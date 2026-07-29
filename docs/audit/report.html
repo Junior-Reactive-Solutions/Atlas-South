@@ -1,0 +1,1097 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Atlas South — Website Audit &amp; ABM Comparative Analysis</title>
+<style>
+:root{
+  --navy:#0B1437; --navy2:#13205A; --blue:#2E8BFF; --blue-soft:#EAF2FF;
+  --ink:#161A25; --body:#3A4257; --muted:#6B7590; --line:#DFE4EE; --bg-soft:#F6F8FC;
+  --red:#C0392B; --amber:#B7791F; --green:#1E7A4C; --grey:#7A8398;
+}
+@page{ size:A4; margin:18mm 15mm 20mm 15mm; }
+*{box-sizing:border-box;}
+body{
+  font-family:"Segoe UI",system-ui,-apple-system,sans-serif;
+  color:var(--body); font-size:9.6pt; line-height:1.52; margin:0;
+  -webkit-print-color-adjust:exact; print-color-adjust:exact;
+}
+h1,h2,h3,h4{color:var(--navy); margin:0 0 .4em; line-height:1.2; font-weight:700;}
+h2{font-size:17pt; padding-bottom:.28em; border-bottom:2.5px solid var(--blue); margin-top:0;}
+h3{font-size:12.2pt; margin-top:1.5em;}
+h4{font-size:10.2pt; margin-top:1.2em; color:var(--navy2);}
+p{margin:0 0 .7em;}
+small{font-size:8.2pt;}
+a{color:var(--blue); text-decoration:none;}
+code{font-family:"Cascadia Mono",Consolas,monospace; font-size:8.4pt; background:var(--bg-soft);
+  padding:1px 4px; border-radius:3px; color:var(--navy2);}
+
+.section{page-break-before:always;}
+.avoid{page-break-inside:avoid;}
+
+/* ---------- cover ---------- */
+.cover{
+  page-break-after:always; height:247mm; background:var(--navy);
+  color:#fff; margin:-18mm -15mm 0; padding:26mm 20mm; position:relative;
+}
+.cover .kicker{font-size:9pt; letter-spacing:.22em; text-transform:uppercase; color:var(--blue); font-weight:700;}
+.cover h1{color:#fff; font-size:33pt; line-height:1.06; margin:14mm 0 6mm; letter-spacing:-.5px;}
+.cover .sub{font-size:12.5pt; color:#AFC0E0; max-width:135mm; line-height:1.45;}
+.cover .rule{width:52mm; height:4px; background:var(--blue); margin:10mm 0;}
+.cover .meta{position:absolute; bottom:26mm; left:20mm; right:20mm;
+  display:flex; gap:12mm; border-top:1px solid rgba(255,255,255,.22); padding-top:6mm;}
+.cover .meta div{flex:1;}
+.cover .meta .lbl{font-size:7.6pt; letter-spacing:.16em; text-transform:uppercase; color:#7F91B8;}
+.cover .meta .val{font-size:10.4pt; color:#fff; font-weight:600; margin-top:2mm;}
+.scorepill{
+  display:inline-flex; align-items:baseline; gap:4mm; background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.2); border-radius:5px; padding:6mm 9mm; margin-top:9mm;
+}
+.scorepill .n{font-size:40pt; font-weight:800; color:#fff; line-height:1;}
+.scorepill .d{font-size:13pt; color:#8FA6D0;}
+.scorepill .g{font-size:11pt; color:var(--blue); font-weight:700; letter-spacing:.1em;}
+
+/* ---------- tables ---------- */
+table{width:100%; border-collapse:collapse; margin:.6em 0 1.1em; font-size:8.6pt;}
+th{background:var(--navy); color:#fff; text-align:left; padding:5px 7px; font-weight:600;
+  font-size:8.1pt; letter-spacing:.04em; text-transform:uppercase;}
+td{padding:5px 7px; border-bottom:1px solid var(--line); vertical-align:top;}
+tbody tr:nth-child(even){background:var(--bg-soft);}
+table.compact td,table.compact th{padding:3.5px 6px; font-size:8.2pt;}
+
+/* ---------- severity ---------- */
+.sev{display:inline-block; padding:1px 6px; border-radius:3px; font-size:7.4pt;
+  font-weight:700; letter-spacing:.06em; text-transform:uppercase; white-space:nowrap; color:#fff;}
+.sev.c{background:var(--red);} .sev.h{background:#D9622B;}
+.sev.m{background:var(--amber);} .sev.l{background:var(--grey);} .sev.w{background:var(--green);}
+
+/* ---------- score bars ---------- */
+.bars{margin:.5em 0 1em;}
+.bar{display:flex; align-items:center; gap:4mm; margin-bottom:3.2mm; page-break-inside:avoid;}
+.bar .nm{width:36mm; font-size:8.8pt; font-weight:600; color:var(--navy); flex:none;}
+.bar .tr{flex:1; height:13px; background:#E9EDF5; border-radius:2px; overflow:hidden;}
+.bar .fl{height:100%; border-radius:2px;}
+.bar .vl{width:22mm; text-align:right; font-size:8.6pt; font-weight:700; color:var(--navy); flex:none;}
+.f-crit{background:var(--red);} .f-poor{background:#D9622B;}
+.f-mid{background:var(--amber);} .f-ok{background:var(--green);}
+
+/* ---------- callouts ---------- */
+.callout{border-left:3.5px solid var(--blue); background:var(--blue-soft);
+  padding:4mm 5mm; margin:.8em 0 1.1em; page-break-inside:avoid; border-radius:0 3px 3px 0;}
+.callout.warn{border-color:#D9622B; background:#FFF3EC;}
+.callout.good{border-color:var(--green); background:#EEF8F2;}
+.callout p:last-child{margin-bottom:0;}
+.callout .ttl{font-weight:700; color:var(--navy); display:block; margin-bottom:1.5mm; font-size:9.6pt;}
+
+/* ---------- figures ---------- */
+figure{margin:0 0 5mm; page-break-inside:avoid;}
+figure img{width:100%; border:1px solid var(--line); border-radius:3px; display:block;}
+figcaption{font-size:7.9pt; color:var(--muted); margin-top:1.8mm; line-height:1.4;}
+.two{display:flex; gap:5mm; page-break-inside:avoid; margin-bottom:5mm;}
+.two figure{flex:1; margin:0;}
+.tall{display:flex; gap:8mm; justify-content:center; align-items:flex-start; page-break-inside:avoid;}
+.tall figure{text-align:center; margin:0;}
+.tall img{height:200mm; width:auto; border:1px solid var(--line);}
+
+/* ---------- misc ---------- */
+.kpi{display:flex; gap:4mm; margin:.6em 0 1.2em;}
+.kpi div{flex:1; background:var(--bg-soft); border:1px solid var(--line);
+  border-radius:4px; padding:3.5mm; text-align:center;}
+.kpi .n{font-size:16pt; font-weight:800; color:var(--navy); line-height:1;}
+.kpi .l{font-size:7.4pt; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin-top:1.5mm;}
+.toc li{margin-bottom:2.2mm; font-size:10pt;}
+.toc .n{color:var(--blue); font-weight:700; display:inline-block; width:9mm;}
+ul,ol{margin:.3em 0 .9em; padding-left:5mm;}
+li{margin-bottom:1.6mm;}
+.tag{display:inline-block; background:var(--navy2); color:#fff; font-size:7.2pt;
+  padding:1px 6px; border-radius:9px; letter-spacing:.05em; font-weight:600;}
+.tag.new{background:var(--green);} .tag.keep{background:var(--blue);}
+hr{border:0; border-top:1px solid var(--line); margin:1.4em 0;}
+</style>
+</head>
+<body>
+
+<!-- ================= COVER ================= -->
+<div class="cover">
+  <div class="kicker">Atlas South Technical Services · Redesign Programme</div>
+  <h1>Website Audit &amp;<br>Comparative Analysis</h1>
+  <div class="rule"></div>
+  <div class="sub">A technical, SEO and design audit of <strong style="color:#fff">atlassouthes.com</strong>,
+  benchmarked against the inspiration reference <strong style="color:#fff">abm.co.uk</strong>, with a
+  page-by-page and function-by-function improvement plan.</div>
+
+  <div class="scorepill">
+    <span class="n">48</span><span class="d">/ 100</span>
+    <span class="g">GRADE F</span>
+  </div>
+  <div style="font-size:9pt;color:#8FA6D0;margin-top:4mm;">Overall health score · SEO sub-score <strong style="color:#fff">53/100</strong></div>
+
+  <div class="meta">
+    <div><div class="lbl">Prepared</div><div class="val">29 July 2026</div></div>
+    <div><div class="lbl">Scope</div><div class="val">13 live pages</div></div>
+    <div><div class="lbl">Benchmark</div><div class="val">abm.co.uk</div></div>
+    <div><div class="lbl">Document</div><div class="val">v1.0 · Sprint 0</div></div>
+  </div>
+</div>
+
+<!-- ================= CONTENTS ================= -->
+<h2>Contents</h2>
+<ol class="toc" style="list-style:none;padding:0;">
+  <li><span class="n">1</span> Executive Summary</li>
+  <li><span class="n">2</span> Methodology &amp; Tooling</li>
+  <li><span class="n">3</span> Audit Scorecard</li>
+  <li><span class="n">4</span> Detailed Findings</li>
+  <li><span class="n">5</span> Visual Comparison: Atlas South vs ABM</li>
+  <li><span class="n">6</span> Comparative Analysis</li>
+  <li><span class="n">7</span> What Atlas South Already Does Better</li>
+  <li><span class="n">8</span> Improvement Plan — Page by Page</li>
+  <li><span class="n">9</span> Improvement Plan — Function by Function</li>
+  <li><span class="n">10</span> Phased Delivery Roadmap</li>
+  <li><span class="n">11</span> Appendix: Measured Data</li>
+</ol>
+
+<h3 style="margin-top:2em;">At a glance</h3>
+<div class="kpi">
+  <div><div class="n">13</div><div class="l">Pages audited</div></div>
+  <div><div class="n">0</div><div class="l">Pages with schema</div></div>
+  <div><div class="n">0</div><div class="l">Pages with OG tags</div></div>
+  <div><div class="n">~90</div><div class="l">Dead links</div></div>
+  <div><div class="n">0</div><div class="l">Analytics tools</div></div>
+</div>
+
+<div class="callout warn">
+  <span class="ttl">The single most important finding</span>
+  <p>The site has <strong>no analytics of any kind</strong> — no Google Analytics, no Tag Manager, no
+  pixel, no server-side tracking. There is currently <em>no way to measure</em> whether the redesign
+  improves anything. Installing measurement must be the first task of Sprint 1, before any visual
+  work begins, so that a genuine before/after baseline exists.</p>
+</div>
+
+<!-- ================= 1. EXEC SUMMARY ================= -->
+<div class="section">
+<h2>1 · Executive Summary</h2>
+
+<p>Atlas South's website is <strong>structurally healthier than it first appears</strong>. It is not the
+single-scroll brochure page it resembles: there are 13 live pages, including eight genuine service pages,
+each with unique copy (measured content overlap between service pages is only 7.2%, which is
+low and good). Titles and meta descriptions are written on every page, a sitemap and robots.txt exist,
+HTTPS and HSTS are enabled, forms carry spam protection, and there is a GDPR cookie banner.</p>
+
+<p>The score of <strong>48/100</strong> is driven almost entirely by <em>missing layers</em> rather than
+broken ones. Specifically, four things are absent site-wide and each is individually cheap to fix:</p>
+
+<ul>
+  <li><strong>Structured data (JSON-LD)</strong> — 0 of 13 pages. No <code>LocalBusiness</code>,
+      <code>Service</code>, <code>Review</code> or <code>FAQPage</code> markup, so Google cannot generate
+      rich results for a business whose entire market is local search.</li>
+  <li><strong>Open Graph / Twitter Card tags</strong> — 0 of 13 pages. This matters unusually much here:
+      WhatsApp is a primary sales channel for Atlas South, and a link pasted into WhatsApp currently
+      previews with no image, no title card and no description.</li>
+  <li><strong>Security response headers</strong> — no CSP, no <code>X-Frame-Options</code>,
+      no <code>X-Content-Type-Options</code>, no <code>Referrer-Policy</code>.</li>
+  <li><strong>Photography</strong> — the entire site contains three images, all of which are the logo or
+      UI chrome. There is not one photograph of a job, a van, a uniform or a team member. Service
+      iconography is rendered with emoji (🔧 ⚡ 🎨), which reads as improvised at the commercial tier
+      Atlas South is trying to win.</li>
+</ul>
+
+<p>Against ABM, the gap is <strong>not primarily information architecture</strong> — Atlas South already has
+per-service pages, an industries section, pricing and multiple conversion paths, and in some respects
+(transparent pricing, self-serve quote forms, instant contact) it is <em>ahead</em> of ABM, which offers
+none of those. The gap is in <strong>credibility signalling</strong>: real imagery, case studies, proof of
+work, machine-readable trust markers, and a visual language that does not rely on emoji.</p>
+
+<div class="callout good">
+  <span class="ttl">The strategic read</span>
+  <p>Atlas South does not need to be rebuilt from zero. It needs (a) a measurement layer, (b) the missing
+  machine-readable layers, (c) a photography and design-system pass, and (d) expansion of the pages that
+  already exist in outline — industries and service areas — into real landing pages. That is a sequence of
+  additive sprints, not a demolition.</p>
+</div>
+
+<h3>Top ten priorities</h3>
+<table class="compact">
+<thead><tr><th style="width:7%">#</th><th style="width:38%">Action</th><th style="width:13%">Severity</th><th style="width:22%">Category</th><th>Effort</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Install analytics + conversion tracking to establish a baseline</td><td><span class="sev c">Critical</span></td><td>Measurement</td><td>Low</td></tr>
+<tr><td>2</td><td>Resolve the phone-number inconsistency across pages</td><td><span class="sev c">Critical</span></td><td>Local SEO / Trust</td><td>Low</td></tr>
+<tr><td>3</td><td>Add real photography; remove emoji iconography</td><td><span class="sev c">Critical</span></td><td>Design / Credibility</td><td>High</td></tr>
+<tr><td>4</td><td>Add Open Graph + Twitter Card tags to all pages</td><td><span class="sev h">High</span></td><td>SEO / Social</td><td>Low</td></tr>
+<tr><td>5</td><td>Add JSON-LD structured data (LocalBusiness, Service, Review, FAQ)</td><td><span class="sev h">High</span></td><td>SEO</td><td>Medium</td></tr>
+<tr><td>6</td><td>Fix ~90 dead <code>#</code> links across the site</td><td><span class="sev h">High</span></td><td>UX / Crawlability</td><td>Low</td></tr>
+<tr><td>7</td><td>Add security response headers (CSP, XFO, XCTO, Referrer-Policy)</td><td><span class="sev h">High</span></td><td>Security</td><td>Low</td></tr>
+<tr><td>8</td><td>Extract shared CSS/JS to cached external files; add Cache-Control</td><td><span class="sev h">High</span></td><td>Performance</td><td>Medium</td></tr>
+<tr><td>9</td><td>Label all form inputs; fix contrast and tap-target failures</td><td><span class="sev m">Medium</span></td><td>Accessibility</td><td>Medium</td></tr>
+<tr><td>10</td><td>Build industry and service-area landing pages</td><td><span class="sev m">Medium</span></td><td>SEO / Content</td><td>High</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- ================= 2. METHODOLOGY ================= -->
+<div class="section">
+<h2>2 · Methodology &amp; Tooling</h2>
+
+<div class="callout warn">
+  <span class="ttl">Note on tooling — please read</span>
+  <p>This audit was <strong>not</strong> produced by SquirrelScan. The <code>squirrel</code> CLI referenced
+  by the standard audit workflow is not installed on this machine, so no SquirrelScan health score exists
+  for this site. Every score in this document was produced by a <strong>custom measurement pass written for
+  this audit</strong>, against a transparent rubric published in §3. All underlying measurements are listed
+  in the Appendix so the scores can be independently checked or recalculated.</p>
+  <p>If you would like the official SquirrelScan 230-rule score alongside this one, install the CLI from
+  <a href="https://squirrelscan.com/download">squirrelscan.com/download</a> and the audit can be re-run to
+  produce directly comparable numbers.</p>
+</div>
+
+<h3>What was measured, and how</h3>
+<table>
+<thead><tr><th style="width:26%">Layer</th><th style="width:38%">Method</th><th>Coverage</th></tr></thead>
+<tbody>
+<tr><td>HTML / SEO metadata</td><td>Direct HTTP fetch + parse of every page</td><td>All 13 live pages</td></tr>
+<tr><td>Response headers</td><td><code>curl -I</code> and <code>fetch</code> header inspection</td><td>All 13 pages + ABM homepage</td></tr>
+<tr><td>Rendered DOM</td><td>Live JavaScript execution in a real browser session</td><td>Homepage</td></tr>
+<tr><td>Colour contrast</td><td>WCAG 2.1 relative-luminance computed on rendered elements</td><td>Homepage</td></tr>
+<tr><td>Tap targets</td><td>Bounding-box measurement of all interactive elements</td><td>Homepage @1280px</td></tr>
+<tr><td>Screenshots</td><td>Headless Chrome via DevTools Protocol, 1440px desktop &amp; 390px mobile</td><td>Both sites</td></tr>
+<tr><td>Duplicate content</td><td>5-gram Jaccard similarity between all service-page pairs</td><td>8 service pages</td></tr>
+<tr><td>Crawlability</td><td><code>robots.txt</code>, <code>sitemap.xml</code>, 404 status verification</td><td>Site-wide</td></tr>
+</tbody>
+</table>
+
+<h3>Known limitations</h3>
+<ul>
+  <li>Contrast and tap-target analysis was run on the homepage only, at a 1280px desktop viewport. A
+      small number of flagged contrast items are false positives caused by gradient-clipped text
+      (e.g. the outlined <em>“FIRST TIME.”</em> headline); only independently confirmed failures are
+      cited in §4.</li>
+  <li>Core Web Vitals (LCP, CLS, INP) were <strong>not</strong> measured — no field data exists because the
+      site has no analytics. Performance findings here are based on transfer size, TTFB, caching and
+      request-count analysis, which are leading indicators rather than the vitals themselves.</li>
+  <li>The ABM benchmark covers its homepage only; ABM's inner pages were not crawled.</li>
+  <li>The ABM full-page screenshot is truncated at 7,000px (page height 8,344px) and some of its
+      lazy-loaded carousels did not paint during capture.</li>
+</ul>
+</div>
+
+<!-- ================= 3. SCORECARD ================= -->
+<div class="section">
+<h2>3 · Audit Scorecard</h2>
+
+<div class="callout">
+  <span class="ttl">Overall health score: 48 / 100 — Grade F</span>
+  <p>Grade scale: <strong>A</strong> 90–100 · <strong>B</strong> 80–89 · <strong>C</strong> 70–79 ·
+  <strong>D</strong> 60–69 · <strong>E</strong> 50–59 · <strong>F</strong> below 50.
+  Target for the redesign programme: <strong>85+ (Grade B)</strong>.</p>
+</div>
+
+<h3>Category scores</h3>
+<div class="bars">
+  <div class="bar"><span class="nm">SEO</span><span class="tr"><span class="fl f-mid" style="width:53%"></span></span><span class="vl">53 · E</span></div>
+  <div class="bar"><span class="nm">Performance</span><span class="tr"><span class="fl f-mid" style="width:64%"></span></span><span class="vl">64 · D</span></div>
+  <div class="bar"><span class="nm">Mobile</span><span class="tr"><span class="fl f-mid" style="width:68%"></span></span><span class="vl">68 · D</span></div>
+  <div class="bar"><span class="nm">Accessibility</span><span class="tr"><span class="fl f-poor" style="width:49%"></span></span><span class="vl">49 · F</span></div>
+  <div class="bar"><span class="nm">Technical</span><span class="tr"><span class="fl f-poor" style="width:42%"></span></span><span class="vl">42 · F</span></div>
+  <div class="bar"><span class="nm">Content &amp; UX</span><span class="tr"><span class="fl f-crit" style="width:36%"></span></span><span class="vl">36 · F</span></div>
+  <div class="bar"><span class="nm">Security</span><span class="tr"><span class="fl f-crit" style="width:33%"></span></span><span class="vl">33 · F</span></div>
+</div>
+
+<h3>How the overall score is composed</h3>
+<table class="compact">
+<thead><tr><th style="width:26%">Category</th><th style="width:12%">Score</th><th style="width:12%">Weight</th><th style="width:14%">Contribution</th><th>Dominant deductions</th></tr></thead>
+<tbody>
+<tr><td>SEO</td><td>53</td><td>22%</td><td>11.66</td><td>No schema, no social meta, partial canonicals, NAP conflict</td></tr>
+<tr><td>Content &amp; UX</td><td>36</td><td>20%</td><td>7.20</td><td>No photography, no case studies, dead links, no measurement</td></tr>
+<tr><td>Accessibility</td><td>49</td><td>14%</td><td>6.86</td><td>Unlabelled inputs, no landmarks, contrast, tap targets</td></tr>
+<tr><td>Security</td><td>33</td><td>14%</td><td>4.62</td><td>Five response headers absent</td></tr>
+<tr><td>Performance</td><td>64</td><td>14%</td><td>8.96</td><td>No caching headers, ~1s TTFB, duplicated inline assets</td></tr>
+<tr><td>Mobile</td><td>68</td><td>8%</td><td>5.44</td><td>15,168px page height, small tap targets</td></tr>
+<tr><td>Technical</td><td>42</td><td>8%</td><td>3.36</td><td>No build system, no shared assets, no tooling</td></tr>
+<tr style="background:var(--navy);color:#fff;font-weight:700;">
+  <td style="color:#fff">Overall</td><td style="color:#fff">48</td><td style="color:#fff">100%</td><td style="color:#fff">48.10</td><td style="color:#fff">Grade F</td></tr>
+</tbody>
+</table>
+
+<h3 style="margin-top:1.6em;">SEO rating in detail — 53/100</h3>
+<p>Because SEO carries the heaviest weight and is the metric most often asked about, its ten sub-criteria
+are published in full:</p>
+<table class="compact">
+<thead><tr><th style="width:32%">SEO criterion</th><th style="width:12%">Score</th><th>Evidence</th></tr></thead>
+<tbody>
+<tr><td>Indexability</td><td>9 / 10</td><td><code>robots.txt</code> allows all; correct 404 status codes; no accidental noindex</td></tr>
+<tr><td>Title tags</td><td>8 / 10</td><td>Unique and descriptive on all 13 pages; homepage 116 chars (truncates in SERPs)</td></tr>
+<tr><td>Meta descriptions</td><td>8 / 10</td><td>Present on all 13; <code>about</code> 184 and <code>careers</code> 172 chars exceed ~160 limit</td></tr>
+<tr><td>Sitemap &amp; robots</td><td>8 / 10</td><td>Both present and linked; sitemap omits <code>about.html</code> and <code>careers.html</code></td></tr>
+<tr><td>Heading structure</td><td>7 / 10</td><td>Exactly one H1 per page (good); 2–3 hierarchy skips per page (h2→h4, h3→h5)</td></tr>
+<tr><td>Internal linking</td><td>6 / 10</td><td>Sound cross-linking, undermined by ~90 dead <code>#</code> placeholder links</td></tr>
+<tr><td>Canonical tags</td><td>4 / 10</td><td>Present on 7 of 13 pages; missing on homepage, security, about, careers, both legal pages</td></tr>
+<tr><td>Local SEO / NAP</td><td>3 / 10</td><td>Two different phone numbers in use; five formatting variants; no LocalBusiness schema</td></tr>
+<tr><td>Structured data</td><td>0 / 10</td><td>Zero JSON-LD blocks across all 13 pages</td></tr>
+<tr><td>Social metadata</td><td>0 / 10</td><td>Zero Open Graph and zero Twitter Card tags across all 13 pages</td></tr>
+<tr style="background:var(--bg-soft);font-weight:700;"><td>SEO total</td><td>53 / 100</td><td>Grade E — strong fundamentals, absent machine-readable layer</td></tr>
+</tbody>
+</table>
+
+<div class="callout">
+  <span class="ttl">Why this score is encouraging rather than alarming</span>
+  <p>Six of the ten SEO criteria already score 6/10 or better — the hard, slow parts (unique copy, sensible
+  titles, page structure, crawlability) are done. The four weak criteria are all
+  <em>additive</em>: schema, social tags, canonicals and NAP consistency are template-level changes that do
+  not require rewriting a single page of content. A realistic SEO score after Sprint 1 is <strong>80+</strong>.</p>
+</div>
+</div>
+
+<!-- ================= 4. FINDINGS ================= -->
+<div class="section">
+<h2>4 · Detailed Findings</h2>
+
+<h3>4.1 · SEO — 53/100</h3>
+<table class="compact">
+<thead><tr><th style="width:11%">Severity</th><th style="width:30%">Finding</th><th>Detail &amp; recommendation</th></tr></thead>
+<tbody>
+<tr><td><span class="sev h">High</span></td><td>No structured data anywhere</td>
+<td>0 JSON-LD blocks on 13/13 pages. Add <code>LocalBusiness</code> (with address, geo, opening hours, phone),
+<code>Service</code> per service page, <code>AggregateRating</code>/<code>Review</code> for testimonials,
+<code>FAQPage</code> for common questions and <code>BreadcrumbList</code> for hierarchy. For a
+local trades business this is the single highest-leverage SEO change available.</td></tr>
+
+<tr><td><span class="sev h">High</span></td><td>No Open Graph or Twitter Card tags</td>
+<td>0 OG and 0 Twitter tags on 13/13 pages, versus 4 and 4 on ABM's homepage. Because WhatsApp is a
+primary channel here, every shared link currently renders as a bare URL with no preview card. Add
+<code>og:title</code>, <code>og:description</code>, <code>og:image</code> (1200×630), <code>og:url</code>,
+<code>og:type</code>, <code>og:site_name</code> and <code>twitter:card</code>.</td></tr>
+
+<tr><td><span class="sev h">High</span></td><td>Conflicting phone numbers (NAP)</td>
+<td>Five service pages advertise <code>020 335 52797</code> while the homepage, footer and all other pages
+use <code>07778 858278</code>; both appear as <code>tel:</code> targets on the same pages. The mobile number
+is additionally formatted five different ways (<code>07778 858278</code>, <code>0777 8858 278</code>,
+<code>0777 8858278</code>, <code>0777885 8278</code>, <code>0777 88 58278</code>). Inconsistent NAP data
+directly damages local pack rankings and looks careless to visitors. Pick one number and one format,
+site-wide.</td></tr>
+
+<tr><td><span class="sev h">High</span></td><td>“Areas We Cover” links are dead</td>
+<td>All six area links (Central, South East, North, East, West London, Surrey &amp; Kent) point to
+<code>#</code>. These are the highest-intent local-SEO keywords Atlas South could own and are currently
+worth nothing. Convert each into a real service-area landing page.</td></tr>
+
+<tr><td><span class="sev m">Medium</span></td><td>Canonical tags on only 7 of 13 pages</td>
+<td>Missing on <code>index</code>, <code>security</code>, <code>about</code>, <code>careers</code>,
+<code>terms-of-use</code>, <code>privacy-policy</code>. The homepage is reachable as <code>/</code>,
+<code>/index.html</code>, with and without <code>www</code> — a canonical is required to consolidate signals.</td></tr>
+
+<tr><td><span class="sev m">Medium</span></td><td>Heading hierarchy skips</td>
+<td>2–3 skipped levels per page (h2→h4 and h3→h5) on 9 of 13 pages. Harms both semantics and screen-reader navigation.</td></tr>
+
+<tr><td><span class="sev m">Medium</span></td><td>Homepage title too long</td>
+<td>116 characters; Google truncates near 60. Front-load the primary keyword and shorten.</td></tr>
+
+<tr><td><span class="sev l">Low</span></td><td>Sitemap incomplete</td>
+<td>11 URLs listed; <code>about.html</code> and <code>careers.html</code> are absent.</td></tr>
+
+<tr><td><span class="sev l">Low</span></td><td>No favicon declared</td>
+<td>No <code>&lt;link rel="icon"&gt;</code> in the markup on any page.</td></tr>
+
+<tr><td><span class="sev l">Low</span></td><td><code>lang="en"</code> not <code>en-GB</code></td>
+<td>Minor localisation signal for a UK-only business.</td></tr>
+
+<tr><td><span class="sev l">Low</span></td><td>Obsolete <code>meta keywords</code></td>
+<td>Present on the homepage; ignored by all major engines since 2009. Harmless but worth removing.</td></tr>
+
+<tr><td><span class="sev w">Strength</span></td><td>Service-page copy is genuinely unique</td>
+<td>Average 5-gram overlap between the eight service pages is just <strong>7.2%</strong> (highest pair 11.2%).
+There is no thin-content or duplicate-content risk — a real asset that many multi-service trade sites fail.</td></tr>
+</tbody>
+</table>
+
+<h3>4.2 · Performance — 64/100</h3>
+<table class="compact">
+<thead><tr><th style="width:11%">Severity</th><th style="width:30%">Finding</th><th>Detail &amp; recommendation</th></tr></thead>
+<tbody>
+<tr><td><span class="sev h">High</span></td><td>No caching headers at all</td>
+<td>No <code>Cache-Control</code>, no <code>Expires</code>, no <code>ETag</code> policy on any page.
+Every repeat visit re-downloads everything. Add long-lived caching for static assets and a sensible
+revalidation policy for HTML.</td></tr>
+
+<tr><td><span class="sev h">High</span></td><td>226KB of inline CSS/JS duplicated across pages</td>
+<td>Each page carries ~36KB of inline CSS and ~11KB of inline JS. Across 13 pages that is
+<strong>226KB that can never be cached or reused</strong>. Extracting to two shared external files would
+make every page after the first dramatically cheaper, and would cut homepage HTML from 128KB to roughly 80KB.</td></tr>
+
+<tr><td><span class="sev m">Medium</span></td><td>Server TTFB ~1.0–1.5s</td>
+<td>Measured 0.98s–1.52s across pages (homepage 1.04s). For static HTML on Apache this is slow; the target
+is under 0.6s. Investigate host performance and consider a CDN.</td></tr>
+
+<tr><td><span class="sev l">Low</span></td><td>Google Fonts render-blocking</td>
+<td>Single external stylesheet loading 9 font weights. <code>display=swap</code> is correctly set. Add
+<code>preconnect</code>, and trim unused weights.</td></tr>
+
+<tr><td><span class="sev w">Strength</span></td><td>Very lean request profile</td>
+<td>Gzip is enabled (130KB → 56KB on the wire), there is exactly <strong>one</strong> external resource,
+<strong>zero</strong> external JavaScript, and only 650 DOM nodes. This is a genuinely fast-rendering
+front end — the problems are all server-side and architectural.</td></tr>
+</tbody>
+</table>
+
+<h3>4.3 · Security — 33/100</h3>
+<table class="compact">
+<thead><tr><th style="width:11%">Severity</th><th style="width:30%">Finding</th><th>Detail &amp; recommendation</th></tr></thead>
+<tbody>
+<tr><td><span class="sev h">High</span></td><td>No Content-Security-Policy</td><td>Absent. ABM sets at least <code>frame-ancestors 'self'</code>. Add a policy covering scripts, styles, images and form-action.</td></tr>
+<tr><td><span class="sev m">Medium</span></td><td>No <code>X-Frame-Options</code></td><td>Site can be framed — clickjacking exposure. ABM sets <code>SAMEORIGIN</code>.</td></tr>
+<tr><td><span class="sev m">Medium</span></td><td>No <code>X-Content-Type-Options</code></td><td>MIME-sniffing not disabled. Add <code>nosniff</code>.</td></tr>
+<tr><td><span class="sev m">Medium</span></td><td>No <code>Referrer-Policy</code></td><td>Full URLs leak to third parties. Add <code>strict-origin-when-cross-origin</code>.</td></tr>
+<tr><td><span class="sev m">Medium</span></td><td>Form data posts to a third party</td><td>Both forms submit personal data (name, phone, email, postcode, property type) to
+<code>formsubmit.co</code>. Confirm this processor is named in the privacy policy and covered by a
+GDPR processing agreement, or move to a first-party endpoint.</td></tr>
+<tr><td><span class="sev l">Low</span></td><td>No <code>Permissions-Policy</code></td><td>Absent.</td></tr>
+<tr><td><span class="sev l">Low</span></td><td>Server banner disclosed</td><td><code>Server: Apache</code> exposed (version is not — good).</td></tr>
+<tr><td><span class="sev l">Low</span></td><td><code>rel="noopener"</code> missing</td><td>Seven external links on the homepage lack it.</td></tr>
+<tr><td><span class="sev w">Strength</span></td><td>HTTPS + HSTS enabled</td><td><code>max-age=15552000; includeSubDomains</code> — 180 days. Notably, <strong>ABM does not set HSTS at all</strong>. Consider extending to one year and adding <code>preload</code>.</td></tr>
+<tr><td><span class="sev w">Strength</span></td><td>Form spam protection present</td><td>Honeypot field is implemented on both forms.</td></tr>
+</tbody>
+</table>
+
+<h3>4.4 · Accessibility — 49/100</h3>
+<table class="compact">
+<thead><tr><th style="width:11%">Severity</th><th style="width:30%">Finding</th><th>Detail &amp; recommendation</th></tr></thead>
+<tbody>
+<tr><td><span class="sev h">High</span></td><td>26 form inputs without programmatic labels</td>
+<td>Across the two homepage forms, 26 of the inputs have no associated <code>&lt;label for&gt;</code>,
+<code>aria-label</code> or wrapping label. Screen-reader users cannot reliably complete the quote form —
+the site's primary conversion path.</td></tr>
+
+<tr><td><span class="sev h">High</span></td><td>WhatsApp button contrast 1.98:1</td>
+<td>White text on WhatsApp green <code>#25D366</code>. WCAG AA requires 4.5:1 for normal text. Darken
+the green or switch the label to near-black.</td></tr>
+
+<tr><td><span class="sev m">Medium</span></td><td>Body text contrast 4.32:1 at 12.5px</td>
+<td>Muted grey <code>#6A7A9A</code> on white, used throughout the Industries and Services card
+descriptions. Just below the 4.5:1 threshold, and the 12.5px size compounds it.</td></tr>
+
+<tr><td><span class="sev m">Medium</span></td><td>70 of 110 interactive elements below 44×44px</td>
+<td>Measured at 1280px desktop; the header navigation links are only 15px tall. WCAG 2.5.8 recommends a
+minimum 44×44px target.</td></tr>
+
+<tr><td><span class="sev m">Medium</span></td><td>No landmark regions</td>
+<td>No <code>&lt;main&gt;</code> and no <code>&lt;header&gt;</code> element on the homepage
+(<code>&lt;nav&gt;</code> and <code>&lt;footer&gt;</code> are present). Screen-reader users cannot skip to content.</td></tr>
+
+<tr><td><span class="sev m">Medium</span></td><td>Emoji used as meaningful icons</td>
+<td>Service and industry icons are emoji characters without <code>aria-hidden="true"</code>, so assistive
+technology announces them literally (“shield emoji”, “sparkles emoji”) in the middle of headings.</td></tr>
+
+<tr><td><span class="sev m">Medium</span></td><td>No skip-to-content link</td><td>Absent on all pages.</td></tr>
+<tr><td><span class="sev l">Low</span></td><td>One unlabelled button</td><td>A control with no accessible name.</td></tr>
+<tr><td><span class="sev w">Strength</span></td><td>All images have alt text</td><td>3 of 3 images carry meaningful alt attributes; <code>lang</code> is declared.</td></tr>
+</tbody>
+</table>
+
+<h3>4.5 · Content &amp; UX — 36/100</h3>
+<table class="compact">
+<thead><tr><th style="width:11%">Severity</th><th style="width:30%">Finding</th><th>Detail &amp; recommendation</th></tr></thead>
+<tbody>
+<tr><td><span class="sev c">Critical</span></td><td>No photography anywhere on the site</td>
+<td>Three images site-wide, all logo or chrome, all base64-encoded. For a trades and security business,
+proof of work <em>is</em> the product. No completed jobs, no uniformed staff, no vans, no sites, no team.
+ABM's homepage carries 103 images and a video hero.</td></tr>
+
+<tr><td><span class="sev c">Critical</span></td><td>No analytics or conversion tracking</td>
+<td>Zero external scripts; no GA4, no Tag Manager, no pixel. Conversions, traffic sources and drop-off are
+entirely unmeasured, and the redesign has no baseline to be judged against.</td></tr>
+
+<tr><td><span class="sev h">High</span></td><td>~90 dead placeholder links</td>
+<td>7 on the homepage (“Work With Us” plus all six service areas) and 12 on each of the eight service
+pages. Every one is a dead end for users and a wasted crawl path.</td></tr>
+
+<tr><td><span class="sev h">High</span></td><td>Emoji as primary iconography</td>
+<td>🛡️ 🔧 ⚡ 🎨 ✨ 🪚 render inconsistently across operating systems and undercut the credibility Atlas
+South needs to win healthcare, corporate and construction contracts.</td></tr>
+
+<tr><td><span class="sev m">Medium</span></td><td>Industries section has no destination pages</td>
+<td>Eight industries are presented as cards but none links anywhere. ABM gives each of its 13 industries
+a full page — this is the clearest structural borrow available.</td></tr>
+
+<tr><td><span class="sev m">Medium</span></td><td>Only three testimonials, no case studies</td>
+<td>Reviews are real and attributed (a strength), but there is no depth: no before/after, no project
+detail, no client logos, no outcomes.</td></tr>
+
+<tr><td><span class="sev m">Medium</span></td><td>No dedicated thank-you page</td>
+<td>Forms redirect to <code>/?sent=1#booking</code>. Without a distinct URL there is no clean conversion
+event to track, and no opportunity to set expectations after submission.</td></tr>
+
+<tr><td><span class="sev m">Medium</span></td><td>Unbranded 404 page</td>
+<td>Returns a correct 404 status (good) but serves a bare 236-byte Apache default page with no navigation
+back into the site.</td></tr>
+
+<tr><td><span class="sev l">Low</span></td><td>No blog or insights content</td>
+<td>No vehicle for informational search traffic or seasonal demand (frozen pipes, EICR deadlines, end-of-tenancy season).</td></tr>
+
+<tr><td><span class="sev w">Strength</span></td><td>Transparent pricing published</td>
+<td>Three tiers with explicit monthly prices and feature comparison. ABM publishes no pricing at all — this
+is a real competitive advantage and should be protected in the redesign.</td></tr>
+
+<tr><td><span class="sev w">Strength</span></td><td>Conversion paths are strong</td>
+<td>Two on-page quote forms, phone and WhatsApp CTAs repeated throughout, urgency and property-type
+qualifiers built into the form. ABM offers none of this.</td></tr>
+</tbody>
+</table>
+
+<h3>4.6 · Mobile — 68/100 &amp; Technical — 42/100</h3>
+<table class="compact">
+<thead><tr><th style="width:11%">Severity</th><th style="width:30%">Finding</th><th>Detail &amp; recommendation</th></tr></thead>
+<tbody>
+<tr><td><span class="sev m">Medium</span></td><td>Mobile homepage is 15,168px tall</td>
+<td>Nearly twice ABM's 8,189px. That is roughly 18 full phone screens of scrolling to reach the footer.
+Condense sections, introduce accordions, and move secondary content to dedicated pages.</td></tr>
+<tr><td><span class="sev h">High</span></td><td>No shared asset architecture</td>
+<td>13 hand-maintained HTML files each carrying their own copy of the full stylesheet. A single design
+change — a colour, a button radius, a nav item — requires editing 13 files consistently. This is the
+main reason the redesign needs a templating or component step before large-scale visual work begins.</td></tr>
+<tr><td><span class="sev m">Medium</span></td><td>No build or deployment pipeline</td>
+<td>No minification, no bundling, no automated deployment, no staging environment identified.</td></tr>
+<tr><td><span class="sev l">Low</span></td><td><code>.html</code> URL extensions</td>
+<td>Cosmetic, but <code>/services/plumbing</code> reads better and is more durable than <code>/plumbing.html</code>.</td></tr>
+<tr><td><span class="sev w">Strength</span></td><td>Responsive layout works</td>
+<td>Viewport meta is correct and the layout adapts cleanly at 390px — the mobile experience is long, but it is not broken.</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- ================= 5. VISUAL ================= -->
+<div class="section">
+<h2>5 · Visual Comparison: Atlas South vs ABM</h2>
+
+<h3>5.1 · Above the fold</h3>
+<figure>
+  <img src="screenshots/print/atlas-desktop-hero.jpg" alt="Atlas South homepage hero, desktop">
+  <figcaption><strong>Atlas South</strong> — 1440px desktop. Dark navy field, condensed uppercase display type,
+  three competing primary CTAs (Book / WhatsApp / View Services), and a six-card service grid using emoji
+  icons. No photography. Credibility rests entirely on typography and the stats row.</figcaption>
+</figure>
+
+<figure>
+  <img src="screenshots/print/abm-desktop-hero.jpg" alt="ABM homepage hero, desktop">
+  <figcaption><strong>ABM</strong> — 1440px desktop. Full-bleed video of real work being performed, light
+  interface, a single focused CTA (“Speak with the Experts”), sentence-case humanist type, and an
+  announcement bar carrying corporate news. Credibility rests on imagery and restraint.</figcaption>
+</figure>
+
+<div class="callout">
+  <span class="ttl">The core visual lesson</span>
+  <p>ABM's hero does <em>less</em> and shows <em>more</em>. One message, one button, and real footage of the
+  service being delivered. Atlas South's hero asks the visitor to choose between three actions before
+  showing a single piece of evidence that the work is good. The highest-value visual change is not a new
+  colour palette — it is <strong>replacing emoji with photography and reducing the hero to one primary action</strong>.</p>
+</div>
+
+<h3 class="section" style="page-break-before:always;">5.2 · Whole-page structure</h3>
+<div class="tall">
+  <figure>
+    <img src="screenshots/print/atlas-desktop-full.jpg" alt="Atlas South full homepage">
+    <figcaption style="max-width:60mm">Atlas South<br>1440 × 8,046px</figcaption>
+  </figure>
+  <figure>
+    <img src="screenshots/print/abm-desktop-full.jpg" alt="ABM full homepage">
+    <figcaption style="max-width:60mm">ABM<br>1440 × 8,344px (truncated at 7,000px)</figcaption>
+  </figure>
+</div>
+<p style="margin-top:4mm;">At the whole-page scale the two sites are almost the same length — the difference is
+<em>rhythm</em>. ABM alternates generous white space, imagery and colour blocks; Atlas South runs dense
+card grids with little breathing room between sections. Note also how much of ABM's page is given to a
+single idea at a time.</p>
+
+<h3 class="section" style="page-break-before:always;">5.3 · Mobile</h3>
+<div class="tall">
+  <figure>
+    <img src="screenshots/print/atlas-mobile-full.jpg" alt="Atlas South mobile homepage">
+    <figcaption style="max-width:50mm">Atlas South<br>390 × 15,168px<br><strong>≈18 screens</strong></figcaption>
+  </figure>
+  <figure>
+    <img src="screenshots/print/abm-mobile-full.jpg" alt="ABM mobile homepage">
+    <figcaption style="max-width:50mm">ABM<br>390 × 8,189px<br><strong>≈10 screens</strong></figcaption>
+  </figure>
+</div>
+<p style="margin-top:4mm;">The mobile comparison is the starkest in this document. Atlas South's homepage is
+<strong>85% longer</strong> on a phone than ABM's, because the desktop card grids stack into single columns
+without being condensed. Given that trade enquiries skew heavily mobile, this is a material conversion risk.</p>
+
+<h3 class="section" style="page-break-before:always;">5.4 · Atlas South section detail</h3>
+<div class="two">
+  <figure><img src="screenshots/print/atlas-sec-services.jpg" alt="Services section">
+    <figcaption>Services — eight cards, emoji icons, repeated “LEARN MORE →”. Clear, but visually flat and
+    unevidenced.</figcaption></figure>
+  <figure><img src="screenshots/print/atlas-sec-industries.jpg" alt="Industries section">
+    <figcaption>Industries — eight sectors presented as cards. <strong>None of these links anywhere.</strong>
+    The clearest expansion opportunity on the site.</figcaption></figure>
+</div>
+<div class="two">
+  <figure><img src="screenshots/print/atlas-sec-packages.jpg" alt="Packages section">
+    <figcaption>Monthly packages — genuinely strong. Transparent tiers, clear feature comparison, explicit
+    inclusions/exclusions. Protect this in the redesign.</figcaption></figure>
+  <figure><img src="screenshots/print/atlas-sec-booking.jpg" alt="Booking form">
+    <figcaption>Quote form — well-qualified (service, urgency, property type). Undermined by 26 unlabelled
+    inputs and no dedicated thank-you page.</figcaption></figure>
+</div>
+<figure><img src="screenshots/print/atlas-sec-contact.jpg" alt="Contact section">
+  <figcaption>Closing contact block — repeats phone, WhatsApp and email with a second form. Strong intent
+  capture; the duplicate form should share one component and one tracking event.</figcaption></figure>
+
+<h3 class="section" style="page-break-before:always;">5.5 · Service page template</h3>
+<div class="tall">
+  <figure><img src="screenshots/print/atlas-plumbing-full.jpg" alt="Plumbing page">
+    <figcaption style="max-width:60mm">plumbing.html<br>1440 × 5,076px</figcaption></figure>
+  <figure><img src="screenshots/print/atlas-security-full.jpg" alt="Security page">
+    <figcaption style="max-width:60mm">security.html<br>1440 × 4,945px</figcaption></figure>
+</div>
+<p style="margin-top:4mm;">The service-page template is consistent and the copy on each is genuinely
+distinct (7.2% average overlap). What it lacks is evidence: no photographs of completed work, no
+certifications shown as artefacts, no case study, no FAQ block, and 12 dead links per page.</p>
+</div>
+
+<!-- ================= 6. COMPARATIVE ================= -->
+<div class="section">
+<h2>6 · Comparative Analysis</h2>
+
+<h3>6.1 · Technical head-to-head</h3>
+<table class="compact">
+<thead><tr><th style="width:34%">Measure (homepage)</th><th style="width:22%">Atlas South</th><th style="width:22%">ABM</th><th>Read</th></tr></thead>
+<tbody>
+<tr><td>Open Graph tags</td><td><strong style="color:var(--red)">0</strong></td><td>4</td><td>Atlas behind</td></tr>
+<tr><td>Twitter Card tags</td><td><strong style="color:var(--red)">0</strong></td><td>4</td><td>Atlas behind</td></tr>
+<tr><td>JSON-LD blocks</td><td><strong style="color:var(--red)">0</strong></td><td>2</td><td>Atlas behind</td></tr>
+<tr><td>Canonical tag</td><td><strong style="color:var(--red)">No</strong></td><td>Yes</td><td>Atlas behind</td></tr>
+<tr><td>Images on page</td><td><strong style="color:var(--red)">3</strong></td><td>103</td><td>Atlas far behind</td></tr>
+<tr><td>External scripts</td><td>0</td><td>15</td><td>Atlas lighter</td></tr>
+<tr><td>HTML size (gzipped)</td><td>56KB</td><td>~150KB raw</td><td>Atlas lighter</td></tr>
+<tr><td>DOM nodes</td><td>650</td><td>Much higher</td><td>Atlas lighter</td></tr>
+<tr><td>HSTS</td><td><strong style="color:var(--green)">Yes</strong></td><td>No</td><td>Atlas ahead</td></tr>
+<tr><td>CSP</td><td>No</td><td>Partial</td><td>Atlas behind</td></tr>
+<tr><td><code>X-Frame-Options</code></td><td>No</td><td>SAMEORIGIN</td><td>Atlas behind</td></tr>
+<tr><td>Cache-Control</td><td>None</td><td>Set</td><td>Atlas behind</td></tr>
+<tr><td>Published pricing</td><td><strong style="color:var(--green)">Yes</strong></td><td>No</td><td>Atlas ahead</td></tr>
+<tr><td>On-page quote form</td><td><strong style="color:var(--green)">2 forms</strong></td><td>None</td><td>Atlas ahead</td></tr>
+<tr><td>Analytics</td><td><strong style="color:var(--red)">None</strong></td><td>Present</td><td>Atlas behind</td></tr>
+<tr><td>Mobile page height</td><td>15,168px</td><td>8,189px</td><td>Atlas behind</td></tr>
+</tbody>
+</table>
+
+<h3>6.2 · Positioning and audience</h3>
+<table class="compact">
+<thead><tr><th style="width:20%">Dimension</th><th style="width:40%">Atlas South</th><th>ABM</th></tr></thead>
+<tbody>
+<tr><td>Scale</td><td>London &amp; South East, founded 2018</td><td>Global facilities management</td></tr>
+<tr><td>Buyer</td><td>Homeowners, landlords, SMEs, plus emerging commercial</td><td>Enterprise procurement and facilities directors</td></tr>
+<tr><td>Tone</td><td>Urgent, direct, concrete (“YOUR HOME. FIXED RIGHT.”)</td><td>Strategic, abstract (“Where others see a facility, we see possibility.”)</td></tr>
+<tr><td>Sales motion</td><td>Self-serve — call, WhatsApp, submit, subscribe</td><td>Consultative — brochure download, “Speak with the Experts”</td></tr>
+<tr><td>Proof</td><td>Stats row, 3 reviews, named certifications</td><td>Imagery, industry breadth, brand scale, sustainability narrative</td></tr>
+<tr><td>Primary CTA</td><td>Three competing (Book / WhatsApp / View Services)</td><td>One (“Speak with the Experts”)</td></tr>
+</tbody>
+</table>
+
+<h3>6.3 · What to borrow — and what not to</h3>
+<div class="callout good">
+  <span class="ttl">Borrow from ABM</span>
+  <ul style="margin-bottom:0;">
+    <li><strong>Real imagery as the primary credibility device</strong> — photography of actual work, staff and sites.</li>
+    <li><strong>Industry pages with their own URLs</strong> — turn the eight existing industry cards into eight real pages.</li>
+    <li><strong>One primary CTA per view</strong> — reduce hero decision load.</li>
+    <li><strong>Whitespace and single-idea sections</strong> — pacing, not density.</li>
+    <li><strong>A downloadable capability document</strong> — the equivalent of “Possibility in Action” for commercial prospects.</li>
+    <li><strong>Machine-readable trust layer</strong> — canonical, OG, JSON-LD as standard on every template.</li>
+  </ul>
+</div>
+<div class="callout warn">
+  <span class="ttl">Do not borrow from ABM</span>
+  <ul style="margin-bottom:0;">
+    <li><strong>Removing pricing.</strong> ABM hides it because enterprise deals are bespoke. Atlas South's
+    transparent tiers are a differentiator against local competitors — keep them prominent.</li>
+    <li><strong>Removing instant contact.</strong> ABM has no on-page form, no phone-first CTA and no
+    WhatsApp. For a 24/7 emergency trade business those are the conversion engine.</li>
+    <li><strong>Abstract corporate language.</strong> “Gas Safe registered”, “Part P certified”,
+    “SIA-licensed” are more persuasive to this buyer than “driving possibility”.</li>
+    <li><strong>Heavy script loading.</strong> ABM runs 15 external scripts; Atlas South's zero-JS
+    front end is a genuine performance asset worth protecting.</li>
+  </ul>
+</div>
+</div>
+
+<!-- ================= 7. STRENGTHS ================= -->
+<div class="section">
+<h2>7 · What Atlas South Already Does Better</h2>
+<p>A redesign that only chases ABM risks discarding advantages Atlas South already holds. These should be
+treated as protected assets with explicit regression tests at the end of every sprint.</p>
+
+<table>
+<thead><tr><th style="width:28%">Asset</th><th style="width:26%">Evidence</th><th>Why it matters</th></tr></thead>
+<tbody>
+<tr><td>Transparent published pricing</td><td>Three tiers, £75 / £180 / £450, with full feature comparison</td>
+<td>ABM publishes nothing. Buyers self-qualify before contact, shortening the sales cycle and filtering out
+price-mismatched leads.</td></tr>
+<tr><td>Self-serve conversion</td><td>Two on-page quote forms with service, urgency and property-type qualifiers</td>
+<td>ABM has no equivalent. A visitor can convert in under a minute without speaking to anyone.</td></tr>
+<tr><td>Instant human contact</td><td>Phone and WhatsApp CTAs repeated throughout; 24/7 line</td>
+<td>Decisive for emergency trade work, where the first responder usually wins the job.</td></tr>
+<tr><td>Genuinely unique service copy</td><td>7.2% average overlap across eight service pages</td>
+<td>No duplicate-content risk. This is the slow, expensive part of SEO and it is already done.</td></tr>
+<tr><td>Concrete credential language</td><td>Gas Safe, Part P, EICR, SIA-licensed, DBS checked</td>
+<td>Specific and verifiable, where ABM's messaging is abstract.</td></tr>
+<tr><td>Exceptionally lean front end</td><td>0 external scripts, 1 external stylesheet, 650 DOM nodes</td>
+<td>Fast rendering by default. Protect this when adding imagery and analytics.</td></tr>
+<tr><td>HSTS enabled</td><td><code>max-age=15552000; includeSubDomains</code></td>
+<td>Ahead of ABM, which sets no HSTS at all.</td></tr>
+<tr><td>GDPR cookie consent</td><td>Granular necessary / analytics / marketing toggles</td>
+<td>Already compliant-by-design, and ready for the analytics rollout in Sprint 1.</td></tr>
+<tr><td>Real, attributed reviews</td><td>Named clients with locations (Walthamstow E17, Maida Vale W9)</td>
+<td>Specific and believable. Needs volume and depth, not replacement.</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- ================= 8. PAGE BY PAGE ================= -->
+<div class="section">
+<h2>8 · Improvement Plan — Page by Page</h2>
+<p>Every existing page, plus every page proposed. <span class="tag keep">KEEP</span> means the page stays and
+is improved in place; <span class="tag new">NEW</span> means it does not yet exist.</p>
+
+<h3>8.1 · Existing pages</h3>
+
+<h4>index.html <span class="tag keep">KEEP</span> — 1,506 words · 128KB · 8,046px</h4>
+<table class="compact">
+<thead><tr><th style="width:30%">Issue found</th><th style="width:40%">Change</th><th>Sprint</th></tr></thead>
+<tbody>
+<tr><td>Title 116 chars; no canonical; no OG; no schema</td><td>Shorten title to ≤60; add canonical, full OG/Twitter set, <code>LocalBusiness</code> + <code>AggregateRating</code> JSON-LD</td><td>1</td></tr>
+<tr><td>7 dead <code>#</code> links (Work With Us + 6 areas)</td><td>Point to the new careers and service-area pages</td><td>1 / 6</td></tr>
+<tr><td>Emoji icons across hero, services, industries</td><td>Replace with a commissioned icon set; add <code>aria-hidden</code></td><td>2</td></tr>
+<tr><td>No photography</td><td>Photographic hero; real job imagery in service and industry cards</td><td>2 / 3</td></tr>
+<tr><td>Three competing hero CTAs</td><td>One primary (Get a Quote); phone and WhatsApp become persistent secondary</td><td>3</td></tr>
+<tr><td>Industries cards link nowhere</td><td>Link each to its new industry page</td><td>5</td></tr>
+<tr><td>26 unlabelled inputs; contrast failures</td><td>Label every input; fix WhatsApp green and muted body text</td><td>1 / 8</td></tr>
+<tr><td>15,168px mobile height</td><td>Condense sections; accordion the industries and packages blocks</td><td>3</td></tr>
+<tr><td>Two near-duplicate forms</td><td>Single shared form component, one tracked conversion event</td><td>7</td></tr>
+</tbody>
+</table>
+
+<h4>The eight service pages <span class="tag keep">KEEP</span></h4>
+<p><code>security</code> · <code>plumbing</code> · <code>electrical</code> · <code>painting</code> ·
+<code>handyman</code> · <code>domestic-cleaning</code> · <code>commercial-cleaning</code> ·
+<code>property-maintenance</code> — 830–958 words each, ~31–34KB, consistent template.</p>
+<table class="compact">
+<thead><tr><th style="width:30%">Issue found</th><th style="width:40%">Change</th><th>Sprint</th></tr></thead>
+<tbody>
+<tr><td><strong>Wrong phone number</strong> — five pages advertise <code>020 335 52797</code></td><td>Standardise to one number and one format site-wide</td><td>1</td></tr>
+<tr><td>12 dead <code>#</code> links per page (~96 total)</td><td>Resolve to real destinations or remove</td><td>1</td></tr>
+<tr><td>No <code>Service</code> or <code>FAQPage</code> schema</td><td>Add both per page, plus <code>BreadcrumbList</code></td><td>1</td></tr>
+<tr><td>Canonical missing on <code>security.html</code></td><td>Add; audit the other seven</td><td>1</td></tr>
+<tr><td>No on-page quote form</td><td>Embed the shared form, pre-filled with that service</td><td>7</td></tr>
+<tr><td>No imagery, no case study, no FAQ</td><td>Add a job gallery, one case study and a 5-question FAQ per page</td><td>4</td></tr>
+<tr><td>Heading skips (h2→h4, h3→h5)</td><td>Correct hierarchy in the shared template</td><td>4</td></tr>
+<tr><td>No certification artefacts</td><td>Show the actual Gas Safe / Part P / SIA credentials as verifiable badges</td><td>4</td></tr>
+</tbody>
+</table>
+
+<h4>about.html <span class="tag keep">KEEP</span> — 1,047 words</h4>
+<table class="compact">
+<thead><tr><th style="width:30%">Issue found</th><th style="width:40%">Change</th><th>Sprint</th></tr></thead>
+<tbody>
+<tr><td>No canonical; description 184 chars; not in sitemap</td><td>Add canonical, trim description, add to sitemap</td><td>1</td></tr>
+<tr><td>No team imagery or named leadership</td><td>Add founder story, team photographs, named leads</td><td>4</td></tr>
+<tr><td>No <code>Organization</code> schema</td><td>Add, with founding date and address</td><td>1</td></tr>
+<tr><td>No accreditation detail</td><td>Add an insurance, DBS and licensing section</td><td>4</td></tr>
+</tbody>
+</table>
+
+<h4>careers.html <span class="tag keep">KEEP</span> — 1,744 words · has an application form</h4>
+<table class="compact">
+<thead><tr><th style="width:30%">Issue found</th><th style="width:40%">Change</th><th>Sprint</th></tr></thead>
+<tbody>
+<tr><td>Not in sitemap; no canonical; description truncated at 172 chars</td><td>Fix all three</td><td>1</td></tr>
+<tr><td>Homepage “Work With Us” does not link here</td><td>Wire the link</td><td>1</td></tr>
+<tr><td>No <code>JobPosting</code> schema</td><td>Add per role — enables Google Jobs listings</td><td>5</td></tr>
+<tr><td>Application form not tracked</td><td>Add conversion tracking and a thank-you state</td><td>7</td></tr>
+</tbody>
+</table>
+
+<h4>privacy-policy.html &amp; terms-of-use.html <span class="tag keep">KEEP</span></h4>
+<table class="compact">
+<thead><tr><th style="width:30%">Issue found</th><th style="width:40%">Change</th><th>Sprint</th></tr></thead>
+<tbody>
+<tr><td>No canonical tags</td><td>Add</td><td>1</td></tr>
+<tr><td>Third-party form processor may not be disclosed</td><td>Confirm <code>formsubmit.co</code> is named as a processor; verify GDPR basis</td><td>1</td></tr>
+<tr><td>Analytics not yet covered</td><td>Update both documents before analytics goes live</td><td>1</td></tr>
+</tbody>
+</table>
+
+<h3 class="section" style="page-break-before:always;">8.2 · Proposed new pages</h3>
+<table class="compact">
+<thead><tr><th style="width:26%">Page</th><th style="width:10%">Count</th><th style="width:36%">Purpose</th><th>Sprint</th></tr></thead>
+<tbody>
+<tr><td><strong>Industry pages</strong><br><small>healthcare, education, events, construction, corporate, residential, retail, property</small></td><td>8</td><td>Give the existing homepage industry cards real destinations. Sector-specific proof, compliance language and case studies. The clearest ABM borrow.</td><td>5</td></tr>
+<tr><td><strong>Service-area pages</strong><br><small>Central, South East, North, East, West London, Surrey &amp; Kent</small></td><td>6</td><td>Replace the six dead footer links. Highest-intent local search terms, each with local jobs and reviews.</td><td>6</td></tr>
+<tr><td><strong>Case studies</strong></td><td>6–10</td><td>Close the single biggest credibility gap. Before/after imagery, scope, timeline, outcome.</td><td>6</td></tr>
+<tr><td><strong>Dedicated packages page</strong></td><td>1</td><td>Give pricing its own indexable URL rather than a homepage anchor; room for comparison and FAQ.</td><td>7</td></tr>
+<tr><td><strong>Dedicated contact page</strong></td><td>1</td><td>Own URL for “atlas south contact” searches; map, hours, coverage, <code>LocalBusiness</code> schema.</td><td>7</td></tr>
+<tr><td><strong>Thank-you page</strong></td><td>1</td><td>Clean conversion URL for tracking; sets response-time expectations after submission.</td><td>7</td></tr>
+<tr><td><strong>Branded 404</strong></td><td>1</td><td>Replace the bare Apache default with navigation and a search or contact prompt.</td><td>1</td></tr>
+<tr><td><strong>Accreditations page</strong></td><td>1</td><td>Gas Safe, Part P, SIA, insurance, DBS as verifiable artefacts for commercial procurement.</td><td>4</td></tr>
+<tr><td><strong>Insights / blog</strong></td><td>ongoing</td><td>Informational and seasonal search capture; supports E-E-A-T signals.</td><td>9</td></tr>
+</tbody>
+</table>
+<p><strong>Site size after the programme:</strong> 13 pages today → approximately <strong>38–42 pages</strong>,
+with every page carrying canonical, OG and schema by template default.</p>
+</div>
+
+<!-- ================= 9. FUNCTION BY FUNCTION ================= -->
+<div class="section">
+<h2>9 · Improvement Plan — Function by Function</h2>
+
+<h4>Navigation</h4>
+<table class="compact">
+<thead><tr><th style="width:32%">Current</th><th style="width:44%">Target</th><th>Sprint</th></tr></thead>
+<tbody>
+<tr><td>Header mixes real pages with homepage anchors; 15px tap height</td><td>Consistent page-based nav; dropdowns for Services and Industries; 44px minimum targets</td><td>3</td></tr>
+<tr><td>No breadcrumbs</td><td>Breadcrumbs on all inner pages with <code>BreadcrumbList</code> schema</td><td>4</td></tr>
+<tr><td>Footer contains 7 dead links</td><td>All links resolve; footer becomes the service-area and industry hub</td><td>1 / 6</td></tr>
+<tr><td>No search</td><td>Optional site search once the page count passes ~30</td><td>9</td></tr>
+</tbody>
+</table>
+
+<h4>Quote &amp; contact forms</h4>
+<table class="compact">
+<thead><tr><th style="width:32%">Current</th><th style="width:44%">Target</th><th>Sprint</th></tr></thead>
+<tbody>
+<tr><td>Two near-duplicate forms, hand-maintained</td><td>One shared component, context-aware defaults per page</td><td>7</td></tr>
+<tr><td>26 inputs without labels</td><td>Every input labelled; full keyboard and screen-reader pass</td><td>1</td></tr>
+<tr><td>Posts to <code>formsubmit.co</code>; captcha disabled</td><td>Confirm GDPR processing basis; keep the honeypot; evaluate a first-party endpoint</td><td>1 / 7</td></tr>
+<tr><td>Redirects to <code>/?sent=1</code></td><td>Dedicated <code>/thank-you</code> page as a clean conversion URL</td><td>7</td></tr>
+<tr><td>No validation feedback or submission state</td><td>Inline validation, loading state, explicit success and failure messaging</td><td>7</td></tr>
+<tr><td>No tracking</td><td>Conversion event per submission, segmented by service and urgency</td><td>1 / 7</td></tr>
+</tbody>
+</table>
+
+<h4>Subscription packages</h4>
+<table class="compact">
+<thead><tr><th style="width:32%">Current</th><th style="width:44%">Target</th><th>Sprint</th></tr></thead>
+<tbody>
+<tr><td>Three tiers on a homepage anchor; Stripe/PayPal indicated</td><td>Own indexable page; verify the live checkout path end to end</td><td>7</td></tr>
+<tr><td>No <code>Offer</code> schema</td><td>Add per tier — enables price display in search results</td><td>7</td></tr>
+<tr><td>No comparison view or FAQ</td><td>Comparison table plus billing, cancellation and coverage FAQ</td><td>7</td></tr>
+</tbody>
+</table>
+
+<h4>WhatsApp &amp; phone</h4>
+<table class="compact">
+<thead><tr><th style="width:32%">Current</th><th style="width:44%">Target</th><th>Sprint</th></tr></thead>
+<tbody>
+<tr><td>Conflicting numbers across pages</td><td>Single number, single format, defined once in the template</td><td>1</td></tr>
+<tr><td>WhatsApp button fails contrast at 1.98:1</td><td>Accessible colour pairing that stays recognisably WhatsApp</td><td>8</td></tr>
+<tr><td>Click-throughs untracked</td><td>Track <code>tel:</code> and <code>wa.me</code> clicks as micro-conversions</td><td>1</td></tr>
+<tr><td>Shared links have no preview card</td><td>OG image and title so WhatsApp shares render properly</td><td>1</td></tr>
+</tbody>
+</table>
+
+<h4>Cookie consent &amp; analytics</h4>
+<table class="compact">
+<thead><tr><th style="width:32%">Current</th><th style="width:44%">Target</th><th>Sprint</th></tr></thead>
+<tbody>
+<tr><td>Granular banner exists but governs nothing — no analytics installed</td><td>GA4 (or equivalent) wired to the existing consent toggles</td><td>1</td></tr>
+<tr><td>No baseline metrics</td><td>Two to three weeks of baseline traffic and conversion data before visual work starts</td><td>1</td></tr>
+<tr><td>No Search Console</td><td>Verify property; submit sitemap; monitor indexation and queries</td><td>1</td></tr>
+</tbody>
+</table>
+
+<h4>Testimonials &amp; proof</h4>
+<table class="compact">
+<thead><tr><th style="width:32%">Current</th><th style="width:44%">Target</th><th>Sprint</th></tr></thead>
+<tbody>
+<tr><td>Three static reviews, no schema</td><td>Expanded set with <code>Review</code> / <code>AggregateRating</code> markup</td><td>1 / 6</td></tr>
+<tr><td>No case studies, no client logos</td><td>Case study library, filterable by service and industry</td><td>6</td></tr>
+<tr><td>No third-party review integration</td><td>Connect Google Business Profile / Trustpilot</td><td>9</td></tr>
+</tbody>
+</table>
+
+<h4>Asset &amp; template architecture</h4>
+<table class="compact">
+<thead><tr><th style="width:32%">Current</th><th style="width:44%">Target</th><th>Sprint</th></tr></thead>
+<tbody>
+<tr><td>226KB inline CSS/JS duplicated across 13 files</td><td>Shared external stylesheet and script, cached and versioned</td><td>2</td></tr>
+<tr><td>No design tokens</td><td>Documented colour, type, spacing and component tokens</td><td>2</td></tr>
+<tr><td>No templating — 13 hand-edited files</td><td>Header, footer, nav, form and card as reusable partials or components</td><td>2</td></tr>
+<tr><td>No build or staging</td><td>Build step, staging environment, deployment pipeline</td><td>2</td></tr>
+<tr><td>No caching or security headers</td><td>Server config for <code>Cache-Control</code>, CSP, XFO, XCTO, Referrer-Policy</td><td>1</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- ================= 10. ROADMAP ================= -->
+<div class="section">
+<h2>10 · Phased Delivery Roadmap</h2>
+<p>Sequenced so that measurement precedes change, architecture precedes visual work, and templates precede
+page production. Sprint numbering continues from the Sprint 0 foundations already agreed.</p>
+
+<table>
+<thead><tr><th style="width:8%">Sprint</th><th style="width:24%">Theme</th><th style="width:44%">Scope</th><th>Exit criteria</th></tr></thead>
+<tbody>
+<tr><td><strong>1</strong></td><td>Measurement &amp; quick wins</td>
+<td>Analytics + Search Console; fix the phone-number conflict; add OG, canonicals and core schema; repair ~90 dead links; security and caching headers; label form inputs; branded 404; sitemap completion</td>
+<td>Baseline data flowing; SEO sub-score ≥80</td></tr>
+
+<tr><td><strong>2</strong></td><td>Design system &amp; architecture</td>
+<td>Extract shared CSS/JS; design tokens; component library; templating; build and staging pipeline; commission photography and a custom icon set</td>
+<td>One template change propagates to all pages</td></tr>
+
+<tr><td><strong>3</strong></td><td>Homepage rebuild</td>
+<td>Photographic hero; single primary CTA; condensed mobile layout; real icons; restructured sections</td>
+<td>Mobile height under 9,000px; hero converts at or above baseline</td></tr>
+
+<tr><td><strong>4</strong></td><td>Service pages</td>
+<td>All eight rebuilt on the new template: imagery, FAQ blocks, certification artefacts, embedded forms, corrected heading hierarchy; accreditations page</td>
+<td>Eight pages live with schema and forms</td></tr>
+
+<tr><td><strong>5</strong></td><td>Industry pages</td>
+<td>Eight new sector pages with tailored proof and compliance language; <code>JobPosting</code> schema on careers</td>
+<td>Homepage industry cards all resolve</td></tr>
+
+<tr><td><strong>6</strong></td><td>Local &amp; proof</td>
+<td>Six service-area pages; case study library; expanded reviews with schema</td>
+<td>Zero dead links site-wide; local pages indexed</td></tr>
+
+<tr><td><strong>7</strong></td><td>Conversion</td>
+<td>Unified form component; thank-you page; packages and contact pages; checkout verification; full funnel tracking</td>
+<td>Every conversion path tracked end to end</td></tr>
+
+<tr><td><strong>8</strong></td><td>Accessibility &amp; performance</td>
+<td>WCAG 2.1 AA pass — contrast, tap targets, landmarks, keyboard, screen reader; Core Web Vitals; image optimisation; TTFB and CDN</td>
+<td>AA conformance; Vitals in the green</td></tr>
+
+<tr><td><strong>9</strong></td><td>Content operations &amp; launch</td>
+<td>Insights/blog; third-party review integration; site search if warranted; redirect map; launch checklist</td>
+<td>Overall score ≥85 (Grade B)</td></tr>
+</tbody>
+</table>
+
+<div class="callout">
+  <span class="ttl">Sequencing rationale</span>
+  <p><strong>Why analytics first:</strong> without a baseline there is no way to prove the redesign worked, and
+  no way to catch a regression. <strong>Why architecture before visuals:</strong> while the stylesheet is
+  duplicated across 13 files, every design change costs 13× and drifts. <strong>Why templates before new
+  pages:</strong> producing 23 new pages on the current architecture would multiply the maintenance problem
+  rather than solve it.</p>
+</div>
+
+<h3>Expected score trajectory</h3>
+<table class="compact">
+<thead><tr><th style="width:14%">Milestone</th><th style="width:12%">Overall</th><th style="width:12%">SEO</th><th>Driver</th></tr></thead>
+<tbody>
+<tr><td>Today</td><td>48 · F</td><td>53 · E</td><td>Baseline</td></tr>
+<tr><td>After Sprint 1</td><td>~68 · D</td><td>~82 · B</td><td>Schema, OG, canonicals, headers, dead links, NAP</td></tr>
+<tr><td>After Sprint 4</td><td>~78 · C</td><td>~86 · B</td><td>Photography, templates, service-page depth</td></tr>
+<tr><td>After Sprint 8</td><td>~88 · B</td><td>~92 · A</td><td>Accessibility, performance, local and industry pages</td></tr>
+</tbody>
+</table>
+<p><small>Projections are estimates against this document's rubric, not guarantees, and assume the scope above is delivered in full.</small></p>
+</div>
+
+<!-- ================= 11. APPENDIX ================= -->
+<div class="section">
+<h2>11 · Appendix: Measured Data</h2>
+
+<h3>A · Per-page measurements</h3>
+<table class="compact">
+<thead><tr><th>Page</th><th>Status</th><th>Size</th><th>TTFB</th><th>Title</th><th>Desc</th><th>Canon</th><th>OG</th><th>Schema</th><th>H1</th><th>Skips</th><th>Words</th></tr></thead>
+<tbody>
+<tr><td>index.html</td><td>200</td><td>128KB</td><td>1.04s</td><td>116</td><td>168</td><td>—</td><td>0</td><td>0</td><td>1</td><td>2</td><td>1506</td></tr>
+<tr><td>security.html</td><td>200</td><td>33KB</td><td>0.98s</td><td>91</td><td>164</td><td>—</td><td>0</td><td>0</td><td>1</td><td>3</td><td>949</td></tr>
+<tr><td>plumbing.html</td><td>200</td><td>32KB</td><td>1.00s</td><td>68</td><td>155</td><td>Y</td><td>0</td><td>0</td><td>1</td><td>3</td><td>958</td></tr>
+<tr><td>electrical.html</td><td>200</td><td>31KB</td><td>1.28s</td><td>64</td><td>152</td><td>Y</td><td>0</td><td>0</td><td>1</td><td>3</td><td>842</td></tr>
+<tr><td>painting.html</td><td>200</td><td>31KB</td><td>1.52s</td><td>71</td><td>166</td><td>Y</td><td>0</td><td>0</td><td>1</td><td>3</td><td>833</td></tr>
+<tr><td>handyman.html</td><td>200</td><td>31KB</td><td>1.03s</td><td>58</td><td>153</td><td>Y</td><td>0</td><td>0</td><td>1</td><td>3</td><td>894</td></tr>
+<tr><td>domestic-cleaning.html</td><td>200</td><td>31KB</td><td>1.13s</td><td>71</td><td>148</td><td>Y</td><td>0</td><td>0</td><td>1</td><td>3</td><td>873</td></tr>
+<tr><td>commercial-cleaning.html</td><td>200</td><td>31KB</td><td>1.12s</td><td>70</td><td>150</td><td>Y</td><td>0</td><td>0</td><td>1</td><td>3</td><td>830</td></tr>
+<tr><td>property-maintenance.html</td><td>200</td><td>31KB</td><td>1.08s</td><td>75</td><td>152</td><td>Y</td><td>0</td><td>0</td><td>1</td><td>3</td><td>840</td></tr>
+<tr><td>about.html</td><td>200</td><td>59KB</td><td>1.04s</td><td>60</td><td>184</td><td>—</td><td>0</td><td>0</td><td>1</td><td>1</td><td>1047</td></tr>
+<tr><td>careers.html</td><td>200</td><td>76KB</td><td>1.08s</td><td>89</td><td>172</td><td>—</td><td>0</td><td>0</td><td>1</td><td>1</td><td>1744</td></tr>
+<tr><td>terms-of-use.html</td><td>200</td><td>50KB</td><td>0.99s</td><td>45</td><td>116</td><td>—</td><td>0</td><td>0</td><td>1</td><td>1</td><td>1640</td></tr>
+<tr><td>privacy-policy.html</td><td>200</td><td>53KB</td><td>1.02s</td><td>47</td><td>118</td><td>—</td><td>0</td><td>0</td><td>1</td><td>1</td><td>1668</td></tr>
+</tbody>
+</table>
+
+<h3>B · Phone-number inconsistency (verbatim)</h3>
+<table class="compact">
+<thead><tr><th style="width:30%">Page</th><th style="width:34%"><code>tel:</code> targets</th><th>Numbers displayed in copy</th></tr></thead>
+<tbody>
+<tr><td>index</td><td>07778858278</td><td>07778 858278</td></tr>
+<tr><td>security</td><td>07778858278</td><td>07778 858278</td></tr>
+<tr><td>plumbing</td><td>07778858278, <strong>02033552797</strong></td><td><strong>020 335 52797</strong>, 0777 8858 278, 0777 88 58278</td></tr>
+<tr><td>electrical</td><td>07778858278, <strong>02033552797</strong></td><td>0777 8858278, 0777885 8278, <strong>020 335 52797</strong></td></tr>
+<tr><td>painting</td><td>07778858278, <strong>02033552797</strong></td><td><strong>020 335 52797</strong>, 0777 8858278</td></tr>
+<tr><td>handyman</td><td><strong>02033552797</strong>, 07778858278</td><td><strong>020 335 52797</strong>, 0777 8858278</td></tr>
+<tr><td>domestic-cleaning</td><td>07778858278</td><td>0777 8858 278, 07778858278</td></tr>
+<tr><td>commercial-cleaning</td><td>07778858278</td><td>0777 8858 278</td></tr>
+<tr><td>property-maintenance</td><td>07778858278, <strong>02033552797</strong></td><td><strong>020 335 52797</strong>, 0777 8858 278</td></tr>
+<tr><td>about / careers / legal</td><td>07778858278</td><td>07778 858278</td></tr>
+</tbody>
+</table>
+<p><small>The <code>0303 123 1113</code> appearing on the privacy policy is the ICO helpline and is correct.</small></p>
+
+<h3>C · Duplicate-content analysis (5-gram Jaccard)</h3>
+<table class="compact">
+<thead><tr><th style="width:60%">Service page pair</th><th>Overlap</th></tr></thead>
+<tbody>
+<tr><td>painting vs handyman</td><td>11.2%</td></tr>
+<tr><td>domestic-cleaning vs commercial-cleaning</td><td>11.1%</td></tr>
+<tr><td>painting vs property-maintenance</td><td>10.9%</td></tr>
+<tr><td>handyman vs property-maintenance</td><td>10.3%</td></tr>
+<tr><td>commercial-cleaning vs property-maintenance</td><td>10.3%</td></tr>
+<tr style="background:var(--bg-soft);font-weight:700;"><td>Average across all 28 pairs</td><td>7.2%</td></tr>
+</tbody>
+</table>
+<p><small>Well below the ~30% threshold at which duplicate-content concerns typically arise. This is a strength.</small></p>
+
+<h3>D · Response headers — homepage</h3>
+<table class="compact">
+<thead><tr><th style="width:38%">Header</th><th style="width:30%">Atlas South</th><th>ABM</th></tr></thead>
+<tbody>
+<tr><td><code>strict-transport-security</code></td><td style="color:var(--green)">max-age=15552000</td><td style="color:var(--red)">absent</td></tr>
+<tr><td><code>content-security-policy</code></td><td style="color:var(--red)">absent</td><td>frame-ancestors 'self'</td></tr>
+<tr><td><code>x-frame-options</code></td><td style="color:var(--red)">absent</td><td>SAMEORIGIN</td></tr>
+<tr><td><code>x-content-type-options</code></td><td style="color:var(--red)">absent</td><td style="color:var(--red)">absent</td></tr>
+<tr><td><code>referrer-policy</code></td><td style="color:var(--red)">absent</td><td style="color:var(--red)">absent</td></tr>
+<tr><td><code>permissions-policy</code></td><td style="color:var(--red)">absent</td><td style="color:var(--red)">absent</td></tr>
+<tr><td><code>cache-control</code></td><td style="color:var(--red)">absent</td><td>max-age=0, no-cache, no-store</td></tr>
+<tr><td><code>content-encoding</code></td><td style="color:var(--green)">gzip</td><td style="color:var(--green)">gzip</td></tr>
+<tr><td><code>server</code></td><td>Apache (version hidden)</td><td>hidden</td></tr>
+</tbody>
+</table>
+
+<h3>E · Form configuration</h3>
+<table class="compact">
+<tbody>
+<tr><td style="width:34%">Endpoints</td><td><code>formsubmit.co/fm@atlassouthes.com</code> and <code>formsubmit.co/ajax/fm@atlassouthes.com</code></td></tr>
+<tr><td>Honeypot spam field</td><td style="color:var(--green)">Present</td></tr>
+<tr><td>Captcha</td><td>Disabled (<code>_captcha = false</code>)</td></tr>
+<tr><td>Post-submit redirect</td><td><code>https://atlassouthes.com/?sent=1#booking</code> — not a distinct page</td></tr>
+<tr><td>Email subject</td><td>“New Booking Inquiry from Website”</td></tr>
+<tr><td>Inputs without labels</td><td style="color:var(--red)">26</td></tr>
+</tbody>
+</table>
+
+<h3>F · Crawlability</h3>
+<table class="compact">
+<tbody>
+<tr><td style="width:34%"><code>robots.txt</code></td><td>Present · allows all · correctly references the sitemap</td></tr>
+<tr><td><code>sitemap.xml</code></td><td>Present · 11 URLs · <strong>missing</strong> <code>about.html</code> and <code>careers.html</code></td></tr>
+<tr><td>404 handling</td><td>Correct 404 status, but a bare 236-byte Apache default page</td></tr>
+<tr><td>Broken internal links</td><td>0 — every real page returns 200</td></tr>
+<tr><td>Dead placeholder links</td><td>~90 (<code>href="#"</code>)</td></tr>
+</tbody>
+</table>
+
+<hr>
+<p style="font-size:8.2pt;color:var(--muted);">
+<strong>Atlas South Technical Services — Website Audit &amp; Comparative Analysis</strong> · v1.0 ·
+29 July 2026 · Prepared as part of Sprint 0 foundations. Scores are calculated against the rubric published
+in §3 of this document and are not SquirrelScan scores. All measurements are reproducible from the data in
+this appendix.</p>
+</div>
+
+</body>
+</html>
