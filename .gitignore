@@ -1,8 +1,37 @@
-# OS
+# dependencies
+node_modules/
+.pnpm-store/
+
+# build output
+dist/
+build/
+.vercel/
+.next/
+
+# env & secrets
+.env
+.env.*
+!.env.example
+
+# logs
+*.log
+npm-debug.log*
+
+# OS/editor
+.DS_Store
 Thumbs.db
 Desktop.ini
-.DS_Store
-
-# Editors
 .vscode/
 .idea/
+
+# Prisma
+apps/api/prisma/migrations/dev.db
+apps/api/prisma/dev.db
+
+# test/coverage
+coverage/
+playwright-report/
+test-results/
+
+# misc
+*.tsbuildinfo

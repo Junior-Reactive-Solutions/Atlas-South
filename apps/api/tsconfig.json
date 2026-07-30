@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "declaration": false
+  },
+  "include": ["src"]
+  // scripts/ (the one-time admin seed script) is intentionally excluded from the
+  // project's rootDir-constrained build/typecheck — it's run directly via `tsx`
+  // (docs/build/08-ADMIN-PANEL-SPEC.md §3), which type-checks it independently at
+  // execution time and doesn't need it to share the src/ output layout.
+}
