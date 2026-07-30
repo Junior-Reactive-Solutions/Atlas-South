@@ -43,7 +43,12 @@ jobs:
         with:
           fetch-depth: 0
 
+      # gitleaks/gitleaks-action@v2 now requires a paid GITLEAKS_LICENSE for
+      # organization-owned repos (this one is owned by Junior-Reactive-Solutions).
+      # Running the free OSS gitleaks binary directly avoids that requirement entirely
+      # — same scan, no license needed. See docs/build/11-GIT-GITHUB-WORKFLOW.md §6.
       - name: Scan for committed secrets
-        uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          curl -sSL https://github.com/gitleaks/gitleaks/releases/download/v8.21.2/gitleaks_8.21.2_linux_x64.tar.gz -o gitleaks.tar.gz
+          tar -xzf gitleaks.tar.gz gitleaks
+          ./gitleaks detect --source . --redact --exit-code 1

@@ -11,7 +11,11 @@ import { requireDb } from '../lib/prisma.js';
 export const enquiriesRouter = Router();
 
 enquiriesRouter.post('/enquiries', enquiryLimiter, validateBody(CreateEnquirySchema), async (req, res) => {
-  const { companyWebsite, agreedToPrivacyPolicy, ...data } = req.body;
+  // agreedToPrivacyPolicy is intentionally destructured out and discarded: zod already
+  // validated it's `true` (CreateEnquirySchema), and the Enquiry table has no matching
+  // column — it must not reach Prisma's `data`, but there's nothing further to do with
+  // the value itself.
+  const { companyWebsite, agreedToPrivacyPolicy: _agreedToPrivacyPolicy, ...data } = req.body;
 
   // Honeypot: a real visitor never fills this hidden field in.
   if (companyWebsite) {
