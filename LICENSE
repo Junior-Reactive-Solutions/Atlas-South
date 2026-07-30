@@ -1,0 +1,19 @@
+Copyright (c) 2026 [COPYRIGHT HOLDER — TBC: confirm whether this is Junior Reactive
+Solutions or Atlas South Technical Services per the actual engagement/ownership terms —
+see docs/build/11-GIT-GITHUB-WORKFLOW.md, "LICENSE" section]
+
+All Rights Reserved.
+
+This repository and its contents (source code, design assets, documentation, and
+associated materials) are proprietary and confidential. No part of this repository may
+be copied, modified, merged, published, distributed, sublicensed, and/or sold, in whole
+or in part, without the prior written permission of the copyright holder.
+
+This is NOT an open-source license. The repository is hosted publicly on GitHub for
+collaboration and deployment purposes only; public visibility does not grant any right
+to reuse, reproduce, or redistribute its contents.
+
+Third-party components used within this project (npm packages, fonts, icon libraries,
+stock photography, etc.) remain governed by their own respective licenses, details of
+which are recorded in docs/build/01-BRAND-SYSTEM.md, docs/build/03-HERO-SECTION-SPEC.md,
+and each package's own license file under node_modules/.
