@@ -13,8 +13,7 @@ planning artefact requested before Sprint 1 execution begins.
 ## ⚠ Read this first — the nav brief changes project scope
 
 The client-supplied navigation order is a materially bigger and more B2B/enterprise site
-than the one we audited. Flagging this now because it affects estimation and because a
-few things need a decision before stories can be built against:
+than the one we audited. Flagging this because it affects estimation.
 
 | Current site (audited) | Client nav brief |
 |---|---|
@@ -25,25 +24,39 @@ few things need a decision before stories can be built against:
 | No "Company" section (About/Careers exist as standalone pages) | Explicit **Company** dropdown: Mission, Vision, Join Us, Contact Us |
 | Domestic/residential cleaning as its own service | Not listed — "Commercial Cleaning" only appears under Soft Services |
 
-**Open questions for you before Sprint 1 stories are finalised** (see Sprint 0 plan for the
-other open decisions):
-1. Does the **residential/consumer offering** (domestic cleaning, the monthly homeowner
-   subscription tiers, "YOUR HOME. FIXED RIGHT.") still exist alongside this new B2B
-   structure, or is it being retired in favour of the enterprise FM positioning implied by
-   the nav brief? This determines whether Packages/Pricing gets its own nav entry or is
-   dropped.
-2. **Reactive Maintenance** (Hard Services) and **Facilities Management** (Soft Services)
-   overlap conceptually with the current `property-maintenance.html` page — confirm these
-   are two distinct offerings, not a rename.
-3. Where does the existing **Handyman** and **Painting** content map to in the new IA? Not
-   named in the brief. Proposed placement below assumes Handyman → Reactive Maintenance
-   and Painting → folded into Facilities Management; flag if wrong.
-4. Confirm **Fire & Safety, Catering, Aviation Services, Concierge, Waste & Recycling** are
-   genuinely new service lines Atlas South delivers (or partners for) — these have zero
-   existing content, certifications, or copy to draw from.
+### Decisions (confirmed 2026-07-30)
 
-The stories below are written to be buildable either way, but Epic ownership (§2 vs the
-old Epic 1 in `product-backlog.md`) should be reconciled once you confirm.
+1. **Residential/consumer offering survives.** Domestic cleaning, the monthly homeowner
+   subscription tiers (£75/£180/£450) and the existing consumer hero positioning are
+   **kept alongside** the new B2B/enterprise structure — this is not a replacement, it's
+   an addition. Packages/Pricing keeps a nav home; since the client's brief doesn't name
+   one, it's placed as its own header item ("Packages") plus a footer column, sitting
+   alongside — not inside — the Hard/Soft Services split so the two audiences (homeowner
+   self-serve vs. enterprise FM buyer) don't get tangled in one dropdown. Revisit if the
+   client pushes back once they see it built.
+2. **Reactive Maintenance vs. Facilities Management overlap** — treating these as two
+   distinct offerings per the brief (Reactive Maintenance = on-demand/emergency
+   response under Hard Services; Facilities Management = the "one contract, all trades"
+   ongoing-management pitch under Soft Services). `property-maintenance.html` content
+   splits across both rather than mapping 1:1 to either.
+3. **Handyman and Painting placement** — decided from our own audit of the current site
+   plus the ABM inspiration structure: **Handyman → Reactive Maintenance** (Hard
+   Services) since the existing copy is entirely about small on-demand jobs, and
+   **Painting → Facilities Management** (Soft Services) since ABM treats decorating-type
+   work as part of ongoing facility upkeep rather than a standalone trade. Flag if this
+   reads wrong once drafted.
+4. **New service lines (Fire & Safety, Catering, Aviation, Concierge, Waste & Recycling)**
+   — no existing content or client-supplied source material for any of these. Per
+   direction, we generate **believable placeholder copy** for the MVP (plausible scope,
+   generic-but-credible certifications language, no fabricated specific claims like
+   named clients, dates or numbers) and get it corrected/replaced once real content comes
+   from the client. Every placeholder page gets an inline `<!-- PLACEHOLDER: needs client
+   review -->` marker in the source so these are trivially greppable before launch.
+5. **Same approach for the 5 industries with no existing copy** (Oil & Gas, Government &
+   Public Sector, Manufacturing, Data Centres, Venues) — believable generic-sector copy
+   for MVP, marked as placeholder, replaced with real case studies/proof once available.
+
+The stories below are written against these decisions.
 
 ---
 
@@ -105,8 +118,11 @@ not asked to choose between competing actions before I've seen any evidence. *(M
 
 **B3.** As a visitor, I want the hero headline to state what Atlas South does and for
 whom in one sentence, so that I immediately understand the offering. *(S)*
-- Must work for the audience confirmed in the open questions above (B2B FM buyer vs
-  homeowner) — copy cannot be written until Q1 above is answered.
+- Since both audiences now co-exist (homeowner + enterprise FM buyer, per decision 1),
+  the homepage hero should speak to breadth ("trades and facilities services across
+  homes and businesses") with a secondary path splitting into "For Your Home" (→
+  Packages/residential) vs "For Your Business" (→ Hard/Soft Services) rather than
+  picking one audience and alienating the other.
 
 **B4.** As a visitor on mobile, I want the hero to render in one screen without excessive
 scroll, so that the first impression isn't diluted by a long stack of hero content. *(M)*
@@ -134,9 +150,11 @@ exists to do, so that I can assess cultural/strategic fit before engaging. *(M)*
 
 **C2.** As a prospective client, I want a Vision page distinct from Mission, so that I
 understand where the company is heading, not just what it does today. *(M)*
-- New page; confirm with client whether Mission/Vision are genuinely separate pages or a
-  single "About" page with two sections (current `about.html` already covers similar
-  ground — reconcile before building to avoid duplicate/thin content).
+- New page. Given both are short, build as anchored sections on one "Company" page
+  (`/company#mission`, `/company#vision`) rather than two thin pages, to avoid the
+  duplicate/thin-content problem the audit flagged elsewhere — the nav brief's separate
+  links still work as in-page anchors. `about.html`'s existing founder-story content
+  feeds Mission/Vision framing rather than being discarded.
 
 **C3.** As a job seeker, I want "Join Us" to present open roles and culture, so that I can
 apply. *(M)*
@@ -165,15 +183,20 @@ Hard Services section feels consistent. *(M)*
 
 **D3.** As a facilities buyer, I want a Reactive Maintenance page describing response times
 and coverage, so that I understand emergency/on-demand capability. *(M)*
-- Likely maps from `handyman.html` and/or `property-maintenance.html` — needs the mapping
-  decision (open question 3) before content is drafted.
+- Maps from `handyman.html` (decision 3) plus the emergency-response portion of
+  `property-maintenance.html`. Existing "same-day available" and "all small repairs"
+  messaging carries over directly.
 
 **D4.** As a facilities buyer, I want a Fire & Safety page covering compliance services
 (alarms, extinguishers, inspections, certification), so that I can evaluate regulatory
 coverage. *(L)*
-- **No existing content.** New service line — needs source material (certifications,
-  scope, pricing model) from the client before copy can be written. Flag as a content
-  dependency, not just a build task.
+- **No existing content — MVP placeholder per decision 4.** Draft believable scope
+  (alarm testing, extinguisher servicing, fire risk assessments, emergency lighting) using
+  standard UK fire-safety compliance language (Regulatory Reform (Fire Safety) Order 2005
+  references are safe generic territory), without inventing specific certifications,
+  named accreditation bodies, or client claims we can't verify. Mark
+  `<!-- PLACEHOLDER: needs client review -->` in source for replacement once the client
+  supplies real scope/certifications.
 
 **D5.** As any Hard Services page visitor, I want a consistent template (hero, scope,
 certifications-as-artefacts, case study, FAQ, embedded quote form), so that every service
@@ -199,28 +222,36 @@ manned guarding and site security capability. *(M)*
 
 **E3.** As a facilities buyer, I want a Commercial Cleaning page, so that I can evaluate
 office/workspace cleaning contracts. *(M)*
-- Existing `commercial-cleaning.html` is the base. **Note:** current `domestic-cleaning.html`
-  has no obvious home in this nav — resolve via open question 1.
+- Existing `commercial-cleaning.html` is the base. `domestic-cleaning.html` stays live
+  under the residential/Packages side of the site (decision 1) rather than here — the two
+  audiences get separate cleaning pages rather than one page trying to serve both.
 
 **E4.** As a facilities buyer, I want a Catering page, so that I can evaluate on-site
 catering provision. *(L)*
-- **No existing content.** New service line — content dependency on the client.
+- **No existing content — MVP placeholder per decision 4.** Draft generic on-site catering
+  scope (staff canteens, corporate hospitality, food safety/HACCP-aligned language)
+  without inventing specific menus, named suppliers or client claims. Mark as placeholder.
 
 **E5.** As a facilities buyer, I want an Aviation Services page, so that I can evaluate
 sector-specific capability (this pairs with the "Aviation"/"Airlines"/"Airports" industry
 vertical pattern seen on ABM). *(L)*
-- **No existing content.** New service line — content dependency on the client. Confirm
-  whether this is airside-cleared personnel/security or ground-services-only scope, since
-  that materially changes the compliance content required.
+- **No existing content — MVP placeholder per decision 4.** Draft generic ground-services
+  scope (cleaning, security, facilities support for airport/aviation sites) rather than
+  claiming airside-cleared personnel or specific certifications we can't verify — safer
+  placeholder territory until the client confirms actual scope. Mark as placeholder.
 
 **E6.** As a facilities buyer, I want a Concierge page, so that I can evaluate front-of-house
 and reception service provision. *(M)*
-- **No existing content.** New service line.
+- **No existing content — MVP placeholder per decision 4.** Draft generic front-of-house
+  scope (reception, visitor management, mail handling). Mark as placeholder.
 
 **E7.** As a facilities buyer, I want a Waste and Recycling Services page, so that I can
 evaluate waste management and sustainability compliance. *(M)*
-- **No existing content.** New service line — pairs well with an ESG/sustainability
-  narrative if the client wants to echo ABM's "Advancing Sustainability" pillar.
+- **No existing content — MVP placeholder per decision 4.** Draft generic scope (waste
+  collection scheduling, recycling stream management, general sustainability-reporting
+  language) without inventing specific tonnage figures or named partners. Mark as
+  placeholder. Pairs well with an ESG narrative if the client wants to echo ABM's
+  "Advancing Sustainability" pillar later.
 
 **E8.** As any Soft Services page visitor, I want the same consistent template used across
 Hard Services, so that the whole site reads as one system regardless of section. *(L)*
@@ -245,10 +276,12 @@ context specifically, not generically. *(L, ×9 — one per industry)*
 - Audit: the current 8 industry cards on the homepage link nowhere (`href="#"`) — these 9
   pages directly resolve that finding, expanded from 8 to 9 per the new brief (adds Oil &
   Gas as new).
-- **Content dependency:** Oil & Gas, Government & Public Sector, Manufacturing, Data
-  Centres and Venues have zero existing case studies or sector-specific copy — flag for
-  client input before these 5 can be drafted; the other 4 (Corporate, Healthcare, Retail,
-  Education) have partial existing homepage copy to build from.
+- **Oil & Gas, Government & Public Sector, Manufacturing, Data Centres and Venues have
+  zero existing copy — MVP placeholder per decision 5.** Draft believable
+  generic-sector copy (typical compliance concerns, plausible relevant services) without
+  inventing named clients, contract values or specific outcomes. Mark each
+  `<!-- PLACEHOLDER: needs client review -->`. The other 4 (Corporate, Healthcare, Retail,
+  Education) build from existing partial homepage copy.
 
 **F2.** As a visitor, I want each industry page to link into relevant Hard/Soft Services
 pages (not just list them), so that navigation between "who you serve" and "what you do"
@@ -330,20 +363,19 @@ never hand-typed per page again. *(template-level, directly fixes the audit's to
 |---|---|---|---|
 | A · Global Nav & Header | 4 | 0 | header/nav component |
 | B · Hero | 6 | 0 | homepage hero section |
-| C · Company | 4 | 2–4 (pending Q2) | about.html, careers.html |
-| D · Hard Services | 5 | 1 (Fire & Safety) | electrical, plumbing, handyman/property-maintenance |
-| E · Soft Services | 8 | 4 (Facilities Mgmt, Catering, Aviation, Concierge, Waste) | security, commercial-cleaning |
-| F · Industries | 2 (×9 pages) | 9 (5 with content dependency) | partial homepage copy only |
+| C · Company | 4 | 0 (anchored sections) | about.html, careers.html |
+| D · Hard Services | 5 | 1 placeholder (Fire & Safety) | electrical, plumbing, handyman/property-maintenance |
+| E · Soft Services | 8 | 4 placeholders (Facilities Mgmt, Catering, Aviation, Concierge, Waste) | security, commercial-cleaning |
+| F · Industries | 2 (×9 pages) | 9 (5 placeholder) | partial homepage copy only |
 | G · Footer | 6 | 0 (consumes pages from above) | footer component |
 | H · Cross-cutting | 5 | — | applies to all templates |
+| Residential/Packages *(retained, decision 1)* | — | 1 (dedicated Packages page) | homepage pricing section |
 
-**Estimated total new/rebuilt pages: ~30–34**, up from the ~13 (existing) / ~38–42
-(previously proposed in `product-backlog.md`) estimate — the client's Hard/Soft/Industries
-split is more granular than our original proposal in most areas, and adds entirely new
-service lines (Fire & Safety, Catering, Aviation, Concierge, Waste & Recycling) with zero
-existing content.
+**Estimated total new/rebuilt pages: ~31–35**, including 10 MVP-placeholder pages (5 new
+service lines + 5 new industries) that ship with believable-but-generic copy and an
+inline review marker, pending real content from the client.
 
 ## Next step
-Answer the four open questions in the callout at the top of this document, then I'll
-fold this into `product-backlog.md` as estimated, sprint-assigned stories and we can groom
-Sprint 1. Building starts on your go-ahead only.
+All open questions are resolved (see Decisions above). Ready to fold this into
+`product-backlog.md` as estimated, sprint-assigned stories and groom Sprint 1 whenever you
+want — **building still starts only on your explicit go-ahead.**
