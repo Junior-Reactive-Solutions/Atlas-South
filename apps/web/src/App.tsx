@@ -12,6 +12,7 @@ import { Layout } from './components/layout/Layout';
 import { Home } from './pages/Home';
 import { PageStub } from './pages/PageStub';
 import { NotFound } from './pages/NotFound';
+import { Plumbing } from './pages/services/Plumbing';
 
 /** Company pages that resolve to real, distinct routes (not the /company#anchor pair). */
 const COMPANY_ROUTES: NavItem[] = [
@@ -41,6 +42,9 @@ export default function App() {
           element={<PageStub title="Company — Mission & Vision" icon="target" specRef="docs/build/06-PAGE-SPECIFICATIONS.md — Company" />}
         />
         {stubRoutes(COMPANY_ROUTES, 'docs/build/06-PAGE-SPECIFICATIONS.md — Company')}
+
+        {/* Built-out service pages (Sprint 4+) — these take precedence over stubRoutes */}
+        <Route path="/hard-services/plumbing" element={<Plumbing />} />
 
         {stubRoutes(HARD_SERVICES, 'docs/build/06-PAGE-SPECIFICATIONS.md — Hard Services')}
         {stubRoutes(SOFT_SERVICES, 'docs/build/06-PAGE-SPECIFICATIONS.md — Soft Services')}
