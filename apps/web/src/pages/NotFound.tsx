@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Icon } from '../components/ui/Icon';
+import { Icon } from '@atlas-south/design-system';
 
 /**
  * docs/build/06-PAGE-SPECIFICATIONS.md §3 "404 (Not Found)". Replaces the previous

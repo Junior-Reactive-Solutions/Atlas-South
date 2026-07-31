@@ -12,9 +12,7 @@ import {
   PACKAGES_PAGE,
   type NavItem,
 } from '@atlas-south/shared';
-import { Icon } from '../ui/Icon';
-import { useAnimationScope } from '../../hooks/useAnimationScope';
-import { DURATION, EASE, STAGGER_GAP } from '../../lib/motion-tokens';
+import { Icon, useAnimationScope, DURATION, EASE, STAGGER_GAP } from '@atlas-south/design-system';
 
 interface ColumnProps {
   title: string;

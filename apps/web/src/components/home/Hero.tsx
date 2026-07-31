@@ -1,9 +1,7 @@
 import { Link } from 'react-router-dom';
 import { animate, createTimeline, stagger } from 'animejs';
 import { COMPANY, PACKAGES_PAGE } from '@atlas-south/shared';
-import { Icon } from '../ui/Icon';
-import { useAnimationScope } from '../../hooks/useAnimationScope';
-import { DURATION, EASE } from '../../lib/motion-tokens';
+import { Icon, useAnimationScope, DURATION, EASE } from '@atlas-south/design-system';
 
 /**
  * Hero background — first-choice candidate from docs/build/03-HERO-SECTION-SPEC.md §3
