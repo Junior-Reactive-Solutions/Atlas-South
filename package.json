@@ -1,0 +1,22 @@
+{
+  "name": "atlas-south",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Atlas South Technical Services — website rebuild (monorepo)",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "postinstall": "npm run build --workspace=packages/shared && npm run build --workspace=packages/design-system",
+    "dev:web": "npm run dev --workspace=apps/web",
+    "dev:api": "npm run dev --workspace=apps/api",
+    "build": "npm run build --workspace=packages/shared && npm run build --workspace=packages/design-system && npm run build --workspace=apps/web && npm run build --workspace=apps/api",
+    "lint": "npm run lint --workspace=apps/web --if-present && npm run lint --workspace=apps/api --if-present",
+    "typecheck": "npm run typecheck --workspace=packages/design-system --if-present && npm run typecheck --workspace=apps/web --if-present && npm run typecheck --workspace=apps/api --if-present",
+    "test": "npm run test --workspace=apps/web --if-present && npm run test --workspace=apps/api --if-present"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

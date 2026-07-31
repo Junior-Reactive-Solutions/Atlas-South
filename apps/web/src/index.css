@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Design tokens mirrored as CSS custom properties for non-Tailwind contexts
+   (inline SVG, third-party components). Keep in sync with tailwind.config.js —
+   see docs/build/01-BRAND-SYSTEM.md §2. */
+:root {
+  --color-navy: #002484;
+  --color-navy-deep: #0a2472;
+  --color-brand-blue: #0078fc; /* decorative/graphic use ONLY */
+  --color-accent-blue: #0062d6; /* all text/links/buttons */
+  --color-ink: #0b1220;
+  --color-slate: #47547a;
+  --color-canvas: #ffffff;
+  --color-canvas-tint: #f5f8fd;
+  --color-border: #dce3f0;
+  --color-success: #1e7a4c;
+  --color-error: #c0392b;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-canvas text-slate font-body antialiased;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  @apply font-display uppercase tracking-tight text-navy;
+}
+
+/* WCAG 2.1 2.3.3 — honoured once, globally, per docs/build/02-ANIMATION-SYSTEM.md §4 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Skip-to-content link — docs/build/06-PAGE-SPECIFICATIONS.md, mandatory on every page */
+.skip-link {
+  @apply sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50;
+  @apply focus:bg-navy focus:text-white focus:px-4 focus:py-2 focus:rounded;
+}
