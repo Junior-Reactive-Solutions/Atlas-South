@@ -17,6 +17,12 @@ import { Corporate } from './pages/industries/Corporate';
 import { Healthcare } from './pages/industries/Healthcare';
 import { Retail } from './pages/industries/Retail';
 import { Education } from './pages/industries/Education';
+import { CentralLondon } from './pages/areas/CentralLondon';
+import { SouthEastLondon } from './pages/areas/SouthEastLondon';
+import { NorthLondon } from './pages/areas/NorthLondon';
+import { EastLondon } from './pages/areas/EastLondon';
+import { WestLondon } from './pages/areas/WestLondon';
+import { SurreyKent } from './pages/areas/SurreyKent';
 
 /** Company pages that resolve to real, distinct routes (not the /company#anchor pair). */
 const COMPANY_ROUTES: NavItem[] = [
@@ -55,6 +61,14 @@ export default function App() {
         <Route path="/industries/healthcare" element={<Healthcare />} />
         <Route path="/industries/retail" element={<Retail />} />
         <Route path="/industries/education" element={<Education />} />
+
+        {/* Built-out service area pages (Sprint 6+) — these take precedence over stubRoutes */}
+        <Route path="/areas/central-london" element={<CentralLondon />} />
+        <Route path="/areas/south-east-london" element={<SouthEastLondon />} />
+        <Route path="/areas/north-london" element={<NorthLondon />} />
+        <Route path="/areas/east-london" element={<EastLondon />} />
+        <Route path="/areas/west-london" element={<WestLondon />} />
+        <Route path="/areas/surrey-kent" element={<SurreyKent />} />
 
         {stubRoutes(HARD_SERVICES, 'docs/build/06-PAGE-SPECIFICATIONS.md — Hard Services')}
         {stubRoutes(SOFT_SERVICES, 'docs/build/06-PAGE-SPECIFICATIONS.md — Soft Services')}
