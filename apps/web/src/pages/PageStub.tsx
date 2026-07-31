@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Icon, type IconName } from '../components/ui/Icon';
+import { Icon, type IconName } from '@atlas-south/design-system';
 
 interface PageStubProps {
   title: string;

@@ -1,0 +1,33 @@
+{
+  "name": "@atlas-south/design-system",
+  "version": "0.2.0",
+  "description": "Atlas South design system — brand tokens, motion system, and foundational components",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": ["dist", "tailwind.config.js"],
+  "exports": {
+    ".": "./dist/index.js",
+    "./tokens": "./dist/tokens/index.js",
+    "./hooks": "./dist/hooks/index.js",
+    "./components": "./dist/components/index.js",
+    "./tailwind": "./tailwind.config.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "animejs": "^4.0.0",
+    "lucide-react": "^0.400.0"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "devDependencies": {
+    "@types/animejs": "^3.1.9",
+    "@types/react": "^18.2.0",
+    "typescript": "^5.3.0"
+  }
+}

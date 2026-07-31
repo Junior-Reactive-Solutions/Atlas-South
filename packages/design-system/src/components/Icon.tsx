@@ -1,5 +1,5 @@
 import type { LucideProps } from 'lucide-react';
-import { ICON_REGISTRY } from './icon-registry';
+import { ICON_REGISTRY } from './icon-registry.js';
 
 export type IconName = string;
 
@@ -24,7 +24,7 @@ interface IconProps extends Omit<LucideProps, 'ref'> {
 export function Icon({ name, label, ...props }: IconProps) {
   const LucideIcon = ICON_REGISTRY[name];
   if (!LucideIcon) {
-    if (import.meta.env.DEV) {
+    if (typeof globalThis !== 'undefined' && (globalThis as any).DEV) {
       // eslint-disable-next-line no-console
       console.warn(`Icon "${name}" is not in ICON_REGISTRY — add it in icon-registry.ts`);
     }
