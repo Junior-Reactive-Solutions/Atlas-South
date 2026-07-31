@@ -13,6 +13,10 @@ import { Home } from './pages/Home';
 import { PageStub } from './pages/PageStub';
 import { NotFound } from './pages/NotFound';
 import { Plumbing } from './pages/services/Plumbing';
+import { Corporate } from './pages/industries/Corporate';
+import { Healthcare } from './pages/industries/Healthcare';
+import { Retail } from './pages/industries/Retail';
+import { Education } from './pages/industries/Education';
 
 /** Company pages that resolve to real, distinct routes (not the /company#anchor pair). */
 const COMPANY_ROUTES: NavItem[] = [
@@ -45,6 +49,12 @@ export default function App() {
 
         {/* Built-out service pages (Sprint 4+) — these take precedence over stubRoutes */}
         <Route path="/hard-services/plumbing" element={<Plumbing />} />
+
+        {/* Built-out industry pages (Sprint 5+) — these take precedence over stubRoutes */}
+        <Route path="/industries/corporate" element={<Corporate />} />
+        <Route path="/industries/healthcare" element={<Healthcare />} />
+        <Route path="/industries/retail" element={<Retail />} />
+        <Route path="/industries/education" element={<Education />} />
 
         {stubRoutes(HARD_SERVICES, 'docs/build/06-PAGE-SPECIFICATIONS.md — Hard Services')}
         {stubRoutes(SOFT_SERVICES, 'docs/build/06-PAGE-SPECIFICATIONS.md — Soft Services')}
