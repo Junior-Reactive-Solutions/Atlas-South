@@ -3,6 +3,7 @@ import { CreateEnquirySchema } from '@atlas-south/shared';
 import { validateBody } from '../middleware/validate.js';
 import { enquiryLimiter } from '../middleware/rateLimiters.js';
 import { requireDb } from '../lib/prisma.js';
+import { sendEnquiryConfirmation, sendEnquiryAdminNotification } from '../lib/email.js';
 
 /**
  * Every quote/contact form on the site posts here — docs/build/08-ADMIN-PANEL-SPEC.md §5.
@@ -26,8 +27,31 @@ enquiriesRouter.post('/enquiries', enquiryLimiter, validateBody(CreateEnquirySch
   try {
     const db = requireDb();
     const enquiry = await db.enquiry.create({ data });
-    // TODO (docs/build/12-HOSTING-DEPLOYMENT.md §6): fire the Resend confirmation +
-    // admin-notification emails here once RESEND_API_KEY is configured.
+
+    // Fire confirmation and admin notification emails in parallel (don't await).
+    // If email sending fails, the enquiry is already created and the submission was successful
+    // from the visitor's perspective. Email failures are logged but don't block the response.
+    Promise.all([
+      sendEnquiryConfirmation({
+        fullName: data.fullName,
+        email: data.email,
+        phone: data.phone,
+        serviceId: data.serviceId,
+        message: data.message,
+      }),
+      sendEnquiryAdminNotification({
+        enquiryId: enquiry.id,
+        fullName: data.fullName,
+        email: data.email,
+        phone: data.phone,
+        serviceId: data.serviceId,
+        message: data.message,
+      }),
+    ]).catch((err) => {
+      // eslint-disable-next-line no-console
+      console.error('Failed to send enquiry emails:', err);
+    });
+
     return res.status(201).json({ ok: true, id: enquiry.id });
   } catch (err) {
     if (err instanceof Error && err.message.includes('DATABASE_URL')) {
