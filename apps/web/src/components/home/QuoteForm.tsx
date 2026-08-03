@@ -1,6 +1,7 @@
 import { useState } from 'react';
+import { animate, stagger } from 'animejs';
 import { CreateEnquirySchema, ALL_SERVICES, type CreateEnquiryInput } from '@atlas-south/shared';
-import { Icon } from '@atlas-south/design-system';
+import { Icon, useAnimationScope, DURATION, EASE, STAGGER_GAP } from '@atlas-south/design-system';
 
 /**
  * Quote form — docs/build/06-PAGE-SPECIFICATIONS.md "Quote form section".
@@ -23,6 +24,26 @@ export function QuoteForm() {
   const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Scroll-triggered fade+rise for the form card, matching the public-site card language
+  // (Testimonials, Footer columns) rather than appearing with no motion at all.
+  const root = useAnimationScope((self) => {
+    self?.add('reveal', () => {
+      animate('.quote-form-card', {
+        opacity: [0, 1],
+        translateY: [24, 0],
+        duration: DURATION.slow,
+        ease: EASE.standard,
+      });
+      animate('.quote-form-field', {
+        opacity: [0, 1],
+        translateY: [12, 0],
+        delay: stagger(STAGGER_GAP),
+        duration: DURATION.base,
+        ease: EASE.standard,
+      });
+    });
+  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
@@ -116,9 +137,11 @@ export function QuoteForm() {
   if (submitted) {
     return (
       <section aria-label="Quote form" className="bg-navy py-16 text-white sm:py-20">
-        <div className="mx-auto max-w-7xl px-4">
-          <div className="flex items-center gap-4">
-            <Icon name="badge-check" size={32} className="text-success" />
+        <div className="mx-auto max-w-2xl px-4">
+          <div className="flex items-center gap-4 rounded-2xl border border-white/10 bg-white/5 p-8 shadow-xl backdrop-blur-sm">
+            <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-full bg-success/15">
+              <Icon name="badge-check" size={32} className="text-success" />
+            </div>
             <div>
               <h2 className="text-2xl font-bold">Enquiry submitted</h2>
               <p className="mt-1 text-white/80">
@@ -132,7 +155,7 @@ export function QuoteForm() {
   }
 
   return (
-    <section aria-label="Quote form" className="bg-navy py-16 text-white sm:py-20">
+    <section ref={root} aria-label="Quote form" className="bg-navy py-16 text-white sm:py-20">
       <div className="mx-auto max-w-2xl px-4">
         <div className="mb-8 text-center">
           <h2 className="font-display text-3xl font-bold sm:text-4xl">Get a free quote</h2>
@@ -141,102 +164,117 @@ export function QuoteForm() {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="quote-form-card space-y-6 rounded-2xl border border-white/10 bg-white/5 p-6 shadow-xl backdrop-blur-sm sm:p-8">
           {errors.submit && (
             <div className="rounded-lg bg-error/10 p-4 text-sm text-error">{errors.submit}</div>
           )}
 
           <div className="grid gap-6 sm:grid-cols-2">
-            <div>
+            <div className="quote-form-field">
               <label htmlFor="fullName" className="block text-sm font-medium">
                 Full name *
               </label>
-              <input
-                id="fullName"
-                name="fullName"
-                type="text"
-                required
-                value={formData.fullName}
-                onChange={handleChange}
-                className={`mt-2 w-full rounded-lg border bg-white/10 px-4 py-2 text-white placeholder-white/50 focus:outline-none focus:ring-2 ${
-                  errors.fullName ? 'border-error ring-error/50' : 'border-white/20 focus:ring-accent-blue'
-                }`}
-              />
+              <div className="relative mt-2">
+                <Icon name="user" size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-white/40" />
+                <input
+                  id="fullName"
+                  name="fullName"
+                  type="text"
+                  required
+                  value={formData.fullName}
+                  onChange={handleChange}
+                  className={`w-full rounded-lg border bg-white/10 py-2 pl-10 pr-4 text-white placeholder-white/50 transition-colors focus:outline-none focus:ring-2 ${
+                    errors.fullName ? 'border-error ring-error/50' : 'border-white/20 focus:ring-accent-blue'
+                  }`}
+                />
+              </div>
               {errors.fullName && <p className="mt-1 text-sm text-error">{errors.fullName}</p>}
             </div>
 
-            <div>
+            <div className="quote-form-field">
               <label htmlFor="email" className="block text-sm font-medium">
                 Email *
               </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                required
-                value={formData.email}
-                onChange={handleChange}
-                className={`mt-2 w-full rounded-lg border bg-white/10 px-4 py-2 text-white placeholder-white/50 focus:outline-none focus:ring-2 ${
-                  errors.email ? 'border-error ring-error/50' : 'border-white/20 focus:ring-accent-blue'
-                }`}
-              />
+              <div className="relative mt-2">
+                <Icon name="mail" size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-white/40" />
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  required
+                  value={formData.email}
+                  onChange={handleChange}
+                  className={`w-full rounded-lg border bg-white/10 py-2 pl-10 pr-4 text-white placeholder-white/50 transition-colors focus:outline-none focus:ring-2 ${
+                    errors.email ? 'border-error ring-error/50' : 'border-white/20 focus:ring-accent-blue'
+                  }`}
+                />
+              </div>
               {errors.email && <p className="mt-1 text-sm text-error">{errors.email}</p>}
             </div>
 
-            <div>
+            <div className="quote-form-field">
               <label htmlFor="phone" className="block text-sm font-medium">
                 Phone *
               </label>
-              <input
-                id="phone"
-                name="phone"
-                type="tel"
-                required
-                value={formData.phone}
-                onChange={handleChange}
-                className={`mt-2 w-full rounded-lg border bg-white/10 px-4 py-2 text-white placeholder-white/50 focus:outline-none focus:ring-2 ${
-                  errors.phone ? 'border-error ring-error/50' : 'border-white/20 focus:ring-accent-blue'
-                }`}
-              />
+              <div className="relative mt-2">
+                <Icon name="phone" size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-white/40" />
+                <input
+                  id="phone"
+                  name="phone"
+                  type="tel"
+                  required
+                  value={formData.phone}
+                  onChange={handleChange}
+                  className={`w-full rounded-lg border bg-white/10 py-2 pl-10 pr-4 text-white placeholder-white/50 transition-colors focus:outline-none focus:ring-2 ${
+                    errors.phone ? 'border-error ring-error/50' : 'border-white/20 focus:ring-accent-blue'
+                  }`}
+                />
+              </div>
               {errors.phone && <p className="mt-1 text-sm text-error">{errors.phone}</p>}
             </div>
 
-            <div>
+            <div className="quote-form-field">
               <label htmlFor="serviceId" className="block text-sm font-medium">
                 Service type
               </label>
-              <select
-                id="serviceId"
-                name="serviceId"
-                value={formData.serviceId || ''}
-                onChange={handleChange}
-                className="mt-2 w-full rounded-lg border border-white/20 bg-white/10 px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-accent-blue"
-              >
-                <option value="">Select a service...</option>
-                {ALL_SERVICES.map((service) => (
-                  <option key={service.id} value={service.id}>
-                    {service.label}
-                  </option>
-                ))}
-              </select>
+              <div className="relative mt-2">
+                <Icon name="wrench" size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-white/40" />
+                <select
+                  id="serviceId"
+                  name="serviceId"
+                  value={formData.serviceId || ''}
+                  onChange={handleChange}
+                  className="w-full appearance-none rounded-lg border border-white/20 bg-white/10 py-2 pl-10 pr-4 text-white transition-colors focus:outline-none focus:ring-2 focus:ring-accent-blue"
+                >
+                  <option value="" className="text-navy">Select a service...</option>
+                  {ALL_SERVICES.map((service) => (
+                    <option key={service.id} value={service.id} className="text-navy">
+                      {service.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
           </div>
 
-          <div>
+          <div className="quote-form-field">
             <label htmlFor="message" className="block text-sm font-medium">
               Message *
             </label>
-            <textarea
-              id="message"
-              name="message"
-              required
-              rows={4}
-              value={formData.message}
-              onChange={handleChange}
-              className={`mt-2 w-full rounded-lg border bg-white/10 px-4 py-2 text-white placeholder-white/50 focus:outline-none focus:ring-2 ${
-                errors.message ? 'border-error ring-error/50' : 'border-white/20 focus:ring-accent-blue'
-              }`}
-            />
+            <div className="relative mt-2">
+              <Icon name="message-square" size={18} className="pointer-events-none absolute left-3 top-3 text-white/40" />
+              <textarea
+                id="message"
+                name="message"
+                required
+                rows={4}
+                value={formData.message}
+                onChange={handleChange}
+                className={`w-full rounded-lg border bg-white/10 py-2 pl-10 pr-4 text-white placeholder-white/50 transition-colors focus:outline-none focus:ring-2 ${
+                  errors.message ? 'border-error ring-error/50' : 'border-white/20 focus:ring-accent-blue'
+                }`}
+              />
+            </div>
             {errors.message && <p className="mt-1 text-sm text-error">{errors.message}</p>}
           </div>
 
@@ -251,7 +289,7 @@ export function QuoteForm() {
             autoComplete="off"
           />
 
-          <div className="flex items-start gap-3">
+          <div className="quote-form-field flex items-start gap-3">
             <input
               id="agreedToPrivacyPolicy"
               name="agreedToPrivacyPolicy"
@@ -263,7 +301,7 @@ export function QuoteForm() {
             />
             <label htmlFor="agreedToPrivacyPolicy" className="text-sm leading-relaxed text-white/80">
               I agree to the{' '}
-              <a href="/privacy" className="font-medium text-accent-blue hover:underline">
+              <a href="/legal/privacy" className="font-medium text-accent-blue hover:underline">
                 Privacy Policy
               </a>{' '}
               *
@@ -276,9 +314,16 @@ export function QuoteForm() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full rounded-lg bg-accent-blue px-6 py-3 font-semibold text-white transition-colors hover:bg-brand-blue disabled:opacity-50"
+            className="quote-form-field group flex w-full items-center justify-center gap-2 rounded-lg bg-accent-blue px-6 py-3 font-semibold text-white transition-all hover:scale-[1.01] hover:bg-brand-blue disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100"
           >
-            {isSubmitting ? 'Submitting...' : 'Get a free quote'}
+            {isSubmitting ? (
+              'Submitting...'
+            ) : (
+              <>
+                Get a free quote
+                <Icon name="arrow-right" size={18} className="transition-transform group-hover:translate-x-1" />
+              </>
+            )}
           </button>
         </form>
       </div>

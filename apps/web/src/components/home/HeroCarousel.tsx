@@ -22,9 +22,9 @@ const HERO_IMAGES: HeroImage[] = [
   },
   {
     desktop:
-      'https://images.unsplash.com/photo-1581578731548-c64695c952952?auto=format&fit=crop&w=1920&q=80',
+      'https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=1920&q=80',
     mobile:
-      'https://images.unsplash.com/photo-1581578731548-c64695c952952?auto=format&fit=crop&w=800&h=1000&crop=faces&q=80',
+      'https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=800&h=1000&crop=faces&q=80',
     alt: 'Team coordination and planning',
   },
   {
