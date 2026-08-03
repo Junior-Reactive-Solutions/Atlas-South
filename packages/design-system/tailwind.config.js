@@ -25,7 +25,7 @@ export default {
       fontFamily: {
         // Fonts sourced from Google Fonts; weights preloaded in apps/web/index.html.
         // See docs/build/01-BRAND-SYSTEM.md §4 for the rationale.
-        display: ['"Big Shoulders Display"', 'sans-serif'],
+        display: ['Montserrat', 'sans-serif'],
         body: ['Inter', 'sans-serif'],
       },
     },
