@@ -1,56 +1,69 @@
-import { randomBytes } from 'node:crypto';
-import argon2 from 'argon2';
-import { requireDb } from '../src/lib/prisma.js';
-import { env } from '../src/lib/env.js';
-
 /**
- * One-time "break-glass" admin account creation — docs/build/08-ADMIN-PANEL-SPEC.md §3.
- *
- * Run manually, ONCE, against production: `npm run seed:admin --workspace=apps/api`
- * Never runs as part of normal app startup, so it can't accidentally re-run and reset
- * the account. The generated password is shown ONLY in this terminal's output — it is
- * never written to a log file, never emailed, never committed anywhere. Capture it
- * immediately and change it on first login (the account is created with
- * mustChangePassword: true, which the admin panel must enforce before granting access
- * to any data).
+ * One-time seed script to create the first admin user.
+ * Run once: npm run seed-admin
+ * Never run automatically on startup (see §3 of docs/build/08-ADMIN-PANEL-SPEC.md)
  */
+
+import { PrismaClient } from '@prisma/client';
+import * as argon2 from 'argon2';
+import { randomBytes } from 'crypto';
+
+const prisma = new PrismaClient();
+
 async function main() {
-  const db = requireDb();
+  const adminEmail = process.env.ADMIN_SEED_EMAIL;
 
-  if (!env.ADMIN_SEED_EMAIL) {
-    console.error('Set ADMIN_SEED_EMAIL in the environment before running this script.');
+  if (!adminEmail) {
+    console.error('❌ ADMIN_SEED_EMAIL environment variable not set');
+    console.error('Set ADMIN_SEED_EMAIL=your@email.com and run again');
     process.exit(1);
   }
 
-  const existing = await db.adminUser.findUnique({ where: { email: env.ADMIN_SEED_EMAIL } });
-  if (existing) {
-    console.error(`An admin account already exists for ${env.ADMIN_SEED_EMAIL} — refusing to overwrite it.`);
-    console.error('If you need to reset the password, use the admin panel\'s own reset flow, not this script.');
+  // Check if admin already exists
+  const existingAdmin = await prisma.adminUser.findUnique({
+    where: { email: adminEmail },
+  });
+
+  if (existingAdmin) {
+    console.error(`❌ Admin user with email ${adminEmail} already exists`);
     process.exit(1);
   }
 
-  const tempPassword = randomBytes(18).toString('base64url'); // cryptographically random
-  const passwordHash = await argon2.hash(tempPassword, { type: argon2.argon2id });
+  // Generate cryptographically random temporary password
+  const tempPassword = randomBytes(32).toString('hex');
+  const passwordHash = await argon2.hash(tempPassword, {
+    type: argon2.argon2id,
+    timeCost: 3,
+    memoryCost: 2 ** 16,
+  });
 
-  await db.adminUser.create({
+  // Create admin user
+  const admin = await prisma.adminUser.create({
     data: {
-      email: env.ADMIN_SEED_EMAIL,
+      email: adminEmail,
       passwordHash,
       mustChangePassword: true,
     },
   });
 
-  console.log('\n=== Admin account created ===');
-  console.log(`Email:    ${env.ADMIN_SEED_EMAIL}`);
-  console.log(`Password: ${tempPassword}`);
-  console.log('\nThis password is shown ONLY here, ONCE. Capture it now and change it');
-  console.log('immediately on first login — it will not be shown or recoverable again.');
-  console.log('===============================\n');
+  console.log('\n✅ Admin user created successfully\n');
+  console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+  console.log('Email:             ', adminEmail);
+  console.log('Temporary password:', tempPassword);
+  console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
+  console.log('⚠️  IMPORTANT:');
+  console.log('1. Copy the temporary password above (it will not be shown again)');
+  console.log('2. Go to http://localhost:9000/admin/login');
+  console.log('3. Log in with the email and temporary password');
+  console.log('4. You will be forced to change your password on first login');
+  console.log('5. We recommend enabling 2FA (TOTP) in Settings after login\n');
 }
 
 main()
-  .catch((err) => {
-    console.error('Seed script failed:', err);
+  .catch((e) => {
+    console.error('Error creating admin user:', e);
     process.exit(1);
   })
-  .finally(() => process.exit(0));
+  .finally(async () => {
+    await prisma.$disconnect();
+  });

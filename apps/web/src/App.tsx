@@ -10,9 +10,16 @@ import {
   type NavItem,
 } from '@atlas-south/shared';
 import { Layout } from './components/layout/Layout';
+import { AdminLayout } from './components/admin/AdminLayout.js';
 import { Home } from './pages/Home';
 import { PageStub } from './pages/PageStub';
 import { NotFound } from './pages/NotFound';
+
+// Admin pages — not lazy loaded (small, always together)
+import { AdminLogin } from './pages/admin/Login.js';
+import { AdminDashboard } from './pages/admin/Dashboard.js';
+import { AdminEnquiries } from './pages/admin/Enquiries.js';
+import { AdminSettings } from './pages/admin/Settings.js';
 
 // Route-level code splitting — docs/build/09-SEO-PERFORMANCE-CHECKLIST.md
 // Each route lazy-loads its chunk on demand, reducing initial bundle size
@@ -68,10 +75,20 @@ function stubRoutes(items: NavItem[], specRef: string) {
 
 export default function App() {
   return (
-    <Layout>
+    <>
       <Suspense fallback={<RouteLoadingFallback />}>
         <Routes>
-          <Route path="/" element={<Home />} />
+          {/* Admin panel routes — separate from public site layout */}
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route element={<AdminLayout />}>
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route path="/admin/enquiries" element={<AdminEnquiries />} />
+            <Route path="/admin/settings" element={<AdminSettings />} />
+          </Route>
+
+          {/* Public site wrapped in Layout */}
+          <Route element={<Layout />}>
+            <Route path="/" element={<Home />} />
 
           {/* Company — Mission/Vision live as anchors on one page per user-stories.md C2 */}
           <Route
@@ -118,9 +135,10 @@ export default function App() {
             element={<PageStub title={PACKAGES_PAGE.label} icon="package" specRef="docs/build/06-PAGE-SPECIFICATIONS.md — Home & Company" />}
           />
 
-          <Route path="*" element={<NotFound />} />
+            <Route path="*" element={<NotFound />} />
+          </Route>
         </Routes>
       </Suspense>
-    </Layout>
+    </>
   );
 }

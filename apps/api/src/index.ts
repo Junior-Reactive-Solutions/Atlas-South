@@ -1,4 +1,5 @@
 import express from 'express';
+import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import cors from 'cors';
 import { env } from './lib/env.js';
@@ -6,6 +7,10 @@ import { generalApiLimiter } from './middleware/rateLimiters.js';
 import { healthRouter } from './routes/health.js';
 import { enquiriesRouter } from './routes/enquiries.js';
 import { eventsRouter } from './routes/events.js';
+import adminAuthRouter from './routes/admin/auth.js';
+import adminEnquiriesRouter from './routes/admin/enquiries.js';
+import adminStatsRouter from './routes/admin/stats.js';
+import adminUsersRouter from './routes/admin/users.js';
 
 const app = express();
 
@@ -40,11 +45,18 @@ app.use(
 );
 
 app.use(express.json({ limit: '100kb' })); // small cap — this API never needs large payloads
+app.use(cookieParser()); // Parse httpOnly cookies for JWT refresh tokens
 app.use(generalApiLimiter);
 
 app.use('/api', healthRouter);
 app.use('/api', enquiriesRouter);
 app.use('/api', eventsRouter);
+
+// Admin routes — secured with JWT authentication
+app.use('/api/admin/auth', adminAuthRouter);
+app.use('/api/admin/enquiries', adminEnquiriesRouter);
+app.use('/api/admin/stats', adminStatsRouter);
+app.use('/api/admin/users', adminUsersRouter);
 
 // Centralised error handler — never leak stack traces to the client.
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
