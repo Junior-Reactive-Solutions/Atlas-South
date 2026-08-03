@@ -84,3 +84,44 @@ model AdminAuditLog {
 
   @@index([createdAt])
 }
+
+enum ContentPageType {
+  service
+  industry
+  area
+  home
+}
+
+enum ContentStatus {
+  draft
+  published
+}
+
+// Admin-editable page content — one row per service/industry/area page plus the
+// home page. draftData is always present and is what the admin panel edits;
+// publishedData is null until the first Publish action and is the ONLY thing
+// the public site ever reads. This split means an in-progress edit can never
+// accidentally go live mid-save.
+//
+// The JSON shape of draftData/publishedData depends on `type` and mirrors the
+// props already accepted by the corresponding page template component:
+// ServiceDetailPage, IndustryDetailPage, ServiceAreaDetailPage, or the Home
+// hero copy. Kept as JSON rather than fully normalised columns because each
+// type's shape differs (features/FAQs vs challenges/approach vs coverage) and
+// the admin form + public template are the actual source of truth for shape,
+// not this table.
+model ContentPage {
+  id            String          @id @default(cuid())
+  slug          String          @unique // matches the page's route id, e.g. "electricals"
+  type          ContentPageType
+  path          String // e.g. "/hard-services/electricals"
+  status        ContentStatus   @default(draft)
+  draftData     Json
+  publishedData Json?
+  publishedAt   DateTime?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  @@index([type])
+  @@index([status])
+}
