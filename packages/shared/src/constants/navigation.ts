@@ -71,8 +71,9 @@ export const PACKAGES_PAGE: NavItem = {
 };
 
 export const LEGAL_PAGES: NavItem[] = [
-  { id: 'privacy-policy', label: 'Privacy Policy', path: '/legal/privacy-policy', icon: 'shield' },
-  { id: 'terms-of-use', label: 'Terms of Use', path: '/legal/terms-of-use', icon: 'file-text' },
+  { id: 'privacy-policy', label: 'Privacy Policy', path: '/legal/privacy', icon: 'shield' },
+  { id: 'terms-of-use', label: 'Terms of Use', path: '/legal/terms', icon: 'file-text' },
+  { id: 'cookie-policy', label: 'Cookie Policy', path: '/legal/cookies', icon: 'cookie' },
 ];
 
 /** Every enquiry-eligible service, used to build the quote form's dropdown + validation enum. */

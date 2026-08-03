@@ -6,7 +6,6 @@ import {
   INDUSTRIES,
   SERVICE_AREAS,
   PACKAGES_PAGE,
-  LEGAL_PAGES,
   type NavItem,
 } from '@atlas-south/shared';
 import { Layout } from './components/layout/Layout';
@@ -140,7 +139,6 @@ export default function App() {
           {stubRoutes(SOFT_SERVICES, 'docs/build/06-PAGE-SPECIFICATIONS.md — Soft Services')}
           {stubRoutes(INDUSTRIES, 'docs/build/06-PAGE-SPECIFICATIONS.md — Industries')}
           {stubRoutes(SERVICE_AREAS, 'docs/build/06-PAGE-SPECIFICATIONS.md — Service Areas')}
-          {stubRoutes(LEGAL_PAGES, 'docs/build/10-LEGAL-CONTENT-PLAN.md')}
 
           <Route
             path={PACKAGES_PAGE.path}
