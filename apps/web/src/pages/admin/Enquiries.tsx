@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Trash2 } from 'lucide-react';
 import { animate, stagger } from 'animejs';
+import { motion, AnimatePresence } from 'motion/react';
 import { useAnimationScope, DURATION, EASE, STAGGER_GAP } from '@atlas-south/design-system';
 
 interface Enquiry {
@@ -131,49 +132,63 @@ export function AdminEnquiries() {
             </h3>
 
             <div className="flex flex-col gap-3">
-              {grouped[status].map((enquiry) => (
-                <div key={enquiry.id} className="rounded-lg border border-slate-200 bg-white p-3">
-                  <p className="font-medium text-navy">{enquiry.fullName}</p>
-                  <p className="text-xs text-slate-600">{enquiry.email}</p>
-                  <p className="mt-2 line-clamp-2 text-xs text-slate-700">{enquiry.message}</p>
+              <AnimatePresence initial={false}>
+                {grouped[status].map((enquiry) => (
+                  <motion.div
+                    key={enquiry.id}
+                    layoutId={enquiry.id}
+                    layout
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    whileHover={{ y: -2, boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                    className="rounded-lg border border-slate-200 bg-white p-3"
+                  >
+                    <p className="font-medium text-navy">{enquiry.fullName}</p>
+                    <p className="text-xs text-slate-600">{enquiry.email}</p>
+                    <p className="mt-2 line-clamp-2 text-xs text-slate-700">{enquiry.message}</p>
 
-                  {/* Status Buttons */}
-                  <div className="mt-3 flex flex-col gap-2">
-                    {status !== 'won' && status !== 'lost' && (
-                      <button
-                        onClick={() => {
-                          const nextStatus: Record<Status, Status> = {
-                            new: 'contacted',
-                            contacted: 'quoted',
-                            quoted: 'won',
-                            won: 'won',
-                            lost: 'lost',
-                          };
-                          updateStatus(enquiry.id, nextStatus[status]);
-                        }}
-                        className="flex items-center justify-center gap-1 rounded bg-accent-blue px-2 py-1 text-xs font-medium text-white hover:bg-blue-700"
-                      >
-                        Move Forward
-                        <ArrowRight className="h-3 w-3" />
-                      </button>
-                    )}
+                    {/* Status Buttons */}
+                    <div className="mt-3 flex flex-col gap-2">
+                      {status !== 'won' && status !== 'lost' && (
+                        <motion.button
+                          whileTap={{ scale: 0.96 }}
+                          onClick={() => {
+                            const nextStatus: Record<Status, Status> = {
+                              new: 'contacted',
+                              contacted: 'quoted',
+                              quoted: 'won',
+                              won: 'won',
+                              lost: 'lost',
+                            };
+                            updateStatus(enquiry.id, nextStatus[status]);
+                          }}
+                          className="flex items-center justify-center gap-1 rounded bg-accent-blue px-2 py-1 text-xs font-medium text-white hover:bg-blue-700"
+                        >
+                          Move Forward
+                          <ArrowRight className="h-3 w-3" />
+                        </motion.button>
+                      )}
 
-                    {status !== 'lost' && (
-                      <button
-                        onClick={() => updateStatus(enquiry.id, 'lost')}
-                        className="flex items-center justify-center gap-1 rounded bg-red-100 px-2 py-1 text-xs font-medium text-red-700 hover:bg-red-200"
-                      >
-                        Lost
-                        <Trash2 className="h-3 w-3" />
-                      </button>
-                    )}
-                  </div>
+                      {status !== 'lost' && (
+                        <motion.button
+                          whileTap={{ scale: 0.96 }}
+                          onClick={() => updateStatus(enquiry.id, 'lost')}
+                          className="flex items-center justify-center gap-1 rounded bg-red-100 px-2 py-1 text-xs font-medium text-red-700 hover:bg-red-200"
+                        >
+                          Lost
+                          <Trash2 className="h-3 w-3" />
+                        </motion.button>
+                      )}
+                    </div>
 
-                  <p className="mt-2 text-xs text-slate-500">
-                    {new Date(enquiry.createdAt).toLocaleDateString()}
-                  </p>
-                </div>
-              ))}
+                    <p className="mt-2 text-xs text-slate-500">
+                      {new Date(enquiry.createdAt).toLocaleDateString()}
+                    </p>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
             </div>
           </div>
         ))}

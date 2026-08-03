@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { TrendingUp, Eye, MousePointerClick, Zap } from 'lucide-react';
 import { animate, stagger } from 'animejs';
 import { useAnimationScope, DURATION, EASE, STAGGER_GAP } from '@atlas-south/design-system';
+import { TrafficAreaChart } from '../../components/charts/TrafficAreaChart.js';
+import { DeviceDonutChart } from '../../components/charts/DeviceDonutChart.js';
 
 interface AnalyticsData {
   totalViews: number;
@@ -154,53 +156,20 @@ export function AdminAnalytics() {
         </div>
       )}
 
+      {/* Traffic Over Time */}
+      {analytics?.trafficOverTime && analytics.trafficOverTime.length > 0 && (
+        <div className="rounded-lg border border-slate-200 bg-white p-6">
+          <h2 className="mb-1 text-lg font-semibold text-navy">Traffic Trend</h2>
+          <p className="mb-2 text-xs text-slate-600">Daily page views over the selected period — hover to inspect a day</p>
+          <TrafficAreaChart data={analytics.trafficOverTime.slice(-14)} />
+        </div>
+      )}
+
       {/* Device Breakdown */}
       {analytics?.deviceBreakdown && analytics.deviceBreakdown.length > 0 && (
         <div className="rounded-lg border border-slate-200 bg-white p-6">
           <h2 className="mb-4 text-lg font-semibold text-navy">Devices</h2>
-          <div className="space-y-3">
-            {analytics.deviceBreakdown.map((device, idx) => (
-              <div key={idx} className="flex items-center gap-3">
-                <div className="flex-1">
-                  <div className="flex items-center justify-between">
-                    <p className="text-sm font-medium text-slate-900">{device.device}</p>
-                    <p className="text-sm font-semibold text-navy">{device.percentage}%</p>
-                  </div>
-                  <div className="mt-2 h-2 bg-slate-200 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-accent-blue transition-all"
-                      style={{ width: `${device.percentage}%` }}
-                    />
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Traffic Over Time */}
-      {analytics?.trafficOverTime && analytics.trafficOverTime.length > 0 && (
-        <div className="rounded-lg border border-slate-200 bg-white p-6">
-          <h2 className="mb-4 text-lg font-semibold text-navy">Traffic Trend</h2>
-          <div className="space-y-2 text-xs text-slate-600">
-            <p>Daily page views over the selected period</p>
-            <div className="mt-4 flex items-end justify-between gap-1" style={{ height: '200px' }}>
-              {analytics.trafficOverTime.slice(-14).map((day, idx) => {
-                const maxViews = Math.max(...analytics.trafficOverTime.map((d) => d.views));
-                const height = maxViews > 0 ? (day.views / maxViews) * 100 : 0;
-                return (
-                  <div key={idx} className="flex flex-1 flex-col items-center gap-2" title={day.date}>
-                    <div
-                      className="w-full bg-accent-blue rounded-t transition-all hover:opacity-80"
-                      style={{ height: `${height}%`, minHeight: '4px' }}
-                    />
-                    <p className="text-xs text-slate-500">{day.date.split('-')[2]}</p>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
+          <DeviceDonutChart data={analytics.deviceBreakdown} />
         </div>
       )}
 
