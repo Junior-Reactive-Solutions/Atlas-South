@@ -147,7 +147,8 @@ export function Header() {
 
           <button
             type="button"
-            className="flex h-11 w-11 items-center justify-center lg:hidden"
+            className="hamburger-toggle flex h-11 w-11 items-center justify-center transition-transform lg:hidden"
+            style={{ transform: mobileOpen ? 'rotate(90deg)' : 'rotate(0deg)' }}
             aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={mobileOpen}
             onClick={() => setMobileOpen((v) => !v)}
