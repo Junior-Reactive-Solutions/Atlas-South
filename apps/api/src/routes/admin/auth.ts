@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
 import { z } from 'zod';
-import { verifyPassword, hashPassword, generateTokens, verifyRefreshToken } from '../../lib/auth.js';
+import { verifyPassword, generateTokens, verifyRefreshToken } from '../../lib/auth.js';
 
 const router = Router();
 const prisma = new PrismaClient();

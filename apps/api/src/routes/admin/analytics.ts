@@ -13,7 +13,7 @@ router.get('/', async (req: AuthRequest, res: Response) => {
 
     // Calculate date range
     const now = new Date();
-    let startDate = new Date();
+    const startDate = new Date();
 
     if (range === '7d') {
       startDate.setDate(now.getDate() - 7);
