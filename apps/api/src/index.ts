@@ -7,11 +7,13 @@ import { generalApiLimiter } from './middleware/rateLimiters.js';
 import { healthRouter } from './routes/health.js';
 import { enquiriesRouter } from './routes/enquiries.js';
 import { eventsRouter } from './routes/events.js';
+import { contentRouter } from './routes/content.js';
 import adminAuthRouter from './routes/admin/auth.js';
 import adminEnquiriesRouter from './routes/admin/enquiries.js';
 import adminStatsRouter from './routes/admin/stats.js';
 import adminUsersRouter from './routes/admin/users.js';
 import adminAnalyticsRouter from './routes/admin/analytics.js';
+import adminContentRouter from './routes/admin/content.js';
 
 const app = express();
 
@@ -52,6 +54,7 @@ app.use(generalApiLimiter);
 app.use('/api', healthRouter);
 app.use('/api', enquiriesRouter);
 app.use('/api', eventsRouter);
+app.use('/api', contentRouter);
 
 // Admin routes — secured with JWT authentication
 app.use('/api/admin/auth', adminAuthRouter);
@@ -59,6 +62,7 @@ app.use('/api/admin/enquiries', adminEnquiriesRouter);
 app.use('/api/admin/stats', adminStatsRouter);
 app.use('/api/admin/users', adminUsersRouter);
 app.use('/api/admin/analytics', adminAnalyticsRouter);
+app.use('/api/admin/content', adminContentRouter);
 
 // Centralised error handler — never leak stack traces to the client.
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
