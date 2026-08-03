@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { BarChart3, MessageSquare, Settings, LogOut } from 'lucide-react';
+import { BarChart3, MessageSquare, Settings, LogOut, ChevronLeft, ChevronRight, type LucideIcon } from 'lucide-react';
+import { useNoIndex } from '../../hooks/useNoIndex.js';
 
 export function AdminLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(true);
+
+  useNoIndex();
 
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
@@ -25,9 +28,27 @@ export function AdminLayout() {
     <div className="flex min-h-screen bg-slate-100">
       {/* Sidebar */}
       <aside className={`${isOpen ? 'w-64' : 'w-20'} flex flex-col bg-navy text-white transition-all duration-300`}>
-        <div className="border-b border-navy-700 px-6 py-8">
+        <div className="flex items-center justify-between border-b border-navy-700 px-6 py-8">
           <h1 className={`font-black ${isOpen ? 'text-xl' : 'text-xs text-center'}`}>AS</h1>
+          {isOpen && (
+            <button
+              onClick={() => setIsOpen(false)}
+              aria-label="Collapse sidebar"
+              className="rounded p-1 text-slate-300 hover:bg-navy-700 hover:text-white"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+          )}
         </div>
+        {!isOpen && (
+          <button
+            onClick={() => setIsOpen(true)}
+            aria-label="Expand sidebar"
+            className="mx-auto mb-2 rounded p-1 text-slate-300 hover:bg-navy-700 hover:text-white"
+          >
+            <ChevronRight className="h-4 w-4" />
+          </button>
+        )}
 
         <nav className="flex-1 space-y-2 px-4 py-6">
           <NavLink
@@ -85,7 +106,7 @@ export function AdminLayout() {
 
 interface NavLinkProps {
   to: string;
-  icon: React.ComponentType<{ className: string }>;
+  icon: LucideIcon;
   label: string;
   isActive: boolean;
   isOpen: boolean;

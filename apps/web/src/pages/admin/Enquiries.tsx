@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Trash2 } from 'lucide-react';
+import { animate, stagger } from 'animejs';
+import { useAnimationScope, DURATION, EASE, STAGGER_GAP } from '@atlas-south/design-system';
 
 interface Enquiry {
   id: string;
@@ -93,20 +95,39 @@ export function AdminEnquiries() {
     lost: enquiries.filter((e) => e.status === 'lost'),
   };
 
+  // Same fade+rise treatment as the public site's cards — docs/build/08-ADMIN-PANEL-SPEC.md §7.
+  const root = useAnimationScope(
+    (self) => {
+      self?.add('reveal', () => {
+        animate('.pipeline-column', {
+          opacity: [0, 1],
+          translateY: [24, 0],
+          delay: stagger(STAGGER_GAP),
+          duration: DURATION.slow,
+          ease: EASE.standard,
+        });
+      });
+    },
+    [isLoading],
+  );
+
   if (isLoading) {
     return <div className="flex items-center justify-center p-8">Loading...</div>;
   }
 
   return (
-    <div className="space-y-6">
+    <div ref={root} className="space-y-6">
       <h1 className="text-3xl font-black text-navy">Enquiries Pipeline</h1>
 
       {/* Kanban Board */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-5">
         {(['new', 'contacted', 'quoted', 'won', 'lost'] as Status[]).map((status) => (
-          <div key={status} className="flex flex-col rounded-lg bg-slate-50 p-4">
-            <h3 className="mb-4 font-semibold text-slate-700">
-              {STATUS_LABELS[status]} ({grouped[status].length})
+          <div key={status} className="pipeline-column flex flex-col rounded-lg bg-slate-50 p-4">
+            <h3 className="mb-4 flex items-center gap-2 font-semibold text-slate-700">
+              {STATUS_LABELS[status]}
+              <span className={`rounded-full px-2 py-0.5 text-xs font-bold ${STATUS_COLORS[status]}`}>
+                {grouped[status].length}
+              </span>
             </h3>
 
             <div className="flex flex-col gap-3">

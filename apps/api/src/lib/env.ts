@@ -1,5 +1,14 @@
-import 'dotenv/config';
+import { config as loadDotenv } from 'dotenv';
+import { fileURLToPath } from 'url';
+import { dirname, resolve } from 'path';
 import { z } from 'zod';
+
+// npm workspace scripts run with cwd set to the workspace dir (apps/api), not the repo
+// root — plain `dotenv/config` would only ever find apps/api/.env. The single .env this
+// project documents (.env.example) lives at the monorepo root, so resolve it explicitly
+// relative to this file rather than relying on cwd.
+const __dirname = dirname(fileURLToPath(import.meta.url));
+loadDotenv({ path: resolve(__dirname, '../../../../.env') });
 
 /**
  * Validate process.env once, at boot, rather than trusting `process.env.X!` scattered

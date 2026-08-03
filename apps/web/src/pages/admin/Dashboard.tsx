@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BarChart3, MessageSquare, Eye, TrendingUp } from 'lucide-react';
+import { animate, stagger } from 'animejs';
+import { useAnimationScope, DURATION, EASE, STAGGER_GAP } from '@atlas-south/design-system';
 
 interface DashboardStats {
   enquiriesThisWeek: number;
@@ -41,17 +43,34 @@ export function AdminDashboard() {
     fetchStats();
   }, [navigate]);
 
+  // Data widgets fade+rise on load using the same tokens as public-site cards —
+  // docs/build/08-ADMIN-PANEL-SPEC.md §7 ("admin UI is not a separate animation system").
+  const root = useAnimationScope(
+    (self) => {
+      self?.add('reveal', () => {
+        animate('.stat-card', {
+          opacity: [0, 1],
+          translateY: [24, 0],
+          delay: stagger(STAGGER_GAP),
+          duration: DURATION.slow,
+          ease: EASE.standard,
+        });
+      });
+    },
+    [stats],
+  );
+
   if (isLoading) {
     return <div className="flex items-center justify-center p-8">Loading...</div>;
   }
 
   return (
-    <div className="space-y-6">
+    <div ref={root} className="space-y-6">
       <h1 className="text-3xl font-black text-navy">Dashboard</h1>
 
       {/* Stats Grid */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="rounded-lg border border-slate-200 bg-white p-6">
+        <div className="stat-card rounded-lg border border-slate-200 bg-white p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-slate-600">Enquiries (Week)</p>
@@ -63,7 +82,7 @@ export function AdminDashboard() {
           </div>
         </div>
 
-        <div className="rounded-lg border border-slate-200 bg-white p-6">
+        <div className="stat-card rounded-lg border border-slate-200 bg-white p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-slate-600">Enquiries (Month)</p>
@@ -75,7 +94,7 @@ export function AdminDashboard() {
           </div>
         </div>
 
-        <div className="rounded-lg border border-slate-200 bg-white p-6">
+        <div className="stat-card rounded-lg border border-slate-200 bg-white p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-slate-600">Conversion Rate</p>
@@ -87,7 +106,7 @@ export function AdminDashboard() {
           </div>
         </div>
 
-        <div className="rounded-lg border border-slate-200 bg-white p-6">
+        <div className="stat-card rounded-lg border border-slate-200 bg-white p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-slate-600">Top Pages</p>

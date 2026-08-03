@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TrendingUp, Eye, MousePointerClick, Zap } from 'lucide-react';
+import { animate, stagger } from 'animejs';
+import { useAnimationScope, DURATION, EASE, STAGGER_GAP } from '@atlas-south/design-system';
 
 interface AnalyticsData {
   totalViews: number;
@@ -45,12 +47,28 @@ export function AdminAnalytics() {
     fetchAnalytics();
   }, [timeRange, navigate]);
 
+  // Same fade+rise treatment as the public site's cards — docs/build/08-ADMIN-PANEL-SPEC.md §7.
+  const root = useAnimationScope(
+    (self) => {
+      self?.add('reveal', () => {
+        animate('.kpi-card', {
+          opacity: [0, 1],
+          translateY: [24, 0],
+          delay: stagger(STAGGER_GAP),
+          duration: DURATION.slow,
+          ease: EASE.standard,
+        });
+      });
+    },
+    [analytics],
+  );
+
   if (isLoading) {
     return <div className="flex items-center justify-center p-8">Loading analytics...</div>;
   }
 
   return (
-    <div className="space-y-6">
+    <div ref={root} className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-black text-navy">Analytics</h1>
         <div className="flex gap-2">
@@ -72,7 +90,7 @@ export function AdminAnalytics() {
 
       {/* KPI Cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="rounded-lg border border-slate-200 bg-white p-6">
+        <div className="kpi-card rounded-lg border border-slate-200 bg-white p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-slate-600">Page Views</p>
@@ -82,7 +100,7 @@ export function AdminAnalytics() {
           </div>
         </div>
 
-        <div className="rounded-lg border border-slate-200 bg-white p-6">
+        <div className="kpi-card rounded-lg border border-slate-200 bg-white p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-slate-600">Unique Visitors</p>
@@ -92,7 +110,7 @@ export function AdminAnalytics() {
           </div>
         </div>
 
-        <div className="rounded-lg border border-slate-200 bg-white p-6">
+        <div className="kpi-card rounded-lg border border-slate-200 bg-white p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-slate-600">Interactions</p>
@@ -102,7 +120,7 @@ export function AdminAnalytics() {
           </div>
         </div>
 
-        <div className="rounded-lg border border-slate-200 bg-white p-6">
+        <div className="kpi-card rounded-lg border border-slate-200 bg-white p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-slate-600">Avg Session Duration</p>

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useNoIndex } from '../../hooks/useNoIndex.js';
 
 export function AdminLogin() {
   const [email, setEmail] = useState('');
@@ -7,6 +8,8 @@ export function AdminLogin() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+
+  useNoIndex();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
