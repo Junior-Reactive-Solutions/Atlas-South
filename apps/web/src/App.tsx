@@ -20,6 +20,8 @@ import { AdminDashboard } from './pages/admin/Dashboard.js';
 import { AdminEnquiries } from './pages/admin/Enquiries.js';
 import { AdminSettings } from './pages/admin/Settings.js';
 import { AdminAnalytics } from './pages/admin/Analytics.js';
+import { AdminContent } from './pages/admin/Content.js';
+import { AdminContentEdit } from './pages/admin/ContentEdit.js';
 
 // Legal pages
 import { TermsOfUse } from './pages/legal/TermsOfUse.js';
@@ -90,6 +92,8 @@ export default function App() {
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/enquiries" element={<AdminEnquiries />} />
             <Route path="/admin/analytics" element={<AdminAnalytics />} />
+            <Route path="/admin/content" element={<AdminContent />} />
+            <Route path="/admin/content/:slug" element={<AdminContentEdit />} />
             <Route path="/admin/settings" element={<AdminSettings />} />
           </Route>
 
