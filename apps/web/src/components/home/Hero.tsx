@@ -95,7 +95,7 @@ export function Hero() {
     <section ref={root}>
       <HeroCarousel>
         <div className="mx-auto max-w-7xl px-4 py-20 lg:py-32">
-          <p className="hero-eyebrow mb-4 inline-block origin-left rounded border border-accent-blue/40 bg-navy/60 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-accent-blue">
+          <p className="hero-eyebrow mb-4 inline-block origin-left rounded border border-white/30 bg-navy/60 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-white">
             London &amp; South East · Est. {COMPANY.foundedYear} · Available {COMPANY.stats.coverage}
           </p>
 
