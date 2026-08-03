@@ -17,6 +17,16 @@ import { NotFound } from './pages/NotFound';
 // Route-level code splitting — docs/build/09-SEO-PERFORMANCE-CHECKLIST.md
 // Each route lazy-loads its chunk on demand, reducing initial bundle size
 const Plumbing = lazy(() => import('./pages/services/Plumbing.js').then((m) => ({ default: m.Plumbing })));
+const Electricals = lazy(() => import('./pages/services/Electricals.js').then((m) => ({ default: m.Electricals })));
+const ReactiveMaintenance = lazy(() => import('./pages/services/ReactiveMaintenance.js').then((m) => ({ default: m.ReactiveMaintenance })));
+const FireSafety = lazy(() => import('./pages/services/FireSafety.js').then((m) => ({ default: m.FireSafety })));
+const FacilitiesManagement = lazy(() => import('./pages/services/FacilitiesManagement.js').then((m) => ({ default: m.FacilitiesManagement })));
+const SecurityServices = lazy(() => import('./pages/services/SecurityServices.js').then((m) => ({ default: m.SecurityServices })));
+const CommercialCleaning = lazy(() => import('./pages/services/CommercialCleaning.js').then((m) => ({ default: m.CommercialCleaning })));
+const Catering = lazy(() => import('./pages/services/Catering.js').then((m) => ({ default: m.Catering })));
+const AviationServices = lazy(() => import('./pages/services/AviationServices.js').then((m) => ({ default: m.AviationServices })));
+const Concierge = lazy(() => import('./pages/services/Concierge.js').then((m) => ({ default: m.Concierge })));
+const WasteRecycling = lazy(() => import('./pages/services/WasteRecycling.js').then((m) => ({ default: m.WasteRecycling })));
 const Corporate = lazy(() => import('./pages/industries/Corporate.js').then((m) => ({ default: m.Corporate })));
 const Healthcare = lazy(() => import('./pages/industries/Healthcare.js').then((m) => ({ default: m.Healthcare })));
 const Retail = lazy(() => import('./pages/industries/Retail.js').then((m) => ({ default: m.Retail })));
@@ -72,6 +82,16 @@ export default function App() {
 
           {/* Built-out service pages (Sprint 4+) — lazy-loaded for performance */}
           <Route path="/hard-services/plumbing" element={<Plumbing />} />
+          <Route path="/hard-services/electricals" element={<Electricals />} />
+          <Route path="/hard-services/reactive-maintenance" element={<ReactiveMaintenance />} />
+          <Route path="/hard-services/fire-safety" element={<FireSafety />} />
+          <Route path="/soft-services/facilities-management" element={<FacilitiesManagement />} />
+          <Route path="/soft-services/security" element={<SecurityServices />} />
+          <Route path="/soft-services/commercial-cleaning" element={<CommercialCleaning />} />
+          <Route path="/soft-services/catering" element={<Catering />} />
+          <Route path="/soft-services/aviation" element={<AviationServices />} />
+          <Route path="/soft-services/concierge" element={<Concierge />} />
+          <Route path="/soft-services/waste-recycling" element={<WasteRecycling />} />
 
           {/* Built-out industry pages (Sprint 5+) — lazy-loaded for performance */}
           <Route path="/industries/corporate" element={<Corporate />} />
