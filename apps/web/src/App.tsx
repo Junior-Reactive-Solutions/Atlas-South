@@ -20,6 +20,12 @@ import { AdminLogin } from './pages/admin/Login.js';
 import { AdminDashboard } from './pages/admin/Dashboard.js';
 import { AdminEnquiries } from './pages/admin/Enquiries.js';
 import { AdminSettings } from './pages/admin/Settings.js';
+import { AdminAnalytics } from './pages/admin/Analytics.js';
+
+// Legal pages
+import { TermsOfUse } from './pages/legal/TermsOfUse.js';
+import { PrivacyPolicy } from './pages/legal/PrivacyPolicy.js';
+import { CookiePolicy } from './pages/legal/CookiePolicy.js';
 
 // Route-level code splitting — docs/build/09-SEO-PERFORMANCE-CHECKLIST.md
 // Each route lazy-loads its chunk on demand, reducing initial bundle size
@@ -83,8 +89,14 @@ export default function App() {
           <Route element={<AdminLayout />}>
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/enquiries" element={<AdminEnquiries />} />
+            <Route path="/admin/analytics" element={<AdminAnalytics />} />
             <Route path="/admin/settings" element={<AdminSettings />} />
           </Route>
+
+          {/* Legal pages */}
+          <Route path="/legal/terms" element={<TermsOfUse />} />
+          <Route path="/legal/privacy" element={<PrivacyPolicy />} />
+          <Route path="/legal/cookies" element={<CookiePolicy />} />
 
           {/* Public site wrapped in Layout */}
           <Route element={<Layout />}>

@@ -45,6 +45,13 @@ export function AdminLayout() {
             isOpen={isOpen}
           />
           <NavLink
+            to="/admin/analytics"
+            icon={BarChart3}
+            label="Analytics"
+            isActive={isActive('/admin/analytics')}
+            isOpen={isOpen}
+          />
+          <NavLink
             to="/admin/settings"
             icon={Settings}
             label="Settings"
