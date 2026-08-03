@@ -11,6 +11,7 @@ import { requireDb } from '../lib/prisma.js';
  */
 export const eventsRouter = Router();
 
+// Legacy endpoint (generic event tracking)
 eventsRouter.post('/events', validateBody(TrackEventSchema), async (req, res) => {
   try {
     const db = requireDb();
@@ -38,6 +39,49 @@ eventsRouter.post('/events', validateBody(TrackEventSchema), async (req, res) =>
     }
     // eslint-disable-next-line no-console
     console.error('Failed to record event:', err);
+    return res.status(202).json({ ok: true, tracked: false });
+  }
+});
+
+// Page view tracking endpoint (used by usePageTracking hook)
+eventsRouter.post('/events/page-view', async (req, res) => {
+  try {
+    const db = requireDb();
+    const { path, referrer, sessionId } = req.body;
+
+    await db.pageView.create({
+      data: {
+        path: String(path),
+        referrer: referrer ? String(referrer) : null,
+        sessionId: String(sessionId),
+      },
+    });
+
+    return res.status(202).json({ ok: true });
+  } catch (err) {
+    // Fail open — analytics should never block the app
+    return res.status(202).json({ ok: true, tracked: false });
+  }
+});
+
+// Interaction event tracking endpoint (CTA clicks, form submissions, etc.)
+eventsRouter.post('/events/interaction', async (req, res) => {
+  try {
+    const db = requireDb();
+    const { type, label, path, sessionId } = req.body;
+
+    await db.event.create({
+      data: {
+        type: String(type),
+        label: label ? String(label) : null,
+        path: String(path),
+        sessionId: String(sessionId),
+      },
+    });
+
+    return res.status(202).json({ ok: true });
+  } catch (err) {
+    // Fail open
     return res.status(202).json({ ok: true, tracked: false });
   }
 });

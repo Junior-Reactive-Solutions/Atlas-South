@@ -19,6 +19,7 @@ import { NotFound } from './pages/NotFound';
 import { AdminLogin } from './pages/admin/Login.js';
 import { AdminDashboard } from './pages/admin/Dashboard.js';
 import { AdminEnquiries } from './pages/admin/Enquiries.js';
+import { AdminSettings } from './pages/admin/Settings.js';
 
 // Route-level code splitting — docs/build/09-SEO-PERFORMANCE-CHECKLIST.md
 // Each route lazy-loads its chunk on demand, reducing initial bundle size
@@ -82,7 +83,7 @@ export default function App() {
           <Route element={<AdminLayout />}>
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/enquiries" element={<AdminEnquiries />} />
-            <Route path="/admin/settings" element={<PageStub title="Settings" icon="settings" specRef="Sprint 10" />} />
+            <Route path="/admin/settings" element={<AdminSettings />} />
           </Route>
 
           {/* Public site wrapped in Layout */}
