@@ -4,6 +4,7 @@ export function NorthLondon() {
   return (
     <ServiceAreaDetailPage
       id="north-london"
+      path="/areas/north-london"
       title="North London"
       icon="map-pin"
       heroDescription="Responsive facilities management across North London's diverse commercial and institutional landscape, from King's Cross to Barnet"

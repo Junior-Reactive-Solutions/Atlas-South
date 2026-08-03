@@ -4,6 +4,7 @@ export function CentralLondon() {
   return (
     <ServiceAreaDetailPage
       id="central-london"
+      path="/areas/central-london"
       title="Central London"
       icon="map-pin"
       heroDescription="Premium facilities management and emergency response across London's high-value office, retail, and hospitality districts"

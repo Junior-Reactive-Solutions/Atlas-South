@@ -2,7 +2,8 @@ import { Hero } from '../components/home/Hero';
 import { ServiceCard } from '../components/home/ServiceCard';
 import { Testimonials } from '../components/home/Testimonials';
 import { QuoteForm } from '../components/home/QuoteForm';
-import { HARD_SERVICES } from '@atlas-south/shared';
+import { Seo } from '../components/seo/Seo.js';
+import { HARD_SERVICES, COMPANY } from '@atlas-south/shared';
 
 /**
  * Home — docs/build/06-PAGE-SPECIFICATIONS.md "Home & Company" table.
@@ -15,6 +16,27 @@ import { HARD_SERVICES } from '@atlas-south/shared';
 export function Home() {
   return (
     <>
+      <Seo
+        title="Trades & Facilities Services in London & the South East"
+        description="Atlas South delivers electrical, plumbing, fire safety and full facilities management for homes and businesses across London and the South East. 24/7 emergency cover."
+        path="/"
+        jsonLd={{
+          '@context': 'https://schema.org',
+          '@type': 'LocalBusiness',
+          name: COMPANY.name,
+          telephone: COMPANY.phone.tel,
+          email: COMPANY.email,
+          url: `https://${COMPANY.domain}`,
+          address: {
+            '@type': 'PostalAddress',
+            streetAddress: `${COMPANY.address.line1}, ${COMPANY.address.line2}`,
+            addressLocality: COMPANY.address.city,
+            postalCode: COMPANY.address.postalCode,
+            addressCountry: COMPANY.address.country,
+          },
+          foundingDate: String(COMPANY.foundedYear),
+        }}
+      />
       <Hero />
 
       {/* Hard Services section — docs/build/06-PAGE-SPECIFICATIONS.md "Hard Services row" */}

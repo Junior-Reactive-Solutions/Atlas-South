@@ -4,6 +4,7 @@ export function SouthEastLondon() {
   return (
     <ServiceAreaDetailPage
       id="south-east-london"
+      path="/areas/south-east-london"
       title="South East London"
       icon="map-pin"
       heroDescription="Comprehensive facilities management for growing South East London estates, from Lewisham to Crystal Palace to Croydon"

@@ -4,6 +4,7 @@ export function Catering() {
   return (
     <ServiceDetailPage
       id="catering"
+      path="/soft-services/catering"
       title="Catering"
       icon="utensils"
       heroDescription="On-site and contracted catering for corporate events, staff canteens, and hospitality across London and the South East"

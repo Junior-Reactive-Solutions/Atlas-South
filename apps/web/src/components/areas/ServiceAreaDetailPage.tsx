@@ -1,11 +1,15 @@
 import { ReactNode } from 'react';
 import { Icon, type IconName } from '@atlas-south/design-system';
 import { QuoteForm } from '../home/QuoteForm';
+import { Seo } from '../seo/Seo.js';
+import { COMPANY } from '@atlas-south/shared';
 
 interface ServiceAreaDetailPageProps {
   id: string;
   title: string;
   icon: IconName;
+  /** Route this page is mounted at, e.g. "/areas/central-london" — feeds Seo's canonical/OG URL. */
+  path: string;
   heroDescription: string;
   overview: ReactNode;
   responseTime: string;
@@ -18,10 +22,16 @@ interface ServiceAreaDetailPageProps {
  * Reusable layout for individual service area pages. All six areas (Central London, etc.) use
  * one shared template with location-specific data swapped in. Per the spec, no separate
  * content brief is required per area — these are structurally identical pages.
+ *
+ * Also gives every area page local-SEO metadata (title, description, canonical, OG/Twitter,
+ * LocalBusiness JSON-LD scoped to that area via areaServed) — docs/build/09-SEO-PERFORMANCE-
+ * CHECKLIST.md §8 requires each area page to target its specific location, not a generic
+ * templated page with only the place-name swapped.
  */
 export function ServiceAreaDetailPage({
   title,
   icon,
+  path,
   heroDescription,
   overview,
   responseTime,
@@ -30,6 +40,25 @@ export function ServiceAreaDetailPage({
 }: ServiceAreaDetailPageProps) {
   return (
     <>
+      <Seo
+        title={`Trades & Facilities Services in ${title}`}
+        description={heroDescription}
+        path={path}
+        jsonLd={{
+          '@context': 'https://schema.org',
+          '@type': 'LocalBusiness',
+          name: `${COMPANY.name} — ${title}`,
+          telephone: COMPANY.phone.tel,
+          url: `https://${COMPANY.domain}${path}`,
+          areaServed: title,
+          address: {
+            '@type': 'PostalAddress',
+            addressLocality: title,
+            addressCountry: COMPANY.address.country,
+          },
+        }}
+      />
+
       {/* Hero section */}
       <section className="border-b border-border bg-canvas-tint py-16 sm:py-20">
         <div className="mx-auto max-w-7xl px-4">

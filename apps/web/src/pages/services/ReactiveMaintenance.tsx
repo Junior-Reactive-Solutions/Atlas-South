@@ -4,6 +4,7 @@ export function ReactiveMaintenance() {
   return (
     <ServiceDetailPage
       id="reactive-maintenance"
+      path="/hard-services/reactive-maintenance"
       title="Reactive Maintenance"
       icon="hammer"
       heroDescription="Rapid response to unplanned breakdowns, emergency repairs, and urgent facility issues — keeping you operational 24/7"

@@ -1,6 +1,13 @@
+import { Seo } from '../../components/seo/Seo.js';
+
 export function PrivacyPolicy() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-16">
+      <Seo
+        title="Privacy Policy"
+        description="How Atlas South Technical Services collects, uses, and protects your data, including data retention periods and your rights under UK GDPR."
+        path="/legal/privacy"
+      />
       <h1 className="mb-2 text-4xl font-black text-navy">Privacy Policy</h1>
       <p className="mb-8 text-slate-600">Last updated: August 2026</p>
 

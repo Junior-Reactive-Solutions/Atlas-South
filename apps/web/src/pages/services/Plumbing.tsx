@@ -9,6 +9,7 @@ export function Plumbing() {
   return (
     <ServiceDetailPage
       id="plumbing"
+      path="/hard-services/plumbing"
       title="Plumbing Services"
       icon="wrench"
       heroDescription="Comprehensive plumbing solutions for commercial and industrial facilities, from emergency response to preventative maintenance."

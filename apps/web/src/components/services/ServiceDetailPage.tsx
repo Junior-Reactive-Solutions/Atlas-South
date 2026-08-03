@@ -2,6 +2,8 @@ import { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { Icon, type IconName } from '@atlas-south/design-system';
 import { QuoteForm } from '../home/QuoteForm';
+import { Seo } from '../seo/Seo.js';
+import { COMPANY } from '@atlas-south/shared';
 
 interface Feature {
   icon: IconName;
@@ -18,6 +20,8 @@ interface ServiceDetailPageProps {
   id: string;
   title: string;
   icon: IconName;
+  /** Route this page is mounted at, e.g. "/hard-services/electricals" — feeds Seo's canonical/OG URL. */
+  path: string;
   heroDescription: string;
   overview: ReactNode;
   features: Feature[];
@@ -29,10 +33,15 @@ interface ServiceDetailPageProps {
  * Service detail page template — docs/build/06-PAGE-SPECIFICATIONS.md "Hard/Soft Services rows".
  * Reusable layout for individual service pages. Each service provides content (title, description,
  * features, FAQs), and this component handles the layout, animations, and CTA integration.
+ *
+ * Also the single place that gives every service page real SEO metadata (title, description,
+ * canonical, OG/Twitter, Service + FAQPage JSON-LD) — docs/build/09-SEO-PERFORMANCE-CHECKLIST.md §2 —
+ * so it's a structural property of the template rather than something to remember per page.
  */
 export function ServiceDetailPage({
   title,
   icon,
+  path,
   heroDescription,
   overview,
   features,
@@ -41,6 +50,43 @@ export function ServiceDetailPage({
 }: ServiceDetailPageProps) {
   return (
     <>
+      <Seo
+        title={title}
+        description={heroDescription}
+        path={path}
+        jsonLd={[
+          {
+            '@context': 'https://schema.org',
+            '@type': 'Service',
+            name: title,
+            description: heroDescription,
+            provider: {
+              '@type': 'LocalBusiness',
+              name: COMPANY.name,
+              telephone: COMPANY.phone.tel,
+              url: `https://${COMPANY.domain}`,
+            },
+            areaServed: 'London and the South East',
+          },
+          ...(faqs.length > 0
+            ? [
+                {
+                  '@context': 'https://schema.org',
+                  '@type': 'FAQPage',
+                  mainEntity: faqs.map((faq) => ({
+                    '@type': 'Question',
+                    name: faq.question,
+                    acceptedAnswer: {
+                      '@type': 'Answer',
+                      text: faq.answer,
+                    },
+                  })),
+                },
+              ]
+            : []),
+        ]}
+      />
+
       {/* Hero section */}
       <section className="border-b border-border bg-canvas-tint py-16 sm:py-20">
         <div className="mx-auto max-w-7xl px-4">

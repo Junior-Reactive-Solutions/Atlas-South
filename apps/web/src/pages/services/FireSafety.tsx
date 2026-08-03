@@ -4,6 +4,7 @@ export function FireSafety() {
   return (
     <ServiceDetailPage
       id="fire-safety"
+      path="/hard-services/fire-safety"
       title="Fire & Safety"
       icon="flame"
       heroDescription="Comprehensive fire safety, emergency lighting, and life-safety systems to keep your building code-compliant and people protected"

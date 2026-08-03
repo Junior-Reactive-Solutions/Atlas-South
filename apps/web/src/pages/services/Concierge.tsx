@@ -4,6 +4,7 @@ export function Concierge() {
   return (
     <ServiceDetailPage
       id="concierge"
+      path="/soft-services/concierge"
       title="Concierge Services"
       icon="user-check"
       heroDescription="Professional visitor management, reception, and hospitality services enhancing your building's first impression and operational flow"

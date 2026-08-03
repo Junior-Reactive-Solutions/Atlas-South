@@ -4,6 +4,7 @@ export function SurreyKent() {
   return (
     <ServiceAreaDetailPage
       id="surrey-kent"
+      path="/areas/surrey-kent"
       title="Surrey & Kent"
       icon="map-pin"
       heroDescription="Facilities management and emergency response across Surrey and Kent, serving corporate headquarters, light industrial estates, and suburban facilities"

@@ -4,6 +4,7 @@ export function Electricals() {
   return (
     <ServiceDetailPage
       id="electricals"
+      path="/hard-services/electricals"
       title="Electricals"
       icon="zap"
       heroDescription="Comprehensive electrical services for commercial and industrial facilities, from installation to maintenance to emergency response"

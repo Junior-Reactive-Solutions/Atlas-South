@@ -2,6 +2,8 @@ import { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { Icon, type IconName } from '@atlas-south/design-system';
 import { QuoteForm } from '../home/QuoteForm';
+import { Seo } from '../seo/Seo.js';
+import { COMPANY } from '@atlas-south/shared';
 
 interface ServiceHighlight {
   serviceLabel: string;
@@ -12,6 +14,8 @@ interface IndustryDetailPageProps {
   id: string;
   title: string;
   icon: IconName;
+  /** Route this page is mounted at, e.g. "/industries/healthcare" — feeds Seo's canonical/OG URL. */
+  path: string;
   heroDescription: string;
   overview: ReactNode;
   challenges: ReactNode;
@@ -25,10 +29,15 @@ interface IndustryDetailPageProps {
  * Reusable layout for individual industry pages. Each industry provides content
  * (title, description, challenges, approach), and this component handles the layout,
  * styling, and CTA integration.
+ *
+ * Also gives every industry page real SEO metadata (title, description, canonical,
+ * OG/Twitter, WebPage JSON-LD) as a structural property of the template — see the same
+ * note in ServiceDetailPage.tsx.
  */
 export function IndustryDetailPage({
   title,
   icon,
+  path,
   heroDescription,
   overview,
   challenges,
@@ -38,6 +47,24 @@ export function IndustryDetailPage({
 }: IndustryDetailPageProps) {
   return (
     <>
+      <Seo
+        title={`${title} Facilities & Technical Services`}
+        description={heroDescription}
+        path={path}
+        jsonLd={{
+          '@context': 'https://schema.org',
+          '@type': 'WebPage',
+          name: `${title} Facilities & Technical Services`,
+          description: heroDescription,
+          about: title,
+          isPartOf: {
+            '@type': 'Organization',
+            name: COMPANY.name,
+            url: `https://${COMPANY.domain}`,
+          },
+        }}
+      />
+
       {/* Hero section */}
       <section className="border-b border-border bg-canvas-tint py-16 sm:py-20">
         <div className="mx-auto max-w-7xl px-4">

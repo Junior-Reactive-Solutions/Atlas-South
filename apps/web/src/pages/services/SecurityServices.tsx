@@ -4,6 +4,7 @@ export function SecurityServices() {
   return (
     <ServiceDetailPage
       id="security"
+      path="/soft-services/security"
       title="Security Services"
       icon="shield-check"
       heroDescription="Professional security staffing, CCTV systems, and access control tailored to your building's risk profile"
