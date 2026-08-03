@@ -23,13 +23,10 @@ export default {
         error: '#ef4444',
       },
       fontFamily: {
-        // Font sourced from Google Fonts; weights 400–900 preloaded in index.html
-        display: [
-          'Barlow Condensed',
-          'sans-serif',
-          { fontFeatureSettings: '"cv01" 0' },
-        ],
-        body: ['Barlow', 'sans-serif'],
+        // Fonts sourced from Google Fonts; weights preloaded in apps/web/index.html.
+        // See docs/build/01-BRAND-SYSTEM.md §4 for the rationale.
+        display: ['"Big Shoulders Display"', 'sans-serif'],
+        body: ['Inter', 'sans-serif'],
       },
     },
   },

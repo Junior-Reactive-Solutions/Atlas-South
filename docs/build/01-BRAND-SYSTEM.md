@@ -81,21 +81,26 @@ background" but has no accent colour anywhere is a bug, not a valid light panel.
 
 ## 4. Typography
 
-The current site uses Barlow Condensed (display) + Barlow (body) via Google Fonts — this
-pairing is kept because it's already brand-recognisable from the logo's own lettering
-style (bold condensed sans) and loads efficiently (single Google Fonts request, already
-measured in the audit as the site's only external resource).
+The site uses **Big Shoulders** (display) + **Inter** (body) via Google Fonts. Big
+Shoulders was designed around Chicago's industrial/structural architecture — its name
+references Carl Sandburg's "City of Big Shoulders" — which is a genuine match for a
+trades/facilities brand whose own logo mark is a building silhouette, not a stylistic
+pick made freehand. Inter pairs as body copy for its proven legibility across the long
+feature/FAQ copy every service, industry, and area page carries, and is trusted at
+enterprise/technical scale (widely used across SaaS and compliance-heavy sites, which
+suits a business built on certifications and regulatory copy). Loads efficiently as a
+single Google Fonts request, matching the audit's finding that the site's only external
+resource should stay minimal.
 
 | Role | Font | Weight | Notes |
 |---|---|---|---|
-| Display / H1 / Hero headline | Barlow Condensed | 800–900 | Uppercase, tight tracking — matches logo wordmark |
-| H2–H4 | Barlow Condensed | 600–700 | |
-| Body copy | Barlow | 400–500 | Sentence case, `--color-slate` on light panels |
-| UI labels / buttons / nav | Barlow | 600, uppercase, letter-spacing 0.04em | |
+| Display / H1–H4 / Hero headline | Big Shoulders Display | 600–900 | Uppercase, tight tracking — echoes the logo's structural building marks. One family across every heading level, not split by size, so `font-display` stays a single uniform token site-wide |
+| Body copy | Inter | 400–500 | Sentence case, `--color-slate` on light panels |
+| UI labels / buttons / nav | Inter | 600, uppercase, letter-spacing 0.04em | |
 
 Load via `<link rel="preconnect">` + a single `@font-face`/Google Fonts request per the
 performance requirement in [`09-SEO-PERFORMANCE-CHECKLIST.md`](09-SEO-PERFORMANCE-CHECKLIST.md)
-— trim to the exact weights listed above, not the 9 weights currently loaded.
+— trim to the exact weights listed above, not the full family range.
 
 ## 5. Iconography — no emoji, anywhere
 
