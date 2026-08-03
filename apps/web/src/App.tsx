@@ -1,5 +1,5 @@
 import { Suspense, lazy } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import {
   HARD_SERVICES,
   SOFT_SERVICES,
@@ -84,6 +84,7 @@ export default function App() {
       <Suspense fallback={<RouteLoadingFallback />}>
         <Routes>
           {/* Admin panel routes — separate from public site layout */}
+          <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route element={<AdminLayout />}>
             <Route path="/admin/dashboard" element={<AdminDashboard />} />

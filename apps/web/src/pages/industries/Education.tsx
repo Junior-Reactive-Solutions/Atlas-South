@@ -12,6 +12,7 @@ export function Education() {
   return (
     <IndustryDetailPage
       id="education"
+      path="/industries/education"
       title="Education & Learning Institutions"
       icon="graduation-cap"
       heroDescription="Safe, compliant, and cost-effective building services for schools, universities, and training centres"

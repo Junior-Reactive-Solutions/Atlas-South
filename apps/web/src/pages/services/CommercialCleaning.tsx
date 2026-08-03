@@ -4,6 +4,7 @@ export function CommercialCleaning() {
   return (
     <ServiceDetailPage
       id="commercial-cleaning"
+      path="/soft-services/commercial-cleaning"
       title="Commercial Cleaning"
       icon="sparkles"
       heroDescription="Professional daily and specialized cleaning maintaining hygiene, appearance, and compliance across all facility types"

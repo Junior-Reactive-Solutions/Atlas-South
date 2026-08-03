@@ -4,6 +4,7 @@ export function FacilitiesManagement() {
   return (
     <ServiceDetailPage
       id="facilities-management"
+      path="/soft-services/facilities-management"
       title="Facilities Management"
       icon="building-2"
       heroDescription="Integrated facilities management combining hard services, soft services, and operational support under one contract"

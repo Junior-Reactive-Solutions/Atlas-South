@@ -12,6 +12,7 @@ export function Retail() {
   return (
     <IndustryDetailPage
       id="retail"
+      path="/industries/retail"
       title="Retail"
       icon="shopping-bag"
       heroDescription="Keep customer-facing spaces operational, safe, and compliant while managing costs across multi-unit estates"

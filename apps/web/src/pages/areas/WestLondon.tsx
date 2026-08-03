@@ -4,6 +4,7 @@ export function WestLondon() {
   return (
     <ServiceAreaDetailPage
       id="west-london"
+      path="/areas/west-london"
       title="West London"
       icon="map-pin"
       heroDescription="Premium and responsive facilities management across West London's affluent residential, retail, and corporate districts"

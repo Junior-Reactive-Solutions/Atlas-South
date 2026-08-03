@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { animate, createTimeline, stagger } from 'animejs';
 import { COMPANY, PACKAGES_PAGE } from '@atlas-south/shared';
-import { Icon, useAnimationScope, DURATION, EASE } from '@atlas-south/design-system';
+import { Icon, useAnimationScope, DURATION, EASE, STAGGER_GAP, prefersReducedMotion } from '@atlas-south/design-system';
 import { HeroCarousel } from './HeroCarousel.js';
 
 interface Stat {
@@ -25,12 +25,19 @@ const STATS: Stat[] = [
 export function Hero() {
   const root = useAnimationScope(() => {
     const tl = createTimeline();
-    tl.add('.hero-eyebrow', { opacity: [0, 1], translateY: [16, 0], duration: DURATION.base, ease: EASE.standard })
+    tl.add('.hero-eyebrow', {
+        opacity: [0, 1],
+        translateY: [16, 0],
+        scaleX: [0.85, 1],
+        duration: DURATION.base,
+        ease: EASE.standard,
+      })
       .add(
         '.hero-headline-line',
         {
           opacity: [0, 1],
-          translateY: [16, 0],
+          translateY: [28, 0],
+          scale: [0.97, 1],
           delay: stagger(80),
           duration: DURATION.hero,
           ease: EASE.standard,
@@ -39,7 +46,31 @@ export function Hero() {
       )
       .add('.hero-subcopy', { opacity: [0, 1], translateY: [12, 0], duration: DURATION.base, ease: EASE.standard }, '-=200')
       .add('.hero-cta', { opacity: [0, 1], scale: [0.96, 1], duration: DURATION.base, ease: EASE.standard }, '-=150')
-      .add('.hero-secondary-links', { opacity: [0, 1], duration: DURATION.base }, '-=150');
+      .add('.hero-secondary-links', { opacity: [0, 1], duration: DURATION.base }, '-=150')
+      .add(
+        '.hero-stat',
+        {
+          opacity: [0, 1],
+          translateY: [20, 0],
+          delay: stagger(STAGGER_GAP),
+          duration: DURATION.base,
+          ease: EASE.standard,
+        },
+        '-=100',
+      );
+
+    // Gentle continuous nudge on the primary CTA's arrow — draws the eye back to it after
+    // the entrance sequence settles, transform-only so it stays compositor-friendly.
+    // Skipped under prefers-reduced-motion per docs/build/02-ANIMATION-SYSTEM.md §4 — an
+    // infinite loop is exactly the kind of non-essential motion that rule exists to disable.
+    if (!prefersReducedMotion()) {
+      animate('.hero-cta-arrow', {
+        translateX: [0, 4, 0],
+        duration: 1400,
+        loop: true,
+        ease: EASE.emphasis,
+      });
+    }
 
     // Stat count-up — plays on load (the one exception to scroll-triggered per spec §6).
     // Only elements carrying a data-count-to target animate; "24/7" and the founding
@@ -64,7 +95,7 @@ export function Hero() {
     <section ref={root}>
       <HeroCarousel>
         <div className="mx-auto max-w-7xl px-4 py-20 lg:py-32">
-          <p className="hero-eyebrow mb-4 inline-block rounded border border-accent-blue/40 bg-navy/60 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-accent-blue">
+          <p className="hero-eyebrow mb-4 inline-block origin-left rounded border border-accent-blue/40 bg-navy/60 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-accent-blue">
             London &amp; South East · Est. {COMPANY.foundedYear} · Available {COMPANY.stats.coverage}
           </p>
 
@@ -86,7 +117,7 @@ export function Hero() {
               className="hero-cta flex min-h-[44px] items-center gap-2 rounded bg-accent-blue px-6 text-sm font-semibold uppercase tracking-wide text-white hover:bg-white hover:text-navy"
             >
               Get a Free Quote
-              <Icon name="arrow-right" size={18} />
+              <Icon name="arrow-right" size={18} className="hero-cta-arrow" />
             </Link>
             <div className="hero-secondary-links flex gap-6 text-sm font-semibold text-white/90">
               <Link to={PACKAGES_PAGE.path} className="flex items-center gap-1 hover:text-accent-blue">
@@ -100,7 +131,7 @@ export function Hero() {
 
           <dl className="mt-14 grid grid-cols-2 gap-x-8 gap-y-4 border-t border-white/15 pt-6 sm:grid-cols-4">
             {STATS.map((stat) => (
-              <div key={stat.label}>
+              <div key={stat.label} className="hero-stat">
                 <dt className="sr-only">{stat.label}</dt>
                 <dd
                   className="font-display text-2xl font-extrabold text-white"

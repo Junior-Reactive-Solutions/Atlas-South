@@ -4,6 +4,7 @@ export function EastLondon() {
   return (
     <ServiceAreaDetailPage
       id="east-london"
+      path="/areas/east-london"
       title="East London"
       icon="map-pin"
       heroDescription="Facilities management and emergency response across East London's industrial, logistics, and emerging commercial zones"

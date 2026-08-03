@@ -4,6 +4,7 @@ export function AviationServices() {
   return (
     <ServiceDetailPage
       id="aviation"
+      path="/soft-services/aviation"
       title="Aviation Services"
       icon="plane"
       heroDescription="Comprehensive airport and aviation facility services including ground handling, terminal operations, and maintenance support"

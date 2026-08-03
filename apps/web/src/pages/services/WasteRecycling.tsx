@@ -4,6 +4,7 @@ export function WasteRecycling() {
   return (
     <ServiceDetailPage
       id="waste-recycling"
+      path="/soft-services/waste-recycling"
       title="Waste & Recycling"
       icon="recycle"
       heroDescription="Comprehensive waste management, recycling programs, and sustainable disposal aligned with environmental compliance and ESG targets"

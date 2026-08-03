@@ -12,6 +12,7 @@ export function Healthcare() {
   return (
     <IndustryDetailPage
       id="healthcare"
+      path="/industries/healthcare"
       title="Healthcare"
       icon="cross"
       heroDescription="Critical infrastructure management for hospitals, clinics, and care facilities where downtime affects patient outcomes"

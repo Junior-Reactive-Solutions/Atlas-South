@@ -12,6 +12,7 @@ export function Corporate() {
   return (
     <IndustryDetailPage
       id="corporate"
+      path="/industries/corporate"
       title="Corporate"
       icon="briefcase"
       heroDescription="Multi-site compliance, predictable costs, and responsive support for enterprise building management"
