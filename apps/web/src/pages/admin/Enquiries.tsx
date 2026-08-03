@@ -1,0 +1,162 @@
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { ArrowRight, Trash2 } from 'lucide-react';
+
+interface Enquiry {
+  id: string;
+  fullName: string;
+  email: string;
+  phone: string;
+  message: string;
+  serviceId: string | null;
+  status: 'new' | 'contacted' | 'quoted' | 'won' | 'lost';
+  sourcePage: string;
+  createdAt: string;
+}
+
+type Status = 'new' | 'contacted' | 'quoted' | 'won' | 'lost';
+
+const STATUS_LABELS: Record<Status, string> = {
+  new: 'New',
+  contacted: 'Contacted',
+  quoted: 'Quoted',
+  won: 'Won',
+  lost: 'Lost',
+};
+
+const STATUS_COLORS: Record<Status, string> = {
+  new: 'bg-blue-100 text-blue-800',
+  contacted: 'bg-yellow-100 text-yellow-800',
+  quoted: 'bg-purple-100 text-purple-800',
+  won: 'bg-green-100 text-green-800',
+  lost: 'bg-red-100 text-red-800',
+};
+
+export function AdminEnquiries() {
+  const [enquiries, setEnquiries] = useState<Enquiry[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchEnquiries = async () => {
+      try {
+        const token = localStorage.getItem('accessToken');
+        const response = await fetch('/api/admin/enquiries', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (!response.ok) {
+          if (response.status === 401) {
+            navigate('/admin/login');
+          }
+          return;
+        }
+
+        const data = await response.json();
+        setEnquiries(data);
+      } catch (error) {
+        console.error('Error fetching enquiries:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchEnquiries();
+  }, [navigate]);
+
+  const updateStatus = async (id: string, newStatus: Status) => {
+    try {
+      const token = localStorage.getItem('accessToken');
+      const response = await fetch(`/api/admin/enquiries/${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (response.ok) {
+        setEnquiries(enquiries.map((e) => (e.id === id ? { ...e, status: newStatus } : e)));
+      }
+    } catch (error) {
+      console.error('Error updating enquiry:', error);
+    }
+  };
+
+  // Group enquiries by status
+  const grouped = {
+    new: enquiries.filter((e) => e.status === 'new'),
+    contacted: enquiries.filter((e) => e.status === 'contacted'),
+    quoted: enquiries.filter((e) => e.status === 'quoted'),
+    won: enquiries.filter((e) => e.status === 'won'),
+    lost: enquiries.filter((e) => e.status === 'lost'),
+  };
+
+  if (isLoading) {
+    return <div className="flex items-center justify-center p-8">Loading...</div>;
+  }
+
+  return (
+    <div className="space-y-6">
+      <h1 className="text-3xl font-black text-navy">Enquiries Pipeline</h1>
+
+      {/* Kanban Board */}
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-5">
+        {(['new', 'contacted', 'quoted', 'won', 'lost'] as Status[]).map((status) => (
+          <div key={status} className="flex flex-col rounded-lg bg-slate-50 p-4">
+            <h3 className="mb-4 font-semibold text-slate-700">
+              {STATUS_LABELS[status]} ({grouped[status].length})
+            </h3>
+
+            <div className="flex flex-col gap-3">
+              {grouped[status].map((enquiry) => (
+                <div key={enquiry.id} className="rounded-lg border border-slate-200 bg-white p-3">
+                  <p className="font-medium text-navy">{enquiry.fullName}</p>
+                  <p className="text-xs text-slate-600">{enquiry.email}</p>
+                  <p className="mt-2 line-clamp-2 text-xs text-slate-700">{enquiry.message}</p>
+
+                  {/* Status Buttons */}
+                  <div className="mt-3 flex flex-col gap-2">
+                    {status !== 'won' && status !== 'lost' && (
+                      <button
+                        onClick={() => {
+                          const nextStatus: Record<Status, Status> = {
+                            new: 'contacted',
+                            contacted: 'quoted',
+                            quoted: 'won',
+                            won: 'won',
+                            lost: 'lost',
+                          };
+                          updateStatus(enquiry.id, nextStatus[status]);
+                        }}
+                        className="flex items-center justify-center gap-1 rounded bg-accent-blue px-2 py-1 text-xs font-medium text-white hover:bg-blue-700"
+                      >
+                        Move Forward
+                        <ArrowRight className="h-3 w-3" />
+                      </button>
+                    )}
+
+                    {status !== 'lost' && (
+                      <button
+                        onClick={() => updateStatus(enquiry.id, 'lost')}
+                        className="flex items-center justify-center gap-1 rounded bg-red-100 px-2 py-1 text-xs font-medium text-red-700 hover:bg-red-200"
+                      >
+                        Lost
+                        <Trash2 className="h-3 w-3" />
+                      </button>
+                    )}
+                  </div>
+
+                  <p className="mt-2 text-xs text-slate-500">
+                    {new Date(enquiry.createdAt).toLocaleDateString()}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
