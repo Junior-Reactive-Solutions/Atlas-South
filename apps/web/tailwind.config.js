@@ -32,14 +32,13 @@ export default {
         error: '#C0392B',
       },
       fontFamily: {
-        // "Big Shoulders" was designed around Chicago's industrial/structural
-        // architecture (its name references Carl Sandburg's "City of Big Shoulders") —
-        // a genuine match for a trades/facilities brand whose own logo is a building
-        // silhouette, not a stylistic pick. One cut used for every heading level (not
-        // split by size) so `font-display` stays a single uniform token site-wide.
-        // "Inter" pairs as body copy for its proven legibility across the long
-        // feature/FAQ copy every service page carries. See docs/build/01-BRAND-SYSTEM.md §4.
-        display: ['"Big Shoulders Display"', 'sans-serif'],
+        // Montserrat replaces Big Shoulders Display — the previous pick read too thin
+        // at heading weight and made the whole page feel smaller at normal zoom. The
+        // logo's own wordmark (assets/brand/atlas-south-logo.jpg) is a bold geometric
+        // sans with flat-apex letterforms; Montserrat is the closest free, open-license
+        // match (SIL OFL, Google Fonts) with genuinely strong Bold/Black weights, used
+        // uniformly across every heading level. See docs/build/01-BRAND-SYSTEM.md §4.
+        display: ['Montserrat', 'sans-serif'],
         body: ['Inter', 'sans-serif'],
       },
     },

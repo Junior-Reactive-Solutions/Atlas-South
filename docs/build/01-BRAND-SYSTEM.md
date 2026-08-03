@@ -81,20 +81,32 @@ background" but has no accent colour anywhere is a bug, not a valid light panel.
 
 ## 4. Typography
 
-The site uses **Big Shoulders** (display) + **Inter** (body) via Google Fonts. Big
-Shoulders was designed around Chicago's industrial/structural architecture — its name
-references Carl Sandburg's "City of Big Shoulders" — which is a genuine match for a
-trades/facilities brand whose own logo mark is a building silhouette, not a stylistic
-pick made freehand. Inter pairs as body copy for its proven legibility across the long
-feature/FAQ copy every service, industry, and area page carries, and is trusted at
-enterprise/technical scale (widely used across SaaS and compliance-heavy sites, which
-suits a business built on certifications and regulatory copy). Loads efficiently as a
-single Google Fonts request, matching the audit's finding that the site's only external
-resource should stay minimal.
+The site uses **Montserrat** (display) + **Inter** (body) via Google Fonts.
+
+Montserrat was chosen to match the actual lettering in `assets/brand/atlas-south-logo.jpg`
+— the wordmark is a bold geometric sans with flat-apex, open-counter letterforms (see the
+"ATLAS SOUTH" lockup), and Montserrat is the closest free, open-license (SIL OFL) match at
+Bold/ExtraBold/Black weights. It replaced an earlier pick (Big Shoulders Display) that read
+too thin at heading size and made pages feel smaller at normal zoom — genuine visual-weight
+presence at heading level was the deciding factor, not just stylistic resemblance.
+
+A commercial alternative, **Carmen Sans** (StudioJASO, sold via MyFonts), was identified as
+an even closer match to the wordmark's specific geometric construction. It's a paid
+typeface ($33–56/style or $302/family) and using it without a purchased licence would be
+copyright infringement — not something this build will do. If the client wants to license
+Carmen Sans directly from MyFonts in the future, swapping it in is a single change to the
+two Tailwind configs' `fontFamily.display` token plus the Google Fonts `<link>` (or a
+self-hosted `@font-face` if using a desktop/webfont licence instead of a hosted one).
+
+Inter pairs as body copy for its proven legibility across the long feature/FAQ copy every
+service, industry, and area page carries, and is trusted at enterprise/technical scale
+(widely used across SaaS and compliance-heavy sites, which suits a business built on
+certifications and regulatory copy). Loads efficiently as a single Google Fonts request,
+matching the audit's finding that the site's only external resource should stay minimal.
 
 | Role | Font | Weight | Notes |
 |---|---|---|---|
-| Display / H1–H4 / Hero headline | Big Shoulders Display | 600–900 | Uppercase, tight tracking — echoes the logo's structural building marks. One family across every heading level, not split by size, so `font-display` stays a single uniform token site-wide |
+| Display / H1–H4 / Hero headline | Montserrat | 700–900 | Uppercase, tight tracking — echoes the logo wordmark's geometric construction. One family across every heading level, not split by size, so `font-display` stays a single uniform token site-wide |
 | Body copy | Inter | 400–500 | Sentence case, `--color-slate` on light panels |
 | UI labels / buttons / nav | Inter | 600, uppercase, letter-spacing 0.04em | |
 
