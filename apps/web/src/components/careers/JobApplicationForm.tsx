@@ -50,7 +50,7 @@ export function JobApplicationForm({ roleTitle }: JobApplicationFormProps) {
         throw new Error('Failed to submit application');
       }
 
-      setMessage({ text: 'Application submitted successfully! We'll be in touch soon.', tone: 'success' });
+      setMessage({ text: "Application submitted successfully! We'll be in touch soon.", tone: 'success' });
       setFormData({ fullName: '', email: '', phone: '', coverLetter: '', file: null });
     } catch {
       setMessage({ text: 'Failed to submit application. Please try again.', tone: 'error' });
