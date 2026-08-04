@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BarChart3, MessageSquare, Eye, TrendingUp } from 'lucide-react';
+import { BarChart3, MessageSquare, Eye, TrendingUp, Users } from 'lucide-react';
 import { animate, stagger } from 'animejs';
 import { useAnimationScope, DURATION, EASE, STAGGER_GAP } from '@atlas-south/design-system';
 
@@ -145,6 +145,17 @@ export function AdminDashboard() {
             <p className="text-sm text-slate-600">View sales pipeline</p>
           </div>
           <MessageSquare className="h-6 w-6 text-accent-blue" />
+        </a>
+
+        <a
+          href="/admin/applications"
+          className="flex items-center justify-between rounded-lg border border-slate-200 bg-white p-6 hover:bg-slate-50"
+        >
+          <div>
+            <p className="font-semibold text-navy">Job Applications</p>
+            <p className="text-sm text-slate-600">Review applicants</p>
+          </div>
+          <Users className="h-6 w-6 text-accent-blue" />
         </a>
 
         <a

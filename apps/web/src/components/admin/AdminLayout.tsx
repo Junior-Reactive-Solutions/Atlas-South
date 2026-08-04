@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { BarChart3, MessageSquare, Settings, LogOut, ChevronLeft, ChevronRight, FileText, type LucideIcon } from 'lucide-react';
+import { BarChart3, MessageSquare, Settings, LogOut, ChevronLeft, ChevronRight, FileText, Users, type LucideIcon } from 'lucide-react';
 import { useNoIndex } from '../../hooks/useNoIndex.js';
 
 export function AdminLayout() {
@@ -63,6 +63,13 @@ export function AdminLayout() {
             icon={MessageSquare}
             label="Enquiries"
             isActive={isActive('/admin/enquiries')}
+            isOpen={isOpen}
+          />
+          <NavLink
+            to="/admin/applications"
+            icon={Users}
+            label="Applications"
+            isActive={isActive('/admin/applications')}
             isOpen={isOpen}
           />
           <NavLink
