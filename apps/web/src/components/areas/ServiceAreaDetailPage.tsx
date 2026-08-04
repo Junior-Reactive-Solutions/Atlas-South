@@ -1,7 +1,7 @@
-import { ReactNode } from 'react';
 import { Icon, type IconName } from '@atlas-south/design-system';
 import { QuoteForm } from '../home/QuoteForm';
 import { Seo } from '../seo/Seo.js';
+import { Markdown } from '../content/Markdown.js';
 import { COMPANY } from '@atlas-south/shared';
 
 interface ServiceAreaDetailPageProps {
@@ -11,10 +11,10 @@ interface ServiceAreaDetailPageProps {
   /** Route this page is mounted at, e.g. "/areas/central-london" — feeds Seo's canonical/OG URL. */
   path: string;
   heroDescription: string;
-  overview: ReactNode;
+  overview: string;
   responseTime: string;
-  coverage: ReactNode;
-  localProof?: ReactNode;
+  coverage: string;
+  localProof?: string;
 }
 
 /**
@@ -78,7 +78,7 @@ export function ServiceAreaDetailPage({
       <section className="py-16 sm:py-20">
         <div className="mx-auto max-w-4xl px-4">
           <div className="prose prose-sm max-w-none sm:prose-base dark:prose-invert">
-            {overview}
+            <Markdown content={overview} />
           </div>
         </div>
       </section>
@@ -104,7 +104,7 @@ export function ServiceAreaDetailPage({
             Coverage in {title.toLowerCase()}
           </h2>
           <div className="prose prose-sm max-w-none sm:prose-base dark:prose-invert">
-            {coverage}
+            <Markdown content={coverage} />
           </div>
         </div>
       </section>
@@ -117,7 +117,7 @@ export function ServiceAreaDetailPage({
               Trusted by local organisations
             </h2>
             <div className="prose prose-sm max-w-none sm:prose-base dark:prose-invert">
-              {localProof}
+              <Markdown content={localProof} />
             </div>
           </div>
         </section>

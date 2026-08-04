@@ -3,7 +3,16 @@ import { ServiceCard } from '../components/home/ServiceCard';
 import { Testimonials } from '../components/home/Testimonials';
 import { QuoteForm } from '../components/home/QuoteForm';
 import { Seo } from '../components/seo/Seo.js';
+import { useContentPage } from '../hooks/useContentPage';
 import { HARD_SERVICES, COMPANY } from '@atlas-south/shared';
+
+interface HomeContent {
+  headlineLines: [string, string, string];
+  subcopy: string;
+  primaryCtaLabel: string;
+  homeCtaLabel: string;
+  businessCtaLabel: string;
+}
 
 /**
  * Home — docs/build/06-PAGE-SPECIFICATIONS.md "Home & Company" table.
@@ -14,6 +23,8 @@ import { HARD_SERVICES, COMPANY } from '@atlas-south/shared';
  * Soft Services and beyond: Sprint 4+.
  */
 export function Home() {
+  const { data: content } = useContentPage<HomeContent>('home');
+
   return (
     <>
       <Seo
@@ -37,7 +48,13 @@ export function Home() {
           foundingDate: String(COMPANY.foundedYear),
         }}
       />
-      <Hero />
+      <Hero
+        headlineLines={content?.headlineLines}
+        subcopy={content?.subcopy}
+        primaryCtaLabel={content?.primaryCtaLabel}
+        homeCtaLabel={content?.homeCtaLabel}
+        businessCtaLabel={content?.businessCtaLabel}
+      />
 
       {/* Hard Services section — docs/build/06-PAGE-SPECIFICATIONS.md "Hard Services row" */}
       <section aria-label="Hard services" className="bg-canvas-tint py-16 sm:py-20">

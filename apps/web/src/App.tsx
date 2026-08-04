@@ -13,6 +13,7 @@ import { AdminLayout } from './components/admin/AdminLayout.js';
 import { Home } from './pages/Home';
 import { PageStub } from './pages/PageStub';
 import { NotFound } from './pages/NotFound';
+import { PageLoadingFallback } from './components/PageLoadingFallback.js';
 
 // Admin pages — not lazy loaded (small, always together)
 import { AdminLogin } from './pages/admin/Login.js';
@@ -52,18 +53,6 @@ const EastLondon = lazy(() => import('./pages/areas/EastLondon.js').then((m) => 
 const WestLondon = lazy(() => import('./pages/areas/WestLondon.js').then((m) => ({ default: m.WestLondon })));
 const SurreyKent = lazy(() => import('./pages/areas/SurreyKent.js').then((m) => ({ default: m.SurreyKent })));
 
-/** Loading fallback shown while route chunk is being fetched. */
-function RouteLoadingFallback() {
-  return (
-    <div className="flex min-h-screen items-center justify-center">
-      <div className="text-center">
-        <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-slate border-t-accent-blue" />
-        <p className="mt-4 text-sm text-slate">Loading...</p>
-      </div>
-    </div>
-  );
-}
-
 /** Company pages that resolve to real, distinct routes (not the /company#anchor pair). */
 const COMPANY_ROUTES: NavItem[] = [
   { id: 'join-us', label: 'Join Us', path: '/company/join-us', icon: 'users' },
@@ -83,7 +72,7 @@ function stubRoutes(items: NavItem[], specRef: string) {
 export default function App() {
   return (
     <>
-      <Suspense fallback={<RouteLoadingFallback />}>
+      <Suspense fallback={<PageLoadingFallback />}>
         <Routes>
           {/* Admin panel routes — separate from public site layout */}
           <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
