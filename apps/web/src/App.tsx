@@ -52,6 +52,10 @@ const NorthLondon = lazy(() => import('./pages/areas/NorthLondon.js').then((m) =
 const EastLondon = lazy(() => import('./pages/areas/EastLondon.js').then((m) => ({ default: m.EastLondon })));
 const WestLondon = lazy(() => import('./pages/areas/WestLondon.js').then((m) => ({ default: m.WestLondon })));
 const SurreyKent = lazy(() => import('./pages/areas/SurreyKent.js').then((m) => ({ default: m.SurreyKent })));
+const About = lazy(() => import('./pages/company/About.js').then((m) => ({ default: m.About })));
+const Contact = lazy(() => import('./pages/company/Contact.js').then((m) => ({ default: m.Contact })));
+const Packages = lazy(() => import('./pages/packages/Packages.js').then((m) => ({ default: m.Packages })));
+const Careers = lazy(() => import('./pages/careers/Careers.js').then((m) => ({ default: m.Careers })));
 
 /** Company pages that resolve to real, distinct routes (not the /company#anchor pair). */
 const COMPANY_ROUTES: NavItem[] = [
@@ -95,12 +99,10 @@ export default function App() {
           <Route element={<Layout />}>
             <Route path="/" element={<Home />} />
 
-          {/* Company — Mission/Vision live as anchors on one page per user-stories.md C2 */}
-          <Route
-            path="/company"
-            element={<PageStub title="Company — Mission & Vision" icon="target" specRef="docs/build/06-PAGE-SPECIFICATIONS.md — Company" />}
-          />
-          {stubRoutes(COMPANY_ROUTES, 'docs/build/06-PAGE-SPECIFICATIONS.md — Company')}
+          {/* Company pages */}
+          <Route path="/company" element={<About />} />
+          <Route path="/company/contact" element={<Contact />} />
+          <Route path="/company/join-us" element={<Careers />} />
 
           {/* Built-out service pages (Sprint 4+) — lazy-loaded for performance */}
           <Route path="/hard-services/plumbing" element={<Plumbing />} />
@@ -134,10 +136,8 @@ export default function App() {
           {stubRoutes(INDUSTRIES, 'docs/build/06-PAGE-SPECIFICATIONS.md — Industries')}
           {stubRoutes(SERVICE_AREAS, 'docs/build/06-PAGE-SPECIFICATIONS.md — Service Areas')}
 
-          <Route
-            path={PACKAGES_PAGE.path}
-            element={<PageStub title={PACKAGES_PAGE.label} icon="package" specRef="docs/build/06-PAGE-SPECIFICATIONS.md — Home & Company" />}
-          />
+          {/* Packages page */}
+          <Route path={PACKAGES_PAGE.path} element={<Packages />} />
 
             <Route path="*" element={<NotFound />} />
           </Route>

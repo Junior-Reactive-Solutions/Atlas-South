@@ -30,3 +30,84 @@ export interface ServiceAreaContent {
   coverage: string;
   localProof?: string;
 }
+
+export interface HomeContent {
+  headlineLines: [string, string, string];
+  subcopy: string;
+  primaryCtaLabel: string;
+  homeCtaLabel: string;
+  businessCtaLabel: string;
+}
+
+export interface TimelineEntry {
+  year: number;
+  title: string;
+  body: string;
+  icon: IconName;
+}
+
+export interface ValueItem {
+  icon: IconName;
+  title: string;
+  body: string;
+}
+
+export interface TeamMember {
+  role: string;
+  since: number;
+  bio: string;
+}
+
+export interface CertificationItem {
+  icon: IconName;
+  title: string;
+  body: string;
+}
+
+export interface CompanyContent {
+  tagline: string;
+  timeline: TimelineEntry[];
+  missionStatement: string;
+  values: ValueItem[];
+  team: TeamMember[];
+  certifications: CertificationItem[];
+  stats: Array<{ label: string; value: string }>;
+}
+
+export interface BenefitItem {
+  icon?: string;
+  title: string;
+  description: string;
+}
+
+export interface OpenRole {
+  title: string;
+  icon: IconName;
+  location: string;
+  hours: string;
+  payRange: string;
+  startAvailability: string;
+  description?: string;
+}
+
+export interface CareersContent {
+  intro: string;
+  benefits: BenefitItem[];
+  openRoles: OpenRole[];
+  rightToWorkNote?: string;
+}
+
+export interface PricingTier {
+  label: string;
+  startingFrom: string;
+  description: string;
+  includes: string[];
+  icon: IconName;
+}
+
+export interface PackagesContent {
+  title: string;
+  heroDescription: string;
+  intro: string;
+  tiers: PricingTier[];
+}
