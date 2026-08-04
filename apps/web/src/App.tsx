@@ -13,11 +13,13 @@ import { AdminLayout } from './components/admin/AdminLayout.js';
 import { Home } from './pages/Home';
 import { PageStub } from './pages/PageStub';
 import { NotFound } from './pages/NotFound';
+import { PageLoadingFallback } from './components/PageLoadingFallback.js';
 
 // Admin pages — not lazy loaded (small, always together)
 import { AdminLogin } from './pages/admin/Login.js';
 import { AdminDashboard } from './pages/admin/Dashboard.js';
 import { AdminEnquiries } from './pages/admin/Enquiries.js';
+import { AdminApplications } from './pages/admin/Applications.js';
 import { AdminSettings } from './pages/admin/Settings.js';
 import { AdminAnalytics } from './pages/admin/Analytics.js';
 import { AdminContent } from './pages/admin/Content.js';
@@ -51,18 +53,10 @@ const NorthLondon = lazy(() => import('./pages/areas/NorthLondon.js').then((m) =
 const EastLondon = lazy(() => import('./pages/areas/EastLondon.js').then((m) => ({ default: m.EastLondon })));
 const WestLondon = lazy(() => import('./pages/areas/WestLondon.js').then((m) => ({ default: m.WestLondon })));
 const SurreyKent = lazy(() => import('./pages/areas/SurreyKent.js').then((m) => ({ default: m.SurreyKent })));
-
-/** Loading fallback shown while route chunk is being fetched. */
-function RouteLoadingFallback() {
-  return (
-    <div className="flex min-h-screen items-center justify-center">
-      <div className="text-center">
-        <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-slate border-t-accent-blue" />
-        <p className="mt-4 text-sm text-slate">Loading...</p>
-      </div>
-    </div>
-  );
-}
+const About = lazy(() => import('./pages/company/About.js').then((m) => ({ default: m.About })));
+const Contact = lazy(() => import('./pages/company/Contact.js').then((m) => ({ default: m.Contact })));
+const Packages = lazy(() => import('./pages/packages/Packages.js').then((m) => ({ default: m.Packages })));
+const Careers = lazy(() => import('./pages/careers/Careers.js').then((m) => ({ default: m.Careers })));
 
 /** Company pages that resolve to real, distinct routes (not the /company#anchor pair). */
 const COMPANY_ROUTES: NavItem[] = [
@@ -83,7 +77,7 @@ function stubRoutes(items: NavItem[], specRef: string) {
 export default function App() {
   return (
     <>
-      <Suspense fallback={<RouteLoadingFallback />}>
+      <Suspense fallback={<PageLoadingFallback />}>
         <Routes>
           {/* Admin panel routes — separate from public site layout */}
           <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
@@ -91,6 +85,7 @@ export default function App() {
           <Route element={<AdminLayout />}>
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/enquiries" element={<AdminEnquiries />} />
+            <Route path="/admin/applications" element={<AdminApplications />} />
             <Route path="/admin/analytics" element={<AdminAnalytics />} />
             <Route path="/admin/content" element={<AdminContent />} />
             <Route path="/admin/content/:slug" element={<AdminContentEdit />} />
@@ -106,12 +101,10 @@ export default function App() {
           <Route element={<Layout />}>
             <Route path="/" element={<Home />} />
 
-          {/* Company — Mission/Vision live as anchors on one page per user-stories.md C2 */}
-          <Route
-            path="/company"
-            element={<PageStub title="Company — Mission & Vision" icon="target" specRef="docs/build/06-PAGE-SPECIFICATIONS.md — Company" />}
-          />
-          {stubRoutes(COMPANY_ROUTES, 'docs/build/06-PAGE-SPECIFICATIONS.md — Company')}
+          {/* Company pages */}
+          <Route path="/company" element={<About />} />
+          <Route path="/company/contact" element={<Contact />} />
+          <Route path="/company/join-us" element={<Careers />} />
 
           {/* Built-out service pages (Sprint 4+) — lazy-loaded for performance */}
           <Route path="/hard-services/plumbing" element={<Plumbing />} />
@@ -145,10 +138,8 @@ export default function App() {
           {stubRoutes(INDUSTRIES, 'docs/build/06-PAGE-SPECIFICATIONS.md — Industries')}
           {stubRoutes(SERVICE_AREAS, 'docs/build/06-PAGE-SPECIFICATIONS.md — Service Areas')}
 
-          <Route
-            path={PACKAGES_PAGE.path}
-            element={<PageStub title={PACKAGES_PAGE.label} icon="package" specRef="docs/build/06-PAGE-SPECIFICATIONS.md — Home & Company" />}
-          />
+          {/* Packages page */}
+          <Route path={PACKAGES_PAGE.path} element={<Packages />} />
 
             <Route path="*" element={<NotFound />} />
           </Route>

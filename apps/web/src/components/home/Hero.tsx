@@ -21,8 +21,33 @@ const STATS: Stat[] = [
   { label: 'Founded', value: String(COMPANY.foundedYear) },
 ];
 
-/** Choreography per docs/build/03-HERO-SECTION-SPEC.md §6 — one timeline, sequenced. */
-export function Hero() {
+interface HeroProps {
+  headlineLines?: [string, string, string];
+  subcopy?: string;
+  primaryCtaLabel?: string;
+  homeCtaLabel?: string;
+  businessCtaLabel?: string;
+}
+
+const DEFAULT_HEADLINE_LINES: [string, string, string] = [
+  'Trades and facilities services',
+  'you can trust —',
+  'for your home or your business.',
+];
+
+/**
+ * Choreography per docs/build/03-HERO-SECTION-SPEC.md §6 — one timeline, sequenced.
+ * Text props are optional and default to the values above so the entrance animation
+ * (which targets fixed DOM elements on mount) never has to wait on the content fetch
+ * in Home.tsx — copy just swaps in once /api/content/home resolves.
+ */
+export function Hero({
+  headlineLines = DEFAULT_HEADLINE_LINES,
+  subcopy,
+  primaryCtaLabel = 'Get a Free Quote',
+  homeCtaLabel = 'For Your Home',
+  businessCtaLabel = 'For Your Business',
+}: HeroProps) {
   const root = useAnimationScope(() => {
     const tl = createTimeline();
     tl.add('.hero-eyebrow', {
@@ -91,6 +116,13 @@ export function Hero() {
     });
   }, []);
 
+  const resolvedSubcopy = (
+    subcopy ??
+    'Atlas South has delivered {jobsCompleted} jobs across London and the South East since {foundedYear}, from emergency call-outs to fully managed facilities contracts.'
+  )
+    .replace('{jobsCompleted}', COMPANY.stats.jobsCompleted)
+    .replace('{foundedYear}', String(COMPANY.foundedYear));
+
   return (
     <section ref={root}>
       <HeroCarousel>
@@ -100,31 +132,27 @@ export function Hero() {
           </p>
 
           <h1 className="max-w-3xl font-display text-4xl font-black uppercase leading-tight text-white sm:text-5xl lg:text-6xl">
-            <span className="hero-headline-line block">Trades and facilities services</span>
-            <span className="hero-headline-line block text-accent-blue">you can trust —</span>
-            <span className="hero-headline-line block">for your home or your business.</span>
+            <span className="hero-headline-line block">{headlineLines[0]}</span>
+            <span className="hero-headline-line block text-accent-blue">{headlineLines[1]}</span>
+            <span className="hero-headline-line block">{headlineLines[2]}</span>
           </h1>
 
-          <p className="hero-subcopy mt-6 max-w-xl font-body text-lg text-white/85">
-            Atlas South has delivered {COMPANY.stats.jobsCompleted} jobs across London and
-            the South East since {COMPANY.foundedYear}, from emergency call-outs to fully
-            managed facilities contracts.
-          </p>
+          <p className="hero-subcopy mt-6 max-w-xl font-body text-lg text-white/85">{resolvedSubcopy}</p>
 
           <div className="mt-8 flex flex-wrap items-center gap-4">
             <Link
               to="/company/contact"
               className="hero-cta flex min-h-[44px] items-center gap-2 rounded bg-accent-blue px-6 text-sm font-semibold uppercase tracking-wide text-white hover:bg-white hover:text-navy"
             >
-              Get a Free Quote
+              {primaryCtaLabel}
               <Icon name="arrow-right" size={18} className="hero-cta-arrow" />
             </Link>
             <div className="hero-secondary-links flex gap-6 text-sm font-semibold text-white/90">
               <Link to={PACKAGES_PAGE.path} className="flex items-center gap-1 hover:text-accent-blue">
-                For Your Home <Icon name="arrow-right" size={14} />
+                {homeCtaLabel} <Icon name="arrow-right" size={14} />
               </Link>
               <Link to="/hard-services/electricals" className="flex items-center gap-1 hover:text-accent-blue">
-                For Your Business <Icon name="arrow-right" size={14} />
+                {businessCtaLabel} <Icon name="arrow-right" size={14} />
               </Link>
             </div>
           </div>

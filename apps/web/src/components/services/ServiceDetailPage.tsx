@@ -1,8 +1,8 @@
-import { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { Icon, type IconName } from '@atlas-south/design-system';
 import { QuoteForm } from '../home/QuoteForm';
 import { Seo } from '../seo/Seo.js';
+import { Markdown } from '../content/Markdown.js';
 import { COMPANY } from '@atlas-south/shared';
 
 interface Feature {
@@ -23,7 +23,7 @@ interface ServiceDetailPageProps {
   /** Route this page is mounted at, e.g. "/hard-services/electricals" — feeds Seo's canonical/OG URL. */
   path: string;
   heroDescription: string;
-  overview: ReactNode;
+  overview: string;
   features: Feature[];
   faqs: FAQ[];
   relatedServices?: Array<{ label: string; path: string }>;
@@ -106,7 +106,7 @@ export function ServiceDetailPage({
       <section className="py-16 sm:py-20">
         <div className="mx-auto max-w-4xl px-4">
           <div className="prose prose-sm max-w-none sm:prose-base dark:prose-invert">
-            {overview}
+            <Markdown content={overview} />
           </div>
         </div>
       </section>

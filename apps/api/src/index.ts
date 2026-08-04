@@ -8,8 +8,10 @@ import { healthRouter } from './routes/health.js';
 import { enquiriesRouter } from './routes/enquiries.js';
 import { eventsRouter } from './routes/events.js';
 import { contentRouter } from './routes/content.js';
+import { careersRouter } from './routes/careers.js';
 import adminAuthRouter from './routes/admin/auth.js';
 import adminEnquiriesRouter from './routes/admin/enquiries.js';
+import { adminApplicationsRouter } from './routes/admin/applications.js';
 import adminStatsRouter from './routes/admin/stats.js';
 import adminUsersRouter from './routes/admin/users.js';
 import adminAnalyticsRouter from './routes/admin/analytics.js';
@@ -55,10 +57,12 @@ app.use('/api', healthRouter);
 app.use('/api', enquiriesRouter);
 app.use('/api', eventsRouter);
 app.use('/api', contentRouter);
+app.use('/api', careersRouter);
 
 // Admin routes — secured with JWT authentication
 app.use('/api/admin/auth', adminAuthRouter);
 app.use('/api/admin/enquiries', adminEnquiriesRouter);
+app.use('/api/admin', adminApplicationsRouter);
 app.use('/api/admin/stats', adminStatsRouter);
 app.use('/api/admin/users', adminUsersRouter);
 app.use('/api/admin/analytics', adminAnalyticsRouter);
