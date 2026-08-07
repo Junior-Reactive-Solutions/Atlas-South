@@ -14,7 +14,7 @@ export function TimelineSection({ timeline }: { timeline: TimelineEntry[] }) {
         <div key={entry.year} className="flex gap-6">
           <div className="flex flex-col items-center">
             <div className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-accent-blue bg-accent-blue/10">
-              <Icon name={entry.icon} size={20} className="text-accent-blue" />
+              <Icon name={entry.icon} size={20} className="text-accent-blue" aria-hidden="true" />
             </div>
             {idx < timeline.length - 1 && (
               <div className="h-12 w-0.5 bg-border" style={{ marginTop: '1rem' }} />

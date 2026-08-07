@@ -39,12 +39,23 @@ function NavDropdown({ label, items }: DropdownProps) {
     });
   }, []);
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'ArrowDown' || e.key === ' ' || e.key === 'Enter') {
+      e.preventDefault();
+      setOpen(true);
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      setOpen(false);
+    }
+  };
+
   return (
     <div
       ref={root}
       className="relative"
       onMouseEnter={() => setOpen(true)}
       onMouseLeave={() => setOpen(false)}
+      onKeyDown={handleKeyDown}
     >
       <button
         type="button"

@@ -72,60 +72,80 @@ export function JobApplicationForm({ roleTitle }: JobApplicationFormProps) {
       )}
 
       <div>
-        <label className="block text-sm font-medium text-navy">Full name</label>
+        <label htmlFor="jobapp-fullName" className="block text-sm font-medium text-navy">
+          Full name
+        </label>
         <input
+          id="jobapp-fullName"
           type="text"
           name="fullName"
           value={formData.fullName}
           onChange={handleChange}
           required
+          aria-invalid={false}
           className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-accent-blue focus:outline-none focus:ring-2 focus:ring-accent-blue/20"
         />
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className="block text-sm font-medium text-navy">Email</label>
+          <label htmlFor="jobapp-email" className="block text-sm font-medium text-navy">
+            Email
+          </label>
           <input
+            id="jobapp-email"
             type="email"
             name="email"
             value={formData.email}
             onChange={handleChange}
             required
+            aria-invalid={false}
             className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-accent-blue focus:outline-none focus:ring-2 focus:ring-accent-blue/20"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-navy">Phone</label>
+          <label htmlFor="jobapp-phone" className="block text-sm font-medium text-navy">
+            Phone
+          </label>
           <input
+            id="jobapp-phone"
             type="tel"
             name="phone"
             value={formData.phone}
             onChange={handleChange}
             required
+            aria-invalid={false}
             className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-accent-blue focus:outline-none focus:ring-2 focus:ring-accent-blue/20"
           />
         </div>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-navy">Cover letter</label>
+        <label htmlFor="jobapp-coverLetter" className="block text-sm font-medium text-navy">
+          Cover letter
+        </label>
         <textarea
+          id="jobapp-coverLetter"
           name="coverLetter"
           value={formData.coverLetter}
           onChange={handleChange}
           rows={4}
+          aria-invalid={false}
           className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-accent-blue focus:outline-none focus:ring-2 focus:ring-accent-blue/20"
           placeholder="Tell us about yourself and why you're interested in this role..."
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-navy">Upload CV (PDF)</label>
+        <label htmlFor="jobapp-cv" className="block text-sm font-medium text-navy">
+          Upload CV (PDF)
+        </label>
         <input
+          id="jobapp-cv"
           type="file"
           accept=".pdf"
           onChange={handleFileChange}
+          aria-invalid={false}
           className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-accent-blue focus:outline-none focus:ring-2 focus:ring-accent-blue/20"
         />
         {formData.file && <p className="mt-1 text-xs text-slate">{formData.file.name}</p>}

@@ -90,11 +90,12 @@ export function HeroCarousel({ children }: HeroCarouselProps) {
 
       {/* Carousel indicators */}
       <div className="absolute bottom-8 left-1/2 z-10 flex -translate-x-1/2 gap-2">
-        {HERO_IMAGES.map((_, idx) => (
+        {HERO_IMAGES.map((image, idx) => (
           <button
             key={idx}
             type="button"
-            aria-label={`Go to image ${idx + 1}`}
+            aria-label={`Go to slide ${idx + 1} of ${HERO_IMAGES.length}: ${image.alt}`}
+            aria-current={idx === currentIndex ? 'page' : undefined}
             className={`h-2 rounded-full transition-all ${
               idx === currentIndex ? 'w-8 bg-accent-blue' : 'w-2 bg-white/50 hover:bg-white/75'
             }`}

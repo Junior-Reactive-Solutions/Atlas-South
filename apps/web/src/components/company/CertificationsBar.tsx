@@ -12,7 +12,7 @@ export function CertificationsBar({ certifications }: { certifications: Certific
       {certifications.map((cert) => (
         <div key={cert.title} className="flex flex-col items-center rounded-lg border border-border bg-canvas p-4 text-center">
           <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-accent-blue/10">
-            <Icon name={cert.icon} size={20} className="text-accent-blue" />
+            <Icon name={cert.icon} size={20} className="text-accent-blue" aria-hidden="true" />
           </div>
           <h3 className="font-semibold text-navy">{cert.title}</h3>
           <p className="mt-2 text-xs text-slate">{cert.body}</p>
