@@ -2,6 +2,7 @@ import express from 'express';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import cors from 'cors';
+import compression from 'compression';
 import { env } from './lib/env.js';
 import { generalApiLimiter } from './middleware/rateLimiters.js';
 import { healthRouter } from './routes/health.js';
@@ -48,6 +49,10 @@ app.use(
     credentials: true,
   }),
 );
+
+// Compression middleware — gzip responses for 20-50% bandwidth reduction
+// Set threshold to 860 bytes (default is 1 kB) to compress most responses
+app.use(compression({ threshold: 860 }));
 
 app.use(express.json({ limit: '100kb' })); // small cap — this API never needs large payloads
 app.use(cookieParser()); // Parse httpOnly cookies for JWT refresh tokens

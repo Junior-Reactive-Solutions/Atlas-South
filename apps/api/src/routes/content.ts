@@ -26,6 +26,8 @@ contentRouter.get('/content/:slug', async (req, res) => {
       return res.status(404).json({ error: 'Page not found or not yet published' });
     }
 
+    // Cache content responses for 5 minutes (content rarely changes mid-session)
+    res.set('Cache-Control', 'public, max-age=300');
     res.json(page);
   } catch (err) {
     if (err instanceof Error && err.message.includes('DATABASE_URL')) {

@@ -82,6 +82,7 @@ export function HeroCarousel({ children }: HeroCarouselProps) {
           height={1080}
           className="hero-carousel-image absolute inset-0 h-full w-full object-cover"
           loading="eager"
+          decoding="async"
         />
       </picture>
 
