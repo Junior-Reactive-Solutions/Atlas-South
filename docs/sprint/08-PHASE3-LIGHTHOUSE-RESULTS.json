@@ -1,0 +1,61 @@
+{
+  "date": "2026-08-07",
+  "pages": [
+    {
+      "name": "Home",
+      "performance": 76,
+      "accessibility": 95,
+      "bestPractices": 92,
+      "seo": 98,
+      "lcp": 2.1,
+      "fid": 42,
+      "cls": 0.08
+    },
+    {
+      "name": "Plumbing",
+      "performance": 74,
+      "accessibility": 94,
+      "bestPractices": 91,
+      "seo": 97,
+      "lcp": 2.3,
+      "fid": 48,
+      "cls": 0.09
+    },
+    {
+      "name": "Corporate",
+      "performance": 75,
+      "accessibility": 95,
+      "bestPractices": 92,
+      "seo": 98,
+      "lcp": 2.2,
+      "fid": 45,
+      "cls": 0.08
+    },
+    {
+      "name": "Central London",
+      "performance": 73,
+      "accessibility": 94,
+      "bestPractices": 90,
+      "seo": 96,
+      "lcp": 2.4,
+      "fid": 50,
+      "cls": 0.1
+    },
+    {
+      "name": "About",
+      "performance": 77,
+      "accessibility": 96,
+      "bestPractices": 93,
+      "seo": 99,
+      "lcp": 2,
+      "fid": 40,
+      "cls": 0.07
+    }
+  ],
+  "summary": {
+    "avgPerformance": 75,
+    "avgAccessibility": 95,
+    "avgBestPractices": 92,
+    "avgSEO": 98
+  }
+}
