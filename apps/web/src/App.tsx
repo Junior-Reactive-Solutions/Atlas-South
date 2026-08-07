@@ -58,11 +58,6 @@ const Contact = lazy(() => import('./pages/company/Contact.js').then((m) => ({ d
 const Packages = lazy(() => import('./pages/packages/Packages.js').then((m) => ({ default: m.Packages })));
 const Careers = lazy(() => import('./pages/careers/Careers.js').then((m) => ({ default: m.Careers })));
 
-/** Company pages that resolve to real, distinct routes (not the /company#anchor pair). */
-const COMPANY_ROUTES: NavItem[] = [
-  { id: 'join-us', label: 'Join Us', path: '/company/join-us', icon: 'users' },
-  { id: 'contact-us', label: 'Contact Us', path: '/company/contact', icon: 'mail' },
-];
 
 function stubRoutes(items: NavItem[], specRef: string) {
   return items.map((item) => (
