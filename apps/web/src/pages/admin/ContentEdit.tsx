@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext.js';
 import { Reorder } from 'motion/react';
 import { ArrowLeft, GripVertical, Plus, Trash2, Upload, RotateCcw, Eye } from 'lucide-react';
 
@@ -44,7 +45,6 @@ function recordArray(value: unknown): Array<Record<string, unknown>> {
 
 export function AdminContentEdit() {
   const { slug } = useParams<{ slug: string }>();
-  const navigate = useNavigate();
   const [page, setPage] = useState<ContentPageDoc | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -63,19 +63,13 @@ export function AdminContentEdit() {
   const [openRoles, setOpenRoles] = useState<Row[]>([]);
   const [tiers, setTiers] = useState<Row[]>([]);
 
-  const token = localStorage.getItem('accessToken');
+  const { authFetch } = useAuth();
 
   useEffect(() => {
     const fetchPage = async () => {
       try {
-        const response = await fetch(`/api/admin/content/${slug}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        if (!response.ok) {
-          if (response.status === 401) navigate('/admin/login');
-          return;
-        }
+        const response = await authFetch(`/api/admin/content/${slug}`);
+        if (!response.ok) return;
 
         const data: ContentPageDoc = await response.json();
         setPage(data);
@@ -131,9 +125,8 @@ export function AdminContentEdit() {
     setIsSaving(true);
     setMessage(null);
     try {
-      const response = await fetch(`/api/admin/content/${slug}`, {
+      const response = await authFetch(`/api/admin/content/${slug}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ draftData: buildDraftData() }),
       });
 
@@ -153,15 +146,13 @@ export function AdminContentEdit() {
     setMessage(null);
     try {
       // Save first, so publish always reflects the latest edits
-      await fetch(`/api/admin/content/${slug}`, {
+      await authFetch(`/api/admin/content/${slug}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ draftData: buildDraftData() }),
       });
 
-      const response = await fetch(`/api/admin/content/${slug}/publish`, {
+      const response = await authFetch(`/api/admin/content/${slug}/publish`, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
       });
 
       if (!response.ok) throw new Error('Publish failed');
@@ -180,9 +171,8 @@ export function AdminContentEdit() {
     setIsSaving(true);
     setMessage(null);
     try {
-      const response = await fetch(`/api/admin/content/${slug}/discard`, {
+      const response = await authFetch(`/api/admin/content/${slug}/discard`, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
       });
 
       if (!response.ok) throw new Error('Discard failed');

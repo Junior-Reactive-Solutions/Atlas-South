@@ -4,7 +4,7 @@ import helmet from 'helmet';
 import cors from 'cors';
 import compression from 'compression';
 import { env } from './lib/env.js';
-import { generalApiLimiter } from './middleware/rateLimiters.js';
+import { generalApiLimiter, loginLimiter, adminApiLimiter } from './middleware/rateLimiters.js';
 import { healthRouter } from './routes/health.js';
 import { enquiriesRouter } from './routes/enquiries.js';
 import { eventsRouter } from './routes/events.js';
@@ -65,13 +65,15 @@ app.use('/api', contentRouter);
 app.use('/api', careersRouter);
 
 // Admin routes — secured with JWT authentication
-app.use('/api/admin/auth', adminAuthRouter);
-app.use('/api/admin/enquiries', adminEnquiriesRouter);
-app.use('/api/admin', adminApplicationsRouter);
-app.use('/api/admin/stats', adminStatsRouter);
-app.use('/api/admin/users', adminUsersRouter);
-app.use('/api/admin/analytics', adminAnalyticsRouter);
-app.use('/api/admin/content', adminContentRouter);
+// loginLimiter applies specifically to the auth endpoint (5 attempts / 15 min);
+// adminApiLimiter applies to all other admin endpoints (300 req / 60 s per IP).
+app.use('/api/admin/auth', loginLimiter, adminAuthRouter);
+app.use('/api/admin/enquiries', adminApiLimiter, adminEnquiriesRouter);
+app.use('/api/admin', adminApiLimiter, adminApplicationsRouter);
+app.use('/api/admin/stats', adminApiLimiter, adminStatsRouter);
+app.use('/api/admin/users', adminApiLimiter, adminUsersRouter);
+app.use('/api/admin/analytics', adminApiLimiter, adminAnalyticsRouter);
+app.use('/api/admin/content', adminApiLimiter, adminContentRouter);
 
 // Centralised error handler — never leak stack traces to the client.
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

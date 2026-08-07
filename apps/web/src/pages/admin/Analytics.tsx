@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext.js';
 import { TrendingUp, Eye, MousePointerClick, Zap } from 'lucide-react';
 import { animate, stagger } from 'animejs';
 import { useAnimationScope, DURATION, EASE, STAGGER_GAP } from '@atlas-south/design-system';
@@ -20,22 +20,13 @@ export function AdminAnalytics() {
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [timeRange, setTimeRange] = useState<'7d' | '30d' | '90d'>('30d');
-  const navigate = useNavigate();
+  const { authFetch } = useAuth();
 
   useEffect(() => {
     const fetchAnalytics = async () => {
       try {
-        const token = localStorage.getItem('accessToken');
-        const response = await fetch(`/api/admin/analytics?range=${timeRange}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        if (!response.ok) {
-          if (response.status === 401) {
-            navigate('/admin/login');
-          }
-          return;
-        }
+        const response = await authFetch(`/api/admin/analytics?range=${timeRange}`);
+        if (!response.ok) return;
 
         const data = await response.json();
         setAnalytics(data);
@@ -47,7 +38,7 @@ export function AdminAnalytics() {
     };
 
     fetchAnalytics();
-  }, [timeRange, navigate]);
+  }, [timeRange, authFetch]);
 
   // Same fade+rise treatment as the public site's cards — docs/build/08-ADMIN-PANEL-SPEC.md §7.
   const root = useAnimationScope(

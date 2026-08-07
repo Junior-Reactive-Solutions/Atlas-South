@@ -1,17 +1,17 @@
-import { Router, Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
+import { Router, Response } from 'express';
 import { z } from 'zod';
-import { authMiddleware } from '../../middleware/auth.js';
+import { authMiddleware, AuthRequest } from '../../middleware/auth.js';
+import { requireDb } from '../../lib/prisma.js';
 
 const router = Router();
-const prisma = new PrismaClient();
 
 // Apply auth middleware to all admin routes
 router.use(authMiddleware);
 
-router.get('/', async (req: Request, res: Response) => {
+router.get('/', async (req: AuthRequest, res: Response) => {
   try {
-    const enquiries = await prisma.enquiry.findMany({
+    const db = requireDb();
+    const enquiries = await db.enquiry.findMany({
       orderBy: { createdAt: 'desc' },
       take: 100,
     });
@@ -23,9 +23,10 @@ router.get('/', async (req: Request, res: Response) => {
   }
 });
 
-router.get('/:id', async (req: Request, res: Response) => {
+router.get('/:id', async (req: AuthRequest, res: Response) => {
   try {
-    const enquiry = await prisma.enquiry.findUnique({
+    const db = requireDb();
+    const enquiry = await db.enquiry.findUnique({
       where: { id: req.params.id },
     });
 
@@ -44,13 +45,23 @@ const UpdateEnquirySchema = z.object({
   status: z.enum(['new', 'contacted', 'quoted', 'won', 'lost']),
 });
 
-router.patch('/:id', async (req: Request, res: Response) => {
+router.patch('/:id', async (req: AuthRequest, res: Response) => {
   try {
+    const db = requireDb();
     const { status } = UpdateEnquirySchema.parse(req.body);
 
-    const enquiry = await prisma.enquiry.update({
+    const enquiry = await db.enquiry.update({
       where: { id: req.params.id },
       data: { status },
+    });
+
+    // Audit trail: every enquiry status change is logged with the acting admin
+    await db.adminAuditLog.create({
+      data: {
+        event: `enquiry_status_updated:${req.params.id}:${status}`,
+        ip: req.ip ?? 'unknown',
+        adminUserId: req.adminId,
+      },
     });
 
     res.json(enquiry);

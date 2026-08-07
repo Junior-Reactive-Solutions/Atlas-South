@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext.js';
 import { FileText, Calendar, Mail, Phone } from 'lucide-react';
 import { animate, stagger } from 'animejs';
 import { motion, AnimatePresence } from 'motion/react';
@@ -20,22 +20,13 @@ export function AdminApplications() {
   const [applications, setApplications] = useState<JobApplication[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [expandedId, setExpandedId] = useState<string | null>(null);
-  const navigate = useNavigate();
+  const { authFetch } = useAuth();
 
   useEffect(() => {
     const fetchApplications = async () => {
       try {
-        const token = localStorage.getItem('accessToken');
-        const response = await fetch('/api/admin/applications', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        if (!response.ok) {
-          if (response.status === 401) {
-            navigate('/admin/login');
-          }
-          return;
-        }
+        const response = await authFetch('/api/admin/applications');
+        if (!response.ok) return;
 
         const data = await response.json();
         setApplications(data.sort((a: JobApplication, b: JobApplication) =>
@@ -49,7 +40,7 @@ export function AdminApplications() {
     };
 
     fetchApplications();
-  }, [navigate]);
+  }, [authFetch]);
 
   const root = useAnimationScope(
     (self) => {

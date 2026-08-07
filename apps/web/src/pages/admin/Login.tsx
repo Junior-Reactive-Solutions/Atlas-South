@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useNoIndex } from '../../hooks/useNoIndex.js';
+import { useAuth } from '../../contexts/AuthContext.js';
 
 export function AdminLogin() {
   const [email, setEmail] = useState('');
@@ -8,6 +9,7 @@ export function AdminLogin() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   useNoIndex();
 
@@ -17,29 +19,16 @@ export function AdminLogin() {
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/admin/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-        credentials: 'include',
-      });
+      // login() stores the access token in React state (never localStorage).
+      const { mustChangePassword } = await login(email, password);
 
-      if (!response.ok) {
-        const data = await response.json();
-        setError(data.error || 'Login failed');
-        return;
-      }
-
-      const data = await response.json();
-      localStorage.setItem('accessToken', data.accessToken);
-
-      if (data.mustChangePassword) {
+      if (mustChangePassword) {
         navigate('/admin/change-password');
       } else {
         navigate('/admin/dashboard');
       }
     } catch (err) {
-      setError('Network error. Please try again.');
+      setError(err instanceof Error ? err.message : 'Login failed');
     } finally {
       setIsLoading(false);
     }
@@ -54,7 +43,7 @@ export function AdminLogin() {
         </div>
 
         {error && (
-          <div className="mb-6 rounded-lg bg-red-50 p-4 text-sm text-red-600">
+          <div className="mb-6 rounded-lg bg-red-50 p-4 text-sm text-red-600" role="alert">
             {error}
           </div>
         )}
@@ -67,6 +56,7 @@ export function AdminLogin() {
             <input
               id="email"
               type="email"
+              autoComplete="username email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2 focus:border-accent-blue focus:outline-none focus:ring-2 focus:ring-accent-blue/20"
@@ -81,6 +71,7 @@ export function AdminLogin() {
             <input
               id="password"
               type="password"
+              autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2 focus:border-accent-blue focus:outline-none focus:ring-2 focus:ring-accent-blue/20"
@@ -93,7 +84,7 @@ export function AdminLogin() {
             disabled={isLoading}
             className="mt-6 w-full rounded-lg bg-accent-blue px-4 py-2 font-semibold text-white transition-colors hover:bg-blue-700 disabled:opacity-50"
           >
-            {isLoading ? 'Logging in...' : 'Login'}
+            {isLoading ? 'Logging in…' : 'Login'}
           </button>
         </form>
 
