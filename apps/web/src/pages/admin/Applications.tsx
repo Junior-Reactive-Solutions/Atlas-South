@@ -100,7 +100,7 @@ export function AdminApplications() {
                 <motion.button
                   onClick={() => setExpandedId(expandedId === app.id ? null : app.id)}
                   whileHover={{ backgroundColor: 'rgb(248, 250, 252)' }}
-                  className="w-full rounded-lg border border-slate-200 bg-white p-4 text-left transition-colors"
+                  className="w-full rounded-lg border border-slate-200 bg-white p-4 text-left transition-colors focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-accent-blue"
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex-1">

@@ -143,7 +143,7 @@ export function AdminEnquiries() {
                     exit={{ opacity: 0, scale: 0.95 }}
                     whileHover={{ y: -2, boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}
                     transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                    className="rounded-lg border border-slate-200 bg-white p-3"
+                    className="rounded-lg border border-slate-200 bg-white p-3 transition-shadow focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-accent-blue"
                   >
                     <p className="font-medium text-navy">{enquiry.fullName}</p>
                     <p className="text-xs text-slate-600">{enquiry.email}</p>
