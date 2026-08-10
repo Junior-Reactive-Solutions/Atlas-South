@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext.js';
 import { ArrowRight, Trash2 } from 'lucide-react';
 import { animate, stagger } from 'animejs';
 import { motion, AnimatePresence } from 'motion/react';
@@ -38,22 +38,13 @@ const STATUS_COLORS: Record<Status, string> = {
 export function AdminEnquiries() {
   const [enquiries, setEnquiries] = useState<Enquiry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const navigate = useNavigate();
+  const { authFetch } = useAuth();
 
   useEffect(() => {
     const fetchEnquiries = async () => {
       try {
-        const token = localStorage.getItem('accessToken');
-        const response = await fetch('/api/admin/enquiries', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        if (!response.ok) {
-          if (response.status === 401) {
-            navigate('/admin/login');
-          }
-          return;
-        }
+        const response = await authFetch('/api/admin/enquiries');
+        if (!response.ok) return;
 
         const data = await response.json();
         setEnquiries(data);
@@ -65,17 +56,12 @@ export function AdminEnquiries() {
     };
 
     fetchEnquiries();
-  }, [navigate]);
+  }, [authFetch]);
 
   const updateStatus = async (id: string, newStatus: Status) => {
     try {
-      const token = localStorage.getItem('accessToken');
-      const response = await fetch(`/api/admin/enquiries/${id}`, {
+      const response = await authFetch(`/api/admin/enquiries/${id}`, {
         method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
         body: JSON.stringify({ status: newStatus }),
       });
 
@@ -143,7 +129,7 @@ export function AdminEnquiries() {
                     exit={{ opacity: 0, scale: 0.95 }}
                     whileHover={{ y: -2, boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}
                     transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                    className="rounded-lg border border-slate-200 bg-white p-3"
+                    className="rounded-lg border border-slate-200 bg-white p-3 transition-shadow focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-accent-blue"
                   >
                     <p className="font-medium text-navy">{enquiry.fullName}</p>
                     <p className="text-xs text-slate-600">{enquiry.email}</p>

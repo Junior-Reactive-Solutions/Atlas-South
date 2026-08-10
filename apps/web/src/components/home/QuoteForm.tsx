@@ -181,6 +181,8 @@ export function QuoteForm() {
                   name="fullName"
                   type="text"
                   required
+                  aria-describedby={errors.fullName ? 'fullName-error' : undefined}
+                  aria-invalid={!!errors.fullName}
                   value={formData.fullName}
                   onChange={handleChange}
                   className={`w-full rounded-lg border bg-white/10 py-2 pl-10 pr-4 text-white placeholder-white/50 transition-colors focus:outline-none focus:ring-2 ${
@@ -188,7 +190,11 @@ export function QuoteForm() {
                   }`}
                 />
               </div>
-              {errors.fullName && <p className="mt-1 text-sm text-error">{errors.fullName}</p>}
+              {errors.fullName && (
+                <p id="fullName-error" className="mt-1 text-sm text-error" role="alert">
+                  {errors.fullName}
+                </p>
+              )}
             </div>
 
             <div className="quote-form-field">
@@ -202,6 +208,8 @@ export function QuoteForm() {
                   name="email"
                   type="email"
                   required
+                  aria-describedby={errors.email ? 'email-error' : undefined}
+                  aria-invalid={!!errors.email}
                   value={formData.email}
                   onChange={handleChange}
                   className={`w-full rounded-lg border bg-white/10 py-2 pl-10 pr-4 text-white placeholder-white/50 transition-colors focus:outline-none focus:ring-2 ${
@@ -209,7 +217,11 @@ export function QuoteForm() {
                   }`}
                 />
               </div>
-              {errors.email && <p className="mt-1 text-sm text-error">{errors.email}</p>}
+              {errors.email && (
+                <p id="email-error" className="mt-1 text-sm text-error" role="alert">
+                  {errors.email}
+                </p>
+              )}
             </div>
 
             <div className="quote-form-field">
@@ -223,6 +235,8 @@ export function QuoteForm() {
                   name="phone"
                   type="tel"
                   required
+                  aria-describedby={errors.phone ? 'phone-error' : undefined}
+                  aria-invalid={!!errors.phone}
                   value={formData.phone}
                   onChange={handleChange}
                   className={`w-full rounded-lg border bg-white/10 py-2 pl-10 pr-4 text-white placeholder-white/50 transition-colors focus:outline-none focus:ring-2 ${
@@ -230,7 +244,11 @@ export function QuoteForm() {
                   }`}
                 />
               </div>
-              {errors.phone && <p className="mt-1 text-sm text-error">{errors.phone}</p>}
+              {errors.phone && (
+                <p id="phone-error" className="mt-1 text-sm text-error" role="alert">
+                  {errors.phone}
+                </p>
+              )}
             </div>
 
             <div className="quote-form-field">
@@ -268,6 +286,8 @@ export function QuoteForm() {
                 name="message"
                 required
                 rows={4}
+                aria-describedby={errors.message ? 'message-error' : undefined}
+                aria-invalid={!!errors.message}
                 value={formData.message}
                 onChange={handleChange}
                 className={`w-full rounded-lg border bg-white/10 py-2 pl-10 pr-4 text-white placeholder-white/50 transition-colors focus:outline-none focus:ring-2 ${
@@ -275,7 +295,11 @@ export function QuoteForm() {
                 }`}
               />
             </div>
-            {errors.message && <p className="mt-1 text-sm text-error">{errors.message}</p>}
+            {errors.message && (
+              <p id="message-error" className="mt-1 text-sm text-error" role="alert">
+                {errors.message}
+              </p>
+            )}
           </div>
 
           {/* Honeypot field — hidden from users, catches bots */}
@@ -295,6 +319,8 @@ export function QuoteForm() {
               name="agreedToPrivacyPolicy"
               type="checkbox"
               required
+              aria-describedby={errors.agreedToPrivacyPolicy ? 'agreedToPrivacyPolicy-error' : undefined}
+              aria-invalid={!!errors.agreedToPrivacyPolicy}
               checked={formData.agreedToPrivacyPolicy}
               onChange={handleChange}
               className="mt-1 rounded border-white/20 bg-white/10 text-accent-blue focus:ring-accent-blue"
@@ -308,7 +334,9 @@ export function QuoteForm() {
             </label>
           </div>
           {errors.agreedToPrivacyPolicy && (
-            <p className="text-sm text-error">{errors.agreedToPrivacyPolicy}</p>
+            <p id="agreedToPrivacyPolicy-error" className="text-sm text-error" role="alert">
+              {errors.agreedToPrivacyPolicy}
+            </p>
           )}
 
           <button

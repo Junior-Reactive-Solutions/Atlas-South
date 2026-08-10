@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Lock, Key } from 'lucide-react';
+import { useAuth } from '../../contexts/AuthContext.js';
 
 export function AdminSettings() {
   const [currentPassword, setCurrentPassword] = useState('');
@@ -8,6 +9,7 @@ export function AdminSettings() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const { authFetch } = useAuth();
 
   const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,18 +29,9 @@ export function AdminSettings() {
     setIsLoading(true);
 
     try {
-      const token = localStorage.getItem('accessToken');
-      const response = await fetch('/api/admin/users/change-password', {
+      const response = await authFetch('/api/admin/users/change-password', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          currentPassword,
-          newPassword,
-        }),
-        credentials: 'include',
+        body: JSON.stringify({ currentPassword, newPassword }),
       });
 
       if (!response.ok) {

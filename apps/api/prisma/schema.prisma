@@ -90,6 +90,9 @@ enum ContentPageType {
   industry
   area
   home
+  company
+  careers
+  packages
 }
 
 enum ContentStatus {
@@ -124,4 +127,19 @@ model ContentPage {
 
   @@index([type])
   @@index([status])
+}
+
+model JobApplication {
+  id           String   @id @default(cuid())
+  fullName     String
+  email        String
+  phone        String
+  roleTitle    String?
+  coverLetter  String?
+  cvFileName   String?
+  cvFilePath   String?
+  createdAt    DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([roleTitle])
 }

@@ -1,8 +1,8 @@
-import { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { Icon, type IconName } from '@atlas-south/design-system';
 import { QuoteForm } from '../home/QuoteForm';
 import { Seo } from '../seo/Seo.js';
+import { Markdown } from '../content/Markdown.js';
 import { COMPANY } from '@atlas-south/shared';
 
 interface ServiceHighlight {
@@ -17,9 +17,9 @@ interface IndustryDetailPageProps {
   /** Route this page is mounted at, e.g. "/industries/healthcare" — feeds Seo's canonical/OG URL. */
   path: string;
   heroDescription: string;
-  overview: ReactNode;
-  challenges: ReactNode;
-  ourApproach: ReactNode;
+  overview: string;
+  challenges: string;
+  ourApproach: string;
   serviceHighlights: ServiceHighlight[];
   relatedServices?: Array<{ label: string; path: string }>;
 }
@@ -84,7 +84,7 @@ export function IndustryDetailPage({
       <section className="py-16 sm:py-20">
         <div className="mx-auto max-w-4xl px-4">
           <div className="prose prose-sm max-w-none sm:prose-base dark:prose-invert">
-            {overview}
+            <Markdown content={overview} />
           </div>
         </div>
       </section>
@@ -96,7 +96,7 @@ export function IndustryDetailPage({
             Challenges specific to {title.toLowerCase()}
           </h2>
           <div className="prose prose-sm max-w-none sm:prose-base dark:prose-invert">
-            {challenges}
+            <Markdown content={challenges} />
           </div>
         </div>
       </section>
@@ -108,7 +108,7 @@ export function IndustryDetailPage({
             How we serve {title.toLowerCase()}
           </h2>
           <div className="prose prose-sm max-w-none sm:prose-base dark:prose-invert">
-            {ourApproach}
+            <Markdown content={ourApproach} />
           </div>
         </div>
       </section>

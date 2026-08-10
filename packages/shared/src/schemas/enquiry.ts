@@ -10,7 +10,7 @@ import { ALL_SERVICES } from '../constants/navigation.js';
 
 const SERVICE_IDS = ALL_SERVICES.map((s) => s.id) as [string, ...string[]];
 
-export const PropertyType = z.enum(['residential', 'commercial', 'industrial', 'other']);
+export const PropertyType = z.enum(['commercial', 'industrial', 'mixed-use', 'other']);
 export type PropertyType = z.infer<typeof PropertyType>;
 
 export const Urgency = z.enum(['emergency', 'within-a-week', 'planning-ahead']);

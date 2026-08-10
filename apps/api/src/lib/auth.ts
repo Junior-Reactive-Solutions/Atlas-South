@@ -12,13 +12,17 @@ const JWT_REFRESH_SECRET = env.JWT_REFRESH_SECRET || 'dev-refresh-secret-change-
 
 export interface JWTPayload {
   adminId: string;
+  /** tokenVersion is embedded in the JWT and checked against AdminUser.tokenVersion on
+   * every authenticated request. Incrementing the DB value (e.g. on password change)
+   * immediately invalidates all previously issued tokens for that account. */
+  tokenVersion: number;
   iat: number;
   exp: number;
 }
 
-export function generateTokens(adminId: string) {
-  const accessToken = jwt.sign({ adminId }, JWT_SECRET, { expiresIn: '15m' });
-  const refreshToken = jwt.sign({ adminId }, JWT_REFRESH_SECRET, { expiresIn: '7d' });
+export function generateTokens(adminId: string, tokenVersion: number) {
+  const accessToken = jwt.sign({ adminId, tokenVersion }, JWT_SECRET, { expiresIn: '15m' });
+  const refreshToken = jwt.sign({ adminId, tokenVersion }, JWT_REFRESH_SECRET, { expiresIn: '7d' });
 
   return { accessToken, refreshToken };
 }

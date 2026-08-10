@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { BarChart3, MessageSquare, Eye, TrendingUp } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { BarChart3, Eye, MessageSquare, Settings, TrendingUp, Users } from 'lucide-react';
+import { useAuth } from '../../contexts/AuthContext.js';
 import { animate, stagger } from 'animejs';
 import { useAnimationScope, DURATION, EASE, STAGGER_GAP } from '@atlas-south/design-system';
 
@@ -14,22 +15,13 @@ interface DashboardStats {
 export function AdminDashboard() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const navigate = useNavigate();
+  const { authFetch } = useAuth();
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const token = localStorage.getItem('accessToken');
-        const response = await fetch('/api/admin/stats', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        if (!response.ok) {
-          if (response.status === 401) {
-            navigate('/admin/login');
-          }
-          return;
-        }
+        const response = await authFetch('/api/admin/stats');
+        if (!response.ok) return;
 
         const data = await response.json();
         setStats(data);
@@ -41,7 +33,7 @@ export function AdminDashboard() {
     };
 
     fetchStats();
-  }, [navigate]);
+  }, [authFetch]);
 
   // Data widgets fade+rise on load using the same tokens as public-site cards —
   // docs/build/08-ADMIN-PANEL-SPEC.md §7 ("admin UI is not a separate animation system").
@@ -136,8 +128,8 @@ export function AdminDashboard() {
 
       {/* Quick Links */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <a
-          href="/admin/enquiries"
+        <Link
+          to="/admin/enquiries"
           className="flex items-center justify-between rounded-lg border border-slate-200 bg-white p-6 hover:bg-slate-50"
         >
           <div>
@@ -145,10 +137,21 @@ export function AdminDashboard() {
             <p className="text-sm text-slate-600">View sales pipeline</p>
           </div>
           <MessageSquare className="h-6 w-6 text-accent-blue" />
-        </a>
+        </Link>
 
-        <a
-          href="/admin/analytics"
+        <Link
+          to="/admin/applications"
+          className="flex items-center justify-between rounded-lg border border-slate-200 bg-white p-6 hover:bg-slate-50"
+        >
+          <div>
+            <p className="font-semibold text-navy">Job Applications</p>
+            <p className="text-sm text-slate-600">Review applicants</p>
+          </div>
+          <Users className="h-6 w-6 text-accent-blue" />
+        </Link>
+
+        <Link
+          to="/admin/analytics"
           className="flex items-center justify-between rounded-lg border border-slate-200 bg-white p-6 hover:bg-slate-50"
         >
           <div>
@@ -156,18 +159,18 @@ export function AdminDashboard() {
             <p className="text-sm text-slate-600">Traffic insights</p>
           </div>
           <BarChart3 className="h-6 w-6 text-accent-blue" />
-        </a>
+        </Link>
 
-        <a
-          href="/admin/settings"
+        <Link
+          to="/admin/settings"
           className="flex items-center justify-between rounded-lg border border-slate-200 bg-white p-6 hover:bg-slate-50"
         >
           <div>
             <p className="font-semibold text-navy">Settings</p>
             <p className="text-sm text-slate-600">Account & security</p>
           </div>
-          <MessageSquare className="h-6 w-6 text-accent-blue" />
-        </a>
+          <Settings className="h-6 w-6 text-accent-blue" />
+        </Link>
       </div>
     </div>
   );

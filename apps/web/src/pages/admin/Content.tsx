@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext.js';
 import { motion } from 'motion/react';
 import { CheckCircle2, Clock } from 'lucide-react';
 
@@ -23,20 +24,13 @@ const TYPE_LABELS: Record<string, string> = {
 export function AdminContent() {
   const [pages, setPages] = useState<ContentPageSummary[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const navigate = useNavigate();
+  const { authFetch } = useAuth();
 
   useEffect(() => {
     const fetchPages = async () => {
       try {
-        const token = localStorage.getItem('accessToken');
-        const response = await fetch('/api/admin/content', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        if (!response.ok) {
-          if (response.status === 401) navigate('/admin/login');
-          return;
-        }
+        const response = await authFetch('/api/admin/content');
+        if (!response.ok) return;
 
         setPages(await response.json());
       } catch (error) {
@@ -47,7 +41,7 @@ export function AdminContent() {
     };
 
     fetchPages();
-  }, [navigate]);
+  }, [authFetch]);
 
   if (isLoading) {
     return <div className="flex items-center justify-center p-8">Loading...</div>;

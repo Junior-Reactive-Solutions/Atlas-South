@@ -62,7 +62,7 @@ export const SERVICE_AREAS: NavItem[] = [
   { id: 'surrey-kent', label: 'Surrey & Kent', path: '/areas/surrey-kent', icon: 'map-pin' },
 ];
 
-/** Residential/homeowner offering — retained per docs/agile/user-stories.md decision 1. */
+/** Commercial service-agreement tiers — SLA/pricing page for corporate clients. */
 export const PACKAGES_PAGE: NavItem = {
   id: 'packages',
   label: 'Packages',

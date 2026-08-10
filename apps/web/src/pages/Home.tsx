@@ -3,7 +3,16 @@ import { ServiceCard } from '../components/home/ServiceCard';
 import { Testimonials } from '../components/home/Testimonials';
 import { QuoteForm } from '../components/home/QuoteForm';
 import { Seo } from '../components/seo/Seo.js';
+import { useContentPage } from '../hooks/useContentPage';
 import { HARD_SERVICES, COMPANY } from '@atlas-south/shared';
+
+interface HomeContent {
+  headlineLines: [string, string, string];
+  subcopy: string;
+  primaryCtaLabel: string;
+  homeCtaLabel: string;
+  businessCtaLabel: string;
+}
 
 /**
  * Home — docs/build/06-PAGE-SPECIFICATIONS.md "Home & Company" table.
@@ -14,11 +23,13 @@ import { HARD_SERVICES, COMPANY } from '@atlas-south/shared';
  * Soft Services and beyond: Sprint 4+.
  */
 export function Home() {
+  const { data: content } = useContentPage<HomeContent>('home');
+
   return (
     <>
       <Seo
         title="Trades & Facilities Services in London & the South East"
-        description="Atlas South delivers electrical, plumbing, fire safety and full facilities management for homes and businesses across London and the South East. 24/7 emergency cover."
+        description="Atlas South delivers electrical, plumbing, fire safety and full facilities management for commercial buildings across London and the South East. 24/7 emergency cover."
         path="/"
         jsonLd={{
           '@context': 'https://schema.org',
@@ -37,7 +48,12 @@ export function Home() {
           foundingDate: String(COMPANY.foundedYear),
         }}
       />
-      <Hero />
+      <Hero
+        headlineLines={content?.headlineLines}
+        subcopy={content?.subcopy}
+        primaryCtaLabel={content?.primaryCtaLabel}
+        businessCtaLabel={content?.businessCtaLabel}
+      />
 
       {/* Hard Services section — docs/build/06-PAGE-SPECIFICATIONS.md "Hard Services row" */}
       <section aria-label="Hard services" className="bg-canvas-tint py-16 sm:py-20">
@@ -90,10 +106,10 @@ export function Home() {
             Coming soon
           </p>
           <h2 className="mt-2 font-display text-3xl font-bold text-navy sm:text-4xl">
-            Soft Services · Industries · Packages
+            Soft Services · Industries
           </h2>
           <p className="mt-4 text-slate">
-            Additional service lines and industry-specific solutions built in Sprint 4+.
+            Additional service lines and industry-specific solutions — coming soon.
           </p>
         </div>
       </section>

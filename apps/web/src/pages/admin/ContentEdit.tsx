@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext.js';
 import { Reorder } from 'motion/react';
 import { ArrowLeft, GripVertical, Plus, Trash2, Upload, RotateCcw, Eye } from 'lucide-react';
 
@@ -8,7 +9,7 @@ type JsonRecord = Record<string, unknown>;
 interface ContentPageDoc {
   id: string;
   slug: string;
-  type: 'service' | 'industry' | 'area' | 'home';
+  type: 'service' | 'industry' | 'area' | 'home' | 'company' | 'careers' | 'packages';
   path: string;
   status: 'draft' | 'published';
   draftData: JsonRecord;
@@ -44,7 +45,6 @@ function recordArray(value: unknown): Array<Record<string, unknown>> {
 
 export function AdminContentEdit() {
   const { slug } = useParams<{ slug: string }>();
-  const navigate = useNavigate();
   const [page, setPage] = useState<ContentPageDoc | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -55,20 +55,21 @@ export function AdminContentEdit() {
   const [features, setFeatures] = useState<Row[]>([]);
   const [faqs, setFaqs] = useState<Row[]>([]);
   const [serviceHighlights, setServiceHighlights] = useState<Row[]>([]);
+  const [timeline, setTimeline] = useState<Row[]>([]);
+  const [values, setValues] = useState<Row[]>([]);
+  const [team, setTeam] = useState<Row[]>([]);
+  const [certifications, setCertifications] = useState<Row[]>([]);
+  const [benefits, setBenefits] = useState<Row[]>([]);
+  const [openRoles, setOpenRoles] = useState<Row[]>([]);
+  const [tiers, setTiers] = useState<Row[]>([]);
 
-  const token = localStorage.getItem('accessToken');
+  const { authFetch } = useAuth();
 
   useEffect(() => {
     const fetchPage = async () => {
       try {
-        const response = await fetch(`/api/admin/content/${slug}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        if (!response.ok) {
-          if (response.status === 401) navigate('/admin/login');
-          return;
-        }
+        const response = await authFetch(`/api/admin/content/${slug}`);
+        if (!response.ok) return;
 
         const data: ContentPageDoc = await response.json();
         setPage(data);
@@ -76,6 +77,13 @@ export function AdminContentEdit() {
         setFeatures(withKeys(recordArray(data.draftData.features)));
         setFaqs(withKeys(recordArray(data.draftData.faqs)));
         setServiceHighlights(withKeys(recordArray(data.draftData.serviceHighlights)));
+        setTimeline(withKeys(recordArray(data.draftData.timeline)));
+        setValues(withKeys(recordArray(data.draftData.values)));
+        setTeam(withKeys(recordArray(data.draftData.team)));
+        setCertifications(withKeys(recordArray(data.draftData.certifications)));
+        setBenefits(withKeys(recordArray(data.draftData.benefits)));
+        setOpenRoles(withKeys(recordArray(data.draftData.openRoles)));
+        setTiers(withKeys(recordArray(data.draftData.tiers)));
       } catch (error) {
         console.error('Error fetching content page:', error);
       } finally {
@@ -97,6 +105,19 @@ export function AdminContentEdit() {
       data.serviceHighlights = stripKeys(serviceHighlights);
       data.faqs = undefined;
     }
+    if (page?.type === 'company') {
+      data.timeline = stripKeys(timeline);
+      data.values = stripKeys(values);
+      data.team = stripKeys(team);
+      data.certifications = stripKeys(certifications);
+    }
+    if (page?.type === 'careers') {
+      data.benefits = stripKeys(benefits);
+      data.openRoles = stripKeys(openRoles);
+    }
+    if (page?.type === 'packages') {
+      data.tiers = stripKeys(tiers);
+    }
     return data;
   };
 
@@ -104,9 +125,8 @@ export function AdminContentEdit() {
     setIsSaving(true);
     setMessage(null);
     try {
-      const response = await fetch(`/api/admin/content/${slug}`, {
+      const response = await authFetch(`/api/admin/content/${slug}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ draftData: buildDraftData() }),
       });
 
@@ -126,15 +146,13 @@ export function AdminContentEdit() {
     setMessage(null);
     try {
       // Save first, so publish always reflects the latest edits
-      await fetch(`/api/admin/content/${slug}`, {
+      await authFetch(`/api/admin/content/${slug}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ draftData: buildDraftData() }),
       });
 
-      const response = await fetch(`/api/admin/content/${slug}/publish`, {
+      const response = await authFetch(`/api/admin/content/${slug}/publish`, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
       });
 
       if (!response.ok) throw new Error('Publish failed');
@@ -153,9 +171,8 @@ export function AdminContentEdit() {
     setIsSaving(true);
     setMessage(null);
     try {
-      const response = await fetch(`/api/admin/content/${slug}/discard`, {
+      const response = await authFetch(`/api/admin/content/${slug}/discard`, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
       });
 
       if (!response.ok) throw new Error('Discard failed');
@@ -165,6 +182,13 @@ export function AdminContentEdit() {
       setFeatures(withKeys(recordArray(updated.draftData.features)));
       setFaqs(withKeys(recordArray(updated.draftData.faqs)));
       setServiceHighlights(withKeys(recordArray(updated.draftData.serviceHighlights)));
+      setTimeline(withKeys(recordArray(updated.draftData.timeline)));
+      setValues(withKeys(recordArray(updated.draftData.values)));
+      setTeam(withKeys(recordArray(updated.draftData.team)));
+      setCertifications(withKeys(recordArray(updated.draftData.certifications)));
+      setBenefits(withKeys(recordArray(updated.draftData.benefits)));
+      setOpenRoles(withKeys(recordArray(updated.draftData.openRoles)));
+      setTiers(withKeys(recordArray(updated.draftData.tiers)));
       setMessage({ text: 'Reverted to the last published version', tone: 'success' });
     } catch (err) {
       setMessage({ text: err instanceof Error ? err.message : 'Failed to discard', tone: 'error' });
@@ -325,6 +349,143 @@ export function AdminContentEdit() {
             label="Business CTA label"
             value={str(fields.businessCtaLabel)}
             onChange={(v) => setFields((f) => ({ ...f, businessCtaLabel: v }))}
+          />
+        </>
+      )}
+
+      {page.type === 'company' && (
+        <>
+          <Field label="Tagline" value={str(fields.tagline)} onChange={(v) => setFields((f) => ({ ...f, tagline: v }))} />
+          <MarkdownField
+            label="Mission statement"
+            value={str(fields.missionStatement)}
+            onChange={(v) => setFields((f) => ({ ...f, missionStatement: v }))}
+          />
+          <ReorderableList
+            label="Timeline"
+            rows={timeline}
+            setRows={setTimeline}
+            fieldConfig={[
+              { key: 'year', label: 'Year' },
+              { key: 'title', label: 'Title' },
+              { key: 'body', label: 'Description', multiline: true },
+              { key: 'icon', label: 'Icon name (lucide)' },
+            ]}
+            newRow={{ year: new Date().getFullYear(), title: '', body: '', icon: 'star' }}
+          />
+          <ReorderableList
+            label="Values"
+            rows={values}
+            setRows={setValues}
+            fieldConfig={[
+              { key: 'icon', label: 'Icon name (lucide)' },
+              { key: 'title', label: 'Title' },
+              { key: 'body', label: 'Description', multiline: true },
+            ]}
+            newRow={{ icon: 'star', title: '', body: '' }}
+          />
+          <ReorderableList
+            label="Team members"
+            rows={team}
+            setRows={setTeam}
+            fieldConfig={[
+              { key: 'role', label: 'Role' },
+              { key: 'since', label: 'Year joined' },
+              { key: 'bio', label: 'Bio', multiline: true },
+            ]}
+            newRow={{ role: '', since: new Date().getFullYear(), bio: '' }}
+          />
+          <ReorderableList
+            label="Certifications"
+            rows={certifications}
+            setRows={setCertifications}
+            fieldConfig={[
+              { key: 'icon', label: 'Icon name (lucide)' },
+              { key: 'title', label: 'Title' },
+              { key: 'body', label: 'Body', multiline: true },
+            ]}
+            newRow={{ icon: 'award', title: '', body: '' }}
+          />
+          <ReorderableList
+            label="Stats"
+            rows={[]}
+            setRows={() => {}}
+            fieldConfig={[
+              { key: 'value', label: 'Value' },
+              { key: 'label', label: 'Label' },
+            ]}
+            newRow={{ value: '', label: '' }}
+          />
+        </>
+      )}
+
+      {page.type === 'careers' && (
+        <>
+          <MarkdownField
+            label="Intro"
+            value={str(fields.intro)}
+            onChange={(v) => setFields((f) => ({ ...f, intro: v }))}
+          />
+          <ReorderableList
+            label="Benefits"
+            rows={benefits}
+            setRows={setBenefits}
+            fieldConfig={[
+              { key: 'icon', label: 'Icon name (lucide)' },
+              { key: 'title', label: 'Title' },
+              { key: 'description', label: 'Description', multiline: true },
+            ]}
+            newRow={{ icon: 'star', title: '', description: '' }}
+          />
+          <ReorderableList
+            label="Open roles"
+            rows={openRoles}
+            setRows={setOpenRoles}
+            fieldConfig={[
+              { key: 'title', label: 'Title' },
+              { key: 'icon', label: 'Icon name (lucide)' },
+              { key: 'location', label: 'Location' },
+              { key: 'hours', label: 'Hours' },
+              { key: 'payRange', label: 'Pay range' },
+              { key: 'startAvailability', label: 'Start availability' },
+              { key: 'description', label: 'Description', multiline: true },
+            ]}
+            newRow={{ title: '', icon: 'briefcase', location: '', hours: '', payRange: '', startAvailability: '', description: '' }}
+          />
+          <Field
+            label="Right to work note"
+            value={str(fields.rightToWorkNote)}
+            onChange={(v) => setFields((f) => ({ ...f, rightToWorkNote: v }))}
+            multiline
+          />
+        </>
+      )}
+
+      {page.type === 'packages' && (
+        <>
+          <Field label="Title" value={str(fields.title)} onChange={(v) => setFields((f) => ({ ...f, title: v }))} />
+          <Field
+            label="Hero description"
+            value={str(fields.heroDescription)}
+            onChange={(v) => setFields((f) => ({ ...f, heroDescription: v }))}
+            multiline
+          />
+          <MarkdownField
+            label="Intro"
+            value={str(fields.intro)}
+            onChange={(v) => setFields((f) => ({ ...f, intro: v }))}
+          />
+          <ReorderableList
+            label="Pricing tiers"
+            rows={tiers}
+            setRows={setTiers}
+            fieldConfig={[
+              { key: 'label', label: 'Label' },
+              { key: 'startingFrom', label: 'Starting from (price)' },
+              { key: 'description', label: 'Description', multiline: true },
+              { key: 'icon', label: 'Icon name (lucide)' },
+            ]}
+            newRow={{ label: '', startingFrom: '', description: '', icon: 'box' }}
           />
         </>
       )}
