@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { animate, stagger } from 'animejs';
 import {
   COMPANY,
@@ -7,7 +7,6 @@ import {
   HARD_SERVICES,
   SOFT_SERVICES,
   INDUSTRIES,
-  PACKAGES_PAGE,
   type NavItem,
 } from '@atlas-south/shared';
 import { Icon, useAnimationScope, DURATION, EASE, STAGGER_GAP } from '@atlas-south/design-system';
@@ -128,16 +127,10 @@ export function Header() {
           </Link>
 
           <nav aria-label="Primary" className="hidden items-center gap-1 lg:flex">
-            <NavDropdown label="Company" items={COMPANY_PAGES} />
+            <NavDropdown label="Industries" items={INDUSTRIES} />
             <NavDropdown label="Hard Services" items={HARD_SERVICES} />
             <NavDropdown label="Soft Services" items={SOFT_SERVICES} />
-            <NavDropdown label="Industries" items={INDUSTRIES} />
-            <NavLink
-              to={PACKAGES_PAGE.path}
-              className="flex min-h-[44px] items-center px-3 text-sm font-semibold uppercase tracking-wide text-navy hover:text-accent-blue"
-            >
-              {PACKAGES_PAGE.label}
-            </NavLink>
+            <NavDropdown label="Company" items={COMPANY_PAGES} />
           </nav>
 
           <div className="hidden items-center gap-2 lg:flex">
@@ -180,7 +173,7 @@ export function Header() {
             aria-label="Mobile"
             className="mobile-drawer absolute right-0 top-0 h-full w-80 max-w-full overflow-y-auto bg-canvas p-6"
           >
-            {[...COMPANY_PAGES, ...HARD_SERVICES, ...SOFT_SERVICES, ...INDUSTRIES, PACKAGES_PAGE].map(
+            {[...INDUSTRIES, ...HARD_SERVICES, ...SOFT_SERVICES, ...COMPANY_PAGES].map(
               (item) => (
                 <Link
                   key={item.id}

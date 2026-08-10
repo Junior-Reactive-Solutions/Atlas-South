@@ -29,7 +29,7 @@ export function Home() {
     <>
       <Seo
         title="Trades & Facilities Services in London & the South East"
-        description="Atlas South delivers electrical, plumbing, fire safety and full facilities management for homes and businesses across London and the South East. 24/7 emergency cover."
+        description="Atlas South delivers electrical, plumbing, fire safety and full facilities management for commercial buildings across London and the South East. 24/7 emergency cover."
         path="/"
         jsonLd={{
           '@context': 'https://schema.org',
@@ -52,7 +52,6 @@ export function Home() {
         headlineLines={content?.headlineLines}
         subcopy={content?.subcopy}
         primaryCtaLabel={content?.primaryCtaLabel}
-        homeCtaLabel={content?.homeCtaLabel}
         businessCtaLabel={content?.businessCtaLabel}
       />
 
@@ -107,10 +106,10 @@ export function Home() {
             Coming soon
           </p>
           <h2 className="mt-2 font-display text-3xl font-bold text-navy sm:text-4xl">
-            Soft Services · Industries · Packages
+            Soft Services · Industries
           </h2>
           <p className="mt-4 text-slate">
-            Additional service lines and industry-specific solutions built in Sprint 4+.
+            Additional service lines and industry-specific solutions — coming soon.
           </p>
         </div>
       </section>

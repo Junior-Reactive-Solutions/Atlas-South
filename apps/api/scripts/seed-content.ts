@@ -25,12 +25,11 @@ interface ExtractedPage {
 }
 
 const HOME_CONTENT = {
-  headlineLines: ['Trades and facilities services', 'you can trust —', 'for your home or your business.'],
+  headlineLines: ['Commercial facilities services', 'you can trust —', 'for every building, every sector.'],
   subcopy:
     'Atlas South has delivered {jobsCompleted} jobs across London and the South East since {foundedYear}, from emergency call-outs to fully managed facilities contracts.',
   primaryCtaLabel: 'Get a Free Quote',
-  homeCtaLabel: 'For Your Home',
-  businessCtaLabel: 'For Your Business',
+  businessCtaLabel: 'View Our Services',
 };
 
 const COMPANY_CONTENT = {
@@ -94,7 +93,7 @@ const COMPANY_CONTENT = {
     {
       role: 'Lead Plumber',
       since: 2018,
-      bio: 'Master tradesperson with specialized certifications in domestic and commercial plumbing.',
+      bio: 'Master tradesperson with specialized certifications in commercial and industrial plumbing.',
     },
   ],
   certifications: [
@@ -152,7 +151,7 @@ const CAREERS_CONTENT = {
       hours: 'Full-time, 40 hours/week',
       payRange: '£45,000—£55,000',
       startAvailability: 'Immediate',
-      description: 'We\'re looking for an experienced plumber with domestic and commercial experience to join our growing team.',
+      description: 'We\'re looking for an experienced plumber with commercial and industrial facilities experience to join our growing team.',
     },
     {
       title: 'Facilities Manager',

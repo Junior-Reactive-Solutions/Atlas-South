@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { animate, createTimeline, stagger } from 'animejs';
-import { COMPANY, PACKAGES_PAGE } from '@atlas-south/shared';
+import { COMPANY } from '@atlas-south/shared';
 import { Icon, useAnimationScope, DURATION, EASE, STAGGER_GAP, prefersReducedMotion } from '@atlas-south/design-system';
 import { HeroCarousel } from './HeroCarousel.js';
 
@@ -25,14 +25,13 @@ interface HeroProps {
   headlineLines?: [string, string, string];
   subcopy?: string;
   primaryCtaLabel?: string;
-  homeCtaLabel?: string;
   businessCtaLabel?: string;
 }
 
 const DEFAULT_HEADLINE_LINES: [string, string, string] = [
-  'Trades and facilities services',
+  'Commercial facilities services',
   'you can trust —',
-  'for your home or your business.',
+  'for every building, every sector.',
 ];
 
 /**
@@ -45,8 +44,7 @@ export function Hero({
   headlineLines = DEFAULT_HEADLINE_LINES,
   subcopy,
   primaryCtaLabel = 'Get a Free Quote',
-  homeCtaLabel = 'For Your Home',
-  businessCtaLabel = 'For Your Business',
+  businessCtaLabel = 'View Our Services',
 }: HeroProps) {
   const root = useAnimationScope(() => {
     const tl = createTimeline();
@@ -148,9 +146,6 @@ export function Hero({
               <Icon name="arrow-right" size={18} className="hero-cta-arrow" />
             </Link>
             <div className="hero-secondary-links flex gap-6 text-sm font-semibold text-white/90">
-              <Link to={PACKAGES_PAGE.path} className="flex items-center gap-1 hover:text-accent-blue">
-                {homeCtaLabel} <Icon name="arrow-right" size={14} />
-              </Link>
               <Link to="/hard-services/electricals" className="flex items-center gap-1 hover:text-accent-blue">
                 {businessCtaLabel} <Icon name="arrow-right" size={14} />
               </Link>

@@ -13,7 +13,7 @@ export function Packages() {
     <>
       <Seo
         title="Pricing & Packages | Atlas South"
-        description="Flexible residential and landlord property management packages from Atlas South. Find the right tier for your needs."
+        description="Flexible commercial facilities management service agreements from Atlas South. Find the right SLA tier for your business."
         path="/packages"
         jsonLd={{
           '@context': 'https://schema.org',
