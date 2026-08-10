@@ -75,7 +75,7 @@ export interface CompanyContent {
 }
 
 export interface BenefitItem {
-  icon?: string;
+  icon?: IconName;
   title: string;
   description: string;
 }

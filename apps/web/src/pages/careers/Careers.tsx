@@ -65,7 +65,7 @@ export function Careers() {
             {data.benefits.map((benefit) => (
               <div key={benefit.title} className="rounded-lg border border-border bg-canvas p-6">
                 <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-accent-blue/10">
-                  <Icon name={benefit.icon as any} size={20} className="text-accent-blue" />
+                  {benefit.icon && <Icon name={benefit.icon} size={20} className="text-accent-blue" />}
                 </div>
                 <h3 className="font-semibold text-navy">{benefit.title}</h3>
                 <p className="mt-2 text-sm text-slate">{benefit.description}</p>
@@ -89,15 +89,18 @@ export function Careers() {
               {data.openRoles.map((role) => (
                 <div
                   key={role.title}
+                  role="button"
+                  tabIndex={0}
                   className="cursor-pointer rounded-lg border border-border bg-canvas p-6 transition-colors hover:bg-canvas-tint"
                   onClick={() => setSelectedRole(selectedRole === role.title ? null : role.title)}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelectedRole(selectedRole === role.title ? null : role.title); } }}
                 >
                   <div className="flex items-start justify-between">
                     <div>
                       <h3 className="font-semibold text-navy">{role.title}</h3>
                       <div className="mt-3 flex flex-wrap gap-4 text-sm text-slate">
                         <div className="flex items-center gap-1">
-                          <Icon name={role.icon as any} size={16} />
+                          <Icon name={role.icon} size={16} />
                           {role.location}
                         </div>
                         <div>{role.hours}</div>

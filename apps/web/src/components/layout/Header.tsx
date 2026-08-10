@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { animate, stagger } from 'animejs';
 import {
@@ -38,6 +38,15 @@ function NavDropdown({ label, items }: DropdownProps) {
     });
   }, []);
 
+  // Close on Escape from anywhere inside the dropdown (window-level avoids
+  // putting keyboard handlers on non-interactive elements like <nav>).
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [open]);
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'ArrowDown' || e.key === ' ' || e.key === 'Enter') {
       e.preventDefault();
@@ -54,7 +63,6 @@ function NavDropdown({ label, items }: DropdownProps) {
       className="relative"
       onMouseEnter={() => setOpen(true)}
       onMouseLeave={() => setOpen(false)}
-      onKeyDown={handleKeyDown}
     >
       <button
         type="button"
@@ -62,6 +70,7 @@ function NavDropdown({ label, items }: DropdownProps) {
         aria-expanded={open}
         aria-haspopup="true"
         onClick={() => setOpen((v) => !v)}
+        onKeyDown={handleKeyDown}
       >
         {label}
         <Icon name="chevron-down" size={16} />

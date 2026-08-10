@@ -56,7 +56,7 @@ export function AdminLogin() {
             <input
               id="email"
               type="email"
-              autoComplete="username email"
+              autoComplete="username"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2 focus:border-accent-blue focus:outline-none focus:ring-2 focus:ring-accent-blue/20"

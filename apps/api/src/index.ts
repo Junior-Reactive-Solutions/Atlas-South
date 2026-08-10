@@ -3,6 +3,8 @@ import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import cors from 'cors';
 import compression from 'compression';
+import swaggerUi from 'swagger-ui-express';
+import { swaggerSpec, swaggerUiOptions } from './lib/swagger.js';
 import { env } from './lib/env.js';
 import { generalApiLimiter, loginLimiter, adminApiLimiter } from './middleware/rateLimiters.js';
 import { healthRouter } from './routes/health.js';
@@ -19,6 +21,30 @@ import adminAnalyticsRouter from './routes/admin/analytics.js';
 import adminContentRouter from './routes/admin/content.js';
 
 const app = express();
+
+// Swagger UI — registered BEFORE helmet so it can set its own relaxed CSP
+// for the docs route only. All other routes still get the strict helmet policy.
+// Accessible at GET /api/docs (or /api/docs/ for the redirect).
+app.use(
+  '/api/docs',
+  (_req: express.Request, res: express.Response, next: express.NextFunction) => {
+    // Swagger UI requires inline scripts and styles that the strict CSP blocks.
+    res.setHeader(
+      'Content-Security-Policy',
+      [
+        "default-src 'self'",
+        "script-src 'self' 'unsafe-inline'",
+        "style-src 'self' 'unsafe-inline'",
+        "img-src 'self' data: https:",
+        "font-src 'self' data:",
+        "connect-src 'self'",
+      ].join('; '),
+    );
+    next();
+  },
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerSpec, swaggerUiOptions),
+);
 
 // Response headers — docs/build/07-SECURITY.md §1. Direct fix of the audit finding
 // that the previous site set HSTS but nothing else.
