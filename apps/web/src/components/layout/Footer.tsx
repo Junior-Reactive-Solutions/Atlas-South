@@ -139,7 +139,17 @@ export function Footer() {
               </Link>
             ))}
           </div>
-          <p>Site by Junior Reactive Solutions</p>
+          <p>
+            Site by{' '}
+            <a
+              href="https://jrcom.vercel.app/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-accent-blue"
+            >
+              Junior Reactive Solutions
+            </a>
+          </p>
         </div>
       </div>
 

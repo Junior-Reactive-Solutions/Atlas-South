@@ -1,0 +1,22 @@
+name: Keep Render API Alive
+
+# Render's free tier spins the service down after ~15 minutes of no traffic,
+# causing a 30-60s cold-start delay on the next real request (bad first
+# impression on an enquiry form submit). This pings the health endpoint every
+# 10 minutes, well under the idle threshold, so the API never sleeps.
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch: {} # manual trigger from the Actions tab for on-demand testing
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping API health endpoint
+        run: |
+          response=$(curl -s -o /dev/null -w "%{http_code}" https://atlas-south-api.onrender.com/api/health)
+          echo "Health check response: $response"
+          if [ "$response" -ne 200 ]; then
+            echo "::warning::Health check returned HTTP $response"
+          fi
