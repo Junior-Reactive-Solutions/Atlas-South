@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { Icon, type IconName } from '@atlas-south/design-system';
+import { useNoIndex } from '../hooks/useNoIndex.js';
 
 interface PageStubProps {
   title: string;
@@ -22,6 +23,10 @@ export function PageStub({ title, icon, placeholder, specRef }: PageStubProps) {
   useEffect(() => {
     document.title = `${title} | Atlas South Technical Services`;
   }, [title]);
+
+  // Thin "under construction" content has no business ranking in search — keep it out
+  // of the index until real content ships, same pattern as the /admin subtree.
+  useNoIndex();
 
   return (
     <div className="mx-auto flex max-w-3xl flex-col items-center px-4 py-24 text-center">

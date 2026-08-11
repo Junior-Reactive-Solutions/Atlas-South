@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Icon } from '@atlas-south/design-system';
+import { useNoIndex } from '../hooks/useNoIndex.js';
 
 /**
  * docs/build/06-PAGE-SPECIFICATIONS.md §3 "404 (Not Found)". Replaces the previous
@@ -10,6 +11,11 @@ import { Icon } from '@atlas-south/design-system';
  * this component can guarantee on its own.
  */
 export function NotFound() {
+  // Vercel's SPA rewrite serves this page with an HTTP 200 for every unmatched path
+  // (a platform-level limitation of client-side routing, not fixable from the component) —
+  // this meta tag is the only reliable way to stop it from being indexed as real content.
+  useNoIndex();
+
   return (
     <div className="mx-auto flex max-w-xl flex-col items-center px-4 py-24 text-center">
       <Icon name="compass" size={40} className="mb-4 text-accent-blue" />

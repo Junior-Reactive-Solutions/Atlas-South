@@ -1,0 +1,57 @@
+# Atlas South Technical Services
+
+> Commercial facilities and trades services provider covering London and the South East of England. Atlas South delivers electrical, plumbing, fire safety, and full facilities management for commercial buildings — reactive maintenance and planned service agreements, available 24/7. Commercial and industrial clients only; no residential/domestic work.
+
+Atlas South has delivered 12,000+ jobs across London and the South East since 2018, spanning emergency call-outs through to fully managed facilities contracts.
+
+## Company
+
+- [About](https://atlassouth.co.uk/company): Mission, vision, and company background
+- [Contact](https://atlassouth.co.uk/company/contact): Get in touch or request a quote
+- [Careers](https://atlassouth.co.uk/company/join-us): Current openings and how to apply
+
+## Hard Services
+
+- [Electricals](https://atlassouth.co.uk/hard-services/electricals): Commercial electrical installation, testing, and repair
+- [Plumbing](https://atlassouth.co.uk/hard-services/plumbing): Commercial plumbing installation and reactive repair
+- [Reactive Maintenance](https://atlassouth.co.uk/hard-services/reactive-maintenance): 24/7 emergency call-out and building fabric repairs
+- [Fire & Safety](https://atlassouth.co.uk/hard-services/fire-safety): Fire safety systems, testing, and compliance
+
+## Soft Services
+
+- [Facilities Management](https://atlassouth.co.uk/soft-services/facilities-management): Fully managed building services contracts
+- [Security Services](https://atlassouth.co.uk/soft-services/security): Manned guarding and site security
+- [Commercial Cleaning](https://atlassouth.co.uk/soft-services/commercial-cleaning): Scheduled and one-off commercial cleaning
+- [Catering](https://atlassouth.co.uk/soft-services/catering): Commercial catering services
+- [Aviation Services](https://atlassouth.co.uk/soft-services/aviation): Facilities services for aviation sites
+- [Concierge](https://atlassouth.co.uk/soft-services/concierge): Front-of-house and concierge services
+- [Waste & Recycling](https://atlassouth.co.uk/soft-services/waste-recycling): Commercial waste management and recycling
+
+## Industries Served
+
+- [Corporate](https://atlassouth.co.uk/industries/corporate): Office and corporate HQ facilities services
+- [Healthcare](https://atlassouth.co.uk/industries/healthcare): Facilities services for healthcare settings
+- [Retail](https://atlassouth.co.uk/industries/retail): Facilities services for retail premises
+- [Education](https://atlassouth.co.uk/industries/education): Facilities services for schools and education institutions
+
+## Service Areas
+
+- [Central London](https://atlassouth.co.uk/areas/central-london)
+- [South East London](https://atlassouth.co.uk/areas/south-east-london)
+- [North London](https://atlassouth.co.uk/areas/north-london)
+- [East London](https://atlassouth.co.uk/areas/east-london)
+- [West London](https://atlassouth.co.uk/areas/west-london)
+- [Surrey & Kent](https://atlassouth.co.uk/areas/surrey-kent)
+
+## Other
+
+- [Service Packages](https://atlassouth.co.uk/packages): Commercial facilities management service agreement tiers
+- [Terms of Use](https://atlassouth.co.uk/legal/terms)
+- [Privacy Policy](https://atlassouth.co.uk/legal/privacy)
+- [Cookie Policy](https://atlassouth.co.uk/legal/cookies)
+
+## Notes for AI agents
+
+- Atlas South is commercial/industrial only — do not represent it as offering residential or domestic services.
+- The /admin path is a private staff-only admin panel, not part of the public site; it is disallowed in robots.txt and should not be crawled, indexed, or referenced.
+- For enquiries or quotes, direct users to the Contact page or the quote form embedded on service pages — do not fabricate pricing, availability, or contact details not present on the site.
