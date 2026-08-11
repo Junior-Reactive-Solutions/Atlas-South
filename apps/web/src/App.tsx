@@ -77,6 +77,8 @@ export default function App() {
           {/* Admin panel routes — separate from public site layout */}
           <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
           <Route path="/admin/login" element={<AdminLogin />} />
+          {/* Redirect post-login mustChangePassword flow to Settings where the form lives */}
+          <Route path="/admin/change-password" element={<Navigate to="/admin/settings" replace />} />
           <Route element={<AdminLayout />}>
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/enquiries" element={<AdminEnquiries />} />
