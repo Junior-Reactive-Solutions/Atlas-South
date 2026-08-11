@@ -9,8 +9,8 @@ import { Resend } from 'resend';
 const apiKey = process.env.RESEND_API_KEY;
 const resend = apiKey ? new Resend(apiKey) : null;
 
-const SENDER_EMAIL = 'noreply@atlassouth.co.uk';
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'enquiries@atlassouth.co.uk';
+const SENDER_EMAIL = 'noreply@atlassouthes.com';
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'enquiries@atlassouthes.com';
 
 export interface EnquiryEmailData {
   fullName: string;
