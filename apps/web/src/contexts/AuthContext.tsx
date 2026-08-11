@@ -8,7 +8,20 @@ interface AuthContextValue {
    * redirecting to /admin/login. Callers never touch localStorage.
    */
   authFetch: (url: string, opts?: RequestInit) => Promise<Response>;
-  login: (email: string, password: string) => Promise<{ mustChangePassword: boolean }>;
+  /**
+   * Step 1 of login: email + password only.
+   * Returns `{ requiresTotp: true }` if 2FA is enabled — caller should show the
+   * TOTP input and call loginWithTotp() to complete the flow.
+   * Returns `{ mustChangePassword }` when login is fully complete.
+   */
+  login: (email: string, password: string) => Promise<
+    { requiresTotp: true } | { requiresTotp?: false; mustChangePassword: boolean }
+  >;
+  /**
+   * Step 2 of login (2FA path only): re-submits credentials + TOTP code.
+   * Call this only when login() returned `{ requiresTotp: true }`.
+   */
+  loginWithTotp: (email: string, password: string, totpCode: string) => Promise<{ mustChangePassword: boolean }>;
   logout: () => Promise<void>;
   isAuthenticated: boolean;
   /** true while the initial silent refresh is in flight — suppress redirects until resolved */
@@ -106,6 +119,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const err = (await res.json()) as { error?: string };
       throw new Error(err.error ?? 'Login failed');
     }
+    const data = (await res.json()) as
+      | { requiresTotp: true }
+      | { accessToken: string; mustChangePassword: boolean };
+    if ('requiresTotp' in data && data.requiresTotp) {
+      return { requiresTotp: true as const };
+    }
+    applyToken((data as { accessToken: string }).accessToken);
+    return { mustChangePassword: (data as { mustChangePassword: boolean }).mustChangePassword };
+  }, []);
+
+  /** Step 2 — only called when login() returns { requiresTotp: true }. */
+  const loginWithTotp = useCallback(async (email: string, password: string, totpCode: string) => {
+    const res = await fetch('/api/admin/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password, totpCode }),
+      credentials: 'include',
+    });
+    if (!res.ok) {
+      const err = (await res.json()) as { error?: string };
+      throw new Error(err.error ?? 'Invalid code');
+    }
     const data = (await res.json()) as { accessToken: string; mustChangePassword: boolean };
     applyToken(data.accessToken);
     return { mustChangePassword: data.mustChangePassword };
@@ -121,7 +156,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [navigate]);
 
   return (
-    <AuthContext.Provider value={{ authFetch, login, logout, isAuthenticated, isAuthLoading }}>
+    <AuthContext.Provider value={{ authFetch, login, loginWithTotp, logout, isAuthenticated, isAuthLoading }}>
       {children}
     </AuthContext.Provider>
   );

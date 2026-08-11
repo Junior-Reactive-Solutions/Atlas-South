@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { z } from 'zod';
+import { verify as verifyTotp } from 'otplib';
 import { verifyPassword, generateTokens, verifyRefreshToken } from '../../lib/auth.js';
 import { requireDb } from '../../lib/prisma.js';
 
@@ -11,13 +12,14 @@ const MAX_LOCKOUT_ATTEMPTS = 10;
 const LoginSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8),
+  totpCode: z.string().length(6).regex(/^\d+$/).optional(),
 });
 
 router.post('/login', async (req: Request, res: Response) => {
   try {
     const db = requireDb();
     const ip = req.ip || 'unknown';
-    const { email, password } = LoginSchema.parse(req.body);
+    const { email, password, totpCode } = LoginSchema.parse(req.body);
 
     const admin = await db.adminUser.findUnique({ where: { email } });
 
@@ -60,6 +62,24 @@ router.post('/login', async (req: Request, res: Response) => {
       });
 
       return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    // If 2FA is enabled, require a valid TOTP code before issuing tokens.
+    // Return a distinct flag so the frontend can show the TOTP input step.
+    if (admin.totpSecret) {
+      if (!totpCode) {
+        // Credentials were valid — signal the frontend to ask for the TOTP code.
+        // HTTP 200 (not 401) so the client knows credentials succeeded.
+        return res.json({ requiresTotp: true });
+      }
+      const verifyResult = await verifyTotp({ token: totpCode, secret: admin.totpSecret });
+      const codeValid = verifyResult.valid;
+      if (!codeValid) {
+        await db.adminAuditLog.create({
+          data: { event: 'login_failed_invalid_totp', ip, adminUserId: admin.id },
+        });
+        return res.status(401).json({ error: 'Invalid authenticator code' });
+      }
     }
 
     // Reset failed attempts on successful login
