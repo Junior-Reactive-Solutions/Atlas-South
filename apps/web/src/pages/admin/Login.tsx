@@ -125,7 +125,7 @@ export function AdminLogin() {
                 value={totpCode} onChange={(e) => setTotpCode(e.target.value.replace(/\D/g, ''))}
                 placeholder="000000"
                 className="mt-1 w-full rounded-lg border border-slate-300 px-4 py-3 text-center text-2xl tracking-[0.4em] focus:border-accent-blue focus:outline-none focus:ring-2 focus:ring-accent-blue/20"
-                autoFocus required
+                required
               />
             </div>
             <button type="submit" disabled={isLoading || totpCode.length !== 6}

@@ -229,7 +229,7 @@ export function AdminSettings() {
               value={totpCode} onChange={(e) => setTotpCode(e.target.value.replace(/\D/g, ''))}
               placeholder="000000"
               className="w-40 rounded-lg border border-slate-300 px-4 py-2 text-center text-xl tracking-widest focus:border-accent-blue focus:outline-none focus:ring-2 focus:ring-accent-blue/20"
-              required autoFocus
+              required
             />
             <div className="flex gap-3">
               <button type="submit" disabled={totpLoading || totpCode.length !== 6}
@@ -271,14 +271,14 @@ export function AdminSettings() {
                 </p>
                 {disableError && <p className="text-sm text-red-600">{disableError}</p>}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700">Current Password</label>
-                  <input type="password" value={disablePassword} onChange={(e) => setDisablePassword(e.target.value)}
+                  <label htmlFor="disable-password" className="block text-sm font-medium text-slate-700">Current Password</label>
+                  <input id="disable-password" type="password" value={disablePassword} onChange={(e) => setDisablePassword(e.target.value)}
                     className="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2 focus:border-accent-blue focus:outline-none"
                     required />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700">Authenticator Code</label>
-                  <input type="text" inputMode="numeric" pattern="\d{6}" maxLength={6}
+                  <label htmlFor="disable-totp-code" className="block text-sm font-medium text-slate-700">Authenticator Code</label>
+                  <input id="disable-totp-code" type="text" inputMode="numeric" pattern="\d{6}" maxLength={6}
                     value={disableTotpCode} onChange={(e) => setDisableTotpCode(e.target.value.replace(/\D/g, ''))}
                     placeholder="000000"
                     className="mt-1 w-40 rounded-lg border border-slate-300 px-4 py-2 text-center text-xl tracking-widest focus:border-accent-blue focus:outline-none"
