@@ -62,9 +62,10 @@ export function ServiceAreaDetailPage({
       {/* Hero section */}
       <section className="border-b border-border bg-canvas-tint py-16 sm:py-20">
         <div className="mx-auto max-w-7xl px-4">
-          <div className="flex items-center gap-6 sm:gap-8">
-            <div className="flex h-20 w-20 flex-shrink-0 items-center justify-center rounded-lg bg-accent-blue/10 sm:h-24 sm:w-24">
-              <Icon name={icon} size={48} className="text-accent-blue" />
+          <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:gap-8">
+            <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-lg bg-accent-blue/10 sm:h-20 sm:w-20 lg:h-24 lg:w-24">
+              <Icon name={icon} size={40} className="text-accent-blue sm:hidden" />
+              <Icon name={icon} size={48} className="hidden text-accent-blue sm:block" />
             </div>
             <div>
               <h1 className="font-display text-3xl font-bold text-navy sm:text-4xl">{title}</h1>

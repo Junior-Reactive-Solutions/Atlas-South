@@ -62,14 +62,14 @@ export function AdminAnalytics() {
 
   return (
     <div ref={root} className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-3xl font-black text-navy">Analytics</h1>
         <div className="flex gap-2">
           {(['7d', '30d', '90d'] as const).map((range) => (
             <button
               key={range}
               onClick={() => setTimeRange(range)}
-              className={`rounded px-4 py-2 font-medium transition-colors ${
+              className={`min-h-[40px] flex-1 rounded px-3 font-medium transition-colors sm:flex-none sm:px-4 sm:py-2 ${
                 timeRange === range
                   ? 'bg-accent-blue text-white'
                   : 'bg-slate-200 text-slate-700 hover:bg-slate-300'

@@ -83,7 +83,7 @@ export function JobApplicationForm({ roleTitle }: JobApplicationFormProps) {
           onChange={handleChange}
           required
           aria-invalid={false}
-          className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-accent-blue focus:outline-none focus:ring-2 focus:ring-accent-blue/20"
+          className="mt-1 min-h-[44px] w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-accent-blue focus:outline-none focus:ring-2 focus:ring-accent-blue/20"
         />
       </div>
 
@@ -100,7 +100,7 @@ export function JobApplicationForm({ roleTitle }: JobApplicationFormProps) {
             onChange={handleChange}
             required
             aria-invalid={false}
-            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-accent-blue focus:outline-none focus:ring-2 focus:ring-accent-blue/20"
+            className="mt-1 min-h-[44px] w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-accent-blue focus:outline-none focus:ring-2 focus:ring-accent-blue/20"
           />
         </div>
         <div>
@@ -115,7 +115,7 @@ export function JobApplicationForm({ roleTitle }: JobApplicationFormProps) {
             onChange={handleChange}
             required
             aria-invalid={false}
-            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-accent-blue focus:outline-none focus:ring-2 focus:ring-accent-blue/20"
+            className="mt-1 min-h-[44px] w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-accent-blue focus:outline-none focus:ring-2 focus:ring-accent-blue/20"
           />
         </div>
       </div>
@@ -131,7 +131,7 @@ export function JobApplicationForm({ roleTitle }: JobApplicationFormProps) {
           onChange={handleChange}
           rows={4}
           aria-invalid={false}
-          className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-accent-blue focus:outline-none focus:ring-2 focus:ring-accent-blue/20"
+          className="mt-1 min-h-[44px] w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-accent-blue focus:outline-none focus:ring-2 focus:ring-accent-blue/20"
           placeholder="Tell us about yourself and why you're interested in this role..."
         />
       </div>
@@ -146,7 +146,7 @@ export function JobApplicationForm({ roleTitle }: JobApplicationFormProps) {
           accept=".pdf"
           onChange={handleFileChange}
           aria-invalid={false}
-          className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-accent-blue focus:outline-none focus:ring-2 focus:ring-accent-blue/20"
+          className="mt-1 min-h-[44px] w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-accent-blue focus:outline-none focus:ring-2 focus:ring-accent-blue/20"
         />
         {formData.file && <p className="mt-1 text-xs text-slate">{formData.file.name}</p>}
       </div>
@@ -154,7 +154,7 @@ export function JobApplicationForm({ roleTitle }: JobApplicationFormProps) {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full rounded-lg bg-accent-blue px-4 py-2 font-semibold text-white hover:bg-blue-700 disabled:opacity-50 sm:w-auto"
+        className="min-h-[44px] w-full rounded-lg bg-accent-blue px-4 py-2 font-semibold text-white hover:bg-blue-700 disabled:opacity-50 sm:w-auto"
       >
         {isSubmitting ? (
           <>
