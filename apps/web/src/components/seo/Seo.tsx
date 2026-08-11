@@ -42,7 +42,7 @@ export function Seo({ title, description, path, image, jsonLd }: SeoProps) {
   useEffect(() => {
     const fullTitle = `${title} | ${SITE_NAME}`;
     const url = `${SITE_URL}${path}`;
-    const shareImage = image ?? `${SITE_URL}/atlas-south-logo.jpg`;
+    const shareImage = image ?? `${SITE_URL}/og-image.png`;
 
     const previousTitle = document.title;
     document.title = fullTitle;
@@ -62,6 +62,8 @@ export function Seo({ title, description, path, image, jsonLd }: SeoProps) {
       upsertMeta('property', 'og:title', fullTitle),
       upsertMeta('property', 'og:description', description),
       upsertMeta('property', 'og:image', shareImage),
+      upsertMeta('property', 'og:image:width', '1200'),
+      upsertMeta('property', 'og:image:height', '630'),
       upsertMeta('property', 'og:url', url),
       upsertMeta('property', 'og:type', 'website'),
       upsertMeta('property', 'og:site_name', SITE_NAME),
