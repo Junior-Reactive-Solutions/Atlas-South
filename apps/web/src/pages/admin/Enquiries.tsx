@@ -150,7 +150,7 @@ export function AdminEnquiries() {
                             };
                             updateStatus(enquiry.id, nextStatus[status]);
                           }}
-                          className="flex items-center justify-center gap-1 rounded bg-accent-blue px-2 py-1 text-xs font-medium text-white hover:bg-blue-700"
+                          className="flex min-h-[40px] items-center justify-center gap-1 rounded bg-accent-blue px-2 py-1 text-xs font-medium text-white hover:bg-blue-700"
                         >
                           Move Forward
                           <ArrowRight className="h-3 w-3" />
@@ -161,7 +161,7 @@ export function AdminEnquiries() {
                         <motion.button
                           whileTap={{ scale: 0.96 }}
                           onClick={() => updateStatus(enquiry.id, 'lost')}
-                          className="flex items-center justify-center gap-1 rounded bg-red-100 px-2 py-1 text-xs font-medium text-red-700 hover:bg-red-200"
+                          className="flex min-h-[40px] items-center justify-center gap-1 rounded bg-red-100 px-2 py-1 text-xs font-medium text-red-700 hover:bg-red-200"
                         >
                           Lost
                           <Trash2 className="h-3 w-3" />

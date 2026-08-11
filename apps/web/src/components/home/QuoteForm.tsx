@@ -185,7 +185,7 @@ export function QuoteForm() {
                   aria-invalid={!!errors.fullName}
                   value={formData.fullName}
                   onChange={handleChange}
-                  className={`w-full rounded-lg border bg-white/10 py-2 pl-10 pr-4 text-white placeholder-white/50 transition-colors focus:outline-none focus:ring-2 ${
+                  className={`w-full min-h-[44px] rounded-lg border bg-white/10 py-2 pl-10 pr-4 text-white placeholder-white/50 transition-colors focus:outline-none focus:ring-2 ${
                     errors.fullName ? 'border-error ring-error/50' : 'border-white/20 focus:ring-accent-blue'
                   }`}
                 />
@@ -212,7 +212,7 @@ export function QuoteForm() {
                   aria-invalid={!!errors.email}
                   value={formData.email}
                   onChange={handleChange}
-                  className={`w-full rounded-lg border bg-white/10 py-2 pl-10 pr-4 text-white placeholder-white/50 transition-colors focus:outline-none focus:ring-2 ${
+                  className={`w-full min-h-[44px] rounded-lg border bg-white/10 py-2 pl-10 pr-4 text-white placeholder-white/50 transition-colors focus:outline-none focus:ring-2 ${
                     errors.email ? 'border-error ring-error/50' : 'border-white/20 focus:ring-accent-blue'
                   }`}
                 />
@@ -239,7 +239,7 @@ export function QuoteForm() {
                   aria-invalid={!!errors.phone}
                   value={formData.phone}
                   onChange={handleChange}
-                  className={`w-full rounded-lg border bg-white/10 py-2 pl-10 pr-4 text-white placeholder-white/50 transition-colors focus:outline-none focus:ring-2 ${
+                  className={`w-full min-h-[44px] rounded-lg border bg-white/10 py-2 pl-10 pr-4 text-white placeholder-white/50 transition-colors focus:outline-none focus:ring-2 ${
                     errors.phone ? 'border-error ring-error/50' : 'border-white/20 focus:ring-accent-blue'
                   }`}
                 />
@@ -262,7 +262,7 @@ export function QuoteForm() {
                   name="serviceId"
                   value={formData.serviceId || ''}
                   onChange={handleChange}
-                  className="w-full appearance-none rounded-lg border border-white/20 bg-white/10 py-2 pl-10 pr-4 text-white transition-colors focus:outline-none focus:ring-2 focus:ring-accent-blue"
+                  className="w-full min-h-[44px] appearance-none rounded-lg border border-white/20 bg-white/10 py-2 pl-10 pr-4 text-white transition-colors focus:outline-none focus:ring-2 focus:ring-accent-blue"
                 >
                   <option value="" className="text-navy">Select a service...</option>
                   {ALL_SERVICES.map((service) => (

@@ -124,12 +124,12 @@ export function Hero({
   return (
     <section ref={root}>
       <HeroCarousel>
-        <div className="mx-auto max-w-7xl px-4 py-20 lg:py-32">
+        <div className="mx-auto max-w-7xl px-4 py-14 sm:py-20 lg:py-32">
           <p className="hero-eyebrow mb-4 inline-block origin-left rounded border border-white/30 bg-navy/60 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-white">
             London &amp; South East · Est. {COMPANY.foundedYear} · Available {COMPANY.stats.coverage}
           </p>
 
-          <h1 className="max-w-3xl font-display text-4xl font-black uppercase leading-tight text-white sm:text-5xl lg:text-6xl">
+          <h1 className="max-w-3xl font-display text-3xl font-black uppercase leading-tight text-white sm:text-5xl lg:text-6xl">
             <span className="hero-headline-line block">{headlineLines[0]}</span>
             <span className="hero-headline-line block text-accent-blue">{headlineLines[1]}</span>
             <span className="hero-headline-line block">{headlineLines[2]}</span>
@@ -152,7 +152,7 @@ export function Hero({
             </div>
           </div>
 
-          <dl className="mt-14 grid grid-cols-2 gap-x-8 gap-y-4 border-t border-white/15 pt-6 sm:grid-cols-4">
+          <dl className="mt-10 grid grid-cols-2 gap-x-4 gap-y-5 border-t border-white/15 pt-6 sm:mt-14 sm:grid-cols-4 sm:gap-x-8">
             {STATS.map((stat) => (
               <div key={stat.label} className="hero-stat">
                 <dt className="sr-only">{stat.label}</dt>

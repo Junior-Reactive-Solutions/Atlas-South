@@ -16,6 +16,54 @@ interface DropdownProps {
   items: NavItem[];
 }
 
+/** One labeled section of the mobile drawer — mirrors the desktop dropdown groups
+ * instead of dumping all ~25 items into one flat, unlabeled list. */
+function MobileDrawerSection({
+  label,
+  items,
+  onNavigate,
+}: {
+  label: string;
+  items: NavItem[];
+  onNavigate: () => void;
+}) {
+  const [expanded, setExpanded] = useState(false);
+
+  return (
+    <div className="border-b border-border">
+      <button
+        type="button"
+        className="flex min-h-[48px] w-full items-center justify-between py-3 text-left text-sm font-semibold uppercase tracking-wide text-navy"
+        aria-expanded={expanded}
+        onClick={() => setExpanded((v) => !v)}
+      >
+        {label}
+        <Icon name={expanded ? 'chevron-up' : 'chevron-down'} size={16} />
+      </button>
+      {expanded && (
+        <div className="pb-2">
+          {items.map((item) => (
+            <Link
+              key={item.id}
+              to={item.path}
+              className="mobile-drawer-item flex min-h-[44px] items-center gap-3 py-2 pl-2 text-slate"
+              onClick={onNavigate}
+            >
+              <Icon name={item.icon} size={18} />
+              {item.label}
+              {item.placeholder && (
+                <span className="ml-auto rounded-full bg-canvas-tint px-2 py-0.5 text-[10px] uppercase text-slate">
+                  Coming soon
+                </span>
+              )}
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 /** One dropdown per docs/build/02-ANIMATION-SYSTEM.md "Header nav dropdown" row. */
 function NavDropdown({ label, items }: DropdownProps) {
   const [open, setOpen] = useState(false);
@@ -180,28 +228,32 @@ export function Header() {
           />
           <nav
             aria-label="Mobile"
-            className="mobile-drawer absolute right-0 top-0 h-full w-80 max-w-full overflow-y-auto bg-canvas p-6"
+            className="mobile-drawer absolute right-0 top-0 flex h-full w-[85vw] max-w-sm flex-col overflow-y-auto bg-canvas p-4 sm:p-6"
           >
-            {[...INDUSTRIES, ...HARD_SERVICES, ...SOFT_SERVICES, ...COMPANY_PAGES].map(
-              (item) => (
-                <Link
-                  key={item.id}
-                  to={item.path}
-                  className="mobile-drawer-item flex min-h-[44px] items-center gap-3 border-b border-border py-3 text-navy"
-                  onClick={() => setMobileOpen(false)}
-                >
-                  <Icon name={item.icon} size={18} />
-                  {item.label}
-                </Link>
-              ),
-            )}
-            <a
-              href={`tel:${COMPANY.phone.tel}`}
-              className="mobile-drawer-item mt-4 flex min-h-[44px] items-center justify-center gap-2 rounded bg-accent-blue font-semibold text-white"
-            >
-              <Icon name="phone" size={18} />
-              Call {COMPANY.phone.display}
-            </a>
+            <div className="flex-1">
+              <MobileDrawerSection label="Industries" items={INDUSTRIES} onNavigate={() => setMobileOpen(false)} />
+              <MobileDrawerSection label="Hard Services" items={HARD_SERVICES} onNavigate={() => setMobileOpen(false)} />
+              <MobileDrawerSection label="Soft Services" items={SOFT_SERVICES} onNavigate={() => setMobileOpen(false)} />
+              <MobileDrawerSection label="Company" items={COMPANY_PAGES} onNavigate={() => setMobileOpen(false)} />
+            </div>
+
+            {/* CTAs pinned near the bottom, matching the desktop header's pair */}
+            <div className="mobile-drawer-item mt-4 flex flex-col gap-2">
+              <Link
+                to="/company/contact"
+                className="flex min-h-[48px] items-center justify-center rounded bg-accent-blue px-4 text-sm font-semibold uppercase tracking-wide text-white"
+                onClick={() => setMobileOpen(false)}
+              >
+                Contact Us
+              </Link>
+              <a
+                href={`tel:${COMPANY.phone.tel}`}
+                className="flex min-h-[48px] items-center justify-center gap-2 rounded border border-navy font-semibold text-navy"
+              >
+                <Icon name="phone" size={18} />
+                Call {COMPANY.phone.display}
+              </a>
+            </div>
           </nav>
         </div>
       )}

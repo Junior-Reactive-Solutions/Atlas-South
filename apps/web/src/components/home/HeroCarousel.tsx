@@ -25,7 +25,15 @@ const VIDEO_POSTER =
 export function HeroCarousel({ children }: HeroCarouselProps) {
   return (
     <div className="relative overflow-hidden bg-navy">
-      {/* Background video — autoPlay, muted, looped, poster for initial frame */}
+      {/* Static poster on small screens — a looping 4K video autoplaying on mobile
+          data is a real bandwidth/battery cost for no visible benefit at that size.
+          `hidden md:block` swaps to the actual video from the tablet breakpoint up. */}
+      <img
+        src={VIDEO_POSTER}
+        alt=""
+        aria-hidden="true"
+        className="absolute inset-0 h-full w-full object-cover md:hidden"
+      />
       <video
         autoPlay
         muted
@@ -33,7 +41,7 @@ export function HeroCarousel({ children }: HeroCarouselProps) {
         playsInline
         poster={VIDEO_POSTER}
         aria-hidden="true"
-        className="absolute inset-0 h-full w-full object-cover"
+        className="absolute inset-0 hidden h-full w-full object-cover md:block"
       >
         <source src={VIDEO_SRC} type="video/mp4" />
       </video>
