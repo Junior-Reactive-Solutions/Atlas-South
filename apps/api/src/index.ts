@@ -17,6 +17,7 @@ import adminEnquiriesRouter from './routes/admin/enquiries.js';
 import { adminApplicationsRouter } from './routes/admin/applications.js';
 import adminStatsRouter from './routes/admin/stats.js';
 import adminUsersRouter from './routes/admin/users.js';
+import adminTotpRouter from './routes/admin/totp.js';
 import adminAnalyticsRouter from './routes/admin/analytics.js';
 import adminContentRouter from './routes/admin/content.js';
 
@@ -98,6 +99,7 @@ app.use('/api/admin/enquiries', adminApiLimiter, adminEnquiriesRouter);
 app.use('/api/admin', adminApiLimiter, adminApplicationsRouter);
 app.use('/api/admin/stats', adminApiLimiter, adminStatsRouter);
 app.use('/api/admin/users', adminApiLimiter, adminUsersRouter);
+app.use('/api/admin/totp', adminApiLimiter, adminTotpRouter);
 app.use('/api/admin/analytics', adminApiLimiter, adminAnalyticsRouter);
 app.use('/api/admin/content', adminApiLimiter, adminContentRouter);
 
