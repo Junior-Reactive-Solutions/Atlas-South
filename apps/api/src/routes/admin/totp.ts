@@ -1,6 +1,6 @@
 import { Router, Response } from 'express';
 import { z } from 'zod';
-import { generateSecret, generate, verify, generateURI } from 'otplib';
+import { generateSecret, verify, generateURI } from 'otplib';
 import QRCode from 'qrcode';
 import { authMiddleware, AuthRequest } from '../../middleware/auth.js';
 import { verifyPassword } from '../../lib/auth.js';
