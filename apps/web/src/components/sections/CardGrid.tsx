@@ -1,10 +1,13 @@
 import { Link } from 'react-router-dom';
 import { animate, stagger } from 'animejs';
 import { Icon, type IconName, useAnimationScope, DURATION, EASE, STAGGER_GAP } from '@atlas-south/design-system';
+import { useNavVisibility } from '../../hooks/useNavVisibility.js';
 
 export interface GridCard {
   label: string;
   path: string;
+  /** Nav item id. When supplied, the card disappears if an admin hides that page. */
+  navId?: string;
   description?: string;
   icon?: IconName;
   /** Optional photograph. Without one the card renders as a brand-gradient tile. */
@@ -35,6 +38,12 @@ const COLUMN_CLASS: Record<2 | 3 | 4, string> = {
  * brand-blue is decorative here only — every text colour on the card is AA-verified.
  */
 export function CardGrid({ cards, columns = 3, ctaLabel = 'Learn more' }: CardGridProps) {
+  const { hidden } = useNavVisibility();
+
+  // Cards carrying a navId respect the admin's visibility switches. Cards without one
+  // (ad-hoc links) always render, so this can't silently swallow a card by accident.
+  const visibleCards = cards.filter((card) => !(card.navId && hidden.has(card.navId)));
+
   const root = useAnimationScope(
     (self) => {
       self?.add('reveal', () => {
@@ -47,14 +56,14 @@ export function CardGrid({ cards, columns = 3, ctaLabel = 'Learn more' }: CardGr
         });
       });
     },
-    [cards.length],
+    [visibleCards.length],
   );
 
-  if (cards.length === 0) return null;
+  if (visibleCards.length === 0) return null;
 
   return (
     <div ref={root} className={`grid gap-6 ${COLUMN_CLASS[columns]}`}>
-      {cards.map((card) => {
+      {visibleCards.map((card) => {
         const inner = (
           <>
             <div className="relative aspect-[3/2] overflow-hidden bg-gradient-to-br from-navy to-brand-blue">

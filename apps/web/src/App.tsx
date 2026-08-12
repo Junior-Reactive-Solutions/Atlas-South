@@ -23,6 +23,7 @@ import { AdminApplications } from './pages/admin/Applications.js';
 import { AdminSettings } from './pages/admin/Settings.js';
 import { AdminAnalytics } from './pages/admin/Analytics.js';
 import { AdminContent } from './pages/admin/Content.js';
+import { AdminVisibility } from './pages/admin/Visibility.js';
 import { AdminContentEdit } from './pages/admin/ContentEdit.js';
 
 // Legal pages
@@ -64,7 +65,15 @@ function stubRoutes(items: NavItem[], specRef: string) {
     <Route
       key={item.id}
       path={item.path}
-      element={<PageStub title={item.label} icon={item.icon} placeholder={item.placeholder} specRef={specRef} />}
+      element={
+        <PageStub
+          navId={item.id}
+          title={item.label}
+          icon={item.icon}
+          placeholder={item.placeholder}
+          specRef={specRef}
+        />
+      }
     />
   ));
 }
@@ -85,6 +94,7 @@ export default function App() {
             <Route path="/admin/applications" element={<AdminApplications />} />
             <Route path="/admin/analytics" element={<AdminAnalytics />} />
             <Route path="/admin/content" element={<AdminContent />} />
+            <Route path="/admin/visibility" element={<AdminVisibility />} />
             <Route path="/admin/content/:slug" element={<AdminContentEdit />} />
             <Route path="/admin/settings" element={<AdminSettings />} />
           </Route>

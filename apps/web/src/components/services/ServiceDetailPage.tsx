@@ -13,6 +13,7 @@ import {
   type GridCard,
 } from '../sections';
 import { heroImageFor } from '../../content/imagery';
+import { navIdForPath } from '../../lib/navLookup';
 
 interface Feature {
   icon: IconName;
@@ -65,6 +66,7 @@ export function ServiceDetailPage({
   relatedServices,
 }: ServiceDetailPageProps) {
   const relatedCards: GridCard[] = (relatedServices ?? []).map((service) => ({
+    navId: navIdForPath(service.path),
     label: service.label,
     path: service.path,
   }));

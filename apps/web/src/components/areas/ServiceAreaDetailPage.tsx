@@ -60,6 +60,7 @@ export function ServiceAreaDetailPage({
   // list rather than a per-area subset. Placeholder services keep their "coming soon"
   // treatment instead of linking to a stub.
   const serviceCards: GridCard[] = [...HARD_SERVICES, ...SOFT_SERVICES].map((service) => ({
+    navId: service.id,
     label: service.label,
     path: service.path,
     icon: service.icon,

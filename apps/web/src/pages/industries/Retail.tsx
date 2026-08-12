@@ -1,10 +1,14 @@
 import { IndustryDetailPage } from '../../components/industries/IndustryDetailPage';
 import { PageLoadingFallback } from '../../components/PageLoadingFallback';
+import { NotFound } from '../NotFound';
 import { useContentPage } from '../../hooks/useContentPage';
 import type { IndustryContent } from '../../types/content';
 
 export function Retail() {
-  const { data, isLoading } = useContentPage<IndustryContent>('retail');
-  if (isLoading || !data) return <PageLoadingFallback />;
+  const { data, isLoading, error } = useContentPage<IndustryContent>('retail');
+  if (isLoading) return <PageLoadingFallback />;
+  // A hidden or unpublished page 404s from the content API; render NotFound rather than
+  // spinning forever on a request that will never succeed.
+  if (error || !data) return <NotFound />;
   return <IndustryDetailPage id="retail" path="/industries/retail" {...data} />;
 }

@@ -129,6 +129,23 @@ model ContentPage {
   @@index([status])
 }
 
+/// Per-nav-item public visibility, toggled from the admin panel.
+///
+/// Keyed by nav item id (the `id` field in packages/shared navigation.ts) rather than by
+/// ContentPage slug, because several nav entries — the five unbuilt industries — have no
+/// ContentPage row at all. One table therefore covers both content-backed pages and
+/// nav-only entries instead of two competing mechanisms.
+///
+/// Absence of a row means visible. Only explicitly hidden items are stored, so the
+/// default for anything new is to show, and the table stays small.
+model PageVisibility {
+  navId     String   @id // matches NavItem.id, e.g. "fire-safety"
+  visible   Boolean  @default(true)
+  updatedAt DateTime @updatedAt
+
+  @@index([visible])
+}
+
 model JobApplication {
   id           String   @id @default(cuid())
   fullName     String

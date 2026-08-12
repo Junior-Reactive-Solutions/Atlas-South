@@ -12,7 +12,8 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint . --ext ts --max-warnings 0",
     "seed:admin": "tsx scripts/seed-admin.ts",
-    "seed:content": "tsx scripts/seed-content.ts"
+    "seed:content": "tsx scripts/seed-content.ts",
+    "seed:visibility": "tsx scripts/seed-visibility.ts"
   },
   "dependencies": {
     "@atlas-south/shared": "*",

@@ -84,6 +84,7 @@ export function Home() {
   const { data: content } = useContentPage<HomeContent>('home');
 
   const industryCards: GridCard[] = INDUSTRIES.map((industry) => ({
+    navId: industry.id,
     label: industry.label,
     path: industry.path,
     icon: industry.icon,
@@ -91,6 +92,7 @@ export function Home() {
   }));
 
   const hardServiceCards: GridCard[] = HARD_SERVICES.map((service) => ({
+    navId: service.id,
     label: service.label,
     path: service.path,
     icon: service.icon,
@@ -98,6 +100,7 @@ export function Home() {
   }));
 
   const softServiceCards: GridCard[] = SOFT_SERVICES.map((service) => ({
+    navId: service.id,
     label: service.label,
     path: service.path,
     icon: service.icon,

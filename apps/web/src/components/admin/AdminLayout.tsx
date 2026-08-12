@@ -11,6 +11,7 @@ import {
   Users,
   Menu,
   X,
+  Eye,
   type LucideIcon,
 } from 'lucide-react';
 import { useNoIndex } from '../../hooks/useNoIndex.js';
@@ -21,6 +22,7 @@ const NAV_ITEMS: Array<{ to: string; icon: LucideIcon; label: string }> = [
   { to: '/admin/enquiries', icon: MessageSquare, label: 'Enquiries' },
   { to: '/admin/applications', icon: Users, label: 'Applications' },
   { to: '/admin/content', icon: FileText, label: 'Content' },
+  { to: '/admin/visibility', icon: Eye, label: 'Visibility' },
   { to: '/admin/analytics', icon: BarChart3, label: 'Analytics' },
   { to: '/admin/settings', icon: Settings, label: 'Settings' },
 ];

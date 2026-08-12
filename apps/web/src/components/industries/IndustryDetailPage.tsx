@@ -14,6 +14,7 @@ import {
 } from '../sections';
 import { heroImageFor } from '../../content/imagery';
 import { parseBulletPanels } from '../../lib/parseBulletPanels';
+import { navIdForPath } from '../../lib/navLookup';
 
 interface ServiceHighlight {
   serviceLabel: string;
@@ -66,6 +67,7 @@ export function IndustryDetailPage({
   const approachPanels = parseBulletPanels(ourApproach);
 
   const relatedCards: GridCard[] = (relatedServices ?? []).map((service) => ({
+    navId: navIdForPath(service.path),
     label: service.label,
     path: service.path,
   }));
