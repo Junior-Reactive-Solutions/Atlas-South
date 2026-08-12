@@ -11,4 +11,5 @@ export { StatBand, type Stat } from './StatBand';
 export { CtaBand } from './CtaBand';
 export { CardGrid, type GridCard } from './CardGrid';
 export { ScrollProgress } from './ScrollProgress';
+export { ServiceNetwork } from './ServiceNetwork';
 export { SectionNav, type SectionLink } from './SectionNav';

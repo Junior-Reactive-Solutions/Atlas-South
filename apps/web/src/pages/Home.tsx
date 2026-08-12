@@ -10,6 +10,7 @@ import {
   StatBand,
   CtaBand,
   CardGrid,
+  ServiceNetwork,
   type GridCard,
 } from '../components/sections';
 import { photo } from '../content/imagery';
@@ -146,6 +147,10 @@ export function Home() {
           </p>
         </div>
       </section>
+
+      {/* Scroll-reactive services panel — sits between the brand statement and the
+          industries grid, the same slot the inspiration site uses for its equivalent. */}
+      <ServiceNetwork />
 
       {/* Industries */}
       <section aria-label="Industries" className="bg-canvas-tint py-16 sm:py-20">
