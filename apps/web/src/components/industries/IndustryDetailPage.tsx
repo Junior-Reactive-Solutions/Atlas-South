@@ -10,7 +10,10 @@ import {
   StatBand,
   CtaBand,
   CardGrid,
+  ScrollProgress,
+  SectionNav,
   type GridCard,
+  type SectionLink,
 } from '../sections';
 import { heroImageFor } from '../../content/imagery';
 import { parseBulletPanels } from '../../lib/parseBulletPanels';
@@ -72,6 +75,14 @@ export function IndustryDetailPage({
     path: service.path,
   }));
 
+  const sectionLinks: SectionLink[] = [
+    { id: 'overview', label: 'Overview' },
+    { id: 'challenges', label: 'The challenge' },
+    { id: 'approach', label: 'Our approach' },
+    ...(serviceHighlights.length > 0 ? [{ id: 'coverage', label: 'What we cover' }] : []),
+    ...(relatedCards.length > 0 ? [{ id: 'related', label: 'Services' }] : []),
+  ];
+
   return (
     <>
       <Seo
@@ -92,6 +103,8 @@ export function IndustryDetailPage({
         }}
       />
 
+      <ScrollProgress />
+
       <PhotoHero
         eyebrow="Industries"
         title={title}
@@ -99,8 +112,10 @@ export function IndustryDetailPage({
         image={heroImageFor(id)}
       />
 
+      <SectionNav sections={sectionLinks} />
+
       {/* Overview */}
-      <section className="py-16 sm:py-20">
+      <section id="overview" className="scroll-mt-32 py-16 sm:py-20">
         <div className="mx-auto max-w-7xl px-4">
           <SectionHeading
             eyebrow={`${title} sector`}
@@ -113,7 +128,7 @@ export function IndustryDetailPage({
       </section>
 
       {/* Challenges — panels where the copy allows it, prose where it doesn't */}
-      <section className="bg-canvas-tint py-16 sm:py-20">
+      <section id="challenges" className="scroll-mt-32 bg-canvas-tint py-16 sm:py-20">
         <div className="mx-auto max-w-7xl px-4">
           <SectionHeading
             eyebrow="The challenge"
@@ -139,7 +154,7 @@ export function IndustryDetailPage({
       />
 
       {/* Our approach */}
-      <section className="py-16 sm:py-20">
+      <section id="approach" className="scroll-mt-32 py-16 sm:py-20">
         <div className="mx-auto max-w-7xl px-4">
           <SectionHeading
             eyebrow="Our approach"
@@ -166,10 +181,10 @@ export function IndustryDetailPage({
 
       {/* Capability grid — these are capabilities, not linkable service pages */}
       {serviceHighlights.length > 0 && (
-        <section className="py-16 sm:py-20">
+        <section id="coverage" className="scroll-mt-32 py-16 sm:py-20">
           <div className="mx-auto max-w-7xl px-4">
             <SectionHeading
-              eyebrow={`${title} services`}
+              eyebrow={` services`}
               title="What we cover"
               subcopy="Comprehensive support across every system your facility depends on."
             />
@@ -194,7 +209,7 @@ export function IndustryDetailPage({
 
       {/* Related services */}
       {relatedCards.length > 0 && (
-        <section className="bg-canvas-tint py-16 sm:py-20">
+        <section id="related" className="scroll-mt-32 bg-canvas-tint py-16 sm:py-20">
           <div className="mx-auto max-w-7xl px-4">
             <SectionHeading
               eyebrow="Explore solutions"

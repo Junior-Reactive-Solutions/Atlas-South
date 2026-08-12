@@ -10,7 +10,10 @@ import {
   StatBand,
   CtaBand,
   CardGrid,
+  ScrollProgress,
+  SectionNav,
   type GridCard,
+  type SectionLink,
 } from '../sections';
 import { heroImageFor } from '../../content/imagery';
 import { navIdForPath } from '../../lib/navLookup';
@@ -71,6 +74,15 @@ export function ServiceDetailPage({
     path: service.path,
   }));
 
+  // Built from what this page actually renders, so a service with no FAQs doesn't get a
+  // jump link to an absent section.
+  const sectionLinks: SectionLink[] = [
+    { id: 'overview', label: 'Overview' },
+    ...(features.length > 0 ? [{ id: 'benefits', label: 'What we provide' }] : []),
+    ...(faqs.length > 0 ? [{ id: 'faqs', label: 'FAQs' }] : []),
+    ...(relatedCards.length > 0 ? [{ id: 'related', label: 'Related services' }] : []),
+  ];
+
   return (
     <>
       <Seo
@@ -110,6 +122,8 @@ export function ServiceDetailPage({
         ]}
       />
 
+      <ScrollProgress />
+
       <PhotoHero
         eyebrow="Our services"
         title={title}
@@ -117,8 +131,10 @@ export function ServiceDetailPage({
         image={heroImageFor(id)}
       />
 
+      <SectionNav sections={sectionLinks} />
+
       {/* Overview */}
-      <section className="py-16 sm:py-20">
+      <section id="overview" className="scroll-mt-32 py-16 sm:py-20">
         <div className="mx-auto max-w-7xl px-4">
           <SectionHeading eyebrow="Overview" title={`${title} you can rely on`} />
           <div className="prose prose-sm mt-8 max-w-3xl sm:prose-base dark:prose-invert">
@@ -129,7 +145,7 @@ export function ServiceDetailPage({
 
       {/* Benefits — the former "What we provide" grid, now full panels */}
       {features.length > 0 && (
-        <section className="bg-canvas-tint py-16 sm:py-20">
+        <section id="benefits" className="scroll-mt-32 bg-canvas-tint py-16 sm:py-20">
           <div className="mx-auto max-w-7xl px-4">
             <SectionHeading
               eyebrow="Benefits"
@@ -157,7 +173,7 @@ export function ServiceDetailPage({
 
       {/* FAQs */}
       {faqs.length > 0 && (
-        <section className="py-16 sm:py-20">
+        <section id="faqs" className="scroll-mt-32 py-16 sm:py-20">
           <div className="mx-auto max-w-4xl px-4">
             <SectionHeading eyebrow="FAQs" title="Frequently asked questions" />
             <div className="mt-10 space-y-4">
@@ -184,7 +200,7 @@ export function ServiceDetailPage({
 
       {/* Related services */}
       {relatedCards.length > 0 && (
-        <section className="bg-canvas-tint py-16 sm:py-20">
+        <section id="related" className="scroll-mt-32 bg-canvas-tint py-16 sm:py-20">
           <div className="mx-auto max-w-7xl px-4">
             <SectionHeading eyebrow="More services" title="Related services" />
             <div className="mt-12">

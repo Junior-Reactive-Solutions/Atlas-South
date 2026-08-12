@@ -143,7 +143,7 @@ export function QuoteForm() {
               <Icon name="badge-check" size={32} className="text-success" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold">Enquiry submitted</h2>
+              <h2 className="text-2xl font-bold text-white">Enquiry submitted</h2>
               <p className="mt-1 text-white/80">
                 We'll be in touch within 24 hours. Check your email for a confirmation.
               </p>
@@ -158,7 +158,12 @@ export function QuoteForm() {
     <section ref={root} aria-label="Quote form" className="bg-navy py-16 text-white sm:py-20">
       <div className="mx-auto max-w-2xl px-4">
         <div className="mb-8 text-center">
-          <h2 className="font-display text-3xl font-bold sm:text-4xl">Get a free quote</h2>
+          {/* text-white is load-bearing: index.css applies `text-navy` to every h1-h4
+              globally, so without it this heading renders navy on the navy panel and is
+              invisible — which it had been on every page carrying the quote form. */}
+          <h2 className="font-display text-3xl font-bold text-white sm:text-4xl">
+            Get a free quote
+          </h2>
           <p className="mt-2 text-white/80">
             Tell us about your project. We'll respond within 24 hours.
           </p>

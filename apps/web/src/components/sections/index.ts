@@ -10,3 +10,5 @@ export { BenefitPanels, type BenefitPanel } from './BenefitPanels';
 export { StatBand, type Stat } from './StatBand';
 export { CtaBand } from './CtaBand';
 export { CardGrid, type GridCard } from './CardGrid';
+export { ScrollProgress } from './ScrollProgress';
+export { SectionNav, type SectionLink } from './SectionNav';

@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom';
-import { animate, stagger } from 'animejs';
-import { Icon, type IconName, useAnimationScope, DURATION, EASE, STAGGER_GAP } from '@atlas-south/design-system';
+import { Icon, type IconName, useScrollReveal } from '@atlas-south/design-system';
 import { useNavVisibility } from '../../hooks/useNavVisibility.js';
 
 export interface GridCard {
@@ -44,20 +43,7 @@ export function CardGrid({ cards, columns = 3, ctaLabel = 'Learn more' }: CardGr
   // (ad-hoc links) always render, so this can't silently swallow a card by accident.
   const visibleCards = cards.filter((card) => !(card.navId && hidden.has(card.navId)));
 
-  const root = useAnimationScope(
-    (self) => {
-      self?.add('reveal', () => {
-        animate('.grid-card', {
-          opacity: [0, 1],
-          translateY: [24, 0],
-          delay: stagger(STAGGER_GAP),
-          duration: DURATION.slow,
-          ease: EASE.standard,
-        });
-      });
-    },
-    [visibleCards.length],
-  );
+  const root = useScrollReveal('.grid-card');
 
   if (visibleCards.length === 0) return null;
 

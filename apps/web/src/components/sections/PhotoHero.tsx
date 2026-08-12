@@ -32,11 +32,20 @@ export function PhotoHero({
 }: PhotoHeroProps) {
   return (
     <section className="relative overflow-hidden bg-navy">
+      {/*
+        Very slow zoom (a "Ken Burns"): 1.0 → 1.08 over 20s, once, no loop.
+
+        The point is to make the page feel alive the moment it loads without anything
+        actually moving fast enough to read as animation — at this rate it's below the
+        threshold of noticing, which is what separates it from the auto-playing carousels
+        that make sites feel cheap. `motion-reduce:animate-none` turns it off for anyone
+        who has asked for reduced motion.
+      */}
       <img
         src={image}
         alt=""
         aria-hidden="true"
-        className="absolute inset-0 h-full w-full object-cover"
+        className="absolute inset-0 h-full w-full animate-hero-zoom object-cover motion-reduce:animate-none"
       />
       {/* Navy wash — text sits on this, never directly on the photo. */}
       <div

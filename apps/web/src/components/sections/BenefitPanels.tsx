@@ -1,5 +1,4 @@
-import { animate, stagger } from 'animejs';
-import { Icon, type IconName, useAnimationScope, DURATION, EASE, STAGGER_GAP } from '@atlas-south/design-system';
+import { Icon, type IconName, useScrollReveal } from '@atlas-south/design-system';
 import { panelImage } from '../../content/imagery';
 
 export interface BenefitPanel {
@@ -24,20 +23,9 @@ interface BenefitPanelsProps {
  * content/imagery.ts by position, so content authors never have to pick one.
  */
 export function BenefitPanels({ panels, alternate = true }: BenefitPanelsProps) {
-  const root = useAnimationScope(
-    (self) => {
-      self?.add('reveal', () => {
-        animate('.benefit-panel', {
-          opacity: [0, 1],
-          translateY: [24, 0],
-          delay: stagger(STAGGER_GAP),
-          duration: DURATION.slow,
-          ease: EASE.standard,
-        });
-      });
-    },
-    [panels.length],
-  );
+  // Panels rise in as the section reaches the viewport, one after the other — the thing
+  // that makes a long page feel like it's unfolding rather than just being long.
+  const root = useScrollReveal('.benefit-panel');
 
   if (panels.length === 0) return null;
 
