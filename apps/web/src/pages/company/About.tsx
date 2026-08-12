@@ -5,6 +5,7 @@ import { ValuesGrid } from '../../components/company/ValuesGrid';
 import { TeamGrid } from '../../components/company/TeamGrid';
 import { CertificationsBar } from '../../components/company/CertificationsBar';
 import { Seo } from '../../components/seo/Seo.js';
+import { StatBand } from '../../components/sections';
 import { COMPANY } from '@atlas-south/shared';
 import type { CompanyContent } from '../../types/content';
 
@@ -88,19 +89,20 @@ export function About() {
         </div>
       </section>
 
-      {/* Stats section */}
-      <section className="bg-canvas-tint py-16 sm:py-20">
-        <div className="mx-auto max-w-7xl px-4">
-          <dl className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            {data.stats.map((stat) => (
-              <div key={stat.label} className="text-center">
-                <dt className="font-display text-3xl font-bold text-navy">{stat.value}</dt>
-                <dd className="mt-2 text-sm font-medium text-slate">{stat.label}</dd>
-              </div>
-            ))}
-          </dl>
-        </div>
-      </section>
+      {/*
+        Stats section.
+
+        Deliberately ignores `data.stats` from the CMS. That row was seeded with figures
+        (100+ clients, 2,000+ jobs, 40+ team members) that contradicted the homepage's
+        700+ clients / 12,000+ jobs and have no source — they were invented during content
+        seeding. Only the homepage figures are verified, from the client's own live site
+        (docs/build/13-COMPANY-FACTS-VERIFIED.md), so this renders the shared StatBand,
+        which derives from COMPANY.stats. One set of numbers, one source, no drift.
+
+        "Team members" is dropped entirely rather than guessed — reinstate it here only
+        once the client confirms a real headcount.
+      */}
+      <StatBand />
     </>
   );
 }

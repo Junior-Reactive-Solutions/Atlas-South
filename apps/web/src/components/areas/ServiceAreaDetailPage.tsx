@@ -1,8 +1,19 @@
-import { Icon, type IconName } from '@atlas-south/design-system';
+import { type IconName } from '@atlas-south/design-system';
 import { QuoteForm } from '../home/QuoteForm';
 import { Seo } from '../seo/Seo.js';
 import { Markdown } from '../content/Markdown.js';
-import { COMPANY } from '@atlas-south/shared';
+import { COMPANY, HARD_SERVICES, SOFT_SERVICES } from '@atlas-south/shared';
+import {
+  PhotoHero,
+  SectionHeading,
+  BenefitPanels,
+  StatBand,
+  CtaBand,
+  CardGrid,
+  type GridCard,
+} from '../sections';
+import { heroImageFor } from '../../content/imagery';
+import { parseBulletPanels } from '../../lib/parseBulletPanels';
 
 interface ServiceAreaDetailPageProps {
   id: string;
@@ -23,14 +34,19 @@ interface ServiceAreaDetailPageProps {
  * one shared template with location-specific data swapped in. Per the spec, no separate
  * content brief is required per area — these are structurally identical pages.
  *
+ * Rebuilt alongside the service and industry templates to mirror the inspiration site's
+ * (abm.co.uk) section architecture, so all 21 detail pages share one visual language
+ * rather than three. The response-time commitment is promoted into the hero-adjacent stat
+ * band, since for a local-services page it is the single most persuasive fact on the page.
+ *
  * Also gives every area page local-SEO metadata (title, description, canonical, OG/Twitter,
  * LocalBusiness JSON-LD scoped to that area via areaServed) — docs/build/09-SEO-PERFORMANCE-
  * CHECKLIST.md §8 requires each area page to target its specific location, not a generic
  * templated page with only the place-name swapped.
  */
 export function ServiceAreaDetailPage({
+  id,
   title,
-  icon,
   path,
   heroDescription,
   overview,
@@ -38,6 +54,18 @@ export function ServiceAreaDetailPage({
   coverage,
   localProof,
 }: ServiceAreaDetailPageProps) {
+  const coveragePanels = parseBulletPanels(coverage);
+
+  // Every service is available in every area, so the cross-link grid is the full service
+  // list rather than a per-area subset. Placeholder services keep their "coming soon"
+  // treatment instead of linking to a stub.
+  const serviceCards: GridCard[] = [...HARD_SERVICES, ...SOFT_SERVICES].map((service) => ({
+    label: service.label,
+    path: service.path,
+    icon: service.icon,
+    placeholder: service.placeholder,
+  }));
+
   return (
     <>
       <Seo
@@ -59,72 +87,83 @@ export function ServiceAreaDetailPage({
         }}
       />
 
-      {/* Hero section */}
-      <section className="border-b border-border bg-canvas-tint py-16 sm:py-20">
-        <div className="mx-auto max-w-7xl px-4">
-          <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:gap-8">
-            <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-lg bg-accent-blue/10 sm:h-20 sm:w-20 lg:h-24 lg:w-24">
-              <Icon name={icon} size={40} className="text-accent-blue sm:hidden" />
-              <Icon name={icon} size={48} className="hidden text-accent-blue sm:block" />
-            </div>
-            <div>
-              <h1 className="font-display text-3xl font-bold text-navy sm:text-4xl">{title}</h1>
-              <p className="mt-2 max-w-2xl text-slate">{heroDescription}</p>
-            </div>
-          </div>
-        </div>
-      </section>
+      <PhotoHero
+        eyebrow="Areas we cover"
+        title={title}
+        description={heroDescription}
+        image={heroImageFor(id)}
+      />
 
-      {/* Overview section */}
+      {/* Overview */}
       <section className="py-16 sm:py-20">
-        <div className="mx-auto max-w-4xl px-4">
-          <div className="prose prose-sm max-w-none sm:prose-base dark:prose-invert">
+        <div className="mx-auto max-w-7xl px-4">
+          <SectionHeading eyebrow={title} title={`Facilities services across ${title}`} />
+          <div className="prose prose-sm mt-8 max-w-3xl sm:prose-base dark:prose-invert">
             <Markdown content={overview} />
           </div>
         </div>
       </section>
 
-      {/* Response time highlight */}
-      <section className="bg-canvas-tint py-12 sm:py-16">
-        <div className="mx-auto max-w-7xl px-4">
-          <div className="rounded-lg border border-accent-blue bg-accent-blue/5 p-6 sm:p-8">
-            <p className="text-center text-sm font-semibold uppercase tracking-widest text-accent-blue">
-              Response time commitment
-            </p>
-            <p className="mt-2 text-center font-display text-2xl font-bold text-navy sm:text-3xl">
-              {responseTime}
-            </p>
-          </div>
-        </div>
-      </section>
+      {/* responseTime is a full sentence, not a number, so it reads as the supporting line
+          rather than the heading — as an H2 it rendered as an unwieldy all-caps paragraph. */}
+      <StatBand
+        eyebrow="Response commitment"
+        heading={`Rapid response across ${title}`}
+        subcopy={responseTime}
+      />
 
-      {/* Coverage section */}
+      {/* Coverage */}
       <section className="py-16 sm:py-20">
-        <div className="mx-auto max-w-4xl px-4">
-          <h2 className="mb-8 font-display text-2xl font-bold text-navy sm:text-3xl">
-            Coverage in {title.toLowerCase()}
-          </h2>
-          <div className="prose prose-sm max-w-none sm:prose-base dark:prose-invert">
-            <Markdown content={coverage} />
+        <div className="mx-auto max-w-7xl px-4">
+          <SectionHeading
+            eyebrow="Coverage"
+            title={`Where we work in ${title}`}
+            subcopy={coveragePanels?.lead || undefined}
+          />
+          <div className="mt-12">
+            {coveragePanels ? (
+              <BenefitPanels panels={coveragePanels.panels} />
+            ) : (
+              <div className="prose prose-sm max-w-3xl sm:prose-base dark:prose-invert">
+                <Markdown content={coverage} />
+              </div>
+            )}
           </div>
         </div>
       </section>
 
-      {/* Local proof section */}
+      {/* Local proof */}
       {localProof && (
         <section className="bg-canvas-tint py-16 sm:py-20">
-          <div className="mx-auto max-w-4xl px-4">
-            <h2 className="mb-8 font-display text-2xl font-bold text-navy sm:text-3xl">
-              Trusted by local organisations
-            </h2>
-            <div className="prose prose-sm max-w-none sm:prose-base dark:prose-invert">
+          <div className="mx-auto max-w-7xl px-4">
+            <SectionHeading eyebrow="Local track record" title="Trusted by local organisations" />
+            <div className="prose prose-sm mt-8 max-w-3xl sm:prose-base dark:prose-invert">
               <Markdown content={localProof} />
             </div>
           </div>
         </section>
       )}
 
-      {/* Quote form CTA */}
+      <CtaBand
+        heading={`Need a contractor in ${title}?`}
+        description="Emergency call-outs and planned works both start with the same 24-hour response."
+        tone="tint"
+      />
+
+      {/* All services, cross-linked */}
+      <section className="py-16 sm:py-20">
+        <div className="mx-auto max-w-7xl px-4">
+          <SectionHeading
+            eyebrow="Available here"
+            title="Every service we offer"
+            subcopy={`All Atlas South services are available across ${title}.`}
+          />
+          <div className="mt-12">
+            <CardGrid cards={serviceCards} columns={4} ctaLabel="View service" />
+          </div>
+        </div>
+      </section>
+
       <QuoteForm />
     </>
   );
