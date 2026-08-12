@@ -18,19 +18,22 @@ import { useVisibleNavItems } from '../../hooks/useNavVisibility.js';
  * icons on top of the headline. Node centres are offset by `-translate-x-1/2`, so a node
  * at 58% with the largest size still clears the text.
  *
- * `drift` is measured in pixels of travel across the full scroll of the section. Slots cap
- * how many nodes the graphic shows; the accessible list below renders every service
- * regardless, so a service is never hidden by running out of slots.
+ * `drift` is pixels of travel across the full scroll of the section, and `lag` is how
+ * strongly the node responds to scroll *velocity* — see the two-part motion note on the
+ * component below. Signs are mixed on purpose so nodes cross past each other.
+ *
+ * Slots cap how many nodes the graphic shows; the accessible list below renders every
+ * service regardless, so a service is never hidden by running out of slots.
  */
 const NODE_SLOTS = [
-  { top: 10, left: 60, drift: 48, size: 'md' },
-  { top: 26, left: 84, drift: -30, size: 'sm' },
-  { top: 40, left: 58, drift: 40, size: 'lg' },
-  { top: 56, left: 88, drift: -44, size: 'md' },
-  { top: 70, left: 64, drift: 34, size: 'sm' },
-  { top: 86, left: 80, drift: -38, size: 'md' },
-  { top: 18, left: 74, drift: 26, size: 'sm' },
-  { top: 62, left: 74, drift: -22, size: 'sm' },
+  { top: 12, left: 60, drift: 150, lag: 1.5, size: 'md' },
+  { top: 28, left: 84, drift: -110, lag: -1.0, size: 'sm' },
+  { top: 42, left: 58, drift: 190, lag: 1.9, size: 'lg' },
+  { top: 56, left: 88, drift: -140, lag: -1.3, size: 'md' },
+  { top: 70, left: 64, drift: 120, lag: 1.1, size: 'sm' },
+  { top: 84, left: 80, drift: -170, lag: -1.7, size: 'md' },
+  { top: 20, left: 74, drift: 95, lag: 0.8, size: 'sm' },
+  { top: 62, left: 74, drift: -85, lag: -0.7, size: 'sm' },
 ] as const;
 
 const SIZE_CLASS = {
@@ -50,17 +53,34 @@ const ICON_SIZE = { sm: 22, md: 30, lg: 36 } as const;
  * making the section feel alive while actually saying something about the offering — and
  * unlike ABM's, each node is a real link to that service.
  *
- * Motion notes:
- * - Transform only. No layout properties are touched during scroll, so the whole effect
- *   stays on the compositor.
- * - Driven by one rAF-throttled scroll listener for the section, not one per node.
- * - The listener is only attached while the panel is on screen; scrolling the rest of the
- *   page costs nothing.
- * - Travel is deliberately small (±~50px across the entire section). Enough to read as
- *   depth, small enough that the nodes stay comfortably clickable — a link that runs away
- *   from the cursor is a worse outcome than no animation.
+ * The motion has two parts, and they do different jobs:
  *
- * Under prefers-reduced-motion nothing is attached and nodes render in their resting
+ * 1. **Position drift.** Each node's offset is a function of how far the panel has
+ *    travelled through the viewport. Because it is a pure function of scroll *position*,
+ *    it retraces itself exactly in reverse when you scroll back up — scrolling up doesn't
+ *    just stop the motion, it runs it backwards.
+ *
+ * 2. **Velocity lag.** A second offset proportional to current scroll *speed*, which
+ *    decays back to zero when you stop. This is what makes the panel feel reactive rather
+ *    than merely animated: flick the wheel and the nodes visibly get pushed, and the push
+ *    is the opposite way for an upward flick. Nodes with a negative `lag` are shoved
+ *    against the scroll direction, so the group splits and crosses rather than sliding as
+ *    one sheet.
+ *
+ * Because part 2 decays to nothing the moment scrolling stops, nodes always settle to a
+ * stable resting place — which is what keeps them clickable. That mattered enough to
+ * shape the design: a link that keeps drifting under a stationary cursor is a worse
+ * outcome than no animation.
+ *
+ * Implementation notes:
+ * - Transform only. No layout properties are touched, so this stays on the compositor.
+ * - One rAF loop for the whole panel, not a listener per node, and it only runs while the
+ *   panel is on screen. It also parks itself once everything has settled, so a stationary
+ *   reader isn't burning a frame callback indefinitely.
+ * - Velocity is clamped before it is used, so a trackpad fling or a "scroll to bottom"
+ *   keypress can't launch the nodes off the panel.
+ *
+ * Under prefers-reduced-motion no loop is started and nodes render in their resting
  * positions. Below `lg` the network is replaced by a plain grid: at 375px wide, scattered
  * absolute positioning collapses into overlap, and a tidy grid communicates the same
  * thing.
@@ -81,11 +101,20 @@ export function ServiceNetwork() {
     if (!section || prefersReducedMotion()) return;
     if (!window.matchMedia('(min-width: 1024px)').matches) return;
 
-    let frame = 0;
-    let attached = false;
+    /** Hard ceiling on velocity, in px/frame, before it is multiplied by a node's lag. */
+    const MAX_VELOCITY = 55;
+    /** How quickly the smoothed velocity chases the real one. Lower = more lag. */
+    const VELOCITY_EASING = 0.12;
+    /** Below this the panel is treated as settled and the loop parks. */
+    const SETTLED = 0.05;
 
-    const update = () => {
-      frame = 0;
+    let frame = 0;
+    let running = false;
+    let lastScrollY = window.scrollY;
+    let smoothedVelocity = 0;
+    const curves = section.querySelector<SVGElement>('[data-network-curves]');
+
+    const render = () => {
       const rect = section.getBoundingClientRect();
 
       // 0 when the panel's top edge first reaches the bottom of the viewport, 1 when its
@@ -95,29 +124,61 @@ export function ServiceNetwork() {
       const raw = (window.innerHeight - rect.top) / span;
       const centred = Math.min(1, Math.max(0, raw)) - 0.5;
 
+      // Raw per-frame scroll delta, clamped so a fling can't throw nodes off the panel.
+      const delta = window.scrollY - lastScrollY;
+      lastScrollY = window.scrollY;
+      const clamped = Math.max(-MAX_VELOCITY, Math.min(MAX_VELOCITY, delta));
+
+      // Chase the real velocity rather than snapping to it. The gap between the two is
+      // the lag that makes the nodes feel weighted instead of glued to the scrollbar.
+      smoothedVelocity += (clamped - smoothedVelocity) * VELOCITY_EASING;
+
       nodeRefs.current.forEach((node, index) => {
         if (!node) return;
-        const drift = NODE_SLOTS[index % NODE_SLOTS.length].drift;
-        node.style.transform = `translate3d(0, ${(centred * drift).toFixed(2)}px, 0)`;
+        const slot = NODE_SLOTS[index % NODE_SLOTS.length];
+        const offset = centred * slot.drift + smoothedVelocity * slot.lag * 3;
+        node.style.transform = `translate3d(0, ${offset.toFixed(2)}px, 0)`;
       });
+
+      // The curve network shifts gently the other way, so the nodes read as moving
+      // through the lines rather than the whole picture sliding as one plane.
+      if (curves) {
+        curves.style.transform = `translate3d(0, ${(centred * -40).toFixed(2)}px, 0)`;
+      }
+
+      // Park once the velocity component has effectively died. Position drift alone needs
+      // no frames — the next scroll event restarts the loop.
+      if (Math.abs(smoothedVelocity) < SETTLED && Math.abs(delta) < SETTLED) {
+        running = false;
+        frame = 0;
+        return;
+      }
+
+      frame = window.requestAnimationFrame(render);
     };
 
-    const onScroll = () => {
-      if (frame) return;
-      frame = window.requestAnimationFrame(update);
+    const start = () => {
+      if (running) return;
+      running = true;
+      frame = window.requestAnimationFrame(render);
     };
 
-    // Only listen while the panel is actually on screen.
+    // Only run while the panel is actually on screen.
+    let attached = false;
     const observer = new IntersectionObserver(
       (entries) => {
         const visible = entries.some((entry) => entry.isIntersecting);
         if (visible && !attached) {
-          window.addEventListener('scroll', onScroll, { passive: true });
+          lastScrollY = window.scrollY;
+          window.addEventListener('scroll', start, { passive: true });
           attached = true;
-          update();
+          start();
         } else if (!visible && attached) {
-          window.removeEventListener('scroll', onScroll);
+          window.removeEventListener('scroll', start);
           attached = false;
+          running = false;
+          if (frame) window.cancelAnimationFrame(frame);
+          frame = 0;
         }
       },
       { threshold: 0 },
@@ -127,7 +188,7 @@ export function ServiceNetwork() {
 
     return () => {
       observer.disconnect();
-      if (attached) window.removeEventListener('scroll', onScroll);
+      if (attached) window.removeEventListener('scroll', start);
       if (frame) window.cancelAnimationFrame(frame);
     };
   }, [services.length]);
@@ -138,7 +199,10 @@ export function ServiceNetwork() {
     <section
       ref={sectionRef}
       aria-label="Our services"
-      className="relative overflow-hidden bg-navy py-20 text-white sm:py-24"
+      // Taller at lg than the copy needs: the drift is proportional to how far the panel
+      // travels through the viewport, so a short panel gives the nodes almost nothing to
+      // move across. This is the room the effect needs to be visible at all.
+      className="relative overflow-hidden bg-navy py-20 text-white sm:py-24 lg:min-h-[760px] lg:py-32"
     >
       {/*
         The connecting curves. Purely decorative, so aria-hidden and stroked in brand-blue
@@ -149,9 +213,12 @@ export function ServiceNetwork() {
       */}
       <svg
         aria-hidden="true"
+        data-network-curves
         viewBox="0 0 1200 700"
         preserveAspectRatio="none"
-        className="pointer-events-none absolute inset-0 hidden h-full w-full opacity-40 lg:block"
+        // -inset-y-24 gives the curves room to counter-move without revealing a hard edge
+        // at the top or bottom of the panel as they shift.
+        className="pointer-events-none absolute -inset-y-24 left-0 hidden h-[calc(100%+12rem)] w-full opacity-40 lg:block"
       >
         <g fill="none" stroke="#0078FC" strokeWidth="2">
           <path d="M-40,150 C220,150 340,470 620,470 C860,470 980,210 1260,210" />
