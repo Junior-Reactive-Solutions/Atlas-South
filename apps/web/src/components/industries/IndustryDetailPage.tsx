@@ -1,9 +1,23 @@
-import { Link } from 'react-router-dom';
-import { Icon, type IconName } from '@atlas-south/design-system';
+import { type IconName } from '@atlas-south/design-system';
 import { QuoteForm } from '../home/QuoteForm';
 import { Seo } from '../seo/Seo.js';
 import { Markdown } from '../content/Markdown.js';
 import { COMPANY } from '@atlas-south/shared';
+import {
+  PhotoHero,
+  SectionHeading,
+  BenefitPanels,
+  StatBand,
+  CtaBand,
+  CardGrid,
+  ScrollProgress,
+  SectionNav,
+  type GridCard,
+  type SectionLink,
+} from '../sections';
+import { heroImageFor } from '../../content/imagery';
+import { parseBulletPanels } from '../../lib/parseBulletPanels';
+import { navIdForPath } from '../../lib/navLookup';
 
 interface ServiceHighlight {
   serviceLabel: string;
@@ -26,17 +40,24 @@ interface IndustryDetailPageProps {
 
 /**
  * Industry detail page template — docs/build/06-PAGE-SPECIFICATIONS.md "Industries rows".
- * Reusable layout for individual industry pages. Each industry provides content
- * (title, description, challenges, approach), and this component handles the layout,
- * styling, and CTA integration.
+ *
+ * Rebuilt to mirror the section architecture of the inspiration site (abm.co.uk): photo
+ * hero → overview → alternating challenge panels → proof-point band → approach panels →
+ * mid-page CTA → capability grid → related services → quote form.
+ *
+ * The previous version rendered the same content as three markdown blocks in a narrow
+ * centred column, which is why the client read the site as "completely different" from
+ * the inspiration. No copy changed here — `challenges` and `ourApproach` are parsed from
+ * their existing bullet form into panels, and fall back to prose when they don't fit that
+ * shape (see parseBulletPanels).
  *
  * Also gives every industry page real SEO metadata (title, description, canonical,
  * OG/Twitter, WebPage JSON-LD) as a structural property of the template — see the same
  * note in ServiceDetailPage.tsx.
  */
 export function IndustryDetailPage({
+  id,
   title,
-  icon,
   path,
   heroDescription,
   overview,
@@ -45,6 +66,23 @@ export function IndustryDetailPage({
   serviceHighlights,
   relatedServices,
 }: IndustryDetailPageProps) {
+  const challengePanels = parseBulletPanels(challenges);
+  const approachPanels = parseBulletPanels(ourApproach);
+
+  const relatedCards: GridCard[] = (relatedServices ?? []).map((service) => ({
+    navId: navIdForPath(service.path),
+    label: service.label,
+    path: service.path,
+  }));
+
+  const sectionLinks: SectionLink[] = [
+    { id: 'overview', label: 'Overview' },
+    { id: 'challenges', label: 'The challenge' },
+    { id: 'approach', label: 'Our approach' },
+    ...(serviceHighlights.length > 0 ? [{ id: 'coverage', label: 'What we cover' }] : []),
+    ...(relatedCards.length > 0 ? [{ id: 'related', label: 'Services' }] : []),
+  ];
+
   return (
     <>
       <Seo
@@ -65,67 +103,103 @@ export function IndustryDetailPage({
         }}
       />
 
-      {/* Hero section */}
-      <section className="border-b border-border bg-canvas-tint py-16 sm:py-20">
-        <div className="mx-auto max-w-7xl px-4">
-          <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:gap-8">
-            <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-lg bg-accent-blue/10 sm:h-20 sm:w-20 lg:h-24 lg:w-24">
-              <Icon name={icon} size={40} className="text-accent-blue sm:hidden" />
-              <Icon name={icon} size={48} className="hidden text-accent-blue sm:block" />
-            </div>
-            <div>
-              <h1 className="font-display text-3xl font-bold text-navy sm:text-4xl">{title}</h1>
-              <p className="mt-2 max-w-2xl text-slate">{heroDescription}</p>
-            </div>
-          </div>
-        </div>
-      </section>
+      <ScrollProgress />
 
-      {/* Overview section */}
-      <section className="py-16 sm:py-20">
-        <div className="mx-auto max-w-4xl px-4">
-          <div className="prose prose-sm max-w-none sm:prose-base dark:prose-invert">
+      <PhotoHero
+        eyebrow="Industries"
+        title={title}
+        description={heroDescription}
+        image={heroImageFor(id)}
+      />
+
+      <SectionNav sections={sectionLinks} />
+
+      {/* Overview */}
+      <section id="overview" className="scroll-mt-32 py-16 sm:py-20">
+        <div className="mx-auto max-w-7xl px-4">
+          <SectionHeading
+            eyebrow={`${title} sector`}
+            title={`Facilities services built around ${title.toLowerCase()}`}
+          />
+          <div className="prose prose-sm mt-8 max-w-3xl sm:prose-base dark:prose-invert">
             <Markdown content={overview} />
           </div>
         </div>
       </section>
 
-      {/* Challenges section */}
-      <section className="bg-canvas-tint py-16 sm:py-20">
-        <div className="mx-auto max-w-4xl px-4">
-          <h2 className="mb-8 font-display text-2xl font-bold text-navy sm:text-3xl">
-            Challenges specific to {title.toLowerCase()}
-          </h2>
-          <div className="prose prose-sm max-w-none sm:prose-base dark:prose-invert">
-            <Markdown content={challenges} />
+      {/* Challenges — panels where the copy allows it, prose where it doesn't */}
+      <section id="challenges" className="scroll-mt-32 bg-canvas-tint py-16 sm:py-20">
+        <div className="mx-auto max-w-7xl px-4">
+          <SectionHeading
+            eyebrow="The challenge"
+            title={`What makes ${title.toLowerCase()} different`}
+            subcopy={challengePanels?.lead || undefined}
+          />
+          <div className="mt-12">
+            {challengePanels ? (
+              <BenefitPanels panels={challengePanels.panels} />
+            ) : (
+              <div className="prose prose-sm max-w-3xl sm:prose-base dark:prose-invert">
+                <Markdown content={challenges} />
+              </div>
+            )}
           </div>
         </div>
       </section>
 
-      {/* Our approach section */}
-      <section className="py-16 sm:py-20">
-        <div className="mx-auto max-w-4xl px-4">
-          <h2 className="mb-8 font-display text-2xl font-bold text-navy sm:text-3xl">
-            How we serve {title.toLowerCase()}
-          </h2>
-          <div className="prose prose-sm max-w-none sm:prose-base dark:prose-invert">
-            <Markdown content={ourApproach} />
+      <StatBand
+        eyebrow="Why Atlas South"
+        heading="Proof, not promises"
+        subcopy={`The numbers behind every ${title.toLowerCase()} contract we run.`}
+      />
+
+      {/* Our approach */}
+      <section id="approach" className="scroll-mt-32 py-16 sm:py-20">
+        <div className="mx-auto max-w-7xl px-4">
+          <SectionHeading
+            eyebrow="Our approach"
+            title={`How we serve ${title.toLowerCase()}`}
+            subcopy={approachPanels?.lead || undefined}
+          />
+          <div className="mt-12">
+            {approachPanels ? (
+              <BenefitPanels panels={approachPanels.panels} />
+            ) : (
+              <div className="prose prose-sm max-w-3xl sm:prose-base dark:prose-invert">
+                <Markdown content={ourApproach} />
+              </div>
+            )}
           </div>
         </div>
       </section>
 
-      {/* Service highlights grid */}
+      <CtaBand
+        heading={`Let's talk about your ${title.toLowerCase()} estate`}
+        description="Tell us what you're responsible for and we'll come back within 24 hours with a plan and a price."
+        tone="tint"
+      />
+
+      {/* Capability grid — these are capabilities, not linkable service pages */}
       {serviceHighlights.length > 0 && (
-        <section className="bg-canvas-tint py-16 sm:py-20">
+        <section id="coverage" className="scroll-mt-32 py-16 sm:py-20">
           <div className="mx-auto max-w-7xl px-4">
-            <h2 className="mb-12 text-center font-display text-3xl font-bold text-navy">
-              Relevant services
-            </h2>
-            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            <SectionHeading
+              eyebrow={` services`}
+              title="What we cover"
+              subcopy="Comprehensive support across every system your facility depends on."
+            />
+            <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {serviceHighlights.map((highlight) => (
-                <div key={highlight.serviceLabel} className="rounded-lg border border-border bg-canvas p-6">
-                  <h3 className="mb-3 font-semibold text-navy">{highlight.serviceLabel}</h3>
-                  <p className="text-sm text-slate">{highlight.description}</p>
+                <div
+                  key={highlight.serviceLabel}
+                  className="rounded-2xl border border-border bg-canvas p-6"
+                >
+                  <h3 className="font-display text-lg font-bold text-navy">
+                    {highlight.serviceLabel}
+                  </h3>
+                  <p className="mt-3 text-sm leading-relaxed text-slate">
+                    {highlight.description}
+                  </p>
                 </div>
               ))}
             </div>
@@ -134,26 +208,20 @@ export function IndustryDetailPage({
       )}
 
       {/* Related services */}
-      {relatedServices && relatedServices.length > 0 && (
-        <section className="bg-canvas-tint py-12 sm:py-16">
+      {relatedCards.length > 0 && (
+        <section id="related" className="scroll-mt-32 bg-canvas-tint py-16 sm:py-20">
           <div className="mx-auto max-w-7xl px-4">
-            <h3 className="mb-6 font-semibold text-navy">Explore all services</h3>
-            <div className="flex flex-wrap gap-3">
-              {relatedServices.map((service) => (
-                <Link
-                  key={service.path}
-                  to={service.path}
-                  className="inline-block rounded-lg border border-border bg-canvas px-4 py-2 text-sm font-medium text-navy transition-colors hover:border-accent-blue hover:text-accent-blue"
-                >
-                  {service.label}
-                </Link>
-              ))}
+            <SectionHeading
+              eyebrow="Explore solutions"
+              title="Services available to this sector"
+            />
+            <div className="mt-12">
+              <CardGrid cards={relatedCards} columns={4} ctaLabel="View service" />
             </div>
           </div>
         </section>
       )}
 
-      {/* Quote form CTA */}
       <QuoteForm />
     </>
   );

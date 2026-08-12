@@ -10,6 +10,7 @@ import {
   type NavItem,
 } from '@atlas-south/shared';
 import { Icon, useAnimationScope, DURATION, EASE, STAGGER_GAP } from '@atlas-south/design-system';
+import { useVisibleNavItems } from '../../hooks/useNavVisibility.js';
 
 interface DropdownProps {
   label: string;
@@ -28,6 +29,9 @@ function MobileDrawerSection({
   onNavigate: () => void;
 }) {
   const [expanded, setExpanded] = useState(false);
+  // Filtering here rather than at each call site means every drawer group honours the
+  // admin's visibility settings without the call sites having to remember to.
+  const visibleItems = useVisibleNavItems(items);
 
   return (
     <div className="border-b border-border">
@@ -42,7 +46,7 @@ function MobileDrawerSection({
       </button>
       {expanded && (
         <div className="pb-2">
-          {items.map((item) => (
+          {visibleItems.map((item) => (
             <Link
               key={item.id}
               to={item.path}
@@ -67,6 +71,7 @@ function MobileDrawerSection({
 /** One dropdown per docs/build/02-ANIMATION-SYSTEM.md "Header nav dropdown" row. */
 function NavDropdown({ label, items }: DropdownProps) {
   const [open, setOpen] = useState(false);
+  const visibleItems = useVisibleNavItems(items);
 
   const root = useAnimationScope((self) => {
     self?.add('open', () => {
@@ -128,7 +133,7 @@ function NavDropdown({ label, items }: DropdownProps) {
           aria-label={`${label} submenu`}
           className="dropdown-panel absolute left-0 top-full z-20 min-w-[260px] rounded-md border border-border bg-canvas p-2 shadow-lg"
         >
-          {items.map((item) => (
+          {visibleItems.map((item) => (
             <Link
               key={item.id}
               to={item.path}

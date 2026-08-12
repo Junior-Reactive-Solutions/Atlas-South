@@ -26,6 +26,19 @@ contentRouter.get('/content/:slug', async (req, res) => {
       return res.status(404).json({ error: 'Page not found or not yet published' });
     }
 
+    // A page hidden from the admin panel must be genuinely unreachable, not merely
+    // unlinked. Filtering it out of the nav alone would leave the content readable to
+    // anyone who kept the URL, which is security by obscurity. Same 404 body as an
+    // unpublished page so the response does not distinguish "hidden" from "never existed".
+    const visibility = await db.pageVisibility.findUnique({
+      where: { navId: page.slug },
+      select: { visible: true },
+    });
+
+    if (visibility && !visibility.visible) {
+      return res.status(404).json({ error: 'Page not found or not yet published' });
+    }
+
     // Cache content responses for 5 minutes (content rarely changes mid-session)
     res.set('Cache-Control', 'public, max-age=300');
     res.json(page);

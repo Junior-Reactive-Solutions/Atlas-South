@@ -56,7 +56,11 @@ const COMPANY_CONTENT = {
     {
       year: 2024,
       title: 'Continued Growth',
-      body: 'Now serving over 100 clients with 40+ team members across all services.',
+      // Previously "over 100 clients with 40+ team members" — both figures were invented
+      // during seeding and the client count directly contradicted the verified 700+ used
+      // site-wide (docs/build/13-COMPANY-FACTS-VERIFIED.md). Rewritten to the verified
+      // figure; headcount dropped rather than guessed.
+      body: 'Now serving 700+ clients across every service line, from single call-outs to fully managed contracts.',
       icon: 'trending-up',
     },
   ],
@@ -101,12 +105,17 @@ const COMPANY_CONTENT = {
     { icon: 'award', title: 'NICEIC Approved', body: 'Electrical work by certified professionals' },
     { icon: 'award', title: 'ISO 9001', body: 'Quality management certified' },
   ],
-  stats: [
-    { value: '6+', label: 'Years of experience' },
-    { value: '100+', label: 'Satisfied clients' },
-    { value: '2000+', label: 'Jobs completed' },
-    { value: '40+', label: 'Team members' },
-  ],
+  /**
+   * Left empty deliberately. This array previously held 6+ years / 100+ clients /
+   * 2000+ jobs / 40+ team members — none of which had a source, and two of which
+   * contradicted the verified site-wide figures (700+ clients, 12,000+ jobs) from
+   * docs/build/13-COMPANY-FACTS-VERIFIED.md.
+   *
+   * The About page no longer reads this field at all; it renders the shared <StatBand>,
+   * which derives from COMPANY.stats. Kept as an empty array rather than deleted so the
+   * CompanyContent shape is unchanged for any existing database row.
+   */
+  stats: [] as Array<{ value: string; label: string }>,
 };
 
 const CAREERS_CONTENT = {

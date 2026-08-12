@@ -12,6 +12,7 @@ import {
   type NavItem,
 } from '@atlas-south/shared';
 import { Icon, useAnimationScope, DURATION, EASE, STAGGER_GAP } from '@atlas-south/design-system';
+import { useNavVisibility } from '../../hooks/useNavVisibility.js';
 
 interface ColumnProps {
   title: string;
@@ -21,6 +22,12 @@ interface ColumnProps {
 /** Desktop column / mobile accordion — docs/build/04-FOOTER-SPEC.md §5. */
 function FooterColumn({ title, items }: ColumnProps) {
   const [expanded, setExpanded] = useState(false);
+  const { hidden } = useNavVisibility();
+
+  // Same filtering as the header, applied here so a hidden page can't still be reached
+  // from the footer — the audit's dead-link finding was largely a header/footer drift
+  // problem, and this keeps the two in step by construction.
+  const visibleItems = items.filter((item) => !hidden.has(item.id));
 
   return (
     <nav aria-label={`Footer — ${title}`} className="border-b border-white/10 py-4 lg:border-0 lg:py-0">
@@ -36,7 +43,7 @@ function FooterColumn({ title, items }: ColumnProps) {
         </button>
       </h3>
       <ul className={`${expanded ? 'block' : 'hidden'} lg:block`}>
-        {items.map((item) => (
+        {visibleItems.map((item) => (
           <li key={item.id}>
             <Link
               to={item.path}

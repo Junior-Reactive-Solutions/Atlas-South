@@ -1,9 +1,22 @@
-import { Link } from 'react-router-dom';
 import { Icon, type IconName } from '@atlas-south/design-system';
 import { QuoteForm } from '../home/QuoteForm';
 import { Seo } from '../seo/Seo.js';
 import { Markdown } from '../content/Markdown.js';
 import { COMPANY } from '@atlas-south/shared';
+import {
+  PhotoHero,
+  SectionHeading,
+  BenefitPanels,
+  StatBand,
+  CtaBand,
+  CardGrid,
+  ScrollProgress,
+  SectionNav,
+  type GridCard,
+  type SectionLink,
+} from '../sections';
+import { heroImageFor } from '../../content/imagery';
+import { navIdForPath } from '../../lib/navLookup';
 
 interface Feature {
   icon: IconName;
@@ -31,16 +44,23 @@ interface ServiceDetailPageProps {
 
 /**
  * Service detail page template — docs/build/06-PAGE-SPECIFICATIONS.md "Hard/Soft Services rows".
- * Reusable layout for individual service pages. Each service provides content (title, description,
- * features, FAQs), and this component handles the layout, animations, and CTA integration.
+ *
+ * Rebuilt to mirror the inspiration site's (abm.co.uk) service-page architecture: photo
+ * hero → benefits as alternating image/text panels → proof-point band → mid-page CTA →
+ * FAQs → sibling services → quote form. The previous version put a 40px outline icon on a
+ * pale strip and then rendered everything as prose in a narrow column, which is the main
+ * reason the site read as documentation rather than as a marketing page.
+ *
+ * `features` already carried title/description/icon triples, so the panel layout reuses
+ * the existing copy unchanged — no content migration was needed.
  *
  * Also the single place that gives every service page real SEO metadata (title, description,
  * canonical, OG/Twitter, Service + FAQPage JSON-LD) — docs/build/09-SEO-PERFORMANCE-CHECKLIST.md §2 —
  * so it's a structural property of the template rather than something to remember per page.
  */
 export function ServiceDetailPage({
+  id,
   title,
-  icon,
   path,
   heroDescription,
   overview,
@@ -48,6 +68,21 @@ export function ServiceDetailPage({
   faqs,
   relatedServices,
 }: ServiceDetailPageProps) {
+  const relatedCards: GridCard[] = (relatedServices ?? []).map((service) => ({
+    navId: navIdForPath(service.path),
+    label: service.label,
+    path: service.path,
+  }));
+
+  // Built from what this page actually renders, so a service with no FAQs doesn't get a
+  // jump link to an absent section.
+  const sectionLinks: SectionLink[] = [
+    { id: 'overview', label: 'Overview' },
+    ...(features.length > 0 ? [{ id: 'benefits', label: 'What we provide' }] : []),
+    ...(faqs.length > 0 ? [{ id: 'faqs', label: 'FAQs' }] : []),
+    ...(relatedCards.length > 0 ? [{ id: 'related', label: 'Related services' }] : []),
+  ];
+
   return (
     <>
       <Seo
@@ -87,71 +122,75 @@ export function ServiceDetailPage({
         ]}
       />
 
-      {/* Hero section */}
-      <section className="border-b border-border bg-canvas-tint py-16 sm:py-20">
-        <div className="mx-auto max-w-7xl px-4">
-          <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:gap-8">
-            <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-lg bg-accent-blue/10 sm:h-20 sm:w-20 lg:h-24 lg:w-24">
-              <Icon name={icon} size={40} className="text-accent-blue sm:hidden" />
-              <Icon name={icon} size={48} className="hidden text-accent-blue sm:block" />
-            </div>
-            <div>
-              <h1 className="font-display text-3xl font-bold text-navy sm:text-4xl">{title}</h1>
-              <p className="mt-2 max-w-2xl text-slate">{heroDescription}</p>
-            </div>
-          </div>
-        </div>
-      </section>
+      <ScrollProgress />
 
-      {/* Overview section */}
-      <section className="py-16 sm:py-20">
-        <div className="mx-auto max-w-4xl px-4">
-          <div className="prose prose-sm max-w-none sm:prose-base dark:prose-invert">
+      <PhotoHero
+        eyebrow="Our services"
+        title={title}
+        description={heroDescription}
+        image={heroImageFor(id)}
+      />
+
+      <SectionNav sections={sectionLinks} />
+
+      {/* Overview */}
+      <section id="overview" className="scroll-mt-32 py-16 sm:py-20">
+        <div className="mx-auto max-w-7xl px-4">
+          <SectionHeading eyebrow="Overview" title={`${title} you can rely on`} />
+          <div className="prose prose-sm mt-8 max-w-3xl sm:prose-base dark:prose-invert">
             <Markdown content={overview} />
           </div>
         </div>
       </section>
 
-      {/* Features grid */}
+      {/* Benefits — the former "What we provide" grid, now full panels */}
       {features.length > 0 && (
-        <section className="bg-canvas-tint py-16 sm:py-20">
+        <section id="benefits" className="scroll-mt-32 bg-canvas-tint py-16 sm:py-20">
           <div className="mx-auto max-w-7xl px-4">
-            <h2 className="mb-12 text-center font-display text-3xl font-bold text-navy">
-              What we provide
-            </h2>
-            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-              {features.map((feature) => (
-                <div key={feature.title} className="rounded-lg border border-border bg-canvas p-6">
-                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-accent-blue/10">
-                    <Icon name={feature.icon} size={24} className="text-accent-blue" />
-                  </div>
-                  <h3 className="mb-2 font-semibold text-navy">{feature.title}</h3>
-                  <p className="text-sm text-slate">{feature.description}</p>
-                </div>
-              ))}
+            <SectionHeading
+              eyebrow="Benefits"
+              title="What we provide"
+              subcopy="Every engagement covers the full lifecycle — not just the call-out."
+            />
+            <div className="mt-12">
+              <BenefitPanels panels={features} />
             </div>
           </div>
         </section>
       )}
 
-      {/* FAQs section */}
+      <StatBand
+        eyebrow="Why Atlas South"
+        heading="Experience makes the difference"
+        subcopy="The track record behind every job we take on."
+      />
+
+      <CtaBand
+        heading={`Need ${title.toLowerCase()}?`}
+        description="Tell us what you need and we'll respond within 24 hours — or call now for emergency cover."
+        tone="tint"
+      />
+
+      {/* FAQs */}
       {faqs.length > 0 && (
-        <section className="py-16 sm:py-20">
+        <section id="faqs" className="scroll-mt-32 py-16 sm:py-20">
           <div className="mx-auto max-w-4xl px-4">
-            <h2 className="mb-8 font-display text-3xl font-bold text-navy">
-              Frequently asked questions
-            </h2>
-            <div className="space-y-6">
+            <SectionHeading eyebrow="FAQs" title="Frequently asked questions" />
+            <div className="mt-10 space-y-4">
               {faqs.map((faq) => (
                 <details
                   key={faq.question}
-                  className="group rounded-lg border border-border p-6 hover:border-accent-blue hover:bg-canvas-tint"
+                  className="group rounded-2xl border border-border p-6 transition-colors hover:border-accent-blue hover:bg-canvas-tint"
                 >
-                  <summary className="flex cursor-pointer items-center justify-between font-semibold text-navy group-open:text-accent-blue">
+                  <summary className="flex cursor-pointer items-center justify-between gap-4 font-semibold text-navy group-open:text-accent-blue">
                     {faq.question}
-                    <Icon name="arrow-right" size={20} className="transition-transform group-open:rotate-90" />
+                    <Icon
+                      name="arrow-right"
+                      size={20}
+                      className="flex-shrink-0 transition-transform group-open:rotate-90"
+                    />
                   </summary>
-                  <p className="mt-4 text-sm text-slate">{faq.answer}</p>
+                  <p className="mt-4 text-sm leading-relaxed text-slate">{faq.answer}</p>
                 </details>
               ))}
             </div>
@@ -160,26 +199,17 @@ export function ServiceDetailPage({
       )}
 
       {/* Related services */}
-      {relatedServices && relatedServices.length > 0 && (
-        <section className="bg-canvas-tint py-12 sm:py-16">
+      {relatedCards.length > 0 && (
+        <section id="related" className="scroll-mt-32 bg-canvas-tint py-16 sm:py-20">
           <div className="mx-auto max-w-7xl px-4">
-            <h3 className="mb-6 font-semibold text-navy">Related services</h3>
-            <div className="flex flex-wrap gap-3">
-              {relatedServices.map((service) => (
-                <Link
-                  key={service.path}
-                  to={service.path}
-                  className="inline-block rounded-lg border border-border bg-canvas px-4 py-2 text-sm font-medium text-navy transition-colors hover:border-accent-blue hover:text-accent-blue"
-                >
-                  {service.label}
-                </Link>
-              ))}
+            <SectionHeading eyebrow="More services" title="Related services" />
+            <div className="mt-12">
+              <CardGrid cards={relatedCards} columns={4} ctaLabel="View service" />
             </div>
           </div>
         </section>
       )}
 
-      {/* Quote form CTA */}
       <QuoteForm />
     </>
   );

@@ -11,6 +11,7 @@ import { healthRouter } from './routes/health.js';
 import { enquiriesRouter } from './routes/enquiries.js';
 import { eventsRouter } from './routes/events.js';
 import { contentRouter } from './routes/content.js';
+import { visibilityRouter } from './routes/visibility.js';
 import { careersRouter } from './routes/careers.js';
 import adminAuthRouter from './routes/admin/auth.js';
 import adminEnquiriesRouter from './routes/admin/enquiries.js';
@@ -20,6 +21,7 @@ import adminUsersRouter from './routes/admin/users.js';
 import adminTotpRouter from './routes/admin/totp.js';
 import adminAnalyticsRouter from './routes/admin/analytics.js';
 import adminContentRouter from './routes/admin/content.js';
+import adminVisibilityRouter from './routes/admin/visibility.js';
 
 const app = express();
 
@@ -89,6 +91,7 @@ app.use('/api', healthRouter);
 app.use('/api', enquiriesRouter);
 app.use('/api', eventsRouter);
 app.use('/api', contentRouter);
+app.use('/api', visibilityRouter);
 app.use('/api', careersRouter);
 
 // Admin routes — secured with JWT authentication
@@ -102,6 +105,7 @@ app.use('/api/admin/users', adminApiLimiter, adminUsersRouter);
 app.use('/api/admin/totp', adminApiLimiter, adminTotpRouter);
 app.use('/api/admin/analytics', adminApiLimiter, adminAnalyticsRouter);
 app.use('/api/admin/content', adminApiLimiter, adminContentRouter);
+app.use('/api/admin/visibility', adminApiLimiter, adminVisibilityRouter);
 
 // Centralised error handler — never leak stack traces to the client.
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

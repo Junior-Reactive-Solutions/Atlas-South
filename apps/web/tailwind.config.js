@@ -31,6 +31,17 @@ export default {
         success: '#1E7A4C',
         error: '#C0392B',
       },
+      keyframes: {
+        // Slow hero zoom — see the note in components/sections/PhotoHero.tsx. Runs once
+        // rather than alternating, so the image settles and stays settled.
+        'hero-zoom': {
+          from: { transform: 'scale(1)' },
+          to: { transform: 'scale(1.08)' },
+        },
+      },
+      animation: {
+        'hero-zoom': 'hero-zoom 20s ease-out forwards',
+      },
       fontFamily: {
         // Montserrat replaces Big Shoulders Display — the previous pick read too thin
         // at heading weight and made the whole page feel smaller at normal zoom. The
