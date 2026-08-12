@@ -36,6 +36,25 @@ const NODE_SLOTS = [
   { top: 62, left: 74, drift: -85, lag: -0.7, size: 'sm' },
 ] as const;
 
+/**
+ * Below `lg` the scattered layout is replaced by a grid, and the same motion is applied
+ * *per column* rather than per node.
+ *
+ * That distinction is the whole trick on small screens. Grid cells sit in normal flow, so
+ * giving each cell its own offset would let vertically-adjacent cells slide into each
+ * other. Driving whole columns instead means every cell in a column moves together — the
+ * columns cross against each other exactly like the desktop nodes do, and two cells can
+ * never collide because cells only ever share a column with cells moving identically.
+ *
+ * Indexed by column, and the grid is `grid-cols-2 sm:grid-cols-3`, so three entries covers
+ * both layouts.
+ */
+const COLUMN_MOTION = [
+  { drift: -34, lag: -0.55 },
+  { drift: 28, lag: 0.45 },
+  { drift: -20, lag: -0.3 },
+] as const;
+
 const SIZE_CLASS = {
   sm: 'h-14 w-14',
   md: 'h-20 w-20',
@@ -80,14 +99,20 @@ const ICON_SIZE = { sm: 22, md: 30, lg: 36 } as const;
  * - Velocity is clamped before it is used, so a trackpad fling or a "scroll to bottom"
  *   keypress can't launch the nodes off the panel.
  *
- * Under prefers-reduced-motion no loop is started and nodes render in their resting
- * positions. Below `lg` the network is replaced by a plain grid: at 375px wide, scattered
- * absolute positioning collapses into overlap, and a tidy grid communicates the same
- * thing.
+ * The same motion runs at every screen size, but drives a different layout below `lg`.
+ * Scattered absolute positioning collapses into overlap at 375px, so small screens get a
+ * grid instead — and the motion is applied per *column* there, so whole columns cross
+ * against each other while cells within a column stay locked together and can never
+ * collide. Both the velocity ceiling and the lag scale are lowered for that layout: touch
+ * scrolling produces far larger per-frame deltas than a wheel, and grid columns sit closer
+ * together than free-floating nodes, so there is less room to move into.
+ *
+ * Under prefers-reduced-motion no loop is started and everything renders at rest.
  */
 export function ServiceNetwork() {
   const sectionRef = useRef<HTMLElement>(null);
   const nodeRefs = useRef<Array<HTMLAnchorElement | null>>([]);
+  const cellRefs = useRef<Array<HTMLLIElement | null>>([]);
 
   // Hidden services must not be advertised here either — this reads through the same
   // visibility switches as the header, footer and card grids.
@@ -99,7 +124,6 @@ export function ServiceNetwork() {
   useEffect(() => {
     const section = sectionRef.current;
     if (!section || prefersReducedMotion()) return;
-    if (!window.matchMedia('(min-width: 1024px)').matches) return;
 
     /** Hard ceiling on velocity, in px/frame, before it is multiplied by a node's lag. */
     const MAX_VELOCITY = 55;
@@ -108,11 +132,36 @@ export function ServiceNetwork() {
     /** Below this the panel is treated as settled and the loop parks. */
     const SETTLED = 0.05;
 
+    /**
+     * Ceiling on the velocity term alone, per layout.
+     *
+     * Touch scrolling reaches far higher per-frame deltas than a mouse wheel, and momentum
+     * keeps them there for a while after the finger lifts. Without a cap on the *result*
+     * (not just the input), a hard flick on a phone would fling a whole column well past
+     * its neighbours. The mobile figure is deliberately much smaller than desktop's:
+     * columns are in normal flow and sit close together, so there is far less room to move
+     * into before it stops looking deliberate.
+     */
+    const MAX_VELOCITY_OFFSET = { desktop: 70, compact: 20 };
+
+    /** Multiplier applied to `lag` before it meets the velocity, per layout. */
+    const LAG_SCALE = { desktop: 3, compact: 1.1 };
+
     let frame = 0;
     let running = false;
     let lastScrollY = window.scrollY;
     let smoothedVelocity = 0;
-    const curves = section.querySelector<SVGElement>('[data-network-curves]');
+    const curves = section.querySelectorAll<SVGElement>('[data-network-curves]');
+
+    const desktopQuery = window.matchMedia('(min-width: 1024px)');
+    /** Mirrors the grid's own `grid-cols-2 sm:grid-cols-3`, so columns can't fall out of sync. */
+    const threeColQuery = window.matchMedia('(min-width: 640px)');
+
+    /** Clears both element sets so a layout switch can't strand a stale transform. */
+    const resetTransforms = () => {
+      nodeRefs.current.forEach((el) => el && (el.style.transform = ''));
+      cellRefs.current.forEach((el) => el && (el.style.transform = ''));
+    };
 
     const render = () => {
       const rect = section.getBoundingClientRect();
@@ -133,18 +182,39 @@ export function ServiceNetwork() {
       // the lag that makes the nodes feel weighted instead of glued to the scrollbar.
       smoothedVelocity += (clamped - smoothedVelocity) * VELOCITY_EASING;
 
-      nodeRefs.current.forEach((node, index) => {
-        if (!node) return;
-        const slot = NODE_SLOTS[index % NODE_SLOTS.length];
-        const offset = centred * slot.drift + smoothedVelocity * slot.lag * 3;
-        node.style.transform = `translate3d(0, ${offset.toFixed(2)}px, 0)`;
-      });
+      const isDesktop = desktopQuery.matches;
+      const mode = isDesktop ? 'desktop' : 'compact';
+      const lagScale = LAG_SCALE[mode];
+      const cap = MAX_VELOCITY_OFFSET[mode];
 
-      // The curve network shifts gently the other way, so the nodes read as moving
-      // through the lines rather than the whole picture sliding as one plane.
-      if (curves) {
-        curves.style.transform = `translate3d(0, ${(centred * -40).toFixed(2)}px, 0)`;
+      /** Velocity contribution for a given lag, capped so a fling can't overshoot. */
+      const velocityOffset = (lag: number) => {
+        const raw = smoothedVelocity * lag * lagScale;
+        return Math.max(-cap, Math.min(cap, raw));
+      };
+
+      if (isDesktop) {
+        nodeRefs.current.forEach((node, index) => {
+          if (!node) return;
+          const slot = NODE_SLOTS[index % NODE_SLOTS.length];
+          const offset = centred * slot.drift + velocityOffset(slot.lag);
+          node.style.transform = `translate3d(0, ${offset.toFixed(2)}px, 0)`;
+        });
+      } else {
+        const columns = threeColQuery.matches ? 3 : 2;
+        cellRefs.current.forEach((cell, index) => {
+          if (!cell) return;
+          const motion = COLUMN_MOTION[index % columns];
+          const offset = centred * motion.drift + velocityOffset(motion.lag);
+          cell.style.transform = `translate3d(0, ${offset.toFixed(2)}px, 0)`;
+        });
       }
+
+      // The curve network shifts gently the other way, so the icons read as moving
+      // through the lines rather than the whole picture sliding as one plane.
+      curves.forEach((curve) => {
+        curve.style.transform = `translate3d(0, ${(centred * -40).toFixed(2)}px, 0)`;
+      });
 
       // Park once the velocity component has effectively died. Position drift alone needs
       // no frames — the next scroll event restarts the loop.
@@ -162,6 +232,17 @@ export function ServiceNetwork() {
       running = true;
       frame = window.requestAnimationFrame(render);
     };
+
+    // Crossing the lg boundary swaps which element set is driven. Without clearing first,
+    // whichever set stopped being driven keeps the transform it happened to hold — leaving
+    // a grid cell or a node permanently nudged off-position after a rotate or resize.
+    const onLayoutChange = () => {
+      resetTransforms();
+      start();
+    };
+
+    desktopQuery.addEventListener('change', onLayoutChange);
+    threeColQuery.addEventListener('change', onLayoutChange);
 
     // Only run while the panel is actually on screen.
     let attached = false;
@@ -188,6 +269,8 @@ export function ServiceNetwork() {
 
     return () => {
       observer.disconnect();
+      desktopQuery.removeEventListener('change', onLayoutChange);
+      threeColQuery.removeEventListener('change', onLayoutChange);
       if (attached) window.removeEventListener('scroll', start);
       if (frame) window.cancelAnimationFrame(frame);
     };
@@ -208,16 +291,20 @@ export function ServiceNetwork() {
         The connecting curves. Purely decorative, so aria-hidden and stroked in brand-blue
         — the raw logo blue is barred from text by the brand system for failing AA, but
         graphic strokes are exactly what it is reserved for (01-BRAND-SYSTEM.md §2).
-        preserveAspectRatio="none" lets the network stretch to whatever the panel is,
-        which is fine for abstract curves and avoids letterboxing.
+
+        Two variants rather than one responsive SVG. A landscape 1200x700 network squeezed
+        into a tall narrow phone panel would either distort the curves into near-vertical
+        streaks (preserveAspectRatio="none") or crop away most of the interesting part
+        ("slice"). The portrait variant is drawn for that shape instead.
+
+        -inset-y-24 gives the curves room to counter-move without revealing a hard edge at
+        the top or bottom of the panel as they shift.
       */}
       <svg
         aria-hidden="true"
         data-network-curves
         viewBox="0 0 1200 700"
         preserveAspectRatio="none"
-        // -inset-y-24 gives the curves room to counter-move without revealing a hard edge
-        // at the top or bottom of the panel as they shift.
         className="pointer-events-none absolute -inset-y-24 left-0 hidden h-[calc(100%+12rem)] w-full opacity-40 lg:block"
       >
         <g fill="none" stroke="#0078FC" strokeWidth="2">
@@ -226,6 +313,23 @@ export function ServiceNetwork() {
           <path d="M-40,300 C260,300 420,620 720,620 C960,620 1060,300 1260,300" />
           <path d="M180,-40 C180,180 420,240 420,520 C420,660 300,700 300,760" />
           <path d="M940,-40 C940,200 760,280 760,540 C760,680 880,720 880,760" />
+        </g>
+      </svg>
+
+      {/* Portrait variant for phone and tablet — curves run mostly top-to-bottom, matching
+          the direction the columns travel. */}
+      <svg
+        aria-hidden="true"
+        data-network-curves
+        viewBox="0 0 400 900"
+        preserveAspectRatio="none"
+        className="pointer-events-none absolute -inset-y-24 left-0 h-[calc(100%+12rem)] w-full opacity-25 lg:hidden"
+      >
+        <g fill="none" stroke="#0078FC" strokeWidth="2">
+          <path d="M60,-40 C60,180 300,260 300,520 C300,760 120,820 120,980" />
+          <path d="M340,-40 C340,200 90,300 90,540 C90,780 280,840 280,980" />
+          <path d="M-20,220 C120,220 180,420 320,420 C400,420 420,340 460,340" />
+          <path d="M-20,660 C140,660 200,480 340,480" />
         </g>
       </svg>
 
@@ -286,9 +390,18 @@ export function ServiceNetwork() {
           get no service links from this section at all. sr-only keeps it in the
           accessibility tree and the tab order while taking no visual space.
         */}
-        <ul className="mt-14 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:sr-only">
-          {services.map((service) => (
-            <li key={service.id}>
+        {/* gap-y is generous because whole columns travel vertically against each other;
+            a tight row gap would let a rising column's cells sit level with a falling
+            column's and read as a broken grid rather than as depth. */}
+        <ul className="mt-14 grid grid-cols-2 gap-x-3 gap-y-8 sm:grid-cols-3 sm:gap-y-10 lg:sr-only">
+          {services.map((service, index) => (
+            <li
+              key={service.id}
+              ref={(el) => {
+                cellRefs.current[index] = el;
+              }}
+              className="will-change-transform"
+            >
               <Link
                 to={service.path}
                 className="flex min-h-[44px] items-center gap-3 rounded-lg border border-white/15 bg-white/5 p-3 text-sm font-medium text-white transition-colors hover:border-brand-blue hover:bg-white/10"
