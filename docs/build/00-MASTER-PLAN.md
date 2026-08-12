@@ -36,6 +36,7 @@ rather than re-litigating them.
 | 11 | [Git & GitHub Workflow](11-GIT-GITHUB-WORKFLOW.md) | Branch strategy, PRs, issues, labels, milestones, Actions, tags/releases, README/LICENSE/.gitignore |
 | 12 | [Hosting & Deployment](12-HOSTING-DEPLOYMENT.md) | Vercel/Render/Neon/Cloudinary/Resend wiring, environment promotion flow |
 | 13 | [Company Facts — Verified](13-COMPANY-FACTS-VERIFIED.md) | Single source of truth for NAP/legal facts; flags what still needs client confirmation |
+| 14 | [Sprint 10 — ABM Structure Mirror](14-SPRINT-10-ABM-STRUCTURE.md) | Record of the section-architecture rebuild, per-page photography, page visibility controls, motion system, and the content-integrity fixes. Describes what the code **does** — read it before trusting docs 03/06 on layout |
 
 ## Research performed to produce this plan (so it's traceable, not assumed)
 
