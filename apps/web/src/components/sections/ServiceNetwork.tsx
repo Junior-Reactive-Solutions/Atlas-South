@@ -331,7 +331,14 @@ export function ServiceNetwork() {
     <section
       ref={sectionRef}
       aria-label="Our services"
-      className="relative overflow-hidden bg-navy py-20 text-white sm:py-24 lg:min-h-[820px] lg:py-32"
+      // `isolate` is load-bearing, not decorative. The header is `sticky z-30`
+      // (Header.tsx), and the node layer below is also z-30 — with no stacking context
+      // between them, those two z-30s compete directly and DOM order breaks the tie: this
+      // section renders after the header, so its nodes painted OVER the sticky nav once you
+      // scrolled past the panel. `isolate` gives this section its own stacking context, so
+      // every z-index inside it (the curves, the nodes, the copy) is contained here and can
+      // never out-rank anything outside — the header stays on top regardless of scroll.
+      className="isolate relative overflow-hidden bg-navy py-20 text-white sm:py-24 lg:min-h-[820px] lg:py-32"
     >
       {/*
         The lines the nodes ride. Decorative, so aria-hidden, and stroked in brand-blue —
