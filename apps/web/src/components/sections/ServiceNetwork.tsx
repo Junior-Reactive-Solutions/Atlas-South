@@ -11,6 +11,14 @@ const VB_H = 820;
 /**
  * One track per node: the line it rides, where it parks, and when it sets off.
  *
+ * Every track is routed so the node never overlaps the copy block. While a node is left of
+ * roughly x=562 (the right edge of the `max-w-xl` column) it stays either above y=88 or
+ * below y=572, which are the copy's top and bottom in this coordinate space; the corners
+ * and vertical runs all happen at x>600, clear of the text. That constraint is what lets
+ * the node layer sit *above* the copy, and therefore stay hoverable for the entire journey
+ * rather than going dead while it passes behind the headline. The checked-in geometry
+ * script asserts it, because it is easy to break by nudging a single number.
+ *
  * The shape of these paths is the whole point, and it is taken from how the inspiration
  * site (abm.co.uk) actually does it. Theirs is an After Effects composition exported to
  * Lottie and scrubbed by GSAP ScrollTrigger; reading its keyframe data shows each bubble
@@ -33,61 +41,67 @@ const VB_H = 820;
  * disagree the node visibly jumps on first paint.
  */
 const TRACKS = [
+  // Consecutive delays alternate between the band above the copy and the band below it.
+  // Neither band is tall enough to hold two nodes side by side, so same-band neighbours are
+  // kept apart in *time* instead — which is why the delays matter as much as the geometry,
+  // and why the checked-in script replays the timeline to prove no pair ever overlaps.
   {
-    d: 'M-100,120 L240,120 Q300,120 300,180 L300,240 Q300,300 360,300 L1120,300',
+    d: 'M-100,40 L580,40 Q640,40 640,110 L640,240 Q640,300 700,300 L1120,300',
     endX: 1120,
     endY: 300,
     delay: 0,
-    size: 'lg',
-  },
-  {
-    d: 'M-100,300 L360,300 Q420,300 420,240 L420,200 Q420,140 480,140 L1120,140',
-    endX: 1120,
-    endY: 140,
-    delay: 0.08,
     size: 'md',
   },
   {
-    d: 'M-100,460 L200,460 Q260,460 260,540 L260,600 Q260,660 320,660 L1000,660',
-    endX: 1000,
-    endY: 660,
-    delay: 0.16,
-    size: 'md',
-  },
-  {
-    d: 'M-100,620 L460,620 Q520,620 520,560 L520,520 Q520,460 580,460 L1120,460',
-    endX: 1120,
-    endY: 460,
-    delay: 0.24,
-    // md, not lg: at lg its 48px radius left only a 12px gap to the node parked at y=560.
-    size: 'md',
-  },
-  {
-    d: 'M-100,180 L580,180 Q640,180 640,240 L640,320 Q640,380 700,380 L960,380',
-    endX: 960,
-    endY: 380,
-    delay: 0.32,
-    size: 'sm',
-  },
-  {
-    d: 'M-100,700 L720,700 Q780,700 780,640 L780,620 Q780,560 840,560 L1120,560',
+    d: 'M-100,700 L800,700 Q860,700 860,640 L860,620 Q860,560 920,560 L1120,560',
     endX: 1120,
     endY: 560,
-    delay: 0.4,
+    delay: 0.1,
     size: 'md',
   },
   {
-    d: 'M-100,40 L140,40 Q200,40 200,100 L200,160 Q200,220 260,220 L880,220',
-    endX: 880,
-    endY: 220,
-    delay: 0.48,
+    // Parks short of the right edge, between tracks 0 and 3 rather than level with either.
+    // Earlier rest points at y=360 and y=400 each clipped a neighbour by ~12px mid-transit.
+    // Entry at y=72 rather than 88: at 88 this node cleared the copy box by only 8px.
+    d: 'M-100,72 L760,72 Q820,72 820,160 L820,320 Q820,380 880,380 L940,380',
+    endX: 940,
+    endY: 380,
+    delay: 0.2,
     size: 'sm',
   },
   {
-    d: 'M-100,780 L300,780 Q360,780 360,720 L360,660 Q360,600 420,600 L1000,600',
+    d: 'M-100,620 L560,620 Q620,620 620,560 L620,520 Q620,460 680,460 L1120,460',
+    endX: 1120,
+    endY: 460,
+    delay: 0.3,
+    size: 'md',
+  },
+  {
+    d: 'M-100,40 L700,40 Q760,40 760,90 L760,100 Q760,140 820,140 L880,140',
+    endX: 880,
+    endY: 140,
+    delay: 0.4,
+    size: 'sm',
+  },
+  {
+    d: 'M-100,760 L640,760 Q700,760 700,720 L700,700 Q700,660 760,660 L1000,660',
     endX: 1000,
-    endY: 600,
-    delay: 0.56,
+    endY: 660,
+    delay: 0.5,
+    size: 'md',
+  },
+  {
+    d: 'M-100,96 L700,96 Q760,96 760,160 L760,180 Q760,220 820,220 L860,220',
+    endX: 860,
+    endY: 220,
+    delay: 0.6,
+    size: 'sm',
+  },
+  {
+    d: 'M-100,680 L500,680 Q560,680 560,730 L560,750 Q560,780 620,780 L820,780',
+    endX: 820,
+    endY: 780,
+    delay: 0.7,
     size: 'sm',
   },
 ] as const;
@@ -359,16 +373,17 @@ export function ServiceNetwork() {
       </svg>
 
       {/*
-        Node layer — a sibling of the SVG covering the identical box, and sitting *behind*
-        the copy (z-10 vs the content's z-20).
+        Node layer — a sibling of the SVG covering the identical box, at z-30, i.e. *above*
+        the copy.
 
-        That stacking is what makes the whole effect possible: on ABM the animation is a
-        background layer (`possibilities-section_bg`) and bubbles pass behind the headline.
-        Keeping ours in front would force every track to detour around the copy column,
-        which is precisely what made the earlier attempt read as floating rather than
-        travelling.
+        It started below the copy (matching ABM, whose animation is a background layer and
+        whose bubbles pass behind the headline). That looked right but broke interaction:
+        a node behind the text is not hoverable, so each icon went dead for part of its
+        journey. Since the tracks are now routed clear of the copy block (see the note on
+        TRACKS), nothing is gained by keeping them underneath — and putting them on top is
+        what makes them hoverable from the moment they enter to the moment they park.
       */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-10 hidden lg:block">
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-30 hidden lg:block">
         {services.map((service, index) => {
           const track = TRACKS[index % TRACKS.length];
           return (
@@ -398,8 +413,18 @@ export function ServiceNetwork() {
         })}
       </div>
 
-      <div className="relative z-20 mx-auto max-w-7xl px-4">
-        <div className="max-w-xl">
+      {/*
+        pointer-events-none on this wrapper is load-bearing, not tidiness.
+
+        It is a full-width block sitting at z-20 above the node layer, so with pointer
+        events enabled it swallowed every hover across the whole panel — including the empty
+        right-hand area where the nodes park. Four of the six services were simply not
+        hoverable. Capture is re-enabled below on the copy column and the service list,
+        which are the only parts that actually need it, so the transparent gutter around
+        them no longer blocks the icons behind it.
+      */}
+      <div className="pointer-events-none relative z-20 mx-auto max-w-7xl px-4">
+        <div className="pointer-events-auto max-w-xl">
           <p className="text-xs font-bold uppercase tracking-[0.18em] text-white/70">
             One contractor, every discipline
           </p>
@@ -431,7 +456,7 @@ export function ServiceNetwork() {
           this list outright would leave a screen-reader or keyboard user with no service
           links from this section at all on desktop.
         */}
-        <ul className="mt-14 grid grid-cols-2 gap-x-3 gap-y-8 sm:grid-cols-3 sm:gap-y-10 lg:sr-only">
+        <ul className="pointer-events-auto mt-14 grid grid-cols-2 gap-x-3 gap-y-8 sm:grid-cols-3 sm:gap-y-10 lg:sr-only">
           {services.map((service, index) => (
             <li
               key={service.id}
