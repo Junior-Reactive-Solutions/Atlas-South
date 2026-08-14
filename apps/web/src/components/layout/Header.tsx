@@ -7,10 +7,12 @@ import {
   HARD_SERVICES,
   SOFT_SERVICES,
   INDUSTRIES,
+  PACKAGES_PAGE,
   type NavItem,
 } from '@atlas-south/shared';
 import { Icon, useAnimationScope, DURATION, EASE, STAGGER_GAP } from '@atlas-south/design-system';
 import { useVisibleNavItems } from '../../hooks/useNavVisibility.js';
+import { trackPhoneClick, trackWhatsAppClick } from '../../lib/analytics.js';
 
 interface DropdownProps {
   label: string;
@@ -193,11 +195,39 @@ export function Header() {
             <NavDropdown label="Hard Services" items={HARD_SERVICES} />
             <NavDropdown label="Soft Services" items={SOFT_SERVICES} />
             <NavDropdown label="Company" items={COMPANY_PAGES} />
+            <Link
+              to={PACKAGES_PAGE.path}
+              className="flex min-h-[44px] items-center gap-1 px-3 text-sm font-semibold uppercase tracking-wide text-navy hover:text-accent-blue"
+            >
+              Pricing
+            </Link>
           </nav>
 
+          {/*
+            Instant-contact CTAs, repeated in the header on every page.
+
+            The pre-rebuild site's audit called this out as a genuine strength versus the
+            inspiration site: "WhatsApp + phone CTAs repeated throughout — direct-response
+            strength" (docs/agile/inspiration-gap-analysis.md). The WhatsApp half of that
+            pair had gone missing entirely in the rebuild — COMPANY.whatsapp.url and the
+            'whatsapp_click' analytics event both already existed in @atlas-south/shared,
+            unused, with nothing anywhere actually linking to WhatsApp. This is that link.
+          */}
           <div className="hidden items-center gap-2 lg:flex">
             <a
+              href={COMPANY.whatsapp.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Message us on WhatsApp"
+              title="Message us on WhatsApp"
+              onClick={() => trackWhatsAppClick('header')}
+              className="flex h-11 w-11 items-center justify-center rounded text-navy hover:text-accent-blue"
+            >
+              <Icon name="message-circle" size={20} />
+            </a>
+            <a
               href={`tel:${COMPANY.phone.tel}`}
+              onClick={() => trackPhoneClick('header')}
               className="flex min-h-[44px] items-center gap-2 rounded px-3 text-sm font-semibold text-navy hover:text-accent-blue"
             >
               <Icon name="phone" size={18} />
@@ -240,9 +270,18 @@ export function Header() {
               <MobileDrawerSection label="Hard Services" items={HARD_SERVICES} onNavigate={() => setMobileOpen(false)} />
               <MobileDrawerSection label="Soft Services" items={SOFT_SERVICES} onNavigate={() => setMobileOpen(false)} />
               <MobileDrawerSection label="Company" items={COMPANY_PAGES} onNavigate={() => setMobileOpen(false)} />
+              <Link
+                to={PACKAGES_PAGE.path}
+                className="mobile-drawer-item flex min-h-[48px] items-center gap-3 border-b border-border py-3 text-sm font-semibold uppercase tracking-wide text-navy"
+                onClick={() => setMobileOpen(false)}
+              >
+                <Icon name={PACKAGES_PAGE.icon} size={18} />
+                Pricing
+              </Link>
             </div>
 
-            {/* CTAs pinned near the bottom, matching the desktop header's pair */}
+            {/* CTAs pinned near the bottom, matching the desktop header's set — see the
+                note above the desktop WhatsApp link on why it's here at all. */}
             <div className="mobile-drawer-item mt-4 flex flex-col gap-2">
               <Link
                 to="/company/contact"
@@ -251,8 +290,23 @@ export function Header() {
               >
                 Contact Us
               </Link>
+              {/* border-navy, not WhatsApp's brand green — 01-BRAND-SYSTEM.md is explicit
+                  that no colour outside the token set appears anywhere on this site, and
+                  that rule doesn't carve out an exception for a third-party logo colour.
+                  The message-circle icon is what signals "WhatsApp" here, not the hue. */}
+              <a
+                href={COMPANY.whatsapp.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => trackWhatsAppClick('mobile-drawer')}
+                className="flex min-h-[48px] items-center justify-center gap-2 rounded border border-navy font-semibold text-navy"
+              >
+                <Icon name="message-circle" size={18} />
+                WhatsApp Us
+              </a>
               <a
                 href={`tel:${COMPANY.phone.tel}`}
+                onClick={() => trackPhoneClick('mobile-drawer')}
                 className="flex min-h-[48px] items-center justify-center gap-2 rounded border border-navy font-semibold text-navy"
               >
                 <Icon name="phone" size={18} />

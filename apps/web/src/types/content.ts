@@ -101,7 +101,14 @@ export interface PricingTier {
   label: string;
   startingFrom: string;
   description: string;
-  includes: string[];
+  /**
+   * Optional, not required: the live seeded content for every tier omits this field
+   * entirely (verified against /api/content/packages), so treating it as required — as
+   * this interface previously did — was a silent lie the type system never caught until
+   * something actually read `.length` off it and crashed the whole page. Render call
+   * sites must guard for it being absent, not just empty.
+   */
+  includes?: string[];
   icon: IconName;
 }
 

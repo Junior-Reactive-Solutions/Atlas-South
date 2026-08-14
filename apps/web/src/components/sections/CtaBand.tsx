@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { COMPANY } from '@atlas-south/shared';
 import { Icon } from '@atlas-south/design-system';
+import { trackPhoneClick, trackWhatsAppClick } from '../../lib/analytics.js';
 
 interface CtaBandProps {
   heading: string;
@@ -61,6 +62,7 @@ export function CtaBand({
           </Link>
           <a
             href={`tel:${COMPANY.phone.tel}`}
+            onClick={() => trackPhoneClick('cta-band')}
             className={`inline-flex min-h-[48px] items-center justify-center gap-2 rounded-lg border px-6 py-3 font-semibold transition-colors ${
               isNavy
                 ? 'border-white/30 text-white hover:bg-white/10'
@@ -69,6 +71,23 @@ export function CtaBand({
           >
             <Icon name="phone" size={18} />
             {COMPANY.phone.display}
+          </a>
+          {/* Third instant-contact option, matching the "WhatsApp + phone CTAs repeated
+              throughout" pattern the pre-rebuild site's audit flagged as a genuine
+              strength — see the fuller note beside the header's WhatsApp link. */}
+          <a
+            href={COMPANY.whatsapp.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => trackWhatsAppClick('cta-band')}
+            className={`inline-flex min-h-[48px] items-center justify-center gap-2 rounded-lg border px-6 py-3 font-semibold transition-colors ${
+              isNavy
+                ? 'border-white/30 text-white hover:bg-white/10'
+                : 'border-border text-navy hover:border-accent-blue hover:text-accent-blue'
+            }`}
+          >
+            <Icon name="message-circle" size={18} />
+            WhatsApp
           </a>
         </div>
       </div>

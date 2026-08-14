@@ -1,7 +1,19 @@
 import { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { animate, stagger } from 'animejs';
 import { CreateEnquirySchema, ALL_SERVICES, type CreateEnquiryInput } from '@atlas-south/shared';
 import { Icon, useAnimationScope, DURATION, EASE, STAGGER_GAP } from '@atlas-south/design-system';
+
+/**
+ * Carries intent from a pricing-tier "Get started" click (Packages.tsx) through to this
+ * form, rather than dropping it at a generic contact page — a `?package=` query param
+ * pre-fills the message field naming the tier, so what someone was about to buy survives
+ * the navigation. Client-only: no backend schema change, `message` is already free text.
+ */
+function prefilledMessageFromQuery(searchParams: URLSearchParams): string {
+  const pkg = searchParams.get('package');
+  return pkg ? `I'm interested in the ${pkg} package.` : '';
+}
 
 /**
  * Quote form — docs/build/06-PAGE-SPECIFICATIONS.md "Quote form section".
@@ -11,12 +23,13 @@ import { Icon, useAnimationScope, DURATION, EASE, STAGGER_GAP } from '@atlas-sou
  * and the form silently accepts but drops it on the server per docs/build/07-SECURITY.md §3.
  */
 export function QuoteForm() {
+  const [searchParams] = useSearchParams();
   const [formData, setFormData] = useState<Partial<CreateEnquiryInput>>({
     fullName: '',
     email: '',
     phone: '',
     serviceId: undefined,
-    message: '',
+    message: prefilledMessageFromQuery(searchParams),
     sourcePage: typeof window !== 'undefined' ? window.location.pathname : '/',
     companyWebsite: '', // honeypot
   });

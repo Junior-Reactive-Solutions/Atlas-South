@@ -54,6 +54,19 @@ export function trackCTAClick(label: string) {
   trackEvent('cta_click', label);
 }
 
+// Helper to track phone-number taps/clicks — `type` in EventType (@atlas-south/shared)
+// already reserves 'phone_click' and 'whatsapp_click' for exactly this; these two calls
+// are what actually fire them; without a caller, the schema declared the event but
+// nothing ever sent it.
+export function trackPhoneClick(label: string) {
+  trackEvent('phone_click', label);
+}
+
+// Helper to track WhatsApp link clicks
+export function trackWhatsAppClick(label: string) {
+  trackEvent('whatsapp_click', label);
+}
+
 // Helper to track form submissions
 export function trackFormSubmit(formName: string) {
   trackEvent('form_submit', formName);
