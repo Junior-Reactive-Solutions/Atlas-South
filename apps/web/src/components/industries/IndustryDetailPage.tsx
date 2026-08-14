@@ -184,7 +184,7 @@ export function IndustryDetailPage({
         <section id="coverage" className="scroll-mt-32 py-16 sm:py-20">
           <div className="mx-auto max-w-7xl px-4">
             <SectionHeading
-              eyebrow={` services`}
+              eyebrow={`${title} services`}
               title="What we cover"
               subcopy="Comprehensive support across every system your facility depends on."
             />

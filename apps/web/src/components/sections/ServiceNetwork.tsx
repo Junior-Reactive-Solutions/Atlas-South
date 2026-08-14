@@ -4,50 +4,96 @@ import { HARD_SERVICES, SOFT_SERVICES } from '@atlas-south/shared';
 import { Icon, prefersReducedMotion } from '@atlas-south/design-system';
 import { useVisibleNavItems } from '../../hooks/useNavVisibility.js';
 
+/** The landscape SVG's coordinate space. Node positions are expressed in these units. */
+const VB_W = 1200;
+const VB_H = 760;
+
 /**
- * Where each node sits inside the graphic, as percentages of the panel, plus how strongly
- * it reacts to scroll.
+ * One track per node: the curve it rides, where it comes to rest, and when it sets off.
  *
- * Positions are hand-placed rather than generated: they need to sit *on* the curves below,
- * and an even distribution would read as a grid, which is the opposite of the effect. The
- * varied `drift` values are what create depth — nodes moving at identical rates read as
- * one flat layer sliding, which looks like a bug rather than parallax.
+ * Each `d` starts off the left edge (x = -80) and ends on the right, so a node entering at
+ * the path's start is genuinely off-screen and arrives at a resting point that is still
+ * comfortably inside the panel — the brief was that they reach the right and stay, not that
+ * they fly off it.
  *
- * All `left` values stay above 54%. The copy column is `max-w-xl` inside a `max-w-7xl`
- * container, so it occupies roughly the left 45%; anything further left than this drops
- * icons on top of the headline. Node centres are offset by `-translate-x-1/2`, so a node
- * at 58% with the largest size still clears the text.
+ * The left-hand portion of every curve is routed through the top or bottom margin
+ * (y < ~100 or y > ~560 while x < 640). The copy column occupies the middle-left of the
+ * panel, and a node travelling straight across would drag an icon over the headline on its
+ * way past. Routing around it is what lets them enter from the far left at all.
  *
- * `drift` is pixels of travel across the full scroll of the section, and `lag` is how
- * strongly the node responds to scroll *velocity* — see the two-part motion note on the
- * component below. Signs are mixed on purpose so nodes cross past each other.
+ * `endX`/`endY` duplicate the final point of `d` because they double as the node's CSS
+ * resting position — that is where it sits with JavaScript disabled or reduced motion on,
+ * so the two must agree or the node would visibly jump on first paint.
  *
- * Slots cap how many nodes the graphic shows; the accessible list below renders every
- * service regardless, so a service is never hidden by running out of slots.
+ * `delay` staggers arrival: without it all six reach the right edge on the same frame,
+ * which reads as one object splitting rather than as traffic along separate lines.
  */
-const NODE_SLOTS = [
-  { top: 12, left: 60, drift: 150, lag: 1.5, size: 'md' },
-  { top: 28, left: 84, drift: -110, lag: -1.0, size: 'sm' },
-  { top: 42, left: 58, drift: 190, lag: 1.9, size: 'lg' },
-  { top: 56, left: 88, drift: -140, lag: -1.3, size: 'md' },
-  { top: 70, left: 64, drift: 120, lag: 1.1, size: 'sm' },
-  { top: 84, left: 80, drift: -170, lag: -1.7, size: 'md' },
-  { top: 20, left: 74, drift: 95, lag: 0.8, size: 'sm' },
-  { top: 62, left: 74, drift: -85, lag: -0.7, size: 'sm' },
+const TRACKS = [
+  {
+    d: 'M-80,40 C240,40 460,52 680,95 C860,130 990,175 1120,210',
+    endX: 1120,
+    endY: 210,
+    delay: 0,
+    size: 'md',
+  },
+  {
+    d: 'M-80,70 C260,70 480,80 700,95 C880,150 1010,250 1120,330',
+    endX: 1120,
+    endY: 330,
+    delay: 0.1,
+    size: 'lg',
+  },
+  {
+    d: 'M-80,10 C280,10 480,25 680,50 C860,72 1000,95 1120,110',
+    endX: 1120,
+    endY: 110,
+    delay: 0.18,
+    size: 'sm',
+  },
+  {
+    d: 'M-80,720 C240,720 440,700 640,660 C840,620 990,590 1120,560',
+    endX: 1120,
+    endY: 560,
+    delay: 0.06,
+    size: 'md',
+  },
+  {
+    d: 'M-80,690 C260,690 460,660 660,610 C860,560 1000,490 1120,450',
+    endX: 1120,
+    endY: 450,
+    delay: 0.14,
+    size: 'sm',
+  },
+  {
+    d: 'M-80,750 C300,750 520,745 700,730 C880,715 1010,690 1120,670',
+    endX: 1120,
+    endY: 670,
+    delay: 0.22,
+    size: 'md',
+  },
+  {
+    d: 'M-80,45 C260,45 480,58 700,92 C830,125 940,205 1010,270',
+    endX: 1010,
+    endY: 270,
+    delay: 0.26,
+    size: 'sm',
+  },
+  {
+    d: 'M-80,740 C260,740 480,720 680,690 C840,665 950,640 1010,610',
+    endX: 1010,
+    endY: 610,
+    delay: 0.3,
+    size: 'sm',
+  },
 ] as const;
 
 /**
- * Below `lg` the scattered layout is replaced by a grid, and the same motion is applied
- * *per column* rather than per node.
+ * Below `lg` the panel becomes a grid, and the motion is applied per *column* rather than
+ * per cell. Grid cells sit in normal flow, so per-cell offsets would let vertically
+ * adjacent cells slide into each other; driving whole columns means a cell only ever
+ * shares a column with cells moving identically, so two cells can never collide.
  *
- * That distinction is the whole trick on small screens. Grid cells sit in normal flow, so
- * giving each cell its own offset would let vertically-adjacent cells slide into each
- * other. Driving whole columns instead means every cell in a column moves together — the
- * columns cross against each other exactly like the desktop nodes do, and two cells can
- * never collide because cells only ever share a column with cells moving identically.
- *
- * Indexed by column, and the grid is `grid-cols-2 sm:grid-cols-3`, so three entries covers
- * both layouts.
+ * Indexed by column against `grid-cols-2 sm:grid-cols-3`.
  */
 const COLUMN_MOTION = [
   { drift: -34, lag: -0.55 },
@@ -63,51 +109,38 @@ const SIZE_CLASS = {
 
 const ICON_SIZE = { sm: 22, md: 30, lg: 36 } as const;
 
+/** Decelerating arrival — fast entry, gentle settle. */
+function easeOutCubic(t: number): number {
+  return 1 - Math.pow(1 - t, 3);
+}
+
+const clamp01 = (n: number) => Math.min(1, Math.max(0, n));
+
 /**
- * "Every service, one point of contact" — the scroll-reactive network panel.
+ * "Everything your building needs" — the scroll-reactive services panel.
  *
- * Modelled on the inspiration site's (abm.co.uk) homepage panel, which floats circular
- * portrait bubbles along thin curved lines over a navy field and drifts them as you
- * scroll. Ours substitutes service icons for the portraits, which does the same job of
- * making the section feel alive while actually saying something about the offering — and
- * unlike ABM's, each node is a real link to that service.
+ * Modelled on the inspiration site's (abm.co.uk) homepage panel. Ours substitutes service
+ * icons for ABM's portrait bubbles, so the section says something about the offering, and
+ * every node is a real link to that service.
  *
- * The motion has two parts, and they do different jobs:
+ * At `lg` and above the nodes **ride the curves**. Each is bound to one path; scrolling the
+ * panel into view walks it from the path's off-screen left start to its resting point on
+ * the right, following the line the whole way. Position is read straight off the SVG
+ * geometry with `getPointAtLength`, so the icons sit on the drawn line by construction
+ * rather than by two sets of coordinates being kept in sync by hand.
  *
- * 1. **Position drift.** Each node's offset is a function of how far the panel has
- *    travelled through the viewport. Because it is a pure function of scroll *position*,
- *    it retraces itself exactly in reverse when you scroll back up — scrolling up doesn't
- *    just stop the motion, it runs it backwards.
+ * Motion is a pure function of scroll position, clamped to [0,1]:
+ * - Scrolling up runs the journey backwards rather than merely stopping.
+ * - Progress cannot exceed 1, so nodes arrive at the right and stay there. They never
+ *   continue off the edge.
+ * - A small velocity term is added on top, so a fast flick nudges them along the line and
+ *   settles when you stop. It decays to nothing, which is what keeps them clickable.
  *
- * 2. **Velocity lag.** A second offset proportional to current scroll *speed*, which
- *    decays back to zero when you stop. This is what makes the panel feel reactive rather
- *    than merely animated: flick the wheel and the nodes visibly get pushed, and the push
- *    is the opposite way for an upward flick. Nodes with a negative `lag` are shoved
- *    against the scroll direction, so the group splits and crosses rather than sliding as
- *    one sheet.
+ * Below `lg` there are no curves to ride — the layout is a grid — so that breakpoint keeps
+ * the per-column drift described on COLUMN_MOTION.
  *
- * Because part 2 decays to nothing the moment scrolling stops, nodes always settle to a
- * stable resting place — which is what keeps them clickable. That mattered enough to
- * shape the design: a link that keeps drifting under a stationary cursor is a worse
- * outcome than no animation.
- *
- * Implementation notes:
- * - Transform only. No layout properties are touched, so this stays on the compositor.
- * - One rAF loop for the whole panel, not a listener per node, and it only runs while the
- *   panel is on screen. It also parks itself once everything has settled, so a stationary
- *   reader isn't burning a frame callback indefinitely.
- * - Velocity is clamped before it is used, so a trackpad fling or a "scroll to bottom"
- *   keypress can't launch the nodes off the panel.
- *
- * The same motion runs at every screen size, but drives a different layout below `lg`.
- * Scattered absolute positioning collapses into overlap at 375px, so small screens get a
- * grid instead — and the motion is applied per *column* there, so whole columns cross
- * against each other while cells within a column stay locked together and can never
- * collide. Both the velocity ceiling and the lag scale are lowered for that layout: touch
- * scrolling produces far larger per-frame deltas than a wheel, and grid columns sit closer
- * together than free-floating nodes, so there is less room to move into.
- *
- * Under prefers-reduced-motion no loop is started and everything renders at rest.
+ * Under prefers-reduced-motion no loop starts and every node renders at its resting point,
+ * which is also exactly where it sits with JavaScript disabled.
  */
 export function ServiceNetwork() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -118,46 +151,37 @@ export function ServiceNetwork() {
   // visibility switches as the header, footer and card grids.
   const services = useVisibleNavItems([...HARD_SERVICES, ...SOFT_SERVICES]).slice(
     0,
-    NODE_SLOTS.length,
+    TRACKS.length,
   );
 
   useEffect(() => {
     const section = sectionRef.current;
     if (!section || prefersReducedMotion()) return;
 
-    /** Hard ceiling on velocity, in px/frame, before it is multiplied by a node's lag. */
     const MAX_VELOCITY = 55;
-    /** How quickly the smoothed velocity chases the real one. Lower = more lag. */
     const VELOCITY_EASING = 0.12;
-    /** Below this the panel is treated as settled and the loop parks. */
     const SETTLED = 0.05;
 
-    /**
-     * Ceiling on the velocity term alone, per layout.
-     *
-     * Touch scrolling reaches far higher per-frame deltas than a mouse wheel, and momentum
-     * keeps them there for a while after the finger lifts. Without a cap on the *result*
-     * (not just the input), a hard flick on a phone would fling a whole column well past
-     * its neighbours. The mobile figure is deliberately much smaller than desktop's:
-     * columns are in normal flow and sit close together, so there is far less room to move
-     * into before it stops looking deliberate.
-     */
+    /** Ceiling on the velocity term alone. Touch reaches far higher per-frame deltas. */
     const MAX_VELOCITY_OFFSET = { desktop: 70, compact: 20 };
-
-    /** Multiplier applied to `lag` before it meets the velocity, per layout. */
     const LAG_SCALE = { desktop: 3, compact: 1.1 };
+    /** How much a flick advances a node along its curve, as a fraction of the path. */
+    const PATH_VELOCITY_SCALE = 0.0016;
 
     let frame = 0;
     let running = false;
     let lastScrollY = window.scrollY;
     let smoothedVelocity = 0;
-    const curves = section.querySelectorAll<SVGElement>('[data-network-curves]');
 
     const desktopQuery = window.matchMedia('(min-width: 1024px)');
-    /** Mirrors the grid's own `grid-cols-2 sm:grid-cols-3`, so columns can't fall out of sync. */
     const threeColQuery = window.matchMedia('(min-width: 640px)');
 
-    /** Clears both element sets so a layout switch can't strand a stale transform. */
+    const paths = Array.from(
+      section.querySelectorAll<SVGPathElement>('[data-track-path]'),
+    );
+    /** Cached: getTotalLength forces geometry work, and it only changes on resize. */
+    let pathLengths = paths.map((p) => p.getTotalLength());
+
     const resetTransforms = () => {
       nodeRefs.current.forEach((el) => el && (el.style.transform = ''));
       cellRefs.current.forEach((el) => el && (el.style.transform = ''));
@@ -166,58 +190,70 @@ export function ServiceNetwork() {
     const render = () => {
       const rect = section.getBoundingClientRect();
 
-      // 0 when the panel's top edge first reaches the bottom of the viewport, 1 when its
-      // bottom edge leaves the top. Centred on 0 so nodes sit at their resting position
-      // when the panel is mid-screen, and travel symmetrically either side.
-      const span = rect.height + window.innerHeight;
-      const raw = (window.innerHeight - rect.top) / span;
-      const centred = Math.min(1, Math.max(0, raw)) - 0.5;
-
-      // Raw per-frame scroll delta, clamped so a fling can't throw nodes off the panel.
       const delta = window.scrollY - lastScrollY;
       lastScrollY = window.scrollY;
       const clamped = Math.max(-MAX_VELOCITY, Math.min(MAX_VELOCITY, delta));
-
-      // Chase the real velocity rather than snapping to it. The gap between the two is
-      // the lag that makes the nodes feel weighted instead of glued to the scrollbar.
       smoothedVelocity += (clamped - smoothedVelocity) * VELOCITY_EASING;
 
       const isDesktop = desktopQuery.matches;
       const mode = isDesktop ? 'desktop' : 'compact';
-      const lagScale = LAG_SCALE[mode];
-      const cap = MAX_VELOCITY_OFFSET[mode];
-
-      /** Velocity contribution for a given lag, capped so a fling can't overshoot. */
-      const velocityOffset = (lag: number) => {
-        const raw = smoothedVelocity * lag * lagScale;
-        return Math.max(-cap, Math.min(cap, raw));
-      };
 
       if (isDesktop) {
+        // The SVG and the node layer both cover the section box exactly, and the viewBox
+        // has no preserved aspect ratio, so viewBox units map to pixels by a plain scale.
+        // Doing the conversion here rather than via getScreenCTM keeps it obvious and
+        // avoids a matrix allocation per node per frame.
+        const scaleX = rect.width / VB_W;
+        const scaleY = rect.height / VB_H;
+
+        // 0 as the panel's top edge reaches the bottom of the viewport, 1 by the time it
+        // has risen most of a screen. The journey is therefore complete while the panel is
+        // still arriving, which is what leaves the nodes parked on the right as you read.
+        const travel = clamp01((window.innerHeight - rect.top) / (window.innerHeight * 0.9));
+
         nodeRefs.current.forEach((node, index) => {
-          if (!node) return;
-          const slot = NODE_SLOTS[index % NODE_SLOTS.length];
-          const offset = centred * slot.drift + velocityOffset(slot.lag);
-          node.style.transform = `translate3d(0, ${offset.toFixed(2)}px, 0)`;
+          const path = paths[index];
+          if (!node || !path) return;
+
+          const track = TRACKS[index % TRACKS.length];
+          const total = pathLengths[index];
+
+          // A zero length means the geometry wasn't measurable when it was cached — the
+          // SVG is `hidden lg:block`, so a browser that reports nothing for a non-rendered
+          // path would otherwise leave every node pinned at t=0, i.e. off-screen left and
+          // invisible. Bail to the resting position instead of hiding the whole panel.
+          if (!total) {
+            node.style.transform = '';
+            return;
+          }
+
+          // Stagger, then re-normalise so every node still completes at travel = 1.
+          const staggered = clamp01((travel - track.delay) / (1 - track.delay));
+          const nudge = smoothedVelocity * PATH_VELOCITY_SCALE;
+          const t = clamp01(easeOutCubic(staggered) + nudge);
+
+          const current = path.getPointAtLength(t * total);
+          const rest = path.getPointAtLength(total);
+
+          const dx = (current.x - rest.x) * scaleX;
+          const dy = (current.y - rest.y) * scaleY;
+          node.style.transform = `translate3d(${dx.toFixed(2)}px, ${dy.toFixed(2)}px, 0)`;
         });
       } else {
+        const span = rect.height + window.innerHeight;
+        const centred = clamp01((window.innerHeight - rect.top) / span) - 0.5;
+        const cap = MAX_VELOCITY_OFFSET[mode];
         const columns = threeColQuery.matches ? 3 : 2;
+
         cellRefs.current.forEach((cell, index) => {
           if (!cell) return;
           const motion = COLUMN_MOTION[index % columns];
-          const offset = centred * motion.drift + velocityOffset(motion.lag);
+          const raw = smoothedVelocity * motion.lag * LAG_SCALE[mode];
+          const offset = centred * motion.drift + Math.max(-cap, Math.min(cap, raw));
           cell.style.transform = `translate3d(0, ${offset.toFixed(2)}px, 0)`;
         });
       }
 
-      // The curve network shifts gently the other way, so the icons read as moving
-      // through the lines rather than the whole picture sliding as one plane.
-      curves.forEach((curve) => {
-        curve.style.transform = `translate3d(0, ${(centred * -40).toFixed(2)}px, 0)`;
-      });
-
-      // Park once the velocity component has effectively died. Position drift alone needs
-      // no frames — the next scroll event restarts the loop.
       if (Math.abs(smoothedVelocity) < SETTLED && Math.abs(delta) < SETTLED) {
         running = false;
         frame = 0;
@@ -233,18 +269,18 @@ export function ServiceNetwork() {
       frame = window.requestAnimationFrame(render);
     };
 
-    // Crossing the lg boundary swaps which element set is driven. Without clearing first,
-    // whichever set stopped being driven keeps the transform it happened to hold — leaving
-    // a grid cell or a node permanently nudged off-position after a rotate or resize.
+    // Crossing a breakpoint swaps which element set is driven; clear both first, or
+    // whichever set stopped being driven keeps its last transform for good.
     const onLayoutChange = () => {
+      pathLengths = paths.map((p) => p.getTotalLength());
       resetTransforms();
       start();
     };
 
     desktopQuery.addEventListener('change', onLayoutChange);
     threeColQuery.addEventListener('change', onLayoutChange);
+    window.addEventListener('resize', onLayoutChange, { passive: true });
 
-    // Only run while the panel is actually on screen.
     let attached = false;
     const observer = new IntersectionObserver(
       (entries) => {
@@ -271,6 +307,7 @@ export function ServiceNetwork() {
       observer.disconnect();
       desktopQuery.removeEventListener('change', onLayoutChange);
       threeColQuery.removeEventListener('change', onLayoutChange);
+      window.removeEventListener('resize', onLayoutChange);
       if (attached) window.removeEventListener('scroll', start);
       if (frame) window.cancelAnimationFrame(frame);
     };
@@ -282,48 +319,38 @@ export function ServiceNetwork() {
     <section
       ref={sectionRef}
       aria-label="Our services"
-      // Taller at lg than the copy needs: the drift is proportional to how far the panel
-      // travels through the viewport, so a short panel gives the nodes almost nothing to
-      // move across. This is the room the effect needs to be visible at all.
       className="relative overflow-hidden bg-navy py-20 text-white sm:py-24 lg:min-h-[760px] lg:py-32"
     >
       {/*
-        The connecting curves. Purely decorative, so aria-hidden and stroked in brand-blue
-        — the raw logo blue is barred from text by the brand system for failing AA, but
-        graphic strokes are exactly what it is reserved for (01-BRAND-SYSTEM.md §2).
+        The curves the nodes ride. Decorative, so aria-hidden, and stroked in brand-blue —
+        barred from text by the brand system for failing AA, but graphic strokes are
+        precisely what it is reserved for (01-BRAND-SYSTEM.md §2).
 
-        Two variants rather than one responsive SVG. A landscape 1200x700 network squeezed
-        into a tall narrow phone panel would either distort the curves into near-vertical
-        streaks (preserveAspectRatio="none") or crop away most of the interesting part
-        ("slice"). The portrait variant is drawn for that shape instead.
-
-        -inset-y-24 gives the curves room to counter-move without revealing a hard edge at
-        the top or bottom of the panel as they shift.
+        inset-0 with preserveAspectRatio="none" is deliberate and load-bearing: the node
+        layer below covers the same box, so viewBox units convert to pixels by a plain
+        scale factor and the icons land exactly on the drawn line.
       */}
       <svg
         aria-hidden="true"
-        data-network-curves
-        viewBox="0 0 1200 700"
+        viewBox={`0 0 ${VB_W} ${VB_H}`}
         preserveAspectRatio="none"
-        className="pointer-events-none absolute -inset-y-24 left-0 hidden h-[calc(100%+12rem)] w-full opacity-40 lg:block"
+        className="pointer-events-none absolute inset-0 hidden h-full w-full opacity-40 lg:block"
       >
         <g fill="none" stroke="#0078FC" strokeWidth="2">
-          <path d="M-40,150 C220,150 340,470 620,470 C860,470 980,210 1260,210" />
-          <path d="M-40,470 C200,470 300,110 560,110 C820,110 900,360 1260,360" />
-          <path d="M-40,300 C260,300 420,620 720,620 C960,620 1060,300 1260,300" />
-          <path d="M180,-40 C180,180 420,240 420,520 C420,660 300,700 300,760" />
-          <path d="M940,-40 C940,200 760,280 760,540 C760,680 880,720 880,760" />
+          {TRACKS.map((track) => (
+            <path key={track.d} data-track-path d={track.d} />
+          ))}
         </g>
       </svg>
 
-      {/* Portrait variant for phone and tablet — curves run mostly top-to-bottom, matching
-          the direction the columns travel. */}
+      {/* Portrait variant for phone and tablet. The landscape network squeezed into a tall
+          panel would distort the curves into near-vertical streaks; this is drawn for that
+          shape. Nothing rides these — below lg the layout is a grid. */}
       <svg
         aria-hidden="true"
-        data-network-curves
         viewBox="0 0 400 900"
         preserveAspectRatio="none"
-        className="pointer-events-none absolute -inset-y-24 left-0 h-[calc(100%+12rem)] w-full opacity-25 lg:hidden"
+        className="pointer-events-none absolute inset-0 h-full w-full opacity-25 lg:hidden"
       >
         <g fill="none" stroke="#0078FC" strokeWidth="2">
           <path d="M60,-40 C60,180 300,260 300,520 C300,760 120,820 120,980" />
@@ -332,6 +359,41 @@ export function ServiceNetwork() {
           <path d="M-20,660 C140,660 200,480 340,480" />
         </g>
       </svg>
+
+      {/*
+        Node layer — a sibling of the SVG covering the identical box, NOT nested inside the
+        padded content container. Sharing one coordinate space with the SVG is what allows
+        a node's resting percentage and the path's end point to be the same number.
+      */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 hidden lg:block">
+        {services.map((service, index) => {
+          const track = TRACKS[index % TRACKS.length];
+          return (
+            // Positioning wrapper carries the centring translate so it can't be clobbered
+            // by the animated transform written onto the link itself.
+            <div
+              key={service.id}
+              className="absolute -translate-x-1/2 -translate-y-1/2"
+              style={{
+                left: `${(track.endX / VB_W) * 100}%`,
+                top: `${(track.endY / VB_H) * 100}%`,
+              }}
+            >
+              <Link
+                to={service.path}
+                ref={(el) => {
+                  nodeRefs.current[index] = el;
+                }}
+                title={service.label}
+                tabIndex={-1}
+                className={`pointer-events-auto flex ${SIZE_CLASS[track.size]} items-center justify-center rounded-full border border-white/20 bg-navy-deep/90 shadow-lg backdrop-blur-sm transition-colors will-change-transform hover:border-brand-blue hover:bg-accent-blue`}
+              >
+                <Icon name={service.icon} size={ICON_SIZE[track.size]} className="text-white" />
+              </Link>
+            </div>
+          );
+        })}
+      </div>
 
       <div className="relative mx-auto max-w-7xl px-4">
         <div className="max-w-xl">
@@ -358,41 +420,18 @@ export function ServiceNetwork() {
           </Link>
         </div>
 
-        {/* Desktop: nodes scattered across the curves. */}
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0 hidden lg:block">
-          {services.map((service, index) => {
-            const slot = NODE_SLOTS[index % NODE_SLOTS.length];
-            return (
-              <Link
-                key={service.id}
-                to={service.path}
-                ref={(el) => {
-                  nodeRefs.current[index] = el;
-                }}
-                title={service.label}
-                tabIndex={-1}
-                style={{ top: `${slot.top}%`, left: `${slot.left}%` }}
-                className={`pointer-events-auto absolute flex ${SIZE_CLASS[slot.size]} -translate-x-1/2 items-center justify-center rounded-full border border-white/20 bg-navy-deep/90 shadow-lg backdrop-blur-sm transition-colors hover:border-brand-blue hover:bg-accent-blue`}
-              >
-                <Icon name={service.icon} size={ICON_SIZE[slot.size]} className="text-white" />
-              </Link>
-            );
-          })}
-        </div>
-
         {/*
           The real, accessible list of services.
 
-          Visible as a grid below lg; `lg:sr-only` on larger screens rather than
-          `lg:hidden`, which matters: the scattered nodes above are aria-hidden decoration
-          with tabIndex={-1} (so they neither double-announce nor add tab stops), so if
-          this list were display:none on desktop, a screen-reader or keyboard user would
-          get no service links from this section at all. sr-only keeps it in the
-          accessibility tree and the tab order while taking no visual space.
+          `lg:sr-only` rather than `lg:hidden`: the nodes above are aria-hidden decoration
+          with tabIndex={-1} so they neither double-announce nor add tab stops, so hiding
+          this list outright would leave a screen-reader or keyboard user with no service
+          links from this section at all on desktop.
+
+          Generous gap-y because whole columns travel vertically against each other below
+          lg; a tight row gap lets a rising column sit level with a falling one and read as
+          a broken grid.
         */}
-        {/* gap-y is generous because whole columns travel vertically against each other;
-            a tight row gap would let a rising column's cells sit level with a falling
-            column's and read as a broken grid rather than as depth. */}
         <ul className="mt-14 grid grid-cols-2 gap-x-3 gap-y-8 sm:grid-cols-3 sm:gap-y-10 lg:sr-only">
           {services.map((service, index) => (
             <li
