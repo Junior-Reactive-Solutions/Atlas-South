@@ -7,6 +7,17 @@ import { COMPANY } from '@atlas-south/shared';
 import type { PackagesContent } from '../../types/content';
 import { trackCTAClick } from '../../lib/analytics.js';
 
+/**
+ * Pricing & packages — restored to match the pre-rebuild live site, not redesigned.
+ *
+ * The audit (docs/audit/report.html §5.4, citing docs/audit/screenshots/atlas-sec-packages.png)
+ * named this section a genuine strength worth protecting: "Transparent tiers, clear feature
+ * comparison, explicit inclusions/exclusions." An earlier seed quietly replaced the real
+ * three-tier £75/£180/£450 structure with four invented tiers at different prices — this
+ * template renders the restored data (apps/api/scripts/seed-content.ts) with the same
+ * fidelity the original had: a "Most Popular" badge and highlighted card on the middle
+ * tier, and both what's included AND what's excluded per tier, not just the included list.
+ */
 export function Packages() {
   const { data, isLoading } = useContentPage<PackagesContent>('packages');
 
@@ -31,7 +42,14 @@ export function Packages() {
       {/* Hero section */}
       <section className="border-b border-border bg-canvas-tint py-16 sm:py-20">
         <div className="mx-auto max-w-4xl px-4">
-          <h1 className="font-display text-4xl font-bold text-navy sm:text-5xl">{data.title}</h1>
+          {data.eyebrow && (
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-accent-blue">
+              {data.eyebrow}
+            </p>
+          )}
+          <h1 className="mt-3 font-display text-4xl font-bold uppercase text-navy sm:text-5xl">
+            {data.title}
+          </h1>
           <p className="mt-4 text-lg text-slate">{data.heroDescription}</p>
         </div>
       </section>
@@ -45,25 +63,39 @@ export function Packages() {
         </div>
       </section>
 
-      {/* Pricing tiers */}
+      {/* Pricing tiers — three columns, matching the original's three plans rather than
+          the four the rebuild had invented. */}
       <section className="py-16 sm:py-20">
         <div className="mx-auto max-w-7xl px-4">
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-8 md:grid-cols-3">
             {data.tiers.map((tier) => (
-              <div key={tier.label} className="flex flex-col rounded-lg border border-border bg-canvas p-6">
+              <div
+                key={tier.label}
+                className={`relative flex flex-col rounded-lg border p-6 ${
+                  tier.popular
+                    ? 'border-accent-blue bg-accent-blue/5 shadow-lg'
+                    : 'border-border bg-canvas'
+                }`}
+              >
+                {/* "MOST POPULAR" badge — the original's Professional tier carried this,
+                    which is real information (it tells a buyer what most people like them
+                    chose), not decoration. */}
+                {tier.popular && (
+                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-accent-blue px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-white">
+                    Most Popular
+                  </span>
+                )}
+
                 <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-accent-blue/10">
                   <Icon name={tier.icon} size={20} className="text-accent-blue" />
                 </div>
                 <h3 className="font-display text-lg font-bold text-navy">{tier.label}</h3>
-                <p className="mt-2 text-sm font-semibold text-accent-blue">{tier.startingFrom}</p>
+                <p className="mt-2 text-sm font-semibold text-accent-blue">
+                  {tier.startingFrom}
+                  <span className="font-normal text-slate">/month</span>
+                </p>
                 <p className="mt-4 text-sm text-slate">{tier.description}</p>
 
-                {/* `includes` was already part of the content model but never rendered —
-                    a price with nothing shown next to it justifying it is a weaker CTA
-                    than the same price beside a concrete list of what it buys. It's
-                    optional in practice: the live seeded content doesn't set it for any
-                    tier today, so this renders nothing extra until the client supplies
-                    real inclusions rather than this inventing placeholder bullet copy. */}
                 {tier.includes && tier.includes.length > 0 && (
                   <ul className="mt-4 space-y-2">
                     {tier.includes.map((item) => (
@@ -79,23 +111,50 @@ export function Packages() {
                   </ul>
                 )}
 
+                {/* Excludes — greyed out with an X, mirroring the original exactly. Showing
+                    what a tier does NOT cover is what lets a buyer self-select the right
+                    plan before enquiring, rather than finding out after contact. */}
+                {tier.excludes && tier.excludes.length > 0 && (
+                  <ul className="mt-2 space-y-2">
+                    {tier.excludes.map((item) => (
+                      <li
+                        key={item}
+                        className="flex items-start gap-2 text-sm text-slate/50"
+                      >
+                        <Icon name="x" size={16} className="mt-0.5 flex-shrink-0" />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+
                 {/*
-                  Previously a bare <button> with no href, no onClick, and no form to
-                  submit — a dead click target on every one of these four cards. Now a
-                  real link into the quote form, carrying which tier was chosen through
-                  as a `?package=` query param (see QuoteForm.tsx) so that context isn't
-                  lost the way it would be sending everyone to the same blank contact page.
+                  PayPal Subscribe button goes here — see apps/web/src/components/packages/
+                  PayPalSubscribeButton.tsx once that lands. Kept as a link to the quote
+                  form in the meantime so every tier still has a working call to action;
+                  ?package= pre-fills the enquiry message with which tier was chosen
+                  (see QuoteForm.tsx) so that context survives the navigation.
                 */}
                 <Link
                   to={`/company/contact?package=${encodeURIComponent(tier.label)}`}
                   onClick={() => trackCTAClick(`package-${tier.label}`)}
-                  className="mt-6 flex min-h-[44px] items-center justify-center rounded-lg bg-accent-blue px-4 text-sm font-semibold text-white hover:bg-brand-blue"
+                  className={`mt-6 flex min-h-[44px] items-center justify-center rounded-lg px-4 text-sm font-semibold ${
+                    tier.popular
+                      ? 'bg-accent-blue text-white hover:bg-brand-blue'
+                      : 'border border-navy text-navy hover:bg-navy hover:text-white'
+                  }`}
                 >
-                  Get started
+                  Subscribe — {tier.startingFrom}/mo
                 </Link>
               </div>
             ))}
           </div>
+
+          <p className="mt-10 text-center text-sm text-slate">
+            <Icon name="shield-check" size={14} className="mr-1.5 inline text-accent-blue" />
+            Secure payments via PayPal
+            {data.cancellationNote && <> &nbsp;·&nbsp; {data.cancellationNote}</>}
+          </p>
         </div>
       </section>
 

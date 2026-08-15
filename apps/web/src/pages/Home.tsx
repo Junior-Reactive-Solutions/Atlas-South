@@ -237,10 +237,10 @@ export function Home() {
             <SectionHeading
               eyebrow="Transparent pricing"
               title="Published prices, no quote required to see them"
-              subcopy="Four service-agreement tiers, each with a starting price you can see before you ever pick up the phone."
+              subcopy="Three service-agreement tiers, each with a monthly price you can see before you ever pick up the phone."
               align="center"
             />
-            <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="mx-auto mt-12 grid max-w-4xl gap-4 sm:grid-cols-3">
               {packages.tiers.map((tier) => (
                 // Links to the comparison page, not straight to the contact form — these
                 // are "browsing" chips. The form-prefilling deep link lives on /packages
@@ -249,15 +249,25 @@ export function Home() {
                   key={tier.label}
                   to="/packages"
                   onClick={() => trackCTAClick(`home-pricing-${tier.label}`)}
-                  className="group flex flex-col rounded-2xl border border-border bg-canvas p-6 transition-colors hover:border-accent-blue"
+                  className={`group relative flex flex-col rounded-2xl border p-6 transition-colors hover:border-accent-blue ${
+                    tier.popular ? 'border-accent-blue bg-accent-blue/5' : 'border-border bg-canvas'
+                  }`}
                 >
+                  {tier.popular && (
+                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-accent-blue px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-white">
+                      Most Popular
+                    </span>
+                  )}
                   <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent-blue/10">
                     <Icon name={tier.icon} size={20} className="text-accent-blue" />
                   </div>
                   <h3 className="mt-4 font-display text-base font-bold text-navy">
                     {tier.label}
                   </h3>
-                  <p className="mt-1 text-lg font-bold text-accent-blue">{tier.startingFrom}</p>
+                  <p className="mt-1 text-lg font-bold text-accent-blue">
+                    {tier.startingFrom}
+                    <span className="text-sm font-normal text-slate">/mo</span>
+                  </p>
                   <span className="mt-4 flex items-center gap-1 text-sm font-semibold text-accent-blue">
                     See what's included
                     <Icon

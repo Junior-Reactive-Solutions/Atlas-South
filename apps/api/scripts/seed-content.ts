@@ -177,34 +177,75 @@ const CAREERS_CONTENT = {
     'Atlas South is committed to equal opportunities. All candidates must have the right to work in the UK. We follow all UK employment law and regulations.',
 };
 
+/**
+ * Restored verbatim from the pre-rebuild live site — see
+ * docs/audit/screenshots/atlas-sec-packages.png, captured 2026-07-29 and cited in the
+ * audit as "Monthly packages — genuinely strong. Transparent tiers, clear feature
+ * comparison, explicit inclusions/exclusions. Protect this in the redesign."
+ * (docs/audit/report.html §5.4). That protection didn't happen the first time: an
+ * earlier seed replaced this with four invented tiers (Essential/Professional/
+ * Premium/Enterprise at £500/£1,200/£2,500/custom) that bear no relation to the real
+ * £75/£180/£450 structure. This is the correction, not a new design — every price,
+ * tier name, inclusion and exclusion below is transcribed from that screenshot, not
+ * invented. `excludes` reproduces the original's greyed-out ✗ rows; `popular` reproduces
+ * its "MOST POPULAR" badge on Professional.
+ */
 const PACKAGES_CONTENT = {
-  title: 'Our Packages',
-  heroDescription: 'Choose the right facilities solution for your needs. From one-off jobs to ongoing management.',
+  eyebrow: 'Monthly Plans',
+  title: 'Subscribe & never pay emergency rates',
+  heroDescription:
+    'Our monthly packages give you priority cover, regular maintenance visits and capped emergency callout costs — saving you hundreds every year.',
   intro: 'Whether you own a single property or manage multiple buildings, we have flexible packages designed to fit your needs and budget.',
+  cancellationNote: 'Cancel anytime · 30 days notice',
   tiers: [
     {
-      label: 'Essential',
-      startingFrom: 'From £500/month',
-      description: 'Monthly maintenance checks and emergency support. Perfect for small properties or occasional needs.',
+      label: 'Starter',
+      startingFrom: '£75',
+      description: 'Perfect for single-property homeowners wanting essential cover and peace of mind.',
       icon: 'box',
+      includes: [
+        '1 property covered',
+        'Priority booking (next day)',
+        'Emergency callout capped at £50',
+        '1 annual maintenance visit',
+        'Plumbing & electrical cover',
+        'Monthly email report',
+      ],
+      excludes: ['Security services', 'Commercial cleaning'],
     },
     {
       label: 'Professional',
-      startingFrom: 'From £1,200/month',
-      description: 'Proactive maintenance, 24/7 emergency line, and dedicated support. Our most popular option.',
+      startingFrom: '£180',
+      description: 'Ideal for landlords with 2-5 properties or small businesses needing full trade cover.',
       icon: 'briefcase',
-    },
-    {
-      label: 'Premium',
-      startingFrom: 'From £2,500/month',
-      description: 'Full facilities management with scheduled inspections, predictive maintenance, and priority response.',
-      icon: 'crown',
+      popular: true,
+      includes: [
+        'Up to 5 properties',
+        'Priority booking (same day)',
+        'Emergency callout FREE',
+        'Quarterly maintenance visits',
+        'All trades covered',
+        'Monthly inspection report',
+        'Domestic & commercial cleaning',
+      ],
+      excludes: ['Security services'],
     },
     {
       label: 'Enterprise',
-      startingFrom: 'Custom quote',
-      description: 'Tailored solutions for complex properties or multi-site management. Dedicated account manager included.',
-      icon: 'building',
+      startingFrom: '£450',
+      description: 'Full-service contract for property portfolios and commercial clients needing everything covered.',
+      icon: 'crown',
+      includes: [
+        'Unlimited properties',
+        '24/7 priority emergency cover',
+        'Emergency callout FREE always',
+        'Monthly maintenance visits',
+        'All trades + security included',
+        'Compliance management',
+        'Commercial cleaning included',
+        'Dedicated account manager',
+      ],
+      excludes: [],
     },
   ],
 };
