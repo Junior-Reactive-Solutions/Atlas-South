@@ -330,6 +330,7 @@ export function ServiceNetwork() {
   return (
     <section
       ref={sectionRef}
+      id="services"
       aria-label="Our services"
       // `isolate` is load-bearing, not decorative. The header is `sticky z-30`
       // (Header.tsx), and the node layer below is also z-30 — with no stacking context
@@ -338,7 +339,10 @@ export function ServiceNetwork() {
       // scrolled past the panel. `isolate` gives this section its own stacking context, so
       // every z-index inside it (the curves, the nodes, the copy) is contained here and can
       // never out-rank anything outside — the header stays on top regardless of scroll.
-      className="isolate relative overflow-hidden bg-navy py-20 text-white sm:py-24 lg:min-h-[820px] lg:py-32"
+      // `scroll-mt-20` (80px, header is 65px) is for the hero's "For Your Business" anchor
+      // link (Hero.tsx) — without it, the sticky header would cover the top of this panel
+      // whenever it's scrolled to via #services.
+      className="isolate relative scroll-mt-20 overflow-hidden bg-navy py-20 text-white sm:py-24 lg:min-h-[820px] lg:py-32"
     >
       {/*
         The lines the nodes ride. Decorative, so aria-hidden, and stroked in brand-blue —

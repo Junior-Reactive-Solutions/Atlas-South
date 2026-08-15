@@ -149,6 +149,7 @@ export function Home() {
         headlineLines={content?.headlineLines}
         subcopy={content?.subcopy}
         primaryCtaLabel={content?.primaryCtaLabel}
+        homeCtaLabel={content?.homeCtaLabel}
         businessCtaLabel={content?.businessCtaLabel}
       />
 

@@ -64,6 +64,19 @@ export function HeroCarousel({ children }: HeroCarouselProps) {
         aria-hidden="true"
       />
 
+      {/* Decorative brand-blue glow shapes — per docs/build/01-BRAND-SYSTEM.md's dark-panel
+          recipe, `--color-brand-blue` is explicitly sanctioned for "decorative shapes" in
+          the hero. Placed top-right where the gradient is lightest (§3 of the hero spec:
+          "transparent at the top-right"), well clear of the left-aligned headline, so
+          they add graphic depth without ever crossing text or lowering contrast. Purely
+          decorative — aria-hidden, and their drift animation (Hero.tsx) is skipped under
+          prefers-reduced-motion. Sized with vw/vh + blur so they scale with the viewport
+          instead of needing separate mobile/desktop values. */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+        <div className="hero-decor-orb absolute -right-24 -top-24 h-[28rem] w-[28rem] rounded-full bg-brand-blue/25 blur-3xl" />
+        <div className="hero-decor-orb absolute -right-10 top-1/3 h-64 w-64 rounded-full bg-brand-blue/20 blur-3xl" />
+      </div>
+
       {/* Content */}
       <div className="relative">{children}</div>
     </div>

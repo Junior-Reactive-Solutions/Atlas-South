@@ -24,12 +24,22 @@ interface ExtractedPage {
   data: Record<string, unknown>;
 }
 
+/**
+ * Headline restored to the dual-audience framing from docs/build/03-HERO-SECTION-SPEC.md
+ * §2 rather than the commercial-only copy that had drifted into production. The client
+ * flagged the hero wording as "not to the extent it can be" — the concrete gap is that
+ * "Commercial facilities services... for every building, every sector" quietly dropped
+ * homeowners, despite /packages still selling single-property residential plans (see
+ * PACKAGES_CONTENT's Starter tier above). `homeCtaLabel`/`businessCtaLabel` drive the two
+ * self-select links so each audience finds its own path within the hero (see Hero.tsx).
+ */
 const HOME_CONTENT = {
-  headlineLines: ['Commercial facilities services', 'you can trust —', 'for every building, every sector.'],
+  headlineLines: ['Trades & facilities services', 'you can trust —', 'for your home or your business.'],
   subcopy:
     'Atlas South has delivered {jobsCompleted} jobs across London and the South East since {foundedYear}, from emergency call-outs to fully managed facilities contracts.',
   primaryCtaLabel: 'Get a Free Quote',
-  businessCtaLabel: 'View Our Services',
+  homeCtaLabel: 'For Your Home',
+  businessCtaLabel: 'For Your Business',
 };
 
 const COMPANY_CONTENT = {
