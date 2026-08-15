@@ -160,3 +160,41 @@ model JobApplication {
   @@index([createdAt])
   @@index([roleTitle])
 }
+
+/// PayPal-billed status, mirroring the subset of PayPal's own subscription statuses this
+/// app acts on (PayPal's API also has APPROVAL_PENDING/APPROVED as pre-payment states —
+/// this app only ever creates a row once a subscription has been verified server-side as
+/// at least ACTIVE, so those two don't need a local equivalent; see routes/paypal.ts).
+enum SubscriptionStatus {
+  active
+  suspended
+  cancelled
+  expired
+}
+
+/// One row per PayPal recurring billing subscription — apps/api/src/lib/paypal.ts and
+/// apps/api/src/routes/paypal.ts, per docs/build/14-PAYPAL-INTEGRATION.md.
+///
+/// This table is a read cache of what PayPal itself already tracks as the source of
+/// truth, not a competing ledger — every write to it is preceded by either (a) a
+/// server-to-server GET /v1/billing/subscriptions/{id} call that confirms the row's
+/// contents against PayPal's own records, or (b) a signature-verified webhook event. The
+/// client-supplied tierLabel is a display convenience only; paypalPlanId is what's
+/// actually trusted, cross-checked server-side against PACKAGES_CONTENT's known plan ids
+/// before a row is ever created (see confirmSubscription in routes/paypal.ts) — this is
+/// what stops a tampered client request from recording a cheaper tier than the buyer
+/// actually paid for.
+model Subscription {
+  id                   String             @id @default(cuid())
+  paypalSubscriptionId String             @unique // PayPal's "I-XXXXXXXXXXXX" id
+  paypalPlanId         String // PayPal's "P-XXXXXXXXXXXX" billing plan id
+  tierLabel            String // "Starter" | "Professional" | "Enterprise" — display only
+  customerName         String
+  customerEmail        String
+  status               SubscriptionStatus @default(active)
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+
+  @@index([status])
+  @@index([customerEmail])
+}

@@ -35,6 +35,27 @@ const EnvSchema = z.object({
   CORS_ALLOWED_ORIGIN: z.string().default('http://localhost:9000'),
   RATE_LIMIT_WINDOW_MS: z.coerce.number().int().positive().default(600_000),
   RATE_LIMIT_MAX: z.coerce.number().int().positive().default(100),
+
+  // PayPal Subscriptions — docs/build/14-PAYPAL-INTEGRATION.md. All optional at this
+  // schema level for the same reason RESEND_API_KEY is: the client's real PayPal Business
+  // account and its live credentials don't exist yet. lib/paypal.ts checks for these at
+  // the point of use and fails loudly there, never silently.
+  PAYPAL_CLIENT_ID: z.string().optional(),
+  PAYPAL_CLIENT_SECRET: z.string().optional(),
+  // PayPal's webhook subscription id (not a secret) — required to verify that an incoming
+  // webhook POST was actually addressed to *this* app's webhook endpoint, per PayPal's
+  // Verify Webhook Signature API.
+  PAYPAL_WEBHOOK_ID: z.string().optional(),
+  // Toggles which of PayPal's two REST API hosts lib/paypal.ts talks to. Defaults to
+  // sandbox so a missing/misconfigured value can never accidentally take real payments.
+  PAYPAL_ENV: z.enum(['sandbox', 'live']).default('sandbox'),
+  // The three PayPal billing plan ids created by scripts/setup-paypal-plans.ts (or
+  // supplied by the client from their own PayPal dashboard) — this is the allow-list
+  // routes/paypal.ts checks an incoming subscription's plan_id against before recording
+  // it, and what maps a verified plan_id back to a display tier name.
+  PAYPAL_PLAN_ID_STARTER: z.string().optional(),
+  PAYPAL_PLAN_ID_PROFESSIONAL: z.string().optional(),
+  PAYPAL_PLAN_ID_ENTERPRISE: z.string().optional(),
 });
 
 const parsed = EnvSchema.safeParse(process.env);

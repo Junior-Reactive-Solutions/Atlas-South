@@ -13,6 +13,7 @@ import { eventsRouter } from './routes/events.js';
 import { contentRouter } from './routes/content.js';
 import { visibilityRouter } from './routes/visibility.js';
 import { careersRouter } from './routes/careers.js';
+import { paypalRouter } from './routes/paypal.js';
 import adminAuthRouter from './routes/admin/auth.js';
 import adminEnquiriesRouter from './routes/admin/enquiries.js';
 import { adminApplicationsRouter } from './routes/admin/applications.js';
@@ -93,6 +94,7 @@ app.use('/api', eventsRouter);
 app.use('/api', contentRouter);
 app.use('/api', visibilityRouter);
 app.use('/api', careersRouter);
+app.use('/api', paypalRouter);
 
 // Admin routes — secured with JWT authentication
 // loginLimiter applies specifically to the auth endpoint (5 attempts / 15 min);

@@ -6,6 +6,7 @@ import { Icon } from '@atlas-south/design-system';
 import { COMPANY } from '@atlas-south/shared';
 import type { PackagesContent } from '../../types/content';
 import { trackCTAClick } from '../../lib/analytics.js';
+import { PayPalSubscribeButton } from '../../components/packages/PayPalSubscribeButton.js';
 
 /**
  * Pricing & packages — restored to match the pre-rebuild live site, not redesigned.
@@ -129,23 +130,29 @@ export function Packages() {
                 )}
 
                 {/*
-                  PayPal Subscribe button goes here — see apps/web/src/components/packages/
-                  PayPalSubscribeButton.tsx once that lands. Kept as a link to the quote
-                  form in the meantime so every tier still has a working call to action;
-                  ?package= pre-fills the enquiry message with which tier was chosen
+                  PayPal renders its own Subscribe button only once this tier actually has
+                  a real PayPal plan id — see apps/api/scripts/setup-paypal-plans.ts and
+                  docs/build/14-PAYPAL-INTEGRATION.md. Until the client's PayPal Business
+                  account exists and that script has been run, every tier falls back to
+                  the quote-form link exactly as before, so nothing here is ever a dead
+                  end: ?package= pre-fills the enquiry message with which tier was chosen
                   (see QuoteForm.tsx) so that context survives the navigation.
                 */}
-                <Link
-                  to={`/company/contact?package=${encodeURIComponent(tier.label)}`}
-                  onClick={() => trackCTAClick(`package-${tier.label}`)}
-                  className={`mt-6 flex min-h-[44px] items-center justify-center rounded-lg px-4 text-sm font-semibold ${
-                    tier.popular
-                      ? 'bg-accent-blue text-white hover:bg-brand-blue'
-                      : 'border border-navy text-navy hover:bg-navy hover:text-white'
-                  }`}
-                >
-                  Subscribe — {tier.startingFrom}/mo
-                </Link>
+                {import.meta.env.VITE_PAYPAL_CLIENT_ID && tier.paypalPlanId ? (
+                  <PayPalSubscribeButton planId={tier.paypalPlanId} tierLabel={tier.label} />
+                ) : (
+                  <Link
+                    to={`/company/contact?package=${encodeURIComponent(tier.label)}`}
+                    onClick={() => trackCTAClick(`package-${tier.label}`)}
+                    className={`mt-6 flex min-h-[44px] items-center justify-center rounded-lg px-4 text-sm font-semibold ${
+                      tier.popular
+                        ? 'bg-accent-blue text-white hover:bg-brand-blue'
+                        : 'border border-navy text-navy hover:bg-navy hover:text-white'
+                    }`}
+                  >
+                    Subscribe — {tier.startingFrom}/mo
+                  </Link>
+                )}
               </div>
             ))}
           </div>
