@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { COMPANY } from '@atlas-south/shared';
-import { Icon } from '@atlas-south/design-system';
+import { Icon, useMagneticHover } from '@atlas-south/design-system';
 import { trackPhoneClick, trackWhatsAppClick } from '../../lib/analytics.js';
 
 interface CtaBandProps {
@@ -29,6 +29,9 @@ export function CtaBand({
   tone = 'tint',
 }: CtaBandProps) {
   const isNavy = tone === 'navy';
+  // Same shared hook as Hero.tsx's primary CTA and Packages.tsx's Subscribe buttons —
+  // one implementation, so the pull feels identical on every page this band appears on.
+  const magneticCta = useMagneticHover<HTMLAnchorElement>();
 
   return (
     <section
@@ -50,6 +53,7 @@ export function CtaBand({
 
         <div className="flex flex-col gap-3 sm:flex-row lg:flex-shrink-0">
           <Link
+            ref={magneticCta}
             to={ctaPath}
             className="group inline-flex min-h-[48px] items-center justify-center gap-2 rounded-lg bg-accent-blue px-6 py-3 font-semibold text-white transition-all hover:bg-brand-blue"
           >

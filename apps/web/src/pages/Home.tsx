@@ -1,13 +1,15 @@
 import { Link } from 'react-router-dom';
 import { Hero } from '../components/home/Hero';
 import { QuoteForm } from '../components/home/QuoteForm';
+import { CoverageMap } from '../components/home/CoverageMap';
 import { Seo } from '../components/seo/Seo.js';
 import { useContentPage } from '../hooks/useContentPage';
 import { HARD_SERVICES, SOFT_SERVICES, INDUSTRIES, COMPANY } from '@atlas-south/shared';
-import { Icon } from '@atlas-south/design-system';
+import { Icon, useSpotlight } from '@atlas-south/design-system';
 import {
   SectionHeading,
   StatBand,
+  StatsMarquee,
   CtaBand,
   CardGrid,
   ServiceNetwork,
@@ -15,7 +17,7 @@ import {
 } from '../components/sections';
 import { photo, heroImageFor } from '../content/imagery';
 import { trackCTAClick } from '../lib/analytics.js';
-import type { PackagesContent } from '../types/content';
+import type { PackagesContent, PricingTier } from '../types/content';
 
 interface HomeContent {
   headlineLines: [string, string, string];
@@ -83,6 +85,49 @@ const WHY_US = [
  *   sizes.", repeated with the noun swapped). Cards now carry no description rather than a
  *   generated one; real teaser copy belongs in the CMS.
  */
+
+/**
+ * One pricing teaser card — its own component, not inlined in the `.tiers.map()` below,
+ * so `useSpotlight` gets a genuine per-card hook instance (calling a hook conditionally
+ * inside a loop body breaks React's rules of hooks). The same `.spotlight-card` class as
+ * Packages.tsx's TierCard — same family of component, same effect, no separate copy of it.
+ */
+function HomePricingCard({ tier }: { tier: PricingTier }) {
+  const spotlightRef = useSpotlight<HTMLAnchorElement>();
+
+  return (
+    // Links to the comparison page, not straight to the contact form — these are
+    // "browsing" chips. The form-prefilling deep link lives on /packages itself,
+    // once someone has actually picked a tier to act on.
+    <Link
+      ref={spotlightRef}
+      to="/packages"
+      onClick={() => trackCTAClick(`home-pricing-${tier.label}`)}
+      className={`spotlight-card group relative flex flex-col rounded-2xl border p-6 transition-colors hover:border-accent-blue ${
+        tier.popular ? 'border-accent-blue bg-accent-blue/5' : 'border-border bg-canvas'
+      }`}
+    >
+      {tier.popular && (
+        <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-accent-blue px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-white">
+          Most Popular
+        </span>
+      )}
+      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent-blue/10">
+        <Icon name={tier.icon} size={20} className="text-accent-blue" />
+      </div>
+      <h3 className="mt-4 font-display text-base font-bold text-navy">{tier.label}</h3>
+      <p className="mt-1 text-lg font-bold text-accent-blue">
+        {tier.startingFrom}
+        <span className="text-sm font-normal text-slate">/mo</span>
+      </p>
+      <span className="mt-4 flex items-center gap-1 text-sm font-semibold text-accent-blue">
+        See what's included
+        <Icon name="arrow-right" size={14} className="transition-transform group-hover:translate-x-1" />
+      </span>
+    </Link>
+  );
+}
+
 export function Home() {
   const { data: content } = useContentPage<HomeContent>('home');
   const { data: packages } = useContentPage<PackagesContent>('packages');
@@ -153,6 +198,8 @@ export function Home() {
         businessCtaLabel={content?.businessCtaLabel}
       />
 
+      <StatsMarquee />
+
       {/* Brand statement */}
       <section className="py-16 sm:py-24">
         <div className="mx-auto max-w-4xl px-4 text-center">
@@ -165,6 +212,23 @@ export function Home() {
       {/* Scroll-reactive services panel — sits between the brand statement and the
           industries grid, the same slot the inspiration site uses for its equivalent. */}
       <ServiceNetwork />
+
+      {/* Coverage map — the six real Service Area pages, previously reachable only from
+          the nav dropdown, made visible right where a new visitor is already asking
+          "do they cover me?". */}
+      <section aria-label="Areas we cover" className="py-16 sm:py-20">
+        <div className="mx-auto max-w-7xl px-4">
+          <SectionHeading
+            eyebrow="Where we work"
+            title="Covering London & the South East"
+            subcopy="Hover an area to see coverage, or jump straight to its page."
+            align="center"
+          />
+          <div className="mt-12">
+            <CoverageMap />
+          </div>
+        </div>
+      </section>
 
       {/* Industries */}
       <section aria-label="Industries" className="bg-canvas-tint py-16 sm:py-20">
@@ -243,41 +307,7 @@ export function Home() {
             />
             <div className="mx-auto mt-12 grid max-w-4xl gap-4 sm:grid-cols-3">
               {packages.tiers.map((tier) => (
-                // Links to the comparison page, not straight to the contact form — these
-                // are "browsing" chips. The form-prefilling deep link lives on /packages
-                // itself, once someone has actually picked a tier to act on.
-                <Link
-                  key={tier.label}
-                  to="/packages"
-                  onClick={() => trackCTAClick(`home-pricing-${tier.label}`)}
-                  className={`group relative flex flex-col rounded-2xl border p-6 transition-colors hover:border-accent-blue ${
-                    tier.popular ? 'border-accent-blue bg-accent-blue/5' : 'border-border bg-canvas'
-                  }`}
-                >
-                  {tier.popular && (
-                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-accent-blue px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-white">
-                      Most Popular
-                    </span>
-                  )}
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent-blue/10">
-                    <Icon name={tier.icon} size={20} className="text-accent-blue" />
-                  </div>
-                  <h3 className="mt-4 font-display text-base font-bold text-navy">
-                    {tier.label}
-                  </h3>
-                  <p className="mt-1 text-lg font-bold text-accent-blue">
-                    {tier.startingFrom}
-                    <span className="text-sm font-normal text-slate">/mo</span>
-                  </p>
-                  <span className="mt-4 flex items-center gap-1 text-sm font-semibold text-accent-blue">
-                    See what's included
-                    <Icon
-                      name="arrow-right"
-                      size={14}
-                      className="transition-transform group-hover:translate-x-1"
-                    />
-                  </span>
-                </Link>
+                <HomePricingCard key={tier.label} tier={tier} />
               ))}
             </div>
             <div className="mt-8 text-center">

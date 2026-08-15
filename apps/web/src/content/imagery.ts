@@ -89,6 +89,43 @@ export function photo(key: PhotoKey, width?: number): string {
 }
 
 /**
+ * Before/after pairs for the drag-compare slider (components/shared/CompareSlider.tsx),
+ * shown on the service pages where a real visual transformation is the actual selling
+ * point — plumbing, electricals, commercial cleaning. Deliberately NOT applied to every
+ * service page: aviation, catering, concierge etc. don't have a "damaged → fixed" story to
+ * tell, and forcing one on would mean staging a fake pair, which is exactly the kind of
+ * invented-content risk this project has already had to correct elsewhere (see the seed
+ * data fabrication caught and fixed in apps/api/scripts/seed-content.ts).
+ *
+ * These are stock photography illustrating the trade — the same category of image already
+ * used for every hero shot above — not a documentary claim that a specific pictured pipe
+ * or panel is an Atlas South job. Sourced 2026-08-15 with the same process as HERO_BY_SLUG:
+ * excluding Unsplash+ (paid) results, each URL confirmed to return HTTP 200. Unsplash
+ * License: free for commercial use, no attribution required.
+ */
+const BEFORE_AFTER_BY_SLUG: Record<string, { before: string; after: string }> = {
+  plumbing: {
+    before: 'photo-1783789597229-e950db025197', // corroded pipe with valves, concrete wall
+    after: 'photo-1694827893591-af9b80361599', // fresh copper pipework installed in an opened wall
+  },
+  electricals: {
+    before: 'photo-1635335874521-7987db781153', // old fusebox, wires plugged in loose
+    after: 'photo-1576446470246-499c738d1c8e', // clean white circuit breaker panel
+  },
+  'commercial-cleaning': {
+    before: 'photo-1566699270403-3f7e3f340664', // desk covered in scattered papers
+    after: 'photo-1718220216044-006f43e3a9b1', // clean, organised open-plan office
+  },
+};
+
+/** Before/after image pair for a slug, or null if this page doesn't have one. */
+export function beforeAfterFor(slug: string, width = 1000): { before: string; after: string } | null {
+  const pair = BEFORE_AFTER_BY_SLUG[slug];
+  if (!pair) return null;
+  return { before: img(pair.before, width), after: img(pair.after, width) };
+}
+
+/**
  * Images illustrating the alternating benefit panels. Deliberately generic working shots
  * — these sit beside claims like "planned maintenance" or "compliance documentation"
  * that no single photograph depicts literally, so a real person doing real technical work
@@ -117,4 +154,5 @@ export const ALL_PHOTO_IDS: string[] = [
   HERO_FALLBACK,
   ...Object.values(NAMED),
   ...PANEL_ROTATION,
+  ...Object.values(BEFORE_AFTER_BY_SLUG).flatMap((pair) => [pair.before, pair.after]),
 ];

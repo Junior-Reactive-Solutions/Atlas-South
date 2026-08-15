@@ -1,7 +1,15 @@
 import { Link } from 'react-router-dom';
 import { animate, createTimeline, stagger } from 'animejs';
 import { COMPANY } from '@atlas-south/shared';
-import { Icon, useAnimationScope, DURATION, EASE, STAGGER_GAP, prefersReducedMotion } from '@atlas-south/design-system';
+import {
+  Icon,
+  useAnimationScope,
+  useMagneticHover,
+  DURATION,
+  EASE,
+  STAGGER_GAP,
+  prefersReducedMotion,
+} from '@atlas-south/design-system';
 import { HeroCarousel } from './HeroCarousel.js';
 
 interface Stat {
@@ -194,6 +202,11 @@ export function Hero({
 
   const fullHeadline = `${headlineLines[0]} ${headlineLines[1]} ${headlineLines[2]}`;
 
+  // Magnetic pull on the primary CTA — one shared hook (packages/design-system),
+  // applied the same way on every primary CTA sitewide (see also CtaBand.tsx,
+  // Packages.tsx) so the feel is identical wherever it shows up.
+  const magneticCta = useMagneticHover<HTMLAnchorElement>();
+
   return (
     <section ref={root}>
       <HeroCarousel>
@@ -221,8 +234,9 @@ export function Hero({
 
           <div className="mt-8 flex flex-wrap items-center gap-4">
             <Link
+              ref={magneticCta}
               to="/company/contact"
-              className="hero-cta flex min-h-[44px] items-center gap-2 rounded bg-accent-blue px-6 text-sm font-semibold uppercase tracking-wide text-white hover:bg-white hover:text-navy"
+              className="hero-cta flex min-h-[44px] items-center gap-2 rounded bg-accent-blue px-6 text-sm font-semibold uppercase tracking-wide text-white transition-transform duration-150 ease-out hover:bg-white hover:text-navy"
             >
               {primaryCtaLabel}
               <Icon name="arrow-right" size={18} className="hero-cta-arrow" />

@@ -8,6 +8,7 @@ export { SectionHeading } from './SectionHeading';
 export { PhotoHero } from './PhotoHero';
 export { BenefitPanels, type BenefitPanel } from './BenefitPanels';
 export { StatBand, type Stat } from './StatBand';
+export { StatsMarquee } from './StatsMarquee';
 export { CtaBand } from './CtaBand';
 export { CardGrid, type GridCard } from './CardGrid';
 export { ScrollProgress } from './ScrollProgress';

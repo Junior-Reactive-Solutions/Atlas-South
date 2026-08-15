@@ -15,8 +15,9 @@ import {
   type GridCard,
   type SectionLink,
 } from '../sections';
-import { heroImageFor } from '../../content/imagery';
+import { heroImageFor, beforeAfterFor } from '../../content/imagery';
 import { navIdForPath } from '../../lib/navLookup';
+import { CompareSlider } from '../shared/CompareSlider.js';
 
 interface Feature {
   icon: IconName;
@@ -74,11 +75,17 @@ export function ServiceDetailPage({
     path: service.path,
   }));
 
+  // Only set for the services with a genuine visual-transformation story (plumbing,
+  // electricals, commercial cleaning) — see the comment above BEFORE_AFTER_BY_SLUG in
+  // content/imagery.ts for why this isn't applied to every service page.
+  const beforeAfter = beforeAfterFor(id);
+
   // Built from what this page actually renders, so a service with no FAQs doesn't get a
   // jump link to an absent section.
   const sectionLinks: SectionLink[] = [
     { id: 'overview', label: 'Overview' },
     ...(features.length > 0 ? [{ id: 'benefits', label: 'What we provide' }] : []),
+    ...(beforeAfter ? [{ id: 'results', label: 'See the results' }] : []),
     ...(faqs.length > 0 ? [{ id: 'faqs', label: 'FAQs' }] : []),
     ...(relatedCards.length > 0 ? [{ id: 'related', label: 'Related services' }] : []),
   ];
@@ -170,6 +177,22 @@ export function ServiceDetailPage({
         description="Tell us what you need and we'll respond within 24 hours — or call now for emergency cover."
         tone="tint"
       />
+
+      {/* Before/after — only on the services with a real visual-transformation story */}
+      {beforeAfter && (
+        <section id="results" className="scroll-mt-32 py-16 sm:py-20">
+          <div className="mx-auto max-w-4xl px-4">
+            <SectionHeading eyebrow="See the results" title="What the job actually looks like, finished" />
+            <div className="mt-10">
+              <CompareSlider
+                before={beforeAfter.before}
+                after={beforeAfter.after}
+                label={`Before and after: ${title.toLowerCase()}`}
+              />
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* FAQs */}
       {faqs.length > 0 && (

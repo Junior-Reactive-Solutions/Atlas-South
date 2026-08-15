@@ -5,7 +5,7 @@ import { ValuesGrid } from '../../components/company/ValuesGrid';
 import { TeamGrid } from '../../components/company/TeamGrid';
 import { CertificationsBar } from '../../components/company/CertificationsBar';
 import { Seo } from '../../components/seo/Seo.js';
-import { StatBand } from '../../components/sections';
+import { StatBand, StatsMarquee } from '../../components/sections';
 import { COMPANY } from '@atlas-south/shared';
 import type { CompanyContent } from '../../types/content';
 
@@ -45,6 +45,8 @@ export function About() {
           <h1 className="mt-2 font-display text-4xl font-bold text-navy sm:text-5xl">{data.tagline}</h1>
         </div>
       </section>
+
+      <StatsMarquee />
 
       {/* Timeline section */}
       <section className="py-16 sm:py-20">
