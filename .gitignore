@@ -39,5 +39,12 @@ coverage/
 playwright-report/
 test-results/
 
+# Host CLI local state. `netlify deploy` writes .netlify/state.json with the linked siteId,
+# and .vercel/ holds the same for Vercel. Per-machine link state, not project config —
+# committing it forces every clone to deploy to whatever site the last person linked.
+# The deploy configuration that *should* be shared lives in netlify.toml / vercel.json.
+.netlify/
+.vercel/
+
 # misc
 *.tsbuildinfo
