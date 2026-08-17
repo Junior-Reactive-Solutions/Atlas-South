@@ -3,9 +3,26 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--
+      Favicon set brought up to the current cross-browser standard (per favicon.io /
+      web.dev/PWA guidance, Aug 2026):
+        - favicon.ico (multi-size 16/32, PNG-in-ICO container) — the universal fallback
+          every browser still checks first regardless of the <link> tags below; built by
+          apps/web/scripts/build-favicon-ico.mjs from the existing 16/32 PNGs.
+        - Sized PNG <link rel="icon"> tags — what modern Chromium/Firefox/Safari actually
+          render in the tab, taken from the ICO fallback so there's no visual mismatch.
+        - apple-touch-icon — iOS/iPadOS home-screen icon (unchanged, already correct).
+        - site.webmanifest — Android "Add to Home Screen" / PWA install icon + theme color.
+      An SVG favicon (rel="icon" type="image/svg+xml") is deliberately omitted: the Atlas
+      South mark only exists as a raster PNG/JPG, and no vector source exists to convert
+      without redrawing the logo, which is out of scope here.
+    -->
+    <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#002484" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link

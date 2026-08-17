@@ -62,6 +62,8 @@ export interface CertificationItem {
   icon: IconName;
   title: string;
   body: string;
+  /** The certifying body's own badge image, shown instead of `icon` when present. */
+  logo?: string;
 }
 
 export interface CompanyContent {
@@ -101,13 +103,34 @@ export interface PricingTier {
   label: string;
   startingFrom: string;
   description: string;
-  includes: string[];
+  /**
+   * Optional, not required: earlier seeded content omitted this field entirely on every
+   * tier, and something reading `.length` off it unconditionally crashed the whole page.
+   * Render call sites must guard for it being absent, not just empty.
+   */
+  includes?: string[];
+  /**
+   * Features shown struck through / greyed out — what this tier does NOT cover. The
+   * original site's packages section showed both included and excluded items side by
+   * side per tier (e.g. Starter: "✗ Security services", "✗ Commercial cleaning"), which
+   * the audit called out as a genuine strength: it pre-qualifies leads by letting a buyer
+   * self-select before enquiring, rather than finding out after contact that a tier
+   * doesn't cover what they need.
+   */
+  excludes?: string[];
+  /** Renders the "Most Popular" badge and a highlighted card treatment on this tier. */
+  popular?: boolean;
+  /** PayPal billing plan id for this tier's recurring subscription — see paypal.ts. */
+  paypalPlanId?: string;
   icon: IconName;
 }
 
 export interface PackagesContent {
+  eyebrow?: string;
   title: string;
   heroDescription: string;
   intro: string;
+  /** e.g. "Cancel anytime · 30 days notice" — shown near the pricing grid. */
+  cancellationNote?: string;
   tiers: PricingTier[];
 }

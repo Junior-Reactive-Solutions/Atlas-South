@@ -51,3 +51,50 @@ h4 {
   @apply sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50;
   @apply focus:bg-navy focus:text-white focus:px-4 focus:py-2 focus:rounded;
 }
+
+/*
+ * Spotlight card — a soft glow that follows the cursor, paired with
+ * useSpotlight (packages/design-system). One class, applied wherever a card
+ * grid wants it (ServiceNetwork panel, Packages pricing cards) so the effect
+ * is identical everywhere rather than several hand-tuned copies. --spot-x/
+ * --spot-y are set by the hook on pointer move; unset (their `initial`
+ * default), the gradient simply doesn't render, so a card is inert until JS
+ * actually attaches the listener — no motion is ever baked into the static
+ * markup for a no-JS visitor.
+ *
+ * Uses `--color-brand-blue` (decorative use only, per 01-BRAND-SYSTEM.md) —
+ * never text, purely a background glow.
+ */
+.spotlight-card {
+  position: relative;
+  isolation: isolate;
+}
+.spotlight-card::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  /* Matches the card's own rounded corners (whatever they are — this class is shared
+     across cards with different radii) without needing `overflow: hidden` on the card
+     itself. That was the previous approach, and it silently clipped anything meant to
+     poke outside the card's box — namely the "Most Popular" badge on the Packages/
+     pricing-teaser cards (`-top-3`, i.e. intentionally overlapping the top edge), which
+     is why it was rendering cut off. */
+  border-radius: inherit;
+  /* rgba(0, 120, 252, 0.12) — --color-brand-blue (#0078fc) at 12% opacity. Hardcoded
+     rather than derived from the custom property via CSS relative-color syntax
+     (`rgb(from var(...))`), which isn't supported in every browser this site targets. */
+  background: radial-gradient(220px circle at var(--spot-x, 50%) var(--spot-y, 50%), rgba(0, 120, 252, 0.12), transparent 65%);
+  opacity: 0;
+  transition: opacity 220ms ease;
+  pointer-events: none;
+}
+.spotlight-card:hover::before,
+.spotlight-card:focus-within::before {
+  opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .spotlight-card::before {
+    display: none;
+  }
+}

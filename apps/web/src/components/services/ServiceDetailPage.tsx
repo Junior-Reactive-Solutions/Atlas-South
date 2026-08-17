@@ -15,8 +15,10 @@ import {
   type GridCard,
   type SectionLink,
 } from '../sections';
-import { heroImageFor } from '../../content/imagery';
-import { navIdForPath } from '../../lib/navLookup';
+import { heroImageFor, heroImageAltFor, beforeAfterFor } from '../../content/imagery';
+import { navIdForPath, isPlaceholderPath } from '../../lib/navLookup';
+import { useNavVisibility } from '../../hooks/useNavVisibility.js';
+import { CompareSlider } from '../shared/CompareSlider.js';
 
 interface Feature {
   icon: IconName;
@@ -68,17 +70,43 @@ export function ServiceDetailPage({
   faqs,
   relatedServices,
 }: ServiceDetailPageProps) {
-  const relatedCards: GridCard[] = (relatedServices ?? []).map((service) => ({
-    navId: navIdForPath(service.path),
-    label: service.label,
-    path: service.path,
-  }));
+  // Placeholder ("Coming Soon") and admin-hidden related services are excluded entirely —
+  // the client doesn't want them visible at all — via the same two checks
+  // useVisibleNavItems applies to lists built directly from the nav constants; this list
+  // is built from CMS content ({label, path} only, no `.placeholder` field to check
+  // directly), so it cross-references isPlaceholderPath/hidden by path instead.
+  const { hidden } = useNavVisibility();
+  const relatedCards: GridCard[] = (relatedServices ?? [])
+    .filter((service) => !isPlaceholderPath(service.path))
+    .filter((service) => {
+      const navId = navIdForPath(service.path);
+      return !navId || !hidden.has(navId);
+    })
+    .map((service) => {
+      const navId = navIdForPath(service.path);
+      return {
+        navId,
+        label: service.label,
+        path: service.path,
+        // Same per-slug photography the homepage's service grids already use
+        // (content/imagery.ts) — these cards were rendering as a plain gradient tile with
+        // no image, unlike every equivalent card on the homepage.
+        image: navId ? heroImageFor(navId, 700) : undefined,
+        imageAlt: navId ? heroImageAltFor(navId, 700) : undefined,
+      };
+    });
+
+  // Only set for the services with a genuine visual-transformation story (plumbing,
+  // electricals, commercial cleaning) — see the comment above BEFORE_AFTER_BY_SLUG in
+  // content/imagery.ts for why this isn't applied to every service page.
+  const beforeAfter = beforeAfterFor(id);
 
   // Built from what this page actually renders, so a service with no FAQs doesn't get a
   // jump link to an absent section.
   const sectionLinks: SectionLink[] = [
     { id: 'overview', label: 'Overview' },
     ...(features.length > 0 ? [{ id: 'benefits', label: 'What we provide' }] : []),
+    ...(beforeAfter ? [{ id: 'results', label: 'See the results' }] : []),
     ...(faqs.length > 0 ? [{ id: 'faqs', label: 'FAQs' }] : []),
     ...(relatedCards.length > 0 ? [{ id: 'related', label: 'Related services' }] : []),
   ];
@@ -170,6 +198,22 @@ export function ServiceDetailPage({
         description="Tell us what you need and we'll respond within 24 hours — or call now for emergency cover."
         tone="tint"
       />
+
+      {/* Before/after — only on the services with a real visual-transformation story */}
+      {beforeAfter && (
+        <section id="results" className="scroll-mt-32 py-16 sm:py-20">
+          <div className="mx-auto max-w-4xl px-4">
+            <SectionHeading eyebrow="See the results" title="What the job actually looks like, finished" />
+            <div className="mt-10">
+              <CompareSlider
+                before={beforeAfter.before}
+                after={beforeAfter.after}
+                label={`Before and after: ${title.toLowerCase()}`}
+              />
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* FAQs */}
       {faqs.length > 0 && (

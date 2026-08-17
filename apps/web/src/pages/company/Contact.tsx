@@ -1,6 +1,8 @@
 import { QuoteForm } from '../../components/home/QuoteForm';
 import { Seo } from '../../components/seo/Seo.js';
+import { Icon } from '@atlas-south/design-system';
 import { COMPANY } from '@atlas-south/shared';
+import { trackPhoneClick, trackWhatsAppClick } from '../../lib/analytics.js';
 
 export function Contact() {
   return (
@@ -39,13 +41,37 @@ export function Contact() {
       {/* Contact info section */}
       <section className="py-16 sm:py-20">
         <div className="mx-auto max-w-4xl px-4">
-          <div className="grid gap-8 sm:grid-cols-3">
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
             <div>
               <h3 className="font-semibold text-navy">Phone</h3>
-              <a href={`tel:${COMPANY.phone.tel}`} className="mt-2 text-accent-blue hover:underline">
+              <a
+                href={`tel:${COMPANY.phone.tel}`}
+                onClick={() => trackPhoneClick('contact-page')}
+                className="mt-2 text-accent-blue hover:underline"
+              >
                 {COMPANY.phone.display}
               </a>
               <p className="mt-1 text-xs text-slate">24/7 Emergency Line</p>
+            </div>
+
+            {/* WhatsApp alongside phone — the direct-response pairing the pre-rebuild
+                site's audit credited as a real strength; see Header.tsx for the fuller
+                note on why this was missing and where COMPANY.whatsapp.url came from. */}
+            <div>
+              <h3 className="font-semibold text-navy">WhatsApp</h3>
+              <a
+                href={COMPANY.whatsapp.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => trackWhatsAppClick('contact-page')}
+                className="mt-2 inline-flex items-center gap-1.5 text-accent-blue hover:underline"
+              >
+                <Icon name="message-circle" size={16} />
+                Message us
+              </a>
+              {/* No response-time claim here — "usually replies within X" isn't a
+                  verified fact (see docs/build/13-COMPANY-FACTS-VERIFIED.md), unlike the
+                  phone tile's "24/7 Emergency Line", which is COMPANY.stats.coverage. */}
             </div>
 
             <div>

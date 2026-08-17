@@ -38,9 +38,16 @@ export default {
           from: { transform: 'scale(1)' },
           to: { transform: 'scale(1.08)' },
         },
+        // StatsMarquee.tsx — the strip is rendered twice back-to-back, so scrolling
+        // exactly -50% (one copy's width) loops with no visible seam or jump.
+        'stats-marquee': {
+          from: { transform: 'translateX(0)' },
+          to: { transform: 'translateX(-50%)' },
+        },
       },
       animation: {
         'hero-zoom': 'hero-zoom 20s ease-out forwards',
+        'stats-marquee': 'stats-marquee 26s linear infinite',
       },
       fontFamily: {
         // Montserrat replaces Big Shoulders Display — the previous pick read too thin

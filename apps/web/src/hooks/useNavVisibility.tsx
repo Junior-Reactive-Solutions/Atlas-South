@@ -68,17 +68,27 @@ export function useNavVisibility(): NavVisibilityValue {
 /**
  * Filters a nav list down to what the public should currently see.
  *
- * Until the visibility fetch settles this returns the list unchanged, so navigation
- * renders immediately rather than popping in. The window is a few hundred milliseconds
- * and the worst case is a link that 404s.
+ * Two independent filters, applied together:
+ * 1. `placeholder` items ("Coming Soon" — real content isn't written yet) are always
+ *    excluded. Unlike the admin-hidden filter below, this doesn't wait on `isLoaded` or
+ *    depend on the visibility API responding at all — it's a static property of the nav
+ *    data itself, not something an admin toggles. That matters concretely: on a
+ *    frontend-only deployment with no backend reachable yet, the admin-hidden fetch fails
+ *    and fails open (see NavVisibilityProvider), but placeholder pages still correctly
+ *    disappear regardless, because this check never depended on that fetch succeeding.
+ * 2. Admin-hidden items (via the visibility API) are excluded once that fetch settles;
+ *    until then the list renders without this second filter applied, so navigation
+ *    doesn't pop in — the window is a few hundred milliseconds and the worst case is a
+ *    link to an admin-hidden (not placeholder) page that briefly 404s.
  */
 // eslint-disable-next-line react-refresh/only-export-components
 export function useVisibleNavItems<T extends NavItem>(items: T[]): T[] {
   const { hidden, isLoaded } = useNavVisibility();
 
   return useMemo(() => {
-    if (!isLoaded || hidden.size === 0) return items;
-    return items.filter((item) => !hidden.has(item.id));
+    const withoutPlaceholders = items.filter((item) => !item.placeholder);
+    if (!isLoaded || hidden.size === 0) return withoutPlaceholders;
+    return withoutPlaceholders.filter((item) => !hidden.has(item.id));
   }, [items, hidden, isLoaded]);
 }
 

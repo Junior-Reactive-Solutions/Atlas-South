@@ -74,6 +74,57 @@ export function heroImageFor(slug: string, width = 1600): string {
 }
 
 /**
+ * A second, distinct photograph per slug — shown on hover via <HoverImage>
+ * (components/shared/HoverImage.tsx) wherever a card carries both `image` and
+ * `imageAlt` (see CardGrid.tsx). Same sourcing rigor and provenance as HERO_BY_SLUG:
+ * every id below was taken from an Unsplash search result page, excluding sponsored
+ * iStock placements and Unsplash+ (paid) results, and each URL was confirmed to return
+ * HTTP 200 (2026-08-17). Unsplash License: free for commercial use, no attribution
+ * required.
+ *
+ * Deliberately a genuinely different photo per slug, not a crop/filter of the primary
+ * one — two early candidates (an electricals "portrait" shot and a reactive-maintenance
+ * "hard hat" shot) turned out to already be the site's existing primary/panel images and
+ * were swapped out once that was caught, rather than shipped as a fake alternate.
+ *
+ * `surrey-kent`'s alternate is a Cotswolds village street, not literally Surrey or Kent —
+ * described generically in its comment rather than claiming a specific wrong location.
+ */
+const HERO_ALT_BY_SLUG: Record<string, string> = {
+  // Hard services
+  electricals: 'photo-1751486289943-0428133c367c', // exposed wiring mid-installation, raw plaster wall
+  plumbing: 'photo-1611021061421-93741ec41ce1', // hand holding a length of copper pipe
+  'reactive-maintenance': 'photo-1621905251918-48416bd8575a', // engineer in hard hat holding measuring tools
+  'fire-safety': 'photo-1712640379137-6d2532f887a7', // red fire extinguisher mounted on a wall
+  // Soft services
+  'facilities-management': 'photo-1553601581-8a1f1010efbe', // gray high-rise building, low angle
+  security: 'photo-1672073311074-f60c4a5e7b92', // close-up of a security camera on a pole
+  'commercial-cleaning': 'photo-1718152421680-d1580e843cc9', // worker in hi-vis pressure-washing a floor
+  catering: 'photo-1771360963016-1408c2de12c4', // chef preparing food in a professional kitchen
+  aviation: 'photo-1758531491352-7887c1fe45b3', // aircraft at an airport gate, viewed through the window
+  concierge: 'photo-1553369728-15ec6971afaf', // man standing beside a reception counter
+  'waste-recycling': 'photo-1763315156830-07870b159121', // worker feeding material onto a recycling conveyor belt
+  // Industries
+  corporate: 'photo-1557804506-669a67965ba0', // team meeting around a whiteboard
+  healthcare: 'photo-1517120026326-d87759a7b63b', // clinical staff member walking a hospital corridor
+  retail: 'photo-1567958436049-f2903793328b', // staff member organising stock inside a store
+  education: 'photo-1758270704524-596810e891b5', // students in a lecture hall
+  // Areas — a second recognisable landmark/street per area, not the same shot cropped
+  'central-london': 'photo-1503566303019-ba141f5f9b76', // Big Ben, Westminster
+  'east-london': 'photo-1626289296186-bb511ef4285b', // Canary Wharf skyline across the water
+  'south-east-london': 'photo-1642501493351-ffc448931fab', // The Shard at London Bridge, night
+  'north-london': 'photo-1786711575684-65a29d500456', // Camden Market street entrance
+  'west-london': 'photo-1719941857483-f6789ad7200f', // Notting Hill's painted terraces
+  'surrey-kent': 'photo-1670620800615-4225fe6ecb75', // English village street (Cotswolds, not literally Surrey/Kent)
+};
+
+/** Second photograph for a slug, for hover-reveal — null if this slug has no alternate. */
+export function heroImageAltFor(slug: string, width = 1600): string | null {
+  const id = HERO_ALT_BY_SLUG[slug];
+  return id ? img(id, width) : null;
+}
+
+/**
  * Named shots used outside the per-slug heroes (currently the careers block).
  */
 const NAMED = {
@@ -86,6 +137,43 @@ export type PhotoKey = keyof typeof NAMED;
 /** Resolve a named photo to a full CDN URL. */
 export function photo(key: PhotoKey, width?: number): string {
   return img(NAMED[key], width);
+}
+
+/**
+ * Before/after pairs for the drag-compare slider (components/shared/CompareSlider.tsx),
+ * shown on the service pages where a real visual transformation is the actual selling
+ * point — plumbing, electricals, commercial cleaning. Deliberately NOT applied to every
+ * service page: aviation, catering, concierge etc. don't have a "damaged → fixed" story to
+ * tell, and forcing one on would mean staging a fake pair, which is exactly the kind of
+ * invented-content risk this project has already had to correct elsewhere (see the seed
+ * data fabrication caught and fixed in apps/api/scripts/seed-content.ts).
+ *
+ * These are stock photography illustrating the trade — the same category of image already
+ * used for every hero shot above — not a documentary claim that a specific pictured pipe
+ * or panel is an Atlas South job. Sourced 2026-08-15 with the same process as HERO_BY_SLUG:
+ * excluding Unsplash+ (paid) results, each URL confirmed to return HTTP 200. Unsplash
+ * License: free for commercial use, no attribution required.
+ */
+const BEFORE_AFTER_BY_SLUG: Record<string, { before: string; after: string }> = {
+  plumbing: {
+    before: 'photo-1783789597229-e950db025197', // corroded pipe with valves, concrete wall
+    after: 'photo-1694827893591-af9b80361599', // fresh copper pipework installed in an opened wall
+  },
+  electricals: {
+    before: 'photo-1635335874521-7987db781153', // old fusebox, wires plugged in loose
+    after: 'photo-1576446470246-499c738d1c8e', // clean white circuit breaker panel
+  },
+  'commercial-cleaning': {
+    before: 'photo-1566699270403-3f7e3f340664', // desk covered in scattered papers
+    after: 'photo-1718220216044-006f43e3a9b1', // clean, organised open-plan office
+  },
+};
+
+/** Before/after image pair for a slug, or null if this page doesn't have one. */
+export function beforeAfterFor(slug: string, width = 1000): { before: string; after: string } | null {
+  const pair = BEFORE_AFTER_BY_SLUG[slug];
+  if (!pair) return null;
+  return { before: img(pair.before, width), after: img(pair.after, width) };
 }
 
 /**
@@ -117,4 +205,6 @@ export const ALL_PHOTO_IDS: string[] = [
   HERO_FALLBACK,
   ...Object.values(NAMED),
   ...PANEL_ROTATION,
+  ...Object.values(BEFORE_AFTER_BY_SLUG).flatMap((pair) => [pair.before, pair.after]),
+  ...Object.values(HERO_ALT_BY_SLUG),
 ];

@@ -9,10 +9,12 @@ import {
   INDUSTRIES,
   SERVICE_AREAS,
   LEGAL_PAGES,
+  PACKAGES_PAGE,
   type NavItem,
 } from '@atlas-south/shared';
 import { Icon, useAnimationScope, DURATION, EASE, STAGGER_GAP } from '@atlas-south/design-system';
 import { useNavVisibility } from '../../hooks/useNavVisibility.js';
+import { trackPhoneClick, trackWhatsAppClick } from '../../lib/analytics.js';
 
 interface ColumnProps {
   title: string;
@@ -26,8 +28,11 @@ function FooterColumn({ title, items }: ColumnProps) {
 
   // Same filtering as the header, applied here so a hidden page can't still be reached
   // from the footer — the audit's dead-link finding was largely a header/footer drift
-  // problem, and this keeps the two in step by construction.
-  const visibleItems = items.filter((item) => !hidden.has(item.id));
+  // problem, and this keeps the two in step by construction. Placeholder ("Coming Soon")
+  // items are excluded too — the client doesn't want them visible at all, and this column
+  // previously only filtered admin-hidden items, not placeholders, so every unbuilt
+  // service/industry was still linked from here regardless of that setting.
+  const visibleItems = items.filter((item) => !hidden.has(item.id) && !('placeholder' in item && item.placeholder));
 
   return (
     <nav aria-label={`Footer — ${title}`} className="border-b border-white/10 py-4 lg:border-0 lg:py-0">
@@ -71,7 +76,9 @@ export function Footer() {
     });
   }, []);
 
-  const companyColumnItems = [...COMPANY_PAGES];
+  // Packages/pricing sits with Company rather than getting a seventh column — it's one
+  // link, not a category, and the grid is already a tight fit at lg:grid-cols-6.
+  const companyColumnItems = [...COMPANY_PAGES, PACKAGES_PAGE];
 
   const legalConnectItems = [
     ...LEGAL_PAGES,
@@ -88,9 +95,26 @@ export function Footer() {
             <img src="/atlas-south-logo.jpg" alt="" aria-hidden="true" className="h-8 w-auto" />
             {COMPANY.name}
           </div>
-          <a href={`tel:${COMPANY.phone.tel}`} className="flex items-center gap-2 hover:text-accent-blue">
+          <a
+            href={`tel:${COMPANY.phone.tel}`}
+            onClick={() => trackPhoneClick('footer')}
+            className="flex items-center gap-2 hover:text-accent-blue"
+          >
             <Icon name="phone" size={16} />
             {COMPANY.phone.display}
+          </a>
+          {/* Reinstates the "WhatsApp + phone repeated throughout" pattern the
+              pre-rebuild site's own audit flagged as a genuine strength — see the longer
+              note beside the header's WhatsApp link in Header.tsx. */}
+          <a
+            href={COMPANY.whatsapp.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => trackWhatsAppClick('footer')}
+            className="flex items-center gap-2 hover:text-accent-blue"
+          >
+            <Icon name="message-circle" size={16} />
+            WhatsApp Us
           </a>
           <a href={`mailto:${COMPANY.email}`} className="flex items-center gap-2 hover:text-accent-blue">
             <Icon name="mail" size={16} />

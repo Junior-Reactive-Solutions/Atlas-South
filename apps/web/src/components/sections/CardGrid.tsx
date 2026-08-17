@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Icon, type IconName, useScrollReveal } from '@atlas-south/design-system';
 import { useNavVisibility } from '../../hooks/useNavVisibility.js';
+import { HoverImage } from '../shared/HoverImage.js';
 
 export interface GridCard {
   label: string;
@@ -11,6 +12,8 @@ export interface GridCard {
   icon?: IconName;
   /** Optional photograph. Without one the card renders as a brand-gradient tile. */
   image?: string;
+  /** A second photograph, crossfaded in on hover (HoverImage.tsx). Without one, `image` is static. */
+  imageAlt?: string | null;
   /** Renders a "Coming soon" chip and removes the link affordance. */
   placeholder?: boolean;
 }
@@ -54,11 +57,9 @@ export function CardGrid({ cards, columns = 3, ctaLabel = 'Learn more' }: CardGr
           <>
             <div className="relative aspect-[3/2] overflow-hidden bg-gradient-to-br from-navy to-brand-blue">
               {card.image && (
-                <img
+                <HoverImage
                   src={card.image}
-                  alt=""
-                  aria-hidden="true"
-                  loading="lazy"
+                  altSrc={card.imageAlt}
                   className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
               )}

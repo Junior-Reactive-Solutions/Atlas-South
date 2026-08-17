@@ -24,12 +24,22 @@ interface ExtractedPage {
   data: Record<string, unknown>;
 }
 
+/**
+ * Headline restored to the dual-audience framing from docs/build/03-HERO-SECTION-SPEC.md
+ * §2 rather than the commercial-only copy that had drifted into production. The client
+ * flagged the hero wording as "not to the extent it can be" — the concrete gap is that
+ * "Commercial facilities services... for every building, every sector" quietly dropped
+ * homeowners, despite /packages still selling single-property residential plans (see
+ * PACKAGES_CONTENT's Starter tier above). `homeCtaLabel`/`businessCtaLabel` drive the two
+ * self-select links so each audience finds its own path within the hero (see Hero.tsx).
+ */
 const HOME_CONTENT = {
-  headlineLines: ['Commercial facilities services', 'you can trust —', 'for every building, every sector.'],
+  headlineLines: ['Trades & facilities services', 'you can trust —', 'for your home or your business.'],
   subcopy:
     'Atlas South has delivered {jobsCompleted} jobs across London and the South East since {foundedYear}, from emergency call-outs to fully managed facilities contracts.',
   primaryCtaLabel: 'Get a Free Quote',
-  businessCtaLabel: 'View Our Services',
+  homeCtaLabel: 'For Your Home',
+  businessCtaLabel: 'For Your Business',
 };
 
 const COMPANY_CONTENT = {
@@ -100,10 +110,15 @@ const COMPANY_CONTENT = {
       bio: 'Master tradesperson with specialized certifications in commercial and industrial plumbing.',
     },
   ],
+  // `logo` is the certifying body's own badge image (client-supplied 2026-08-17,
+  // apps/web/public/certifications/) — replaces the generic `award` glyph every entry
+  // used to share, which couldn't distinguish one accreditation from another at a
+  // glance. `icon` stays as the fallback CertificationsBar renders if `logo` is ever
+  // removed or a future certification is added without an image ready.
   certifications: [
-    { icon: 'award', title: 'Gas Safe Registered', body: 'All gas work certified and insured' },
-    { icon: 'award', title: 'NICEIC Approved', body: 'Electrical work by certified professionals' },
-    { icon: 'award', title: 'ISO 9001', body: 'Quality management certified' },
+    { icon: 'award', title: 'Gas Safe Registered', body: 'All gas work certified and insured', logo: '/certifications/gas-safe.jpg' },
+    { icon: 'award', title: 'NICEIC Approved', body: 'Electrical work by certified professionals', logo: '/certifications/niceic.jpg' },
+    { icon: 'award', title: 'ISO 9001', body: 'Quality management certified', logo: '/certifications/iso-9001.jpg' },
   ],
   /**
    * Left empty deliberately. This array previously held 6+ years / 100+ clients /
@@ -177,34 +192,75 @@ const CAREERS_CONTENT = {
     'Atlas South is committed to equal opportunities. All candidates must have the right to work in the UK. We follow all UK employment law and regulations.',
 };
 
+/**
+ * Restored verbatim from the pre-rebuild live site — see
+ * docs/audit/screenshots/atlas-sec-packages.png, captured 2026-07-29 and cited in the
+ * audit as "Monthly packages — genuinely strong. Transparent tiers, clear feature
+ * comparison, explicit inclusions/exclusions. Protect this in the redesign."
+ * (docs/audit/report.html §5.4). That protection didn't happen the first time: an
+ * earlier seed replaced this with four invented tiers (Essential/Professional/
+ * Premium/Enterprise at £500/£1,200/£2,500/custom) that bear no relation to the real
+ * £75/£180/£450 structure. This is the correction, not a new design — every price,
+ * tier name, inclusion and exclusion below is transcribed from that screenshot, not
+ * invented. `excludes` reproduces the original's greyed-out ✗ rows; `popular` reproduces
+ * its "MOST POPULAR" badge on Professional.
+ */
 const PACKAGES_CONTENT = {
-  title: 'Our Packages',
-  heroDescription: 'Choose the right facilities solution for your needs. From one-off jobs to ongoing management.',
+  eyebrow: 'Monthly Plans',
+  title: 'Subscribe & never pay emergency rates',
+  heroDescription:
+    'Our monthly packages give you priority cover, regular maintenance visits and capped emergency callout costs — saving you hundreds every year.',
   intro: 'Whether you own a single property or manage multiple buildings, we have flexible packages designed to fit your needs and budget.',
+  cancellationNote: 'Cancel anytime · 30 days notice',
   tiers: [
     {
-      label: 'Essential',
-      startingFrom: 'From £500/month',
-      description: 'Monthly maintenance checks and emergency support. Perfect for small properties or occasional needs.',
+      label: 'Starter',
+      startingFrom: '£75',
+      description: 'Perfect for single-property homeowners wanting essential cover and peace of mind.',
       icon: 'box',
+      includes: [
+        '1 property covered',
+        'Priority booking (next day)',
+        'Emergency callout capped at £50',
+        '1 annual maintenance visit',
+        'Plumbing & electrical cover',
+        'Monthly email report',
+      ],
+      excludes: ['Security services', 'Commercial cleaning'],
     },
     {
       label: 'Professional',
-      startingFrom: 'From £1,200/month',
-      description: 'Proactive maintenance, 24/7 emergency line, and dedicated support. Our most popular option.',
+      startingFrom: '£180',
+      description: 'Ideal for landlords with 2-5 properties or small businesses needing full trade cover.',
       icon: 'briefcase',
-    },
-    {
-      label: 'Premium',
-      startingFrom: 'From £2,500/month',
-      description: 'Full facilities management with scheduled inspections, predictive maintenance, and priority response.',
-      icon: 'crown',
+      popular: true,
+      includes: [
+        'Up to 5 properties',
+        'Priority booking (same day)',
+        'Emergency callout FREE',
+        'Quarterly maintenance visits',
+        'All trades covered',
+        'Monthly inspection report',
+        'Domestic & commercial cleaning',
+      ],
+      excludes: ['Security services'],
     },
     {
       label: 'Enterprise',
-      startingFrom: 'Custom quote',
-      description: 'Tailored solutions for complex properties or multi-site management. Dedicated account manager included.',
-      icon: 'building',
+      startingFrom: '£450',
+      description: 'Full-service contract for property portfolios and commercial clients needing everything covered.',
+      icon: 'crown',
+      includes: [
+        'Unlimited properties',
+        '24/7 priority emergency cover',
+        'Emergency callout FREE always',
+        'Monthly maintenance visits',
+        'All trades + security included',
+        'Compliance management',
+        'Commercial cleaning included',
+        'Dedicated account manager',
+      ],
+      excludes: [],
     },
   ],
 };

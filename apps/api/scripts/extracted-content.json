@@ -139,8 +139,8 @@
       ],
       "relatedServices": [
         {
-          "label": "HVAC Services",
-          "path": "/hard-services/hvac"
+          "label": "Electricals",
+          "path": "/hard-services/electricals"
         },
         {
           "label": "Fire Safety Systems",

@@ -1,19 +1,24 @@
 import { Link } from 'react-router-dom';
 import { Hero } from '../components/home/Hero';
 import { QuoteForm } from '../components/home/QuoteForm';
+import { CoverageMap } from '../components/home/CoverageMap';
 import { Seo } from '../components/seo/Seo.js';
 import { useContentPage } from '../hooks/useContentPage';
 import { HARD_SERVICES, SOFT_SERVICES, INDUSTRIES, COMPANY } from '@atlas-south/shared';
-import { Icon } from '@atlas-south/design-system';
+import { Icon, useSpotlight } from '@atlas-south/design-system';
+import { useVisibleNavItems } from '../hooks/useNavVisibility.js';
 import {
   SectionHeading,
   StatBand,
+  StatsMarquee,
   CtaBand,
   CardGrid,
   ServiceNetwork,
   type GridCard,
 } from '../components/sections';
-import { photo } from '../content/imagery';
+import { photo, heroImageFor, heroImageAltFor } from '../content/imagery';
+import { trackCTAClick } from '../lib/analytics.js';
+import type { PackagesContent, PricingTier } from '../types/content';
 
 interface HomeContent {
   headlineLines: [string, string, string];
@@ -81,30 +86,93 @@ const WHY_US = [
  *   sizes.", repeated with the noun swapped). Cards now carry no description rather than a
  *   generated one; real teaser copy belongs in the CMS.
  */
+
+/**
+ * One pricing teaser card — its own component, not inlined in the `.tiers.map()` below,
+ * so `useSpotlight` gets a genuine per-card hook instance (calling a hook conditionally
+ * inside a loop body breaks React's rules of hooks). The same `.spotlight-card` class as
+ * Packages.tsx's TierCard — same family of component, same effect, no separate copy of it.
+ */
+function HomePricingCard({ tier }: { tier: PricingTier }) {
+  const spotlightRef = useSpotlight<HTMLAnchorElement>();
+
+  return (
+    // Links to the comparison page, not straight to the contact form — these are
+    // "browsing" chips. The form-prefilling deep link lives on /packages itself,
+    // once someone has actually picked a tier to act on.
+    <Link
+      ref={spotlightRef}
+      to="/packages"
+      onClick={() => trackCTAClick(`home-pricing-${tier.label}`)}
+      className={`spotlight-card group relative flex flex-col rounded-2xl border p-6 transition-colors hover:border-accent-blue ${
+        tier.popular ? 'border-accent-blue bg-accent-blue/5' : 'border-border bg-canvas'
+      }`}
+    >
+      {tier.popular && (
+        <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-accent-blue px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-white">
+          Most Popular
+        </span>
+      )}
+      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent-blue/10">
+        <Icon name={tier.icon} size={20} className="text-accent-blue" />
+      </div>
+      <h3 className="mt-4 font-display text-base font-bold text-navy">{tier.label}</h3>
+      <p className="mt-1 text-lg font-bold text-accent-blue">
+        {tier.startingFrom}
+        <span className="text-sm font-normal text-slate">/mo</span>
+      </p>
+      <span className="mt-4 flex items-center gap-1 text-sm font-semibold text-accent-blue">
+        See what's included
+        <Icon name="arrow-right" size={14} className="transition-transform group-hover:translate-x-1" />
+      </span>
+    </Link>
+  );
+}
+
 export function Home() {
   const { data: content } = useContentPage<HomeContent>('home');
+  const { data: packages } = useContentPage<PackagesContent>('packages');
 
-  const industryCards: GridCard[] = INDUSTRIES.map((industry) => ({
+  // Coming-soon (placeholder) and admin-hidden entries are filtered out before a card is
+  // ever built — the client doesn't want "Coming Soon" pages visible at all, so these
+  // never reach CardGrid rather than reaching it and being labelled. Same shared filter
+  // Header.tsx and ServiceNetwork.tsx already use, see useNavVisibility.tsx.
+  const visibleIndustries = useVisibleNavItems(INDUSTRIES);
+  const visibleHardServices = useVisibleNavItems(HARD_SERVICES);
+  const visibleSoftServices = useVisibleNavItems(SOFT_SERVICES);
+
+  // Photographs, not icons, on every homepage card — each keyed to the same per-service
+  // image already verified (against a contact sheet, matched to the actual trade/sector)
+  // for that page's own hero in content/imagery.ts. Reusing rather than re-sourcing keeps
+  // every photo on the site pulled from the one audited, commercial-use-cleared set, and
+  // gives a visitor who clicks through from a homepage card the same photo again on the
+  // page they land on, rather than an unrelated substitute. `icon` stays as the fallback
+  // CardGrid renders if an image URL ever fails to load.
+  const industryCards: GridCard[] = visibleIndustries.map((industry) => ({
     navId: industry.id,
     label: industry.label,
     path: industry.path,
     icon: industry.icon,
-    placeholder: industry.placeholder,
+    image: heroImageFor(industry.id, 700),
+    imageAlt: heroImageAltFor(industry.id, 700),
   }));
 
-  const hardServiceCards: GridCard[] = HARD_SERVICES.map((service) => ({
+  const hardServiceCards: GridCard[] = visibleHardServices.map((service) => ({
     navId: service.id,
     label: service.label,
     path: service.path,
     icon: service.icon,
-    placeholder: service.placeholder,
+    image: heroImageFor(service.id, 700),
+    imageAlt: heroImageAltFor(service.id, 700),
   }));
 
-  const softServiceCards: GridCard[] = SOFT_SERVICES.map((service) => ({
+  const softServiceCards: GridCard[] = visibleSoftServices.map((service) => ({
     navId: service.id,
     label: service.label,
     path: service.path,
     icon: service.icon,
+    image: heroImageFor(service.id, 700),
+    imageAlt: heroImageAltFor(service.id, 700),
     placeholder: service.placeholder,
   }));
 
@@ -136,8 +204,11 @@ export function Home() {
         headlineLines={content?.headlineLines}
         subcopy={content?.subcopy}
         primaryCtaLabel={content?.primaryCtaLabel}
+        homeCtaLabel={content?.homeCtaLabel}
         businessCtaLabel={content?.businessCtaLabel}
       />
+
+      <StatsMarquee />
 
       {/* Brand statement */}
       <section className="py-16 sm:py-24">
@@ -151,6 +222,23 @@ export function Home() {
       {/* Scroll-reactive services panel — sits between the brand statement and the
           industries grid, the same slot the inspiration site uses for its equivalent. */}
       <ServiceNetwork />
+
+      {/* Coverage map — the six real Service Area pages, previously reachable only from
+          the nav dropdown, made visible right where a new visitor is already asking
+          "do they cover me?". */}
+      <section aria-label="Areas we cover" className="py-16 sm:py-20">
+        <div className="mx-auto max-w-7xl px-4">
+          <SectionHeading
+            eyebrow="Where we work"
+            title="Covering London & the South East"
+            subcopy="Hover an area to see coverage, or jump straight to its page."
+            align="center"
+          />
+          <div className="mt-12">
+            <CoverageMap />
+          </div>
+        </div>
+      </section>
 
       {/* Industries */}
       <section aria-label="Industries" className="bg-canvas-tint py-16 sm:py-20">
@@ -200,6 +288,51 @@ export function Home() {
         heading="Trusted by organisations across London"
         subcopy="Built steadily since 2018, one contract at a time."
       />
+
+      {/*
+        Transparent pricing teaser.
+
+        The client's own pre-rebuild site published its pricing on-page — the audit
+        named this a genuine advantage over the inspiration site, which publishes none
+        (docs/agile/inspiration-gap-analysis.md: "Monthly subscription tiers with
+        transparent pricing — ABM publishes none"). The /packages page carrying that
+        pricing was live but linked from nowhere — not the header, not the footer, not
+        the homepage — so a visitor had no way to discover it short of typing the URL.
+        This surfaces it where "insight the user to pay" actually has to happen: on the
+        page most visitors land on first.
+
+        Figures are read from the same 'packages' content page /packages itself renders
+        (never restated by hand here), so there is exactly one place a price can be
+        wrong, and this section simply doesn't render until that content has loaded —
+        no placeholder numbers stand in for it.
+      */}
+      {packages && packages.tiers.length > 0 && (
+        <section aria-label="Pricing" className="py-16 sm:py-20">
+          <div className="mx-auto max-w-7xl px-4">
+            <SectionHeading
+              eyebrow="Transparent pricing"
+              title="Published prices, no quote required to see them"
+              subcopy="Three service-agreement tiers, each with a monthly price you can see before you ever pick up the phone."
+              align="center"
+            />
+            <div className="mx-auto mt-12 grid max-w-4xl gap-4 sm:grid-cols-3">
+              {packages.tiers.map((tier) => (
+                <HomePricingCard key={tier.label} tier={tier} />
+              ))}
+            </div>
+            <div className="mt-8 text-center">
+              <Link
+                to="/packages"
+                onClick={() => trackCTAClick('home-pricing-view-all')}
+                className="inline-flex min-h-[44px] items-center gap-2 font-semibold text-accent-blue hover:underline"
+              >
+                Compare all packages
+                <Icon name="arrow-right" size={16} />
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Why Atlas South */}
       <section aria-label="Why Atlas South" className="py-16 sm:py-20">
