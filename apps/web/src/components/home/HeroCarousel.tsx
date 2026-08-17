@@ -4,35 +4,35 @@
  * readable even if the video fails to load. Falls back to poster image for browsers
  * that don't support HTML5 video or when the video hasn't loaded yet.
  *
- * The previous clip (Pixabay #40816, "Worker, Hard Work, Man, Builder, Work") showed a
- * labourer shovelling gravel/hardcore on a groundworks site — the client flagged it as
- * having nothing to do with the business, correctly: Atlas South sells electrical,
- * plumbing, HVAC and facilities work, not civil groundworks.
+ * Client-supplied clip (2026-08-17): a technician in hi-vis and a hard hat walking an
+ * indoor plant-room aisle with a tablet, inspecting distribution boards / control panels
+ * and HVAC ductwork — squarely the hard-services work this site sells (electrical,
+ * plumbing, HVAC, facilities). Replaces the previous Pexels clip.
  *
- * Replaced with Pexels video #28886877, "Technician Operating Electrical Control Panel" —
- * an indoor commercial control-panel technician, tagged Electrical Engineering / HVAC
- * Controls / Maintenance / Technician on Pexels, which is squarely the hard-services work
- * this site is selling. Pexels License: free for commercial use, no attribution required.
- * Self-hosted in public/ (downloaded from Pexels' own download endpoint, ~6.9MB, 1920x1080,
- * 11s) rather than hotlinked, because that endpoint is styled as a user download
- * (Content-Disposition: attachment) and isn't a stable CDN URL meant for embedding —
- * self-hosting avoids depending on it staying reachable in exactly that form.
+ * The source file is AI-generated (an on-screen "KlingAI 3.0" watermark, bottom-right,
+ * confirmed this on inspection) rather than filmed footage — flagged to the client before
+ * use. `crop=1280:660:0:0` removes the watermark strip entirely (checked across multiple
+ * timestamps in the clip, not just the first frame); re-encoded at CRF 23 for web delivery,
+ * which also dropped the file from the original 8.6MB down to ~1.3MB. Re-run the same crop
+ * against apps/web/public/hero-plant-room-inspection.mp4's untouched source if this ever
+ * needs re-encoding — the crop coordinates are specific to this clip's frame, not a
+ * general-purpose value.
  *
- * The poster is the exact first-frame still Pexels generated for this same clip (not a
- * different photo), so there's no visible seam when the video takes over from the poster.
+ * The poster is the exact first frame of the CROPPED video (not the original), so there's
+ * no watermark flash and no visible seam when the video takes over from the poster.
  */
 
 interface HeroCarouselProps {
   children?: React.ReactNode;
 }
 
-const VIDEO_SRC = '/hero-electrical-panel.mp4';
+const VIDEO_SRC = '/hero-plant-room-inspection.mp4';
 
 /**
  * Poster image shown while the video loads — the exact first frame of VIDEO_SRC, so the
  * above-the-fold area is never blank and there's no jump-cut when playback starts.
  */
-const VIDEO_POSTER = '/hero-electrical-panel-poster.jpg';
+const VIDEO_POSTER = '/hero-plant-room-inspection-poster.jpg';
 
 export function HeroCarousel({ children }: HeroCarouselProps) {
   return (
