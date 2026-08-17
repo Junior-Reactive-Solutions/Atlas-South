@@ -15,7 +15,7 @@ import {
   type GridCard,
   type SectionLink,
 } from '../sections';
-import { heroImageFor } from '../../content/imagery';
+import { heroImageFor, heroImageAltFor } from '../../content/imagery';
 import { parseBulletPanels } from '../../lib/parseBulletPanels';
 import { navIdForPath } from '../../lib/navLookup';
 
@@ -69,11 +69,19 @@ export function IndustryDetailPage({
   const challengePanels = parseBulletPanels(challenges);
   const approachPanels = parseBulletPanels(ourApproach);
 
-  const relatedCards: GridCard[] = (relatedServices ?? []).map((service) => ({
-    navId: navIdForPath(service.path),
-    label: service.label,
-    path: service.path,
-  }));
+  const relatedCards: GridCard[] = (relatedServices ?? []).map((service) => {
+    const navId = navIdForPath(service.path);
+    return {
+      navId,
+      label: service.label,
+      path: service.path,
+      // Same per-slug photography the homepage's service/industry grids already use
+      // (content/imagery.ts) — these cards were rendering as a plain gradient tile with
+      // no image, unlike every equivalent card on the homepage.
+      image: navId ? heroImageFor(navId, 700) : undefined,
+      imageAlt: navId ? heroImageAltFor(navId, 700) : undefined,
+    };
+  });
 
   const sectionLinks: SectionLink[] = [
     { id: 'overview', label: 'Overview' },

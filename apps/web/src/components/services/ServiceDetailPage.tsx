@@ -15,7 +15,7 @@ import {
   type GridCard,
   type SectionLink,
 } from '../sections';
-import { heroImageFor, beforeAfterFor } from '../../content/imagery';
+import { heroImageFor, heroImageAltFor, beforeAfterFor } from '../../content/imagery';
 import { navIdForPath } from '../../lib/navLookup';
 import { CompareSlider } from '../shared/CompareSlider.js';
 
@@ -69,11 +69,19 @@ export function ServiceDetailPage({
   faqs,
   relatedServices,
 }: ServiceDetailPageProps) {
-  const relatedCards: GridCard[] = (relatedServices ?? []).map((service) => ({
-    navId: navIdForPath(service.path),
-    label: service.label,
-    path: service.path,
-  }));
+  const relatedCards: GridCard[] = (relatedServices ?? []).map((service) => {
+    const navId = navIdForPath(service.path);
+    return {
+      navId,
+      label: service.label,
+      path: service.path,
+      // Same per-slug photography the homepage's service grids already use
+      // (content/imagery.ts) — these cards were rendering as a plain gradient tile with
+      // no image, unlike every equivalent card on the homepage.
+      image: navId ? heroImageFor(navId, 700) : undefined,
+      imageAlt: navId ? heroImageAltFor(navId, 700) : undefined,
+    };
+  });
 
   // Only set for the services with a genuine visual-transformation story (plumbing,
   // electricals, commercial cleaning) — see the comment above BEFORE_AFTER_BY_SLUG in

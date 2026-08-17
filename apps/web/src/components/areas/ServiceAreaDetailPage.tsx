@@ -12,7 +12,7 @@ import {
   CardGrid,
   type GridCard,
 } from '../sections';
-import { heroImageFor } from '../../content/imagery';
+import { heroImageFor, heroImageAltFor } from '../../content/imagery';
 import { parseBulletPanels } from '../../lib/parseBulletPanels';
 
 interface ServiceAreaDetailPageProps {
@@ -65,6 +65,11 @@ export function ServiceAreaDetailPage({
     path: service.path,
     icon: service.icon,
     placeholder: service.placeholder,
+    // Same per-slug photography the homepage's service grids already use
+    // (content/imagery.ts) — this grid was rendering plain gradient tiles with no image,
+    // unlike every equivalent card on the homepage.
+    image: heroImageFor(service.id, 700),
+    imageAlt: heroImageAltFor(service.id, 700),
   }));
 
   return (

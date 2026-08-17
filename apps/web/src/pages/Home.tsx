@@ -15,7 +15,7 @@ import {
   ServiceNetwork,
   type GridCard,
 } from '../components/sections';
-import { photo, heroImageFor } from '../content/imagery';
+import { photo, heroImageFor, heroImageAltFor } from '../content/imagery';
 import { trackCTAClick } from '../lib/analytics.js';
 import type { PackagesContent, PricingTier } from '../types/content';
 
@@ -145,6 +145,7 @@ export function Home() {
     path: industry.path,
     icon: industry.icon,
     image: heroImageFor(industry.id, 700),
+    imageAlt: heroImageAltFor(industry.id, 700),
     placeholder: industry.placeholder,
   }));
 
@@ -154,6 +155,7 @@ export function Home() {
     path: service.path,
     icon: service.icon,
     image: heroImageFor(service.id, 700),
+    imageAlt: heroImageAltFor(service.id, 700),
     placeholder: service.placeholder,
   }));
 
@@ -163,6 +165,7 @@ export function Home() {
     path: service.path,
     icon: service.icon,
     image: heroImageFor(service.id, 700),
+    imageAlt: heroImageAltFor(service.id, 700),
     placeholder: service.placeholder,
   }));
 
