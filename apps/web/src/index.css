@@ -68,13 +68,19 @@ h4 {
 .spotlight-card {
   position: relative;
   isolation: isolate;
-  overflow: hidden;
 }
 .spotlight-card::before {
   content: '';
   position: absolute;
   inset: -1px;
   z-index: -1;
+  /* Matches the card's own rounded corners (whatever they are — this class is shared
+     across cards with different radii) without needing `overflow: hidden` on the card
+     itself. That was the previous approach, and it silently clipped anything meant to
+     poke outside the card's box — namely the "Most Popular" badge on the Packages/
+     pricing-teaser cards (`-top-3`, i.e. intentionally overlapping the top edge), which
+     is why it was rendering cut off. */
+  border-radius: inherit;
   /* rgba(0, 120, 252, 0.12) — --color-brand-blue (#0078fc) at 12% opacity. Hardcoded
      rather than derived from the custom property via CSS relative-color syntax
      (`rgb(from var(...))`), which isn't supported in every browser this site targets. */

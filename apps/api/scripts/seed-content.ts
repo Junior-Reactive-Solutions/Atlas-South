@@ -110,10 +110,15 @@ const COMPANY_CONTENT = {
       bio: 'Master tradesperson with specialized certifications in commercial and industrial plumbing.',
     },
   ],
+  // `logo` is the certifying body's own badge image (client-supplied 2026-08-17,
+  // apps/web/public/certifications/) — replaces the generic `award` glyph every entry
+  // used to share, which couldn't distinguish one accreditation from another at a
+  // glance. `icon` stays as the fallback CertificationsBar renders if `logo` is ever
+  // removed or a future certification is added without an image ready.
   certifications: [
-    { icon: 'award', title: 'Gas Safe Registered', body: 'All gas work certified and insured' },
-    { icon: 'award', title: 'NICEIC Approved', body: 'Electrical work by certified professionals' },
-    { icon: 'award', title: 'ISO 9001', body: 'Quality management certified' },
+    { icon: 'award', title: 'Gas Safe Registered', body: 'All gas work certified and insured', logo: '/certifications/gas-safe.jpg' },
+    { icon: 'award', title: 'NICEIC Approved', body: 'Electrical work by certified professionals', logo: '/certifications/niceic.jpg' },
+    { icon: 'award', title: 'ISO 9001', body: 'Quality management certified', logo: '/certifications/iso-9001.jpg' },
   ],
   /**
    * Left empty deliberately. This array previously held 6+ years / 100+ clients /

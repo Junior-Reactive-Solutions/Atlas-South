@@ -62,6 +62,8 @@ export interface CertificationItem {
   icon: IconName;
   title: string;
   body: string;
+  /** The certifying body's own badge image, shown instead of `icon` when present. */
+  logo?: string;
 }
 
 export interface CompanyContent {
