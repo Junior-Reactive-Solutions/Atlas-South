@@ -12,9 +12,10 @@ mitigation was, and what is genuinely still outstanding.
 
 | Area | Status | Notes |
 |---|---|---|
-| Frontend (Vercel) | ✅ Live | `https://atlas-south-web.vercel.app` — all deep links 200 |
-| Backend (Render) | ❌ Not deployed | Blueprint committed (`render.yaml`); needs an account + Neon URL. §6 |
-| Database (Neon) | ❌ Not created | 5 migrations ready to apply. §6 |
+| Frontend (**Netlify**) | ✅ Live | `https://atlas-south-technical-services.netlify.app` — all deep links 200. Now the primary host. §6.0 |
+| Frontend (Vercel) | ⚠️ Still live | `https://atlas-south-web.vercel.app` — kept working during switchover; safe to delete when you're ready |
+| Backend (Render) | ⚠️ Created, build blocked | Service + Postgres exist. One dashboard step left: link `DATABASE_URL`. §6.3 |
+| Database (**Render Postgres**) | ✅ Created | `atlas-south-db`, frankfurt, PG16. Neon not used — §6.0. **Free tier expires 2026-09-16.** |
 | Public pages | ✅ Render fully | Content bundled into the frontend, so they work with **no** backend. §3.2 |
 | Forms / enquiries | ❌ Non-functional | POST to a backend that doesn't exist yet |
 | Admin panel | ⚠️ Loads, can't log in | Route works; auth needs the API |
@@ -245,7 +246,31 @@ It also found a genuine broken link on the way: Plumbing's related services poin
 `/hard-services/hvac`, a page that was never part of this rebuild. Corrected in the content to
 Electricals, completing the reciprocal cross-link the other hard-services pages already had.
 
-### 4.6 `.gitignore` was silently eating documentation
+### 4.6 `NODE_ENV=production` broke the server build
+
+The first Render deploys failed with a wall of TypeScript errors:
+
+```
+src/routes/paypal.ts(1,24): error TS7016: Could not find a declaration file for module
+'express'. Try `npm i --save-dev @types/express` if it exists...
+```
+
+`@types/express` was already in `package.json`. The error's own suggested fix would have changed
+nothing, which is what makes this one expensive — it points at the wrong problem.
+
+**Cause:** Render sets `NODE_ENV=production` on the service, and that variable applies to the
+*build* as well as the runtime. npm reads it and defaults `omit` to `dev`, so devDependencies
+were never installed. This repo compiles on the server, and TypeScript plus every `@types/*`
+package is a devDependency.
+
+**Mitigation:** `include=dev` in a root `.npmrc`, verified rather than assumed —
+`NODE_ENV=production npm config get omit` prints `dev` without the file and nothing with it.
+Chosen over `npm ci --include=dev` in the build command so it applies to *any* environment that
+builds this repo, including ones nobody has configured yet. `render.yaml`'s build command got the
+explicit flag too, since it carried the identical latent bug and would have failed the same way
+on a first Blueprint deploy.
+
+### 4.7 `.gitignore` was silently eating documentation
 
 `.gitignore` line 7 is `build/`, intended for build output. It also matches **`docs/build/`**.
 Pre-existing docs there were unaffected (an ignore rule can't un-track a tracked file), which
@@ -372,12 +397,40 @@ oversight.
 
 ---
 
-## 6. Runbook — standing up Render + Neon
+## 6. Runbook — the live deployment
 
-Everything code-side is committed. What remains needs account access, which is yours: I can't
-create accounts or enter credentials.
+### 6.0 What was actually provisioned (2026-08-17)
 
-### 6.1 Neon
+Provisioned over MCP, so these are the real resources, not a plan:
+
+| Resource | Identifier |
+|---|---|
+| Netlify site | `atlas-south-technical-services` · `c5e8958f-a0f3-421f-b047-a091060e9174` |
+| Netlify URL | `https://atlas-south-technical-services.netlify.app` |
+| Render workspace | `tea-d6uihhmuk2gs7386pak0` |
+| Render web service | `atlas-south-api` · `srv-da1hi1mgekts738amgrg` |
+| Render API URL | `https://atlas-south-api-95v9.onrender.com` |
+| Render Postgres | `atlas-south-db` · `dpg-da1hhbe7bikc73958gr0-a` (PG16, frankfurt) |
+
+**Two deviations from the original plan, both deliberate:**
+
+1. **Netlify replaced Vercel** at the client's request. Config is `netlify.toml` at the repo
+   root; it must stay there and the site's base directory must stay unset, for the same reason
+   `vercel.json` must (§3.1). `vercel.json` was left in place and its API host corrected, so
+   the Vercel deployment keeps working until you choose to delete that project.
+2. **Render Postgres replaced Neon.** There is no Neon MCP, but the Render MCP can create
+   Postgres directly — one fewer vendor, same Postgres, and the API is region-local to it.
+   Switching to Neon later is only a `DATABASE_URL` change; nothing in the code assumes Render.
+
+> ⚠️ **The free Render Postgres expires 2026-09-16** (30 days from creation). Upgrade to a paid
+> plan or migrate before then, or the database is deleted. This is a hard deadline, not a
+> warning banner.
+
+> ⚠️ **Free Render web services sleep after ~15 minutes idle**, so the first request after idle
+> takes ~50s. The frontend tolerates this (it renders from bundled content — §3.2), but form
+> submissions and admin login will feel slow on a cold start.
+
+### 6.1 Neon — only if you switch back from Render Postgres
 
 1. Create a Neon project, region **EU (London)** or **EU Central**, to sit near Render's
    `frankfurt` region and the user base.
@@ -391,27 +444,48 @@ create accounts or enter credentials.
    connections; `sslmode=require` matters because Neon rejects plaintext and the resulting
    error doesn't mention TLS.
 
-### 6.2 Render
+### 6.2 Render — already created
 
-1. Dashboard → **New → Blueprint**, connect `Junior-Reactive-Solutions/Atlas-South`. It reads
-   [`render.yaml`](../../render.yaml) and pre-fills service type, region, build/start commands
-   and the health check.
-2. Fill the prompted (`sync: false`) variables:
+The service and database exist (§6.0), created over MCP with the verified build/start commands.
+Already set: `NODE_ENV=production`, `PAYPAL_ENV=sandbox`, and `CORS_ALLOWED_ORIGIN` pointing at
+the Netlify origin.
 
-   | Variable | Value |
-   |---|---|
-   | `DATABASE_URL` | the Neon string from §6.1 |
-   | `CORS_ALLOWED_ORIGIN` | `https://atlas-south-web.vercel.app` |
-   | `ADMIN_SEED_EMAIL` | the first admin's email address |
-   | `RESEND_API_KEY` | optional — emails are skipped, not failed, without it |
-   | `PAYPAL_*` | leave blank for now (§5.4) |
+### 6.3 ⬅ THE ONE REMAINING STEP: link `DATABASE_URL`
 
-   `JWT_ACCESS_SECRET` / `JWT_REFRESH_SECRET` are `generateValue: true` — Render generates
-   256-bit values, comfortably over the 32-char minimum zod enforces. Don't set them by hand.
-3. Deploy. `prisma migrate deploy` runs in the build step and creates all 5 migrations' tables.
-4. Confirm health: `curl -sI https://<service>.onrender.com/api/health` → `200`.
+The build currently fails at exactly one line, and only this:
 
-### 6.3 Seed the fresh database
+```
+error: Environment variable not found: DATABASE_URL.
+```
+
+Everything before it now succeeds — dependency install and the full TypeScript compile.
+
+This can't be automated from here: the Render MCP deliberately exposes no tool that returns a
+database's connection string, which is the right call for a credential. Render's own UI links it
+without anyone reading or pasting the secret:
+
+1. [Service → Environment](https://dashboard.render.com/web/srv-da1hi1mgekts738amgrg) →
+   **Add Environment Variable → Add from Database**
+2. Database `atlas-south-db`, property **Internal Database URL**, key `DATABASE_URL`
+3. Save. Render redeploys automatically.
+
+While you're there, add (each with **Generate**, so the value is never handled by a human):
+
+| Variable | How |
+|---|---|
+| `JWT_ACCESS_SECRET` | click **Generate** |
+| `JWT_REFRESH_SECRET` | click **Generate** |
+| `ADMIN_SEED_EMAIL` | type the first admin's email |
+
+Then confirm: `curl -sI https://atlas-south-api-95v9.onrender.com/api/health` → `200`.
+
+> The health check path is **not** currently configured on the service — the MCP's
+> `create_web_service` doesn't accept `healthCheckPath`. Render therefore treats the service as
+> live once it binds a port, which works but gives up zero-downtime restart detection. Set it to
+> `/api/health` in **Settings → Health Check Path** if you want that. Do **not** set `/health`
+> (§ the correction in `12-HOSTING-DEPLOYMENT.md`).
+
+### 6.3b Seed the fresh database
 
 From Render → **Shell** on the service (each is idempotent):
 
@@ -423,11 +497,25 @@ npm run seed:admin      --workspace=apps/api   # uses ADMIN_SEED_EMAIL; prints a
 
 Then log in at `/admin/login` and change the password immediately — the flow forces this.
 
-### 6.4 Point the frontend at it
+### 6.4 The frontend already points at it
 
-`vercel.json` currently proxies `/api/*` to `https://atlas-south-api.onrender.com`. **If your
-Render service name differs, update that rewrite and the `connect-src` entry in the CSP in the
-same file**, then redeploy. Both are in one file specifically so they can't drift apart.
+`netlify.toml` proxies `/api/*` → `https://atlas-south-api-95v9.onrender.com/api/:splat`,
+verified live: `/api/health` currently returns **504**, which is the proxy correctly reaching
+Render and finding no running instance. It becomes 200 as soon as §6.3 is done.
+
+Note the hostname has a `-95v9` suffix — Render appends one to keep subdomains unique, and the
+original config assumed a bare `atlas-south-api.onrender.com` that never existed. If you ever
+rename or recreate the service, update the `to =` in `netlify.toml` (and the matching value in
+`vercel.json` while that project still exists).
+
+**Redeploying the frontend.** The Netlify site is currently deployed by CLI upload, not linked
+to GitHub, so pushes to `main` do **not** auto-deploy it. Either connect the repo in
+Netlify → Project configuration → Build & deploy (recommended — restores the auto-deploy and PR
+previews Vercel gave us), or re-run the upload from the repo root:
+
+```bash
+npx -y @netlify/mcp@latest --site-id c5e8958f-a0f3-421f-b047-a091060e9174
+```
 
 ### 6.5 Verify end to end
 
