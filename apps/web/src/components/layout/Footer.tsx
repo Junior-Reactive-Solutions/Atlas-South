@@ -28,8 +28,11 @@ function FooterColumn({ title, items }: ColumnProps) {
 
   // Same filtering as the header, applied here so a hidden page can't still be reached
   // from the footer — the audit's dead-link finding was largely a header/footer drift
-  // problem, and this keeps the two in step by construction.
-  const visibleItems = items.filter((item) => !hidden.has(item.id));
+  // problem, and this keeps the two in step by construction. Placeholder ("Coming Soon")
+  // items are excluded too — the client doesn't want them visible at all, and this column
+  // previously only filtered admin-hidden items, not placeholders, so every unbuilt
+  // service/industry was still linked from here regardless of that setting.
+  const visibleItems = items.filter((item) => !hidden.has(item.id) && !('placeholder' in item && item.placeholder));
 
   return (
     <nav aria-label={`Footer — ${title}`} className="border-b border-white/10 py-4 lg:border-0 lg:py-0">

@@ -6,6 +6,7 @@ import { Seo } from '../components/seo/Seo.js';
 import { useContentPage } from '../hooks/useContentPage';
 import { HARD_SERVICES, SOFT_SERVICES, INDUSTRIES, COMPANY } from '@atlas-south/shared';
 import { Icon, useSpotlight } from '@atlas-south/design-system';
+import { useVisibleNavItems } from '../hooks/useNavVisibility.js';
 import {
   SectionHeading,
   StatBand,
@@ -132,6 +133,14 @@ export function Home() {
   const { data: content } = useContentPage<HomeContent>('home');
   const { data: packages } = useContentPage<PackagesContent>('packages');
 
+  // Coming-soon (placeholder) and admin-hidden entries are filtered out before a card is
+  // ever built — the client doesn't want "Coming Soon" pages visible at all, so these
+  // never reach CardGrid rather than reaching it and being labelled. Same shared filter
+  // Header.tsx and ServiceNetwork.tsx already use, see useNavVisibility.tsx.
+  const visibleIndustries = useVisibleNavItems(INDUSTRIES);
+  const visibleHardServices = useVisibleNavItems(HARD_SERVICES);
+  const visibleSoftServices = useVisibleNavItems(SOFT_SERVICES);
+
   // Photographs, not icons, on every homepage card — each keyed to the same per-service
   // image already verified (against a contact sheet, matched to the actual trade/sector)
   // for that page's own hero in content/imagery.ts. Reusing rather than re-sourcing keeps
@@ -139,27 +148,25 @@ export function Home() {
   // gives a visitor who clicks through from a homepage card the same photo again on the
   // page they land on, rather than an unrelated substitute. `icon` stays as the fallback
   // CardGrid renders if an image URL ever fails to load.
-  const industryCards: GridCard[] = INDUSTRIES.map((industry) => ({
+  const industryCards: GridCard[] = visibleIndustries.map((industry) => ({
     navId: industry.id,
     label: industry.label,
     path: industry.path,
     icon: industry.icon,
     image: heroImageFor(industry.id, 700),
     imageAlt: heroImageAltFor(industry.id, 700),
-    placeholder: industry.placeholder,
   }));
 
-  const hardServiceCards: GridCard[] = HARD_SERVICES.map((service) => ({
+  const hardServiceCards: GridCard[] = visibleHardServices.map((service) => ({
     navId: service.id,
     label: service.label,
     path: service.path,
     icon: service.icon,
     image: heroImageFor(service.id, 700),
     imageAlt: heroImageAltFor(service.id, 700),
-    placeholder: service.placeholder,
   }));
 
-  const softServiceCards: GridCard[] = SOFT_SERVICES.map((service) => ({
+  const softServiceCards: GridCard[] = visibleSoftServices.map((service) => ({
     navId: service.id,
     label: service.label,
     path: service.path,

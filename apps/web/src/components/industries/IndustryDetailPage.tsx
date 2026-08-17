@@ -17,7 +17,8 @@ import {
 } from '../sections';
 import { heroImageFor, heroImageAltFor } from '../../content/imagery';
 import { parseBulletPanels } from '../../lib/parseBulletPanels';
-import { navIdForPath } from '../../lib/navLookup';
+import { navIdForPath, isPlaceholderPath } from '../../lib/navLookup';
+import { useNavVisibility } from '../../hooks/useNavVisibility.js';
 
 interface ServiceHighlight {
   serviceLabel: string;
@@ -69,19 +70,29 @@ export function IndustryDetailPage({
   const challengePanels = parseBulletPanels(challenges);
   const approachPanels = parseBulletPanels(ourApproach);
 
-  const relatedCards: GridCard[] = (relatedServices ?? []).map((service) => {
-    const navId = navIdForPath(service.path);
-    return {
-      navId,
-      label: service.label,
-      path: service.path,
-      // Same per-slug photography the homepage's service/industry grids already use
-      // (content/imagery.ts) — these cards were rendering as a plain gradient tile with
-      // no image, unlike every equivalent card on the homepage.
-      image: navId ? heroImageFor(navId, 700) : undefined,
-      imageAlt: navId ? heroImageAltFor(navId, 700) : undefined,
-    };
-  });
+  // Placeholder ("Coming Soon") and admin-hidden related services are excluded entirely —
+  // the client doesn't want them visible at all — see the matching comment in
+  // ServiceDetailPage.tsx.
+  const { hidden } = useNavVisibility();
+  const relatedCards: GridCard[] = (relatedServices ?? [])
+    .filter((service) => !isPlaceholderPath(service.path))
+    .filter((service) => {
+      const navId = navIdForPath(service.path);
+      return !navId || !hidden.has(navId);
+    })
+    .map((service) => {
+      const navId = navIdForPath(service.path);
+      return {
+        navId,
+        label: service.label,
+        path: service.path,
+        // Same per-slug photography the homepage's service/industry grids already use
+        // (content/imagery.ts) — these cards were rendering as a plain gradient tile with
+        // no image, unlike every equivalent card on the homepage.
+        image: navId ? heroImageFor(navId, 700) : undefined,
+        imageAlt: navId ? heroImageAltFor(navId, 700) : undefined,
+      };
+    });
 
   const sectionLinks: SectionLink[] = [
     { id: 'overview', label: 'Overview' },

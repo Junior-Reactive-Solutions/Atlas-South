@@ -14,6 +14,7 @@ import {
 } from '../sections';
 import { heroImageFor, heroImageAltFor } from '../../content/imagery';
 import { parseBulletPanels } from '../../lib/parseBulletPanels';
+import { useVisibleNavItems } from '../../hooks/useNavVisibility.js';
 
 interface ServiceAreaDetailPageProps {
   id: string;
@@ -57,14 +58,14 @@ export function ServiceAreaDetailPage({
   const coveragePanels = parseBulletPanels(coverage);
 
   // Every service is available in every area, so the cross-link grid is the full service
-  // list rather than a per-area subset. Placeholder services keep their "coming soon"
-  // treatment instead of linking to a stub.
-  const serviceCards: GridCard[] = [...HARD_SERVICES, ...SOFT_SERVICES].map((service) => ({
+  // list rather than a per-area subset — minus placeholder ("Coming Soon") and
+  // admin-hidden entries, which the client doesn't want visible at all; see the shared
+  // filter's own doc comment in useNavVisibility.tsx.
+  const serviceCards: GridCard[] = useVisibleNavItems([...HARD_SERVICES, ...SOFT_SERVICES]).map((service) => ({
     navId: service.id,
     label: service.label,
     path: service.path,
     icon: service.icon,
-    placeholder: service.placeholder,
     // Same per-slug photography the homepage's service grids already use
     // (content/imagery.ts) — this grid was rendering plain gradient tiles with no image,
     // unlike every equivalent card on the homepage.

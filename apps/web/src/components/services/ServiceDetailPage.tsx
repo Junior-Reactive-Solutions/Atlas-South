@@ -16,7 +16,8 @@ import {
   type SectionLink,
 } from '../sections';
 import { heroImageFor, heroImageAltFor, beforeAfterFor } from '../../content/imagery';
-import { navIdForPath } from '../../lib/navLookup';
+import { navIdForPath, isPlaceholderPath } from '../../lib/navLookup';
+import { useNavVisibility } from '../../hooks/useNavVisibility.js';
 import { CompareSlider } from '../shared/CompareSlider.js';
 
 interface Feature {
@@ -69,19 +70,31 @@ export function ServiceDetailPage({
   faqs,
   relatedServices,
 }: ServiceDetailPageProps) {
-  const relatedCards: GridCard[] = (relatedServices ?? []).map((service) => {
-    const navId = navIdForPath(service.path);
-    return {
-      navId,
-      label: service.label,
-      path: service.path,
-      // Same per-slug photography the homepage's service grids already use
-      // (content/imagery.ts) — these cards were rendering as a plain gradient tile with
-      // no image, unlike every equivalent card on the homepage.
-      image: navId ? heroImageFor(navId, 700) : undefined,
-      imageAlt: navId ? heroImageAltFor(navId, 700) : undefined,
-    };
-  });
+  // Placeholder ("Coming Soon") and admin-hidden related services are excluded entirely —
+  // the client doesn't want them visible at all — via the same two checks
+  // useVisibleNavItems applies to lists built directly from the nav constants; this list
+  // is built from CMS content ({label, path} only, no `.placeholder` field to check
+  // directly), so it cross-references isPlaceholderPath/hidden by path instead.
+  const { hidden } = useNavVisibility();
+  const relatedCards: GridCard[] = (relatedServices ?? [])
+    .filter((service) => !isPlaceholderPath(service.path))
+    .filter((service) => {
+      const navId = navIdForPath(service.path);
+      return !navId || !hidden.has(navId);
+    })
+    .map((service) => {
+      const navId = navIdForPath(service.path);
+      return {
+        navId,
+        label: service.label,
+        path: service.path,
+        // Same per-slug photography the homepage's service grids already use
+        // (content/imagery.ts) — these cards were rendering as a plain gradient tile with
+        // no image, unlike every equivalent card on the homepage.
+        image: navId ? heroImageFor(navId, 700) : undefined,
+        imageAlt: navId ? heroImageAltFor(navId, 700) : undefined,
+      };
+    });
 
   // Only set for the services with a genuine visual-transformation story (plumbing,
   // electricals, commercial cleaning) — see the comment above BEFORE_AFTER_BY_SLUG in
