@@ -1,0 +1,59 @@
+# Netlify configuration for the Atlas South frontend.
+#
+# Replaces Vercel as the primary frontend host. This file must live at the repo root and the
+# Netlify site's base directory must stay unset (i.e. the repo root), for the same reason
+# vercel.json has to — see the README note. The build reaches into apps/web itself.
+
+[build]
+  # Build the two workspace packages the app imports from `dist/`, then the app. Listed
+  # explicitly rather than relying on the root `postinstall`, so the build doesn't depend on
+  # install-hook ordering. `apps/api` is deliberately not built here — that's Render's job.
+  command = "npm run build --workspace=packages/shared && npm run build --workspace=packages/design-system && npm run build --workspace=apps/web"
+  publish = "apps/web/dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# ---- Redirects. Order matters: Netlify applies the FIRST match, so the /api proxy must be
+# ---- declared before the SPA catch-all, or every API call would be served index.html.
+
+# Proxy the API so the browser only ever talks to this origin. That keeps every fetch
+# same-origin (no CORS preflight, and `connect-src 'self'` below stays sufficient) and means
+# the API's host can change without touching application code.
+[[redirects]]
+  from = "/api/*"
+  to = "https://atlas-south-api-95v9.onrender.com/api/:splat"
+  status = 200
+  force = true
+
+# SPA fallback. Without this, any URL that isn't a real file on disk — /packages, /admin,
+# /company/contact — returns Netlify's own 404 instead of booting the router. This is the
+# exact class of failure that took the Vercel deployment down when its config stopped being
+# read, so treat it as load-bearing.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# ---- Headers (docs/build/07-SECURITY.md §1) ---------------------------------------------
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(), camera=(), microphone=(), payment=(self \"https://www.paypal.com\")"
+    # connect-src is 'self' only — every API call from the app is a relative /api/... path and
+    # is proxied above, so it never leaves this origin. The Render host deliberately is NOT
+    # listed: adding it would widen the policy for requests the app doesn't make.
+    # paypal.com/paypalobjects.com are required by PayPal's JS SDK — see
+    # docs/build/15-PAYPAL-INTEGRATION.md §6.
+    Content-Security-Policy = "default-src 'self'; img-src 'self' res.cloudinary.com images.unsplash.com; script-src 'self' https://www.paypal.com https://www.paypalobjects.com; style-src 'self' fonts.googleapis.com; font-src 'self' fonts.gstatic.com; connect-src 'self' https://www.paypal.com; frame-src https://www.paypal.com; frame-ancestors 'none'"
+
+# Vite emits content-hashed filenames into /assets, so these are safe to cache forever.
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
