@@ -3,7 +3,7 @@
  * recommend it — a single external <script> tag, not an npm package — and caches the
  * loaded `window.paypal` so multiple <PayPalSubscribeButton> instances on the same page
  * (one per pricing tier) never insert the script twice. See
- * docs/build/14-PAYPAL-INTEGRATION.md.
+ * docs/build/15-PAYPAL-INTEGRATION.md.
  */
 
 /** The subset of the SDK's Buttons API this app actually uses. */

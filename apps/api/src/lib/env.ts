@@ -36,7 +36,7 @@ const EnvSchema = z.object({
   RATE_LIMIT_WINDOW_MS: z.coerce.number().int().positive().default(600_000),
   RATE_LIMIT_MAX: z.coerce.number().int().positive().default(100),
 
-  // PayPal Subscriptions — docs/build/14-PAYPAL-INTEGRATION.md. All optional at this
+  // PayPal Subscriptions — docs/build/15-PAYPAL-INTEGRATION.md. All optional at this
   // schema level for the same reason RESEND_API_KEY is: the client's real PayPal Business
   // account and its live credentials don't exist yet. lib/paypal.ts checks for these at
   // the point of use and fails loudly there, never silently.

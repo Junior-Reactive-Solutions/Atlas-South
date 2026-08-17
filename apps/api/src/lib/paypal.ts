@@ -1,7 +1,7 @@
 import { env } from './env.js';
 
 /**
- * PayPal REST API client — Subscriptions, per docs/build/14-PAYPAL-INTEGRATION.md.
+ * PayPal REST API client — Subscriptions, per docs/build/15-PAYPAL-INTEGRATION.md.
  *
  * Every endpoint path and request-body field name below was checked directly against
  * PayPal's own published OpenAPI specs (github.com/paypal/paypal-rest-api-specifications)
@@ -29,7 +29,7 @@ const API_BASE = env.PAYPAL_ENV === 'live' ? 'https://api-m.paypal.com' : 'https
 function requirePaypalCredentials(): { clientId: string; clientSecret: string } {
   if (!env.PAYPAL_CLIENT_ID || !env.PAYPAL_CLIENT_SECRET) {
     throw new Error(
-      'PayPal is not configured — set PAYPAL_CLIENT_ID and PAYPAL_CLIENT_SECRET (see docs/build/14-PAYPAL-INTEGRATION.md).',
+      'PayPal is not configured — set PAYPAL_CLIENT_ID and PAYPAL_CLIENT_SECRET (see docs/build/15-PAYPAL-INTEGRATION.md).',
     );
   }
   return { clientId: env.PAYPAL_CLIENT_ID, clientSecret: env.PAYPAL_CLIENT_SECRET };

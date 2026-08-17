@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 /**
  * Body the frontend posts to POST /api/paypal/subscriptions once PayPal's JS SDK fires
- * `onApprove` for a subscription — see docs/build/14-PAYPAL-INTEGRATION.md.
+ * `onApprove` for a subscription — see docs/build/15-PAYPAL-INTEGRATION.md.
  *
  * This is deliberately a thin payload: the only thing that actually has to come from the
  * client is which PayPal subscription it's reporting. Everything else the handler needs
