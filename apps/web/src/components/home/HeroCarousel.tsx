@@ -37,15 +37,22 @@ const VIDEO_POSTER = '/hero-plant-room-inspection-poster.jpg';
 export function HeroCarousel({ children }: HeroCarouselProps) {
   return (
     <div className="relative overflow-hidden bg-navy">
-      {/* Static poster on small screens — a looping 4K video autoplaying on mobile
-          data is a real bandwidth/battery cost for no visible benefit at that size.
-          `hidden md:block` swaps to the actual video from the tablet breakpoint up. */}
-      <img
-        src={VIDEO_POSTER}
-        alt=""
-        aria-hidden="true"
-        className="absolute inset-0 h-full w-full object-cover md:hidden"
-      />
+      {/*
+        `object-right` below the md breakpoint is the fix for a real mobile bug, not a
+        stylistic preference. This clip's subject (the technician, the switchgear, the
+        ductwork) all sits in the RIGHT portion of a 1280x660 landscape frame; its left
+        third is a flat dark wall. Cropping a landscape frame into a tall mobile viewport
+        with the default `object-position: center` therefore kept the wall and threw away
+        every recognisable part of the shot — the client correctly reported the mobile hero
+        as showing "only the wall". Anchoring the crop to the right keeps the subject.
+
+        The video now plays on mobile too. It previously rendered as a static poster below
+        md, because the original clip was 6.9MB and autoplaying that on mobile data was a
+        real cost for no benefit. The current clip is ~1.3MB — about the weight of one hero
+        photograph — so that trade-off no longer holds, and a single element avoids the
+        poster and video disagreeing about their crop. `poster` still paints instantly
+        before the first frame decodes, and it's the same frame, so there's no jump.
+      */}
       <video
         autoPlay
         muted
@@ -53,7 +60,7 @@ export function HeroCarousel({ children }: HeroCarouselProps) {
         playsInline
         poster={VIDEO_POSTER}
         aria-hidden="true"
-        className="absolute inset-0 hidden h-full w-full object-cover md:block"
+        className="absolute inset-0 h-full w-full object-cover object-right md:object-center"
       >
         <source src={VIDEO_SRC} type="video/mp4" />
       </video>

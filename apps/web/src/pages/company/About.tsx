@@ -56,8 +56,10 @@ export function About() {
         </div>
       </section>
 
-      {/* Mission section */}
-      <section className="bg-canvas-tint py-16 sm:py-20">
+      {/* Mission section. The `id` is load-bearing: COMPANY_PAGES (navigation.ts) links the
+          header/footer "Mission" item at /company#mission, and without an anchor here that
+          link silently landed at the top of the page instead. */}
+      <section id="mission" className="scroll-mt-20 bg-canvas-tint py-16 sm:py-20">
         <div className="mx-auto max-w-4xl px-4">
           <h2 className="mb-8 font-display text-3xl font-bold text-navy">Our Mission</h2>
           <div className="prose prose-sm max-w-none sm:prose-base dark:prose-invert">

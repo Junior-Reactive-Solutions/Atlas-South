@@ -64,6 +64,22 @@ git workflow, hosting/deployment).
 
 See [`docs/build/12-HOSTING-DEPLOYMENT.md`](docs/build/12-HOSTING-DEPLOYMENT.md).
 
+### `vercel.json` must stay at the repo root
+
+The Vercel project's Root Directory is the **repo root**, not `apps/web`, so `vercel.json`
+has to sit here for Vercel to read it — it is resolved relative to the configured root, not
+to the git root.
+
+This has bitten us once already: the file was moved to `apps/web/vercel.json` to match a
+line in the hosting doc claiming the project root was `apps/web`. Vercel then silently
+ignored it, which dropped the SPA rewrite, and every deep link — `/packages`,
+`/company/contact`, `/admin`, all of them — started returning Vercel's own 404. Only `/`
+worked, because only `/` maps to a real file on disk.
+
+Symptom to check for if deep links 404 again: `curl -sI https://<deployment>/` and look for
+`X-Frame-Options: DENY`. That header comes from `vercel.json`; if it's missing, the file
+isn't being read, and its rewrites aren't applied either.
+
 ## License
 
 Proprietary — see [`LICENSE`](LICENSE). Not open source.
