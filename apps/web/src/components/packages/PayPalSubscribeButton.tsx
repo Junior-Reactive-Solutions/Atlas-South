@@ -13,7 +13,7 @@ type Status = 'idle' | 'confirming' | 'success' | 'error';
 
 /**
  * Renders PayPal's own Smart Button for a recurring subscription — see
- * docs/build/14-PAYPAL-INTEGRATION.md. The button itself, and the approval popup it
+ * docs/build/15-PAYPAL-INTEGRATION.md. The button itself, and the approval popup it
  * opens, are entirely PayPal's UI running in PayPal's own origin; this component never
  * sees or handles card details or PayPal login credentials, which is what keeps this
  * integration in PCI DSS SAQ A scope rather than SAQ D.

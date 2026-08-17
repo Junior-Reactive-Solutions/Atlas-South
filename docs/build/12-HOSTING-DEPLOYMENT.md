@@ -14,7 +14,19 @@ environment/promotion flow.
 
 ## 2. Vercel (frontend)
 
-- Project root: `apps/web`.
+- Project root: **the repo root**, not `apps/web`.
+
+  > ⚠️ Corrected 2026-08-17. This line previously said `apps/web`, and `vercel.json` was
+  > moved there to match it. Vercel resolves `vercel.json` relative to the configured Root
+  > Directory, so it stopped being read entirely: the SPA rewrite vanished and every deep
+  > link (`/packages`, `/company/contact`, `/admin`) returned Vercel's own 404 while `/`
+  > kept working, because only `/` maps to a file on disk. `vercel.json` lives at the repo
+  > root and must stay there — see the README section on this.
+  >
+  > Quick check that it's being applied: `curl -sI https://<deployment>/ | grep -i x-frame`.
+  > `X-Frame-Options: DENY` comes only from `vercel.json`; if it's missing, neither the
+  > headers nor the rewrites are in effect.
+
 - Framework preset: Vite.
 - Environment variables set in Vercel's dashboard per environment (Production/Preview/
   Development) — `VITE_API_BASE_URL` points at the matching Render environment for each.
@@ -33,10 +45,24 @@ environment/promotion flow.
 - Service type: Web Service (persistent Node process — required for in-memory rate
   limiting per `07-SECURITY.md` §3, and for any scheduled jobs, e.g. a nightly job
   purging enquiry records past their retention window per `10-LEGAL-CONTENT-PLAN.md`).
-- Build command: `npm install && npm run build --workspace=apps/api`.
+- **Provisioned from [`render.yaml`](../../render.yaml) as a Render Blueprint**, not by hand
+  in the dashboard — the three settings below are each easy to get wrong in a way that
+  presents as an unrelated fault, so they're committed rather than clicked.
+- Build command: `npm ci && npm run build --workspace=apps/api && npx prisma migrate deploy --schema=apps/api/prisma/schema.prisma`.
+
+  > ⚠️ Corrected 2026-08-17. This previously omitted the migration step. Nothing else in the
+  > repo runs migrations, so a fresh Neon database would have had no tables and every request
+  > would have failed at the query rather than at startup — a confusing failure to debug.
+  > `migrate deploy` (not `migrate dev`) is correct here: it applies only committed
+  > migrations, never prompts, and is idempotent, so it's safe on every deploy.
+
 - Start command: `npm run start --workspace=apps/api`.
-- Health check endpoint (`/health`) configured so Render can detect a crashed instance
-  and restart it.
+- Health check endpoint: **`/api/health`**, not `/health`.
+
+  > ⚠️ Corrected 2026-08-17. The health route is mounted under the `/api` prefix
+  > (`apps/api/src/index.ts`), so `/health` returns 404. Verified by booting the built
+  > server: `/api/health` → 200, `/health` → 404. Pointing Render at `/health` would have
+  > made it declare a perfectly healthy service dead and restart-loop it forever.
 - Environment variables set in Render's dashboard — `DATABASE_URL`, `JWT_*_SECRET`,
   `RESEND_API_KEY`, `CLOUDINARY_*`, `SENTRY_DSN`, `CORS_ALLOWED_ORIGIN` (pointed at the
   matching Vercel deployment for that environment).
@@ -52,9 +78,16 @@ environment/promotion flow.
     with Render's preview environments) — a PR that changes the schema gets its own
     isolated database branch, migrated independently, so schema changes are testable
     without ever touching production or even the shared staging data.
-- Prisma migrations (`prisma migrate deploy`) run as a release step before the API
-  process starts in each environment — never `prisma migrate dev` outside local
-  development.
+- Prisma migrations (`prisma migrate deploy`) run at the end of Render's **build** command —
+  never `prisma migrate dev` outside local development.
+
+  > Render has no separate "release phase" (unlike Heroku), which is what this line
+  > originally assumed. The build step is the correct hook: it runs before the new instance
+  > receives traffic, and `DATABASE_URL` is available to it.
+
+- `DATABASE_URL` must end with `?sslmode=require` — Neon rejects non-TLS connections, and
+  the resulting error surfaces as a generic connection failure rather than anything
+  mentioning TLS.
 - Connection pooling via Neon's built-in pooler (`-pooler` connection string variant) for
   the production `DATABASE_URL`, since Render's persistent process can otherwise exhaust
   Postgres connections under load.

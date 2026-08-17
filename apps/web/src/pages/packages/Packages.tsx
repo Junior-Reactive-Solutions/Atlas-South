@@ -83,7 +83,7 @@ function TierCard({ tier }: { tier: PricingTier }) {
       {/*
         PayPal renders its own Subscribe button only once this tier actually has
         a real PayPal plan id — see apps/api/scripts/setup-paypal-plans.ts and
-        docs/build/14-PAYPAL-INTEGRATION.md. Until the client's PayPal Business
+        docs/build/15-PAYPAL-INTEGRATION.md. Until the client's PayPal Business
         account exists and that script has been run, every tier falls back to
         the quote-form link exactly as before, so nothing here is ever a dead
         end: ?package= pre-fills the enquiry message with which tier was chosen

@@ -6,7 +6,7 @@ import { getSubscription, verifyWebhookSignature, isPaypalConfigured } from '../
 import { env } from '../lib/env.js';
 
 /**
- * PayPal Subscriptions — public-facing routes. See docs/build/14-PAYPAL-INTEGRATION.md
+ * PayPal Subscriptions — public-facing routes. See docs/build/15-PAYPAL-INTEGRATION.md
  * for the full architecture and lib/paypal.ts for the PayPal API client itself.
  */
 export const paypalRouter = Router();

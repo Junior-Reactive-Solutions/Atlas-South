@@ -5,6 +5,12 @@ node_modules/
 # build output
 dist/
 build/
+# ...but docs/build/ is documentation, not build output. The bare `build/` pattern above
+# matches it too, which silently swallowed new files there — docs/build/14-PAYPAL-INTEGRATION.md
+# was written, `git add`ed, refused, and would have been lost. The 14 pre-existing docs in
+# that folder were unaffected because a .gitignore rule can't un-track an already-tracked
+# file, which is exactly why this went unnoticed.
+!docs/build/
 .vercel/
 .next/
 

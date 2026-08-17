@@ -1,7 +1,7 @@
 /**
  * One-time setup: creates the PayPal catalog product and the three monthly billing plans
  * (Starter £75, Professional £180, Enterprise £450) that back /packages' Subscribe
- * buttons — see docs/build/14-PAYPAL-INTEGRATION.md.
+ * buttons — see docs/build/15-PAYPAL-INTEGRATION.md.
  *
  * Requires PAYPAL_CLIENT_ID / PAYPAL_CLIENT_SECRET to already be set (sandbox credentials
  * for testing, or the client's live credentials once they have a PayPal Business account
