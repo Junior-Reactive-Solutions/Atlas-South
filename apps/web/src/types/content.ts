@@ -35,8 +35,12 @@ export interface HomeContent {
   headlineLines: [string, string, string];
   subcopy: string;
   primaryCtaLabel: string;
-  homeCtaLabel: string;
-  businessCtaLabel: string;
+  /** Hero secondary link → the on-page services panel. */
+  servicesCtaLabel: string;
+  /** Hero secondary link → the on-page industries grid. */
+  industriesCtaLabel: string;
+  /** Optional — Home falls back to MISSION_FALLBACK if an older DB row omits it. */
+  missionStatement?: string;
 }
 
 export interface TimelineEntry {

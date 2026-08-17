@@ -33,25 +33,25 @@ interface HeroProps {
   headlineLines?: [string, string, string];
   subcopy?: string;
   primaryCtaLabel?: string;
-  /** "For Your Home" secondary link — routes to the residential/subscription packages. */
-  homeCtaLabel?: string;
-  /** "For Your Business" secondary link — jumps to the on-page hard/soft services panel. */
-  businessCtaLabel?: string;
+  /** Secondary link — jumps to the on-page hard/soft services panel. */
+  servicesCtaLabel?: string;
+  /** Secondary link — jumps to the on-page industries grid. */
+  industriesCtaLabel?: string;
 }
 
 /**
- * Headline restored to the dual-audience framing from docs/build/03-HERO-SECTION-SPEC.md §2
- * ("Per the resolved scope decision... the residential homeowner offering survives alongside
- * the new enterprise Hard/Soft Services structure. The hero must speak to both without
- * diluting into vague language"). The previous copy — "Commercial facilities services... for
- * every building, every sector." — quietly dropped the "or your home" half despite /packages
- * still selling single-property homeowner plans (see PACKAGES_CONTENT's Starter tier), which
- * is exactly the mismatch the client flagged as not yet fitting the system.
+ * Strictly commercial/industrial. A previous revision followed
+ * docs/build/03-HERO-SECTION-SPEC.md §2's dual-audience framing ("for your home or your
+ * business", with a "For Your Home" CTA pointing at /packages), on the basis that the old
+ * site sold residential plans. The client has since confirmed the opposite: no residential
+ * mention anywhere on the site. That spec section is therefore stale — the headline and both
+ * secondary links below are commercial-only, and the two links now split by *what you need*
+ * (services / industries) rather than by audience.
  */
 const DEFAULT_HEADLINE_LINES: [string, string, string] = [
   'Trades & facilities services',
   'you can trust —',
-  'for your home or your business.',
+  'for commercial & industrial sites.',
 ];
 
 /**
@@ -64,8 +64,8 @@ export function Hero({
   headlineLines = DEFAULT_HEADLINE_LINES,
   subcopy,
   primaryCtaLabel = 'Get a Free Quote',
-  homeCtaLabel = 'For Your Home',
-  businessCtaLabel = 'For Your Business',
+  servicesCtaLabel = 'Our Services',
+  industriesCtaLabel = 'Our Industries',
 }: HeroProps) {
   const root = useAnimationScope(() => {
     const tl = createTimeline();
@@ -241,34 +241,37 @@ export function Hero({
               {primaryCtaLabel}
               <Icon name="arrow-right" size={18} className="hero-cta-arrow" />
             </Link>
-            {/* Dual self-select links per docs/build/03-HERO-SECTION-SPEC.md §2 — both
-                audiences the business actually serves (single-property homeowners via
-                /packages, and Hard/Soft Services buyers via the on-page services panel)
-                get a direct path within two seconds, without the headline itself trying
-                to speak to only one of them. */}
+            {/* Two ways into the page's own content, both commercial. Previously these
+                split by audience ("For Your Home" → /packages vs "For Your Business"), which
+                the client has since ruled out — the site is commercial/industrial only.
+                Scrolling is driven explicitly rather than left to the browser's native
+                anchor-scroll: react-router owns history here, and calling
+                `history.pushState` to set the hash fights its internal listener, which was
+                observed resetting the URL and cutting the scroll short. Scrolling without
+                touching the URL sidesteps that; both targets still carry a real id, so a
+                direct #services / #industries link pasted elsewhere still works via the
+                browser's native anchor handling. */}
             <div className="hero-secondary-links flex flex-wrap gap-x-6 gap-y-2 text-sm font-semibold text-white/90">
-              <Link to="/packages" className="flex items-center gap-1 hover:text-accent-blue">
-                {homeCtaLabel} <Icon name="arrow-right" size={14} />
-              </Link>
-              <a
-                href="#services"
-                onClick={(e) => {
-                  // Driven explicitly rather than left to the browser's native
-                  // anchor-scroll — react-router owns history in this app, and calling
-                  // `history.pushState` directly (to set the #services hash) fights its
-                  // internal listener, which was observed resetting the URL and cutting
-                  // the scroll short. Scrolling without touching the URL sidesteps that
-                  // entirely; the target still has a real id, so a direct #services link
-                  // pasted elsewhere still works via the browser's native anchor handling.
-                  const target = document.getElementById('services');
-                  if (!target) return;
-                  e.preventDefault();
-                  target.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth', block: 'start' });
-                }}
-                className="flex items-center gap-1 hover:text-accent-blue"
-              >
-                {businessCtaLabel} <Icon name="arrow-right" size={14} />
-              </a>
+              {(
+                [
+                  { id: 'services', label: servicesCtaLabel },
+                  { id: 'industries', label: industriesCtaLabel },
+                ] as const
+              ).map(({ id, label }) => (
+                <a
+                  key={id}
+                  href={`#${id}`}
+                  onClick={(e) => {
+                    const target = document.getElementById(id);
+                    if (!target) return;
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth', block: 'start' });
+                  }}
+                  className="flex items-center gap-1 hover:text-accent-blue"
+                >
+                  {label} <Icon name="arrow-right" size={14} />
+                </a>
+              ))}
             </div>
           </div>
 

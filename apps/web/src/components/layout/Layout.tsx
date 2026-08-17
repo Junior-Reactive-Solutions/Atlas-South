@@ -2,6 +2,7 @@ import { Outlet } from 'react-router-dom';
 import { Header } from './Header.js';
 import { Footer } from './Footer.js';
 import { usePageTracking } from '../../hooks/usePageTracking.js';
+import { useHashScroll } from '../../hooks/useHashScroll.js';
 
 /**
  * Master page template — docs/build/06-PAGE-SPECIFICATIONS.md §1.
@@ -12,6 +13,9 @@ import { usePageTracking } from '../../hooks/usePageTracking.js';
 export function Layout() {
   // Track page views for analytics
   usePageTracking();
+  // Makes /path#anchor links actually land on their section — see the hook's own note on
+  // why the browser's native hash handling never fires in this app.
+  useHashScroll();
 
   return (
     <div className="flex min-h-screen flex-col">

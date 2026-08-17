@@ -15,13 +15,23 @@
  * live credentials once the real plans exist; use PayPal's dashboard or the update-pricing
  * endpoint to change an existing plan instead.
  */
+import { PACKAGES_CONTENT } from '@atlas-south/shared';
 import { createProduct, createPlan } from '../src/lib/paypal.js';
 
-const TIERS = [
-  { key: 'STARTER', name: 'Atlas South — Starter', description: 'Perfect for single-property homeowners wanting essential cover and peace of mind.', price: '75.00' },
-  { key: 'PROFESSIONAL', name: 'Atlas South — Professional', description: 'Ideal for landlords with 2-5 properties or small businesses needing full trade cover.', price: '180.00' },
-  { key: 'ENTERPRISE', name: 'Atlas South — Enterprise', description: 'Full-service contract for property portfolios and commercial clients needing everything covered.', price: '450.00' },
-] as const;
+/**
+ * Derived from PACKAGES_CONTENT rather than restated, so the plan name/description/price
+ * PayPal shows a buyer at checkout cannot drift from what /packages advertises. These were
+ * previously hardcoded here and had already drifted: they still described the Starter tier
+ * as being for "single-property homeowners" after the site had been made
+ * commercial/industrial-only, which would have put residential copy in front of real payers.
+ */
+const TIERS = PACKAGES_CONTENT.tiers.map((tier) => ({
+  key: tier.label.toUpperCase(),
+  name: `Atlas South — ${tier.label}`,
+  description: tier.description,
+  // "£75" → "75.00": PayPal requires a decimal string with no currency symbol.
+  price: `${tier.startingFrom.replace(/[^0-9.]/g, '')}.00`,
+}));
 
 async function main() {
   console.log('Creating PayPal catalog product...');

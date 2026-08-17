@@ -1,4 +1,27 @@
-[
+/**
+ * The 21 service / industry / service-area page content records.
+ *
+ * Moved here from apps/api/scripts/extracted-content.json so there is exactly ONE copy of
+ * this content in the repo. It is consumed by two places that previously could not share
+ * it (an app can't import another app's scripts):
+ *   - apps/api/scripts/seed-content.ts, which seeds it into the ContentPage table
+ *   - apps/web's useContentPage hook, which uses it as the immediate, offline-safe render
+ *     source (see the fuller note in content/index.ts)
+ *
+ * A .ts module rather than the original .json because packages/shared compiles with plain
+ * tsc, which does not copy .json files into dist/ — a JSON import here would resolve in
+ * development and then be missing at runtime in a built consumer.
+ *
+ * Generated once from that JSON; edit this file directly from now on.
+ */
+export interface ExtractedPage {
+  slug: string;
+  type: 'service' | 'industry' | 'area';
+  path: string;
+  data: Record<string, unknown>;
+}
+
+export const EXTRACTED_PAGES: ExtractedPage[] = [
   {
     "slug": "electricals",
     "type": "service",
@@ -1134,9 +1157,9 @@
       "title": "South East London",
       "icon": "map-pin",
       "heroDescription": "Comprehensive facilities management for growing South East London estates, from Lewisham to Crystal Palace to Croydon",
-      "overview": "South East London is a mixed commercial and residential landscape with rapidly expanding office space, established retail districts, and light industrial zones. Estates here are often larger and more distributed than central areas, requiring coordinated multi-site management and flexible scheduling.\n\nAtlas South operates across SE London with a network of engineers capable of handling everything from emergency response to planned preventative maintenance at competitive rates that reflect the area's market conditions.",
+      "overview": "South East London is a mixed-use commercial landscape with rapidly expanding office space, established retail districts, and light industrial zones. Estates here are often larger and more distributed than central areas, requiring coordinated multi-site management and flexible scheduling.\n\nAtlas South operates across SE London with a network of engineers capable of handling everything from emergency response to planned preventative maintenance at competitive rates that reflect the area's market conditions.",
       "responseTime": "40 minutes for emergency call-outs across SE London postcodes (SE1–SE28)",
-      "coverage": "- **Lewisham & Deptford:** SE8, SE13, SE14 — mixed commercial, retail, and residential estates with growing office conversion projects.\n- **Southwark edge & Elephant & Castle:** SE17 — rapidly gentrifying area with new commercial development and compliance-heavy estates.\n- **Camberwell & Peckham:** SE15, SE5 — light industrial, creative studios, small commercial tenants with cost-conscious FM needs.\n- **Bermondsey & Canada Water:** SE16, SE18 — larger commercial estates, warehouses, and logistics facilities with 24/7 operations.\n- **Crystal Palace, Dulwich & surrounding:** SE19, SE21, SE26 — suburban mixed-use and medium-sized office buildings with longer response times (50 min).\n- **Croydon fringe:** South SE edge of London coverage — coordinated with full Croydon/Surrey capability.",
+      "coverage": "- **Lewisham & Deptford:** SE8, SE13, SE14 — mixed commercial and retail estates with growing office conversion projects.\n- **Southwark edge & Elephant & Castle:** SE17 — rapidly gentrifying area with new commercial development and compliance-heavy estates.\n- **Camberwell & Peckham:** SE15, SE5 — light industrial, creative studios, small commercial tenants with cost-conscious FM needs.\n- **Bermondsey & Canada Water:** SE16, SE18 — larger commercial estates, warehouses, and logistics facilities with 24/7 operations.\n- **Crystal Palace, Dulwich & surrounding:** SE19, SE21, SE26 — suburban mixed-use and medium-sized office buildings with longer response times (50 min).\n- **Croydon fringe:** South SE edge of London coverage — coordinated with full Croydon/Surrey capability.",
       "localProof": "Over 150 SE London clients depend on Atlas South, including logistics operators, growing tech/creative companies, retail chains, and NHS facilities. We've grown significantly in the area over the past 3 years as South East London development accelerates."
     }
   },
@@ -1150,7 +1173,7 @@
       "heroDescription": "Responsive facilities management across North London's diverse commercial and institutional landscape, from King's Cross to Barnet",
       "overview": "North London spans from the dense mixed-use redevelopment zones around King's Cross and Islington through to suburban and light industrial areas in Barnet, Enfield, and Haringey. The area combines high-value central properties, growing mid-market office space, healthcare and educational institutions, and light industrial/logistics facilities.\n\nAtlas South serves North London with dedicated coverage, leveraging our central London expertise in the inner boroughs and expanding capability in outer areas as demand for professional FM grows.",
       "responseTime": "35 minutes for inner North London (N1–N8); 45 minutes for outer areas (N9–N22)",
-      "coverage": "- **King's Cross & St Pancras:** N1, WC1H — high-value mixed-use development with offices, retail, hospitality, and strict scheduling constraints.\n- **Islington & Finsbury:** N1, EC1, N5 — established commercial core with boutique offices, creative studios, and hospitality venues.\n- **Hackney & Shoreditch:** N1, E2, E8 — creative industries, tech companies, mixed-use developments with cost-sensitive FM budgets.\n- **Holloway & Archway:** N7, N19 — residential and small commercial with medium-sized office/retail conversions.\n- **Finchley, Barnet & Enfield:** N3, N10, N12, EN postcodes — suburban office parks, logistics facilities, retail chains with extended response times.\n- **Waltham Forest edge:** E4, E17 — light industrial and growing mixed-use development.",
+      "coverage": "- **King's Cross & St Pancras:** N1, WC1H — high-value mixed-use development with offices, retail, hospitality, and strict scheduling constraints.\n- **Islington & Finsbury:** N1, EC1, N5 — established commercial core with boutique offices, creative studios, and hospitality venues.\n- **Hackney & Shoreditch:** N1, E2, E8 — creative industries, tech companies, mixed-use developments with cost-sensitive FM budgets.\n- **Holloway & Archway:** N7, N19 — small commercial units with medium-sized office/retail conversions.\n- **Finchley, Barnet & Enfield:** N3, N10, N12, EN postcodes — suburban office parks, logistics facilities, retail chains with extended response times.\n- **Waltham Forest edge:** E4, E17 — light industrial and growing mixed-use development.",
       "localProof": "Over 120 North London clients include healthcare trusts, educational institutions, logistics operators, and corporate offices. We've built deep relationships across both inner and outer North London, from high-touch central services to cost-optimized suburban facilities contracts."
     }
   },
@@ -1175,10 +1198,10 @@
     "data": {
       "title": "West London",
       "icon": "map-pin",
-      "heroDescription": "Premium and responsive facilities management across West London's affluent residential, retail, and corporate districts",
-      "overview": "West London spans affluent residential zones, high-value retail districts, corporate headquarters, hospitality venues, and healthcare institutions. The area combines central premium services demand with suburban facility management, and includes major commercial hubs and light industrial areas.\n\nAtlas South serves West London with dedicated coverage and premium service delivery tailored to the area's high-value commercial and institutional clients.",
+      "heroDescription": "Premium and responsive facilities management across West London's high-value retail, corporate, and institutional districts",
+      "overview": "West London spans high-value retail districts, corporate headquarters, hospitality venues, and healthcare institutions. The area combines central premium services demand with suburban facility management, and includes major commercial hubs and light industrial areas.\n\nAtlas South serves West London with dedicated coverage and premium service delivery tailored to the area's high-value commercial and institutional clients.",
       "responseTime": "35 minutes for inner West London (W1–W12); 45 minutes for outer areas (W13–W14, including Ealing)",
-      "coverage": "- **Knightsbridge, Kensington, Chelsea:** SW1, SW3, SW5, SW7 — ultra-premium residential, high-end retail, embassies, and institutional facilities with white-glove service expectations.\n- **Mayfair, Belgravia, Pimlico:** SW1, W1 — premium offices, boutique retail, high-value residential with strict compliance and scheduling.\n- **South Kensington & Natural History:** SW7, SW5 — museums, educational institutions, mixed commercial.\n- **Hammersmith & Fulham:** W6, W12, SW6 — established commercial hub with offices, retail, creative studios, and riverside facilities.\n- **Ealing & Acton:** W3, W5, W13, W14 — suburban offices, retail chains, mixed-use developments with medium-sized FM contracts.\n- **Brentford & Richmond fringe:** TW8, TW9, TW10 — light industrial, logistics, and suburban commercial.",
+      "coverage": "- **Knightsbridge, Kensington, Chelsea:** SW1, SW3, SW5, SW7 — high-end retail, embassies, and institutional facilities with white-glove service expectations.\n- **Mayfair, Belgravia, Pimlico:** SW1, W1 — premium offices and boutique retail with strict compliance and scheduling.\n- **South Kensington & Natural History:** SW7, SW5 — museums, educational institutions, mixed commercial.\n- **Hammersmith & Fulham:** W6, W12, SW6 — established commercial hub with offices, retail, creative studios, and riverside facilities.\n- **Ealing & Acton:** W3, W5, W13, W14 — suburban offices, retail chains, mixed-use developments with medium-sized FM contracts.\n- **Brentford & Richmond fringe:** TW8, TW9, TW10 — light industrial, logistics, and suburban commercial.",
       "localProof": "Over 200 West London clients include luxury retail chains, premium office buildings, hospitality groups, educational institutions, and healthcare trusts. We maintain a dedicated presence serving West London's high-value commercial market with premium responsiveness and tailored service delivery."
     }
   },
@@ -1196,4 +1219,4 @@
       "localProof": "Over 90 Surrey and Kent clients rely on Atlas South for regional facilities management, ranging from single-site business park operators to multi-location corporate FM contracts. We've built regional expertise through partnerships with local specialists and direct hiring in key hubs like Croydon and Guildford."
     }
   }
-]
+];

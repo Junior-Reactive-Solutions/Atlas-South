@@ -18,17 +18,10 @@ import {
 } from '../components/sections';
 import { photo, heroImageFor, heroImageAltFor } from '../content/imagery';
 import { trackCTAClick } from '../lib/analytics.js';
-import type { PackagesContent, PricingTier } from '../types/content';
-
-interface HomeContent {
-  headlineLines: [string, string, string];
-  subcopy: string;
-  primaryCtaLabel: string;
-  homeCtaLabel: string;
-  businessCtaLabel: string;
-  /** Optional — falls back to MISSION_FALLBACK so an un-reseeded database still renders. */
-  missionStatement?: string;
-}
+// HomeContent used to be re-declared locally here, duplicating the definition in
+// types/content.ts — the two then had to be edited in lockstep, which is exactly how the
+// stale residential fields survived in one copy after being changed in the other.
+import type { HomeContent, PackagesContent, PricingTier } from '../types/content';
 
 /**
  * Short brand statement shown under the hero.
@@ -204,8 +197,8 @@ export function Home() {
         headlineLines={content?.headlineLines}
         subcopy={content?.subcopy}
         primaryCtaLabel={content?.primaryCtaLabel}
-        homeCtaLabel={content?.homeCtaLabel}
-        businessCtaLabel={content?.businessCtaLabel}
+        servicesCtaLabel={content?.servicesCtaLabel}
+        industriesCtaLabel={content?.industriesCtaLabel}
       />
 
       <StatsMarquee />
@@ -241,7 +234,9 @@ export function Home() {
       </section>
 
       {/* Industries */}
-      <section aria-label="Industries" className="bg-canvas-tint py-16 sm:py-20">
+      {/* `id` + `scroll-mt-20` (header is 65px) back the hero's "Our Industries" link —
+          same pattern as ServiceNetwork's #services target. */}
+      <section id="industries" aria-label="Industries" className="scroll-mt-20 bg-canvas-tint py-16 sm:py-20">
         <div className="mx-auto max-w-7xl px-4">
           <SectionHeading
             eyebrow="Expertise tailored for you"

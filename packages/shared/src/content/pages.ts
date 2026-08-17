@@ -1,0 +1,260 @@
+/**
+ * The four hand-authored page content records (home, company, careers, packages).
+ *
+ * Moved here from apps/api/scripts/seed-content.ts so there is exactly ONE copy in the
+ * repo, shared by the seed script and by apps/web's offline-safe render path — see the
+ * fuller note in ./index.ts.
+ */
+
+/**
+ * Hero copy. Strictly commercial/industrial: an earlier revision of this file carried a
+ * dual-audience headline ("for your home or your business") plus a "For Your Home" CTA,
+ * taken from docs/build/03-HERO-SECTION-SPEC.md §2's dual-audience framing. The client has
+ * since confirmed the opposite — the site is for commercial and industrial work only, with
+ * no residential mention anywhere — so that framing is removed here rather than left to be
+ * contradicted by the rest of the page. The two secondary links now point at two
+ * commercial destinations (the on-page services panel and industries grid) instead of
+ * splitting by audience.
+ */
+export const HOME_CONTENT = {
+  headlineLines: ['Trades & facilities services', 'you can trust —', 'for commercial & industrial sites.'],
+  subcopy:
+    'Atlas South has delivered {jobsCompleted} jobs across London and the South East since {foundedYear}, from emergency call-outs to fully managed facilities contracts.',
+  primaryCtaLabel: 'Get a Free Quote',
+  servicesCtaLabel: 'Our Services',
+  industriesCtaLabel: 'Our Industries',
+  missionStatement:
+    "To be London's most trusted facilities partner, delivering exceptional service with integrity, reliability, and professionalism.",
+};
+
+export const COMPANY_CONTENT = {
+  tagline: 'Trusted London facilities partner since 2018',
+  timeline: [
+    {
+      year: 2018,
+      title: 'Atlas South Founded',
+      body: 'Started with a vision to provide reliable, professional facilities services across London.',
+      icon: 'rocket',
+    },
+    {
+      year: 2019,
+      title: 'Expanded Team',
+      body: 'Grew from 5 to 15 team members, adding specialized trades services.',
+      icon: 'users',
+    },
+    {
+      year: 2021,
+      title: 'Major Contracts',
+      body: 'Secured first major commercial facilities management contracts.',
+      icon: 'briefcase',
+    },
+    {
+      year: 2024,
+      title: 'Continued Growth',
+      // Previously "over 100 clients with 40+ team members" — both figures were invented
+      // during seeding and the client count directly contradicted the verified 700+ used
+      // site-wide (docs/build/13-COMPANY-FACTS-VERIFIED.md). Rewritten to the verified
+      // figure; headcount dropped rather than guessed.
+      body: 'Now serving 700+ clients across every service line, from single call-outs to fully managed contracts.',
+      icon: 'trending-up',
+    },
+  ],
+  missionStatement:
+    "To be London's most trusted facilities partner, delivering exceptional service with integrity, reliability, and professionalism.",
+  values: [
+    {
+      icon: 'shield',
+      title: 'Reliability',
+      body: "You can count on us to show up, on time, every time. Our 24/7 emergency line means you're never without support.",
+    },
+    {
+      icon: 'target',
+      title: 'Excellence',
+      body: "We don't just fix problems—we deliver solutions. Every job is an opportunity to exceed expectations.",
+    },
+    {
+      icon: 'heart',
+      title: 'Care',
+      body: 'We treat every site as if it were our own. Your satisfaction is our measure of success.',
+    },
+  ],
+  team: [
+    {
+      role: 'Founder & Director',
+      since: 2018,
+      bio: 'With 15+ years in the facilities sector, our founder built Atlas South on principles of reliability and excellence.',
+    },
+    {
+      role: 'Operations Manager',
+      since: 2019,
+      bio: 'Oversees scheduling and team coordination across all services and locations.',
+    },
+    {
+      role: 'Lead Plumber',
+      since: 2018,
+      bio: 'Master tradesperson with specialized certifications in commercial and industrial plumbing.',
+    },
+  ],
+  // `logo` is the certifying body's own badge image (client-supplied 2026-08-17,
+  // apps/web/public/certifications/) — replaces the generic `award` glyph every entry
+  // used to share, which couldn't distinguish one accreditation from another at a
+  // glance. `icon` stays as the fallback CertificationsBar renders if `logo` is ever
+  // removed or a future certification is added without an image ready.
+  certifications: [
+    { icon: 'award', title: 'Gas Safe Registered', body: 'All gas work certified and insured', logo: '/certifications/gas-safe.jpg' },
+    { icon: 'award', title: 'NICEIC Approved', body: 'Electrical work by certified professionals', logo: '/certifications/niceic.jpg' },
+    { icon: 'award', title: 'ISO 9001', body: 'Quality management certified', logo: '/certifications/iso-9001.jpg' },
+  ],
+  /**
+   * Left empty deliberately. This array previously held 6+ years / 100+ clients /
+   * 2000+ jobs / 40+ team members — none of which had a source, and two of which
+   * contradicted the verified site-wide figures (700+ clients, 12,000+ jobs) from
+   * docs/build/13-COMPANY-FACTS-VERIFIED.md.
+   *
+   * The About page no longer reads this field at all; it renders the shared <StatBand>,
+   * which derives from COMPANY.stats. Kept as an empty array rather than deleted so the
+   * CompanyContent shape is unchanged for any existing database row.
+   */
+  stats: [] as Array<{ value: string; label: string }>,
+};
+
+export const CAREERS_CONTENT = {
+  intro:
+    "We're building a team of talented, dedicated professionals who share our commitment to excellence. Join us and grow your career in London's thriving facilities sector.",
+  benefits: [
+    {
+      icon: 'users',
+      title: 'Collaborative Culture',
+      description: 'Work with experienced professionals who support your development and growth.',
+    },
+    {
+      icon: 'dollar-sign',
+      title: 'Competitive Pay',
+      description: 'Industry-leading salaries plus benefits package including pension and health cover.',
+    },
+    {
+      icon: 'calendar',
+      title: 'Flexible Hours',
+      description: 'We value work-life balance. Choose from full-time, part-time, and flexible scheduling options.',
+    },
+    {
+      icon: 'award',
+      title: 'Training & Development',
+      description: 'We invest in your skills with ongoing training and professional certification support.',
+    },
+    {
+      icon: 'zap',
+      title: 'Career Growth',
+      description: 'Clear progression paths from team member to management and leadership roles.',
+    },
+    {
+      icon: 'shield',
+      title: 'Safe Working',
+      description: 'Top-tier health and safety standards across all roles and locations.',
+    },
+  ],
+  openRoles: [
+    {
+      title: 'Experienced Plumber',
+      icon: 'wrench',
+      location: 'London-based, travel to sites',
+      hours: 'Full-time, 40 hours/week',
+      payRange: '£45,000—£55,000',
+      startAvailability: 'Immediate',
+      description:
+        "We're looking for an experienced plumber with commercial and industrial facilities experience to join our growing team.",
+    },
+    {
+      title: 'Facilities Manager',
+      icon: 'briefcase',
+      location: 'Central London office',
+      hours: 'Full-time, 37.5 hours/week',
+      payRange: '£35,000—£45,000',
+      startAvailability: 'Next month',
+      description:
+        'Manage client relationships, coordinate service scheduling, and oversee our operations. Great opportunity for someone looking to move into management.',
+    },
+  ],
+  rightToWorkNote:
+    'Atlas South is committed to equal opportunities. All candidates must have the right to work in the UK. We follow all UK employment law and regulations.',
+};
+
+/**
+ * Prices and tier structure restored verbatim from the pre-rebuild live site — see
+ * docs/audit/screenshots/atlas-sec-packages.png, captured 2026-07-29 and cited in the
+ * audit as "Monthly packages — genuinely strong. Transparent tiers, clear feature
+ * comparison, explicit inclusions/exclusions. Protect this in the redesign."
+ * (docs/audit/report.html §5.4). An earlier seed had replaced it with four invented tiers
+ * (£500/£1,200/£2,500/custom) bearing no relation to the real £75/£180/£450 structure.
+ *
+ * Every price, tier name, inclusion and exclusion below is that original, unchanged.
+ * The tier *descriptions* are not: the originals sold to "single-property homeowners" and
+ * "landlords", because the old site served residential customers. The client has since
+ * confirmed this site is commercial/industrial only, so those three sentences (and the
+ * intro) are rewritten to their commercial equivalents. Prices and feature lists are
+ * untouched — see the note in the summary flagged to the client, since this is the one
+ * place where "match the original exactly" and "no residential mention" genuinely
+ * conflicted.
+ */
+export const PACKAGES_CONTENT = {
+  eyebrow: 'Monthly Plans',
+  title: 'Subscribe & never pay emergency rates',
+  heroDescription:
+    'Our monthly packages give you priority cover, regular maintenance visits and capped emergency callout costs — saving you hundreds every year.',
+  intro:
+    'Whether you run a single site or manage a portfolio of buildings, we have flexible packages designed to fit your operation and your budget.',
+  cancellationNote: 'Cancel anytime · 30 days notice',
+  tiers: [
+    {
+      label: 'Starter',
+      startingFrom: '£75',
+      description: 'For a single commercial site that needs essential cover and predictable costs.',
+      icon: 'box',
+      includes: [
+        '1 property covered',
+        'Priority booking (next day)',
+        'Emergency callout capped at £50',
+        '1 annual maintenance visit',
+        'Plumbing & electrical cover',
+        'Monthly email report',
+      ],
+      excludes: ['Security services', 'Commercial cleaning'],
+    },
+    {
+      label: 'Professional',
+      startingFrom: '£180',
+      description: 'For portfolios of up to five sites, or a growing business needing every trade covered.',
+      icon: 'briefcase',
+      popular: true,
+      includes: [
+        'Up to 5 properties',
+        'Priority booking (same day)',
+        'Emergency callout FREE',
+        'Quarterly maintenance visits',
+        'All trades covered',
+        'Monthly inspection report',
+        // Originally "Domestic & commercial cleaning" — "domestic" dropped for the same
+        // no-residential reason as the descriptions above; the commercial half is intact.
+        'Commercial cleaning',
+      ],
+      excludes: ['Security services'],
+    },
+    {
+      label: 'Enterprise',
+      startingFrom: '£450',
+      description: 'Full-service contract for property portfolios and commercial clients needing everything covered.',
+      icon: 'crown',
+      includes: [
+        'Unlimited properties',
+        '24/7 priority emergency cover',
+        'Emergency callout FREE always',
+        'Monthly maintenance visits',
+        'All trades + security included',
+        'Compliance management',
+        'Commercial cleaning included',
+        'Dedicated account manager',
+      ],
+      excludes: [],
+    },
+  ],
+};

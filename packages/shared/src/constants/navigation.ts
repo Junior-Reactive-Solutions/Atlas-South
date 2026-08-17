@@ -17,9 +17,16 @@ export interface NavItem {
   placeholder?: boolean;
 }
 
+/**
+ * "Vision" is deliberately absent. It used to sit here pointing at /company#vision, but no
+ * vision statement exists anywhere in the content — not in the CMS `company` record, not in
+ * docs/build/13-COMPANY-FACTS-VERIFIED.md — so the link landed on a section that was never
+ * built, i.e. a dead link in the primary nav. Writing one would mean inventing a company's
+ * vision statement, which isn't ours to author. Reinstate this item once the client supplies
+ * real copy and About.tsx renders it behind an `id="vision"` anchor.
+ */
 export const COMPANY_PAGES: NavItem[] = [
   { id: 'mission', label: 'Mission', path: '/company#mission', icon: 'target' },
-  { id: 'vision', label: 'Vision', path: '/company#vision', icon: 'eye' },
   { id: 'join-us', label: 'Join Us', path: '/company/join-us', icon: 'users' },
   { id: 'contact-us', label: 'Contact Us', path: '/company/contact', icon: 'mail' },
 ];

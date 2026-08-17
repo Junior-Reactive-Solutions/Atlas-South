@@ -1,4 +1,6 @@
 import { QuoteForm } from '../../components/home/QuoteForm';
+import { CoverageMap } from '../../components/home/CoverageMap';
+import { SectionHeading } from '../../components/sections';
 import { Seo } from '../../components/seo/Seo.js';
 import { Icon } from '@atlas-south/design-system';
 import { COMPANY } from '@atlas-south/shared';
@@ -91,6 +93,24 @@ export function Contact() {
                 {COMPANY.address.city}, {COMPANY.address.postalCode}
               </p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Coverage map — the same component the homepage uses, placed here because "do you
+          actually cover my area?" is the question most likely to stop someone mid-enquiry,
+          and this is the page where they're about to enquire. Each node links straight to
+          that area's page. */}
+      <section aria-label="Areas we cover" className="bg-canvas-tint py-16 sm:py-20">
+        <div className="mx-auto max-w-7xl px-4">
+          <SectionHeading
+            eyebrow="Where we work"
+            title="Check we cover your site"
+            subcopy="Hover an area to see its coverage, or open that area's page for response times and local detail."
+            align="center"
+          />
+          <div className="mt-12">
+            <CoverageMap />
           </div>
         </div>
       </section>
