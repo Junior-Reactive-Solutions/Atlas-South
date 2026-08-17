@@ -29,8 +29,8 @@ async function main() {
     process.exit(1);
   }
 
-  // Generate cryptographically random temporary password
-  const tempPassword = randomBytes(32).toString('hex');
+  // Use ADMIN_SEED_PASSWORD if set, otherwise generate a random temporary password
+  const tempPassword = process.env.ADMIN_SEED_PASSWORD || randomBytes(32).toString('hex');
   const passwordHash = await argon2.hash(tempPassword, {
     type: argon2.argon2id,
     timeCost: 3,
