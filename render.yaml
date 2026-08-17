@@ -32,7 +32,13 @@ services:
     # which builds packages/shared (the API imports it) and runs `prisma generate`.
     # `migrate deploy` runs last, applies only committed migrations, and is idempotent —
     # safe on every deploy, unlike `migrate dev`, which can prompt or reset.
-    buildCommand: npm ci && npm run build --workspace=apps/api && npx prisma migrate deploy --schema=apps/api/prisma/schema.prisma
+    # `--include=dev` is required, not defensive: Render sets NODE_ENV=production, npm then
+    # defaults `omit` to `dev`, and this repo compiles on the server — TypeScript and every
+    # @types/* package are devDependencies. Without it the build fails with
+    # "Could not find a declaration file for module 'express'", which points nowhere near the
+    # real cause. Belt-and-braces with the repo's .npmrc (`include=dev`), which covers any
+    # environment that doesn't use this file.
+    buildCommand: npm ci --include=dev && npm run build --workspace=apps/api && npx prisma migrate deploy --schema=apps/api/prisma/schema.prisma
     startCommand: npm run start --workspace=apps/api
     healthCheckPath: /api/health
     envVars:
