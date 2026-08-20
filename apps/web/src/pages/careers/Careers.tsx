@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useContentPage } from '../../hooks/useContentPage';
 import { PageLoadingFallback } from '../../components/PageLoadingFallback';
 import { JobApplicationForm } from '../../components/careers/JobApplicationForm';
@@ -136,6 +137,25 @@ export function Careers() {
       <section className="bg-canvas-tint py-16 sm:py-20">
         <div className="mx-auto max-w-4xl px-4">
           <p className="text-sm text-slate">{data.rightToWorkNote}</p>
+        </div>
+      </section>
+
+      {/* Contact CTA. Company nav now groups "Join Us" and "Contact Us" together (see the
+          comment on COMPANY_PAGES in navigation.ts) — the header/footer dropdown no longer
+          carries a standalone "Contact Us" item, so this page is one of the routes that
+          keeps it reachable for a candidate with a question that isn't "I want to apply". */}
+      <section className="py-16 sm:py-20">
+        <div className="mx-auto max-w-4xl px-4 text-center">
+          <h2 className="font-display text-2xl font-bold text-navy">Have a question before you apply?</h2>
+          <p className="mt-3 text-slate">
+            Get in touch and we'll point you to the right person.
+          </p>
+          <Link
+            to="/company/contact"
+            className="mt-6 inline-flex min-h-[44px] items-center rounded bg-accent-blue px-6 text-sm font-semibold uppercase tracking-wide text-white hover:bg-navy"
+          >
+            Contact Us
+          </Link>
         </div>
       </section>
     </>

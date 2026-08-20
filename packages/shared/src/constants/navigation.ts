@@ -18,26 +18,34 @@ export interface NavItem {
 }
 
 /**
- * "Vision" is deliberately absent. It used to sit here pointing at /company#vision, but no
- * vision statement exists anywhere in the content — not in the CMS `company` record, not in
- * docs/build/13-COMPANY-FACTS-VERIFIED.md — so the link landed on a section that was never
- * built, i.e. a dead link in the primary nav. Writing one would mean inventing a company's
- * vision statement, which isn't ours to author. Reinstate this item once the client supplies
- * real copy and About.tsx renders it behind an `id="vision"` anchor.
+ * Two items, not four. The Company dropdown used to be a flat list — Mission, Join Us,
+ * Contact Us — with "Vision" removed entirely because no vision statement existed
+ * anywhere in verified content (see git history on this file for that longer note). The
+ * client's 2026-08-20 content drop supplied both a Vision and a Mission, closing that gap,
+ * and the client separately asked for the dropdown itself to read as two destinations —
+ * About Us (which now carries Vision & Mission together, About.tsx `id="vision-mission"`)
+ * and Join Us — rather than four flat, oddly-uneven entries.
+ *
+ * Contact Us is not gone: it's still a real page at the path below, still linked directly
+ * from the header CTA, the footer, and the Careers page's own "Contact Us" button — it's
+ * just no longer a fifth flat item in this specific dropdown.
  */
 export const COMPANY_PAGES: NavItem[] = [
-  { id: 'mission', label: 'Mission', path: '/company#mission', icon: 'target' },
+  { id: 'about-us', label: 'About Us', path: '/company', icon: 'building-2' },
   { id: 'join-us', label: 'Join Us', path: '/company/join-us', icon: 'users' },
-  { id: 'contact-us', label: 'Contact Us', path: '/company/contact', icon: 'mail' },
 ];
 
+// Fire & Safety removed 2026-08-20 at the client's request — no replacement page.
 export const HARD_SERVICES: NavItem[] = [
   { id: 'electricals', label: 'Electricals', path: '/hard-services/electricals', icon: 'zap' },
   { id: 'plumbing', label: 'Plumbing', path: '/hard-services/plumbing', icon: 'wrench' },
   { id: 'reactive-maintenance', label: 'Reactive Maintenance', path: '/hard-services/reactive-maintenance', icon: 'hammer' },
-  { id: 'fire-safety', label: 'Fire & Safety', path: '/hard-services/fire-safety', icon: 'flame', placeholder: true },
 ];
 
+// Waste & Recycling removed 2026-08-20 at the client's request, replaced in this slot by
+// Parking Lot Management — moved here from INDUSTRIES, since its content (sweeping,
+// pressure washing, line marking, equipment maintenance) is a service offering like the
+// rest of this list, not a client vertical like Healthcare or Oil & Gas.
 export const SOFT_SERVICES: NavItem[] = [
   { id: 'facilities-management', label: 'Facilities Management', path: '/soft-services/facilities-management', icon: 'building-2' },
   { id: 'security', label: 'Security Services', path: '/soft-services/security', icon: 'shield-check' },
@@ -45,7 +53,7 @@ export const SOFT_SERVICES: NavItem[] = [
   { id: 'catering', label: 'Catering', path: '/soft-services/catering', icon: 'utensils', placeholder: true },
   { id: 'aviation', label: 'Aviation Services', path: '/soft-services/aviation', icon: 'plane' },
   { id: 'concierge', label: 'Concierge', path: '/soft-services/concierge', icon: 'concierge-bell', placeholder: true },
-  { id: 'waste-recycling', label: 'Waste & Recycling', path: '/soft-services/waste-recycling', icon: 'recycle', placeholder: true },
+  { id: 'parking-lot-management', label: 'Parking Lot Management', path: '/soft-services/parking-lot-management', icon: 'square-parking' },
 ];
 
 export const INDUSTRIES: NavItem[] = [
@@ -58,9 +66,6 @@ export const INDUSTRIES: NavItem[] = [
   { id: 'education', label: 'Education & Learning Institutions', path: '/industries/education', icon: 'graduation-cap' },
   { id: 'data-centres', label: 'Data Centres', path: '/industries/data-centres', icon: 'server' },
   { id: 'venues', label: 'Venues', path: '/industries/venues', icon: 'theater' },
-  // New this round — no existing route before it; content sourced from the client's
-  // "Atlas South-Parking-Lot-Management.pdf" (2026-08-20 WhatsApp content drop).
-  { id: 'parking-lot-management', label: 'Parking Lot Management', path: '/industries/parking-lot-management', icon: 'square-parking' },
 ];
 
 export const SERVICE_AREAS: NavItem[] = [

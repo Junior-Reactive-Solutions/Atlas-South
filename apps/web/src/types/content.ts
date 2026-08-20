@@ -74,6 +74,12 @@ export interface CompanyContent {
   tagline: string;
   timeline: TimelineEntry[];
   missionStatement: string;
+  /**
+   * Optional — an already-seeded database row from before this field existed won't have
+   * it. About.tsx's Vision & Mission section renders the Vision column only when present,
+   * rather than crashing or showing an empty box for a stale row.
+   */
+  visionStatement?: string;
   values: ValueItem[];
   team: TeamMember[];
   certifications: CertificationItem[];
