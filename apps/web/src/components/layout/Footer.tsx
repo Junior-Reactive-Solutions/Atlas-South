@@ -91,9 +91,24 @@ export function Footer() {
       <div className="mx-auto max-w-7xl px-4 py-8">
         {/* Trust bar — docs/build/04-FOOTER-SPEC.md §3 */}
         <div className="mb-8 flex flex-wrap items-center gap-x-8 gap-y-3 border-b border-white/10 pb-8 text-sm text-white/80">
-          <div className="flex items-center gap-2 font-display text-lg uppercase text-white">
-            <img src="/atlas-south-logo.jpg" alt="" aria-hidden="true" className="h-8 w-auto" />
-            {COMPANY.name}
+          <div className="flex flex-col gap-1">
+            <div className="flex items-center gap-2">
+              <img src="/brand/symbol.svg" alt="" aria-hidden="true" className="h-8 w-auto" />
+              {/* wordmark.svg is navy-on-transparent (apps/web/public/brand/wordmark.svg) —
+                  invert it here since the footer background is navy, matching how
+                  the symbol's own two-tone fill already reads against dark. */}
+              <img
+                src="/brand/wordmark.svg"
+                alt={COMPANY.name}
+                className="h-6 w-auto brightness-0 invert"
+              />
+            </div>
+            {/* "Technical Service" slogan, from the descriptor bar in the source logo
+                (public/brand/tagline.svg) — set as text here rather than the SVG so it
+                inherits the footer's text color and sizing like everything around it. */}
+            <p className="pl-10 text-[11px] font-semibold uppercase tracking-[0.2em] text-white/60">
+              Technical Service
+            </p>
           </div>
           <a
             href={`tel:${COMPANY.phone.tel}`}
