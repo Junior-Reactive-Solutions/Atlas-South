@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="373" height="322" viewBox="0 0 373 322" role="img" aria-label="Atlas South AS symbol">
+  <title>Atlas South AS Symbol (light, for dark backgrounds)</title>
+  <!-- Light variant of symbol.svg: the "A" stroke recolored from navy (#002484) to white,
+       since navy-on-navy is invisible on the footer's bg-navy background — that's exactly
+       the bug this file exists to fix. Kept as a real, purpose-made variant rather than a
+       CSS filter (invert/brightness), which would also flatten the accent-blue swoosh to
+       white and lose the two-tone mark entirely. -->
+  <g fill-rule="evenodd">
+    <path fill="#FFFFFF" d="M 222,0 L 171,0 L 74,181 L 64,202 L 58,211 L 7,308 L 1,317 L 0,321 L 53,321 L 196,55 L 230,119 L 282,119 Z"/>
+    <path fill="#0062D6" d="M 74,320 L 314,321 L 329,319 L 346,312 L 358,302 L 365,292 L 370,280 L 372,268 L 369,245 L 360,229 L 354,223 L 338,213 L 320,208 L 210,208 L 202,205 L 197,200 L 194,189 L 197,182 L 202,177 L 209,174 L 350,174 L 356,168 L 372,138 L 372,135 L 205,135 L 189,139 L 177,145 L 164,157 L 156,171 L 153,182 L 153,199 L 156,211 L 166,228 L 177,237 L 186,242 L 206,247 L 318,248 L 327,254 L 329,260 L 329,269 L 326,275 L 320,280 L 315,282 L 94,282 Z"/>
+  </g>
+</svg>
