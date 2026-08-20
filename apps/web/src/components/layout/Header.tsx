@@ -13,6 +13,7 @@ import {
 import { Icon, useAnimationScope, DURATION, EASE, STAGGER_GAP } from '@atlas-south/design-system';
 import { useVisibleNavItems } from '../../hooks/useNavVisibility.js';
 import { trackPhoneClick, trackWhatsAppClick } from '../../lib/analytics.js';
+import { AnimatedLogo } from './AnimatedLogo.js';
 
 interface DropdownProps {
   label: string;
@@ -182,13 +183,7 @@ export function Header() {
       </a>
       <header className="sticky top-0 z-30 border-b border-border bg-canvas/95 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4">
-          <Link to="/" className="flex items-center gap-2">
-            <img
-              src="/atlas-south-logo.jpg"
-              alt="Atlas South Technical Services"
-              className="h-9 w-auto"
-            />
-          </Link>
+          <AnimatedLogo />
 
           <nav aria-label="Primary" className="hidden items-center gap-1 lg:flex">
             <NavDropdown label="Industries" items={INDUSTRIES} />

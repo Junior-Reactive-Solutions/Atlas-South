@@ -4,19 +4,22 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!--
-      Favicon set brought up to the current cross-browser standard (per favicon.io /
-      web.dev/PWA guidance, Aug 2026):
-        - favicon.ico (multi-size 16/32, PNG-in-ICO container) — the universal fallback
-          every browser still checks first regardless of the <link> tags below; built by
-          apps/web/scripts/build-favicon-ico.mjs from the existing 16/32 PNGs.
-        - Sized PNG <link rel="icon"> tags — what modern Chromium/Firefox/Safari actually
-          render in the tab, taken from the ICO fallback so there's no visual mismatch.
-        - apple-touch-icon — iOS/iPadOS home-screen icon (unchanged, already correct).
+      Favicon set (per favicon.io / web.dev/PWA guidance, Aug 2026):
+        - favicon.svg (the "AS" symbol mark, vector) — listed first so every browser that
+          supports SVG favicons (all current Chromium/Firefox/Safari) uses it; it scales
+          losslessly to any tab/pin/tile size and stays crisp on retina displays, unlike
+          the raster set below.
+        - favicon.ico (multi-size 16/32, PNG-in-ICO container) — fallback for browsers
+          without SVG favicon support; built by apps/web/scripts/build-favicon-ico.mjs
+          from favicon-16.png/favicon-32.png (still the old raster logo — regenerating
+          these from the new vector symbol needs an image tool this environment doesn't
+          have; low-impact since the SVG above is what actually renders everywhere that
+          matters).
+        - apple-touch-icon — iOS/iPadOS home-screen icon (unchanged, still the old mark;
+          same regeneration gap as the ICO fallback above).
         - site.webmanifest — Android "Add to Home Screen" / PWA install icon + theme color.
-      An SVG favicon (rel="icon" type="image/svg+xml") is deliberately omitted: the Atlas
-      South mark only exists as a raster PNG/JPG, and no vector source exists to convert
-      without redrawing the logo, which is out of scope here.
     -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
