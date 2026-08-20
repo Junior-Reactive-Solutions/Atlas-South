@@ -93,15 +93,13 @@ export function Footer() {
         <div className="mb-8 flex flex-wrap items-center gap-x-8 gap-y-3 border-b border-white/10 pb-8 text-sm text-white/80">
           <div className="flex flex-col gap-1">
             <div className="flex items-center gap-2">
-              <img src="/brand/symbol.svg" alt="" aria-hidden="true" className="h-8 w-auto" />
-              {/* wordmark.svg is navy-on-transparent (apps/web/public/brand/wordmark.svg) —
-                  invert it here since the footer background is navy, matching how
-                  the symbol's own two-tone fill already reads against dark. */}
-              <img
-                src="/brand/wordmark.svg"
-                alt={COMPANY.name}
-                className="h-6 w-auto brightness-0 invert"
-              />
+              {/* Light variants, not the default symbol.svg/wordmark.svg + a CSS invert
+                  filter: symbol.svg's dark path is navy (#002484) — the exact same navy
+                  as this footer's own background, so on a filter-less default it simply
+                  disappeared. symbol-light.svg/wordmark-light.svg are real recolored
+                  files made for dark backgrounds, not a filter hack layered on top. */}
+              <img src="/brand/symbol-light.svg" alt="" aria-hidden="true" className="h-8 w-auto" />
+              <img src="/brand/wordmark-light.svg" alt={COMPANY.name} className="h-6 w-auto" />
             </div>
             {/* "Technical Service" slogan, from the descriptor bar in the source logo
                 (public/brand/tagline.svg) — set as text here rather than the SVG so it

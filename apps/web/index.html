@@ -4,20 +4,23 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!--
-      Favicon set (per favicon.io / web.dev/PWA guidance, Aug 2026):
-        - favicon.svg (the "AS" symbol mark, vector) — listed first so every browser that
-          supports SVG favicons (all current Chromium/Firefox/Safari) uses it; it scales
-          losslessly to any tab/pin/tile size and stays crisp on retina displays, unlike
-          the raster set below.
-        - favicon.ico (multi-size 16/32, PNG-in-ICO container) — fallback for browsers
-          without SVG favicon support; built by apps/web/scripts/build-favicon-ico.mjs
-          from favicon-16.png/favicon-32.png (still the old raster logo — regenerating
-          these from the new vector symbol needs an image tool this environment doesn't
-          have; low-impact since the SVG above is what actually renders everywhere that
-          matters).
-        - apple-touch-icon — iOS/iPadOS home-screen icon (unchanged, still the old mark;
-          same regeneration gap as the ICO fallback above).
+      Favicon set (per favicon.io / web.dev/PWA guidance, Aug 2026). Every size below is
+      rasterized from the same vector source, public/brand/symbol.svg (Chrome's own
+      canvas + SVG renderer, no image library like sharp/imagemagick installed here),
+      then favicon.ico is packaged from the 16/32 PNGs by
+      apps/web/scripts/build-favicon-ico.mjs — no visual mismatch between any of them:
+        - favicon.svg — listed first so every browser with SVG favicon support (all
+          current Chromium/Firefox/Safari) uses the lossless vector directly.
+        - favicon.ico (16/32, PNG-in-ICO) — fallback for browsers without SVG favicon
+          support; still checked by some regardless of the <link> tags below.
+        - Sized PNG <link rel="icon"> tags — belt-and-braces for engines that read these
+          over the ICO.
+        - apple-touch-icon (180×180, opaque white background — a transparent PNG here
+          renders on a black iOS home-screen tile) — iOS/iPadOS home-screen icon.
         - site.webmanifest — Android "Add to Home Screen" / PWA install icon + theme color.
+      Browsers cache favicons aggressively per-origin, sometimes past what cache headers
+      say — after deploying a favicon change, a hard refresh (or clearing the site's
+      cached data) may be needed to see it, independent of whether the deploy worked.
     -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" sizes="any" />
