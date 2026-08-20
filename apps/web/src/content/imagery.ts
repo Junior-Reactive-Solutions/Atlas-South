@@ -42,30 +42,35 @@ const HERO_BY_SLUG: Record<string, string> = {
   electricals: 'photo-1621905251189-08b45d6a269e', // electrician wiring a panel, hard hat
   plumbing: 'photo-1673870861507-d72aa6855d89', // tradesperson with wrench at a tool wall
   'reactive-maintenance': 'photo-1642749776312-aa42ce20c9f5', // two engineers working on a roof
-  'fire-safety': 'photo-1574064565163-af7a987a1490', // hard hats beside an emergency alarm point
-  // Soft services
+  // Soft services. fire-safety and waste-recycling removed 2026-08-20 along with their
+  // pages, at the client's request.
   'facilities-management': 'photo-1582647509711-c8aa8a8bda71', // blue glass office tower
-  security: 'photo-1496368077930-c1e31b4e5b44', // surveillance cameras mounted on a wall
+  // Replaced 2026-08-20 — the previous photo was just CCTV cameras on a wall, which reads
+  // as generic surveillance rather than the service itself. Security Services is centrally
+  // about uniformed staffing ("licensed security officers", per the page's own copy), so
+  // this shows an actual security officer on duty, clearly identifiable as such.
+  security: 'photo-1652739758426-56a564265f9e', // security officer in a hi-vis "SECURITY" jacket, walking through a crowd
   'commercial-cleaning': 'photo-1781637590564-01c65dbf2039', // cleaner vacuuming an office floor
   catering: 'photo-1577219492769-b63a779fac28', // chef plating in a commercial kitchen
   aviation: 'photo-1592403386852-6f3c746e1ea6', // passengers moving through an airport terminal
   concierge: 'photo-1763560705345-5aed55f99c8f', // modern reception desk and lobby seating
-  'waste-recycling': 'photo-1611284446314-60a58ac0deb9', // colour-separated recycling bins
+  // parking-lot-management moved here from the Industries block below, 2026-08-20 — see
+  // the note on its navigation.ts entry.
+  'parking-lot-management': 'photo-1772461355574-3fcd84c6016b', // multi-level car park with directional signage
   // Industries
   corporate: 'photo-1560264280-88b68371db39', // open-plan office in use
   healthcare: 'photo-1777269749032-d8d458ae594d', // hospital corridor
   retail: 'photo-1694064500485-405140238c9c', // busy shopping centre concourse
   education: 'photo-1759732735643-39bbe53f27ea', // university buildings around a courtyard
   // Industries added 2026-08-20 (client content drop — see extracted-pages.ts's
-  // government-public-sector/oil-gas/manufacturing/data-centres/venues/
-  // parking-lot-management entries). Same sourcing process as every id above: found via
-  // Unsplash search, excluding sponsored/Unsplash+ results, each URL confirmed HTTP 200.
+  // government-public-sector/oil-gas/manufacturing/data-centres/venues entries). Same
+  // sourcing process as every id above: found via Unsplash search, excluding
+  // sponsored/Unsplash+ results, each URL confirmed HTTP 200.
   'government-public-sector': 'photo-1781174849484-ec624747e197', // stone civic building entrance with columns
   'oil-gas': 'photo-1781364486016-d83c39eb87f2', // industrial plant towers against a purple sky
   manufacturing: 'photo-1730584474196-b0e8a29303e8', // welders working on a machine in a factory
   'data-centres': 'photo-1584169417032-d34e8d805e8b', // server room aisle with metal equipment racks
   venues: 'photo-1773730356782-e3044e73cf6f', // rows of empty theatre seats
-  'parking-lot-management': 'photo-1772461355574-3fcd84c6016b', // multi-level car park with directional signage
   // Areas — a recognisable landmark per area rather than the same London skyline six times
   'central-london': 'photo-1448906654166-444d494666b3', // St Paul's Cathedral
   'east-london': 'photo-1578793226777-3ce6ec6f911e', // 30 St Mary Axe, City fringe
@@ -105,15 +110,18 @@ const HERO_ALT_BY_SLUG: Record<string, string> = {
   electricals: 'photo-1751486289943-0428133c367c', // exposed wiring mid-installation, raw plaster wall
   plumbing: 'photo-1611021061421-93741ec41ce1', // hand holding a length of copper pipe
   'reactive-maintenance': 'photo-1621905251918-48416bd8575a', // engineer in hard hat holding measuring tools
-  'fire-safety': 'photo-1712640379137-6d2532f887a7', // red fire extinguisher mounted on a wall
-  // Soft services
+  // Soft services. fire-safety and waste-recycling removed 2026-08-20 along with their
+  // pages, at the client's request.
   'facilities-management': 'photo-1553601581-8a1f1010efbe', // gray high-rise building, low angle
-  security: 'photo-1672073311074-f60c4a5e7b92', // close-up of a security camera on a pole
+  // Replaced 2026-08-20 alongside the primary security image — see the note on that entry
+  // above; this was a second CCTV-camera shot with the same generic-surveillance problem.
+  security: 'photo-1772743227731-e16af7c8d85a', // security officer in a "SECURITY" jacket on rooftop patrol, different scene/setting from the primary shot
   'commercial-cleaning': 'photo-1718152421680-d1580e843cc9', // worker in hi-vis pressure-washing a floor
   catering: 'photo-1771360963016-1408c2de12c4', // chef preparing food in a professional kitchen
   aviation: 'photo-1758531491352-7887c1fe45b3', // aircraft at an airport gate, viewed through the window
   concierge: 'photo-1553369728-15ec6971afaf', // man standing beside a reception counter
-  'waste-recycling': 'photo-1763315156830-07870b159121', // worker feeding material onto a recycling conveyor belt
+  // parking-lot-management moved here from the Industries block below, 2026-08-20.
+  'parking-lot-management': 'photo-1637970067784-927e66e07e36', // empty parking garage at night, lit
   // Industries
   corporate: 'photo-1557804506-669a67965ba0', // team meeting around a whiteboard
   healthcare: 'photo-1517120026326-d87759a7b63b', // clinical staff member walking a hospital corridor
@@ -124,7 +132,6 @@ const HERO_ALT_BY_SLUG: Record<string, string> = {
   manufacturing: 'photo-1717386255767-52643970d483', // factory floor with machinery, no people (vs. the primary's welders)
   'data-centres': 'photo-1695668548342-c0c1ad479aee', // a different rack of servers in a server room
   venues: 'photo-1762176264161-09219da49794', // rows of empty desks in a modern conference room
-  'parking-lot-management': 'photo-1637970067784-927e66e07e36', // empty parking garage at night, lit
   // Areas — a second recognisable landmark/street per area, not the same shot cropped
   'central-london': 'photo-1503566303019-ba141f5f9b76', // Big Ben, Westminster
   'east-london': 'photo-1626289296186-bb511ef4285b', // Canary Wharf skyline across the water

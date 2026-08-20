@@ -23,8 +23,10 @@ export const HOME_CONTENT = {
   primaryCtaLabel: 'Get a Free Quote',
   servicesCtaLabel: 'Our Services',
   industriesCtaLabel: 'Our Industries',
+  // Client-supplied copy (2026-08-20 WhatsApp content drop, "Atlas South-About-Us.pdf"),
+  // replacing an invented placeholder statement that was never sourced from the client.
   missionStatement:
-    "To be London's most trusted facilities partner, delivering exceptional service with integrity, reliability, and professionalism.",
+    "To deliver cleaning and facilities management that works around our clients' operations, meets every compliance standard their sector demands, and is backed by one accountable point of contact from first enquiry to ongoing delivery.",
 };
 
 export const COMPANY_CONTENT = {
@@ -59,8 +61,16 @@ export const COMPANY_CONTENT = {
       icon: 'trending-up',
     },
   ],
+  // Client-supplied copy (2026-08-20 WhatsApp content drop, "Atlas South-About-Us.pdf"),
+  // replacing an invented placeholder statement that was never sourced from the client.
   missionStatement:
-    "To be London's most trusted facilities partner, delivering exceptional service with integrity, reliability, and professionalism.",
+    "To deliver cleaning and facilities management that works around our clients' operations, meets every compliance standard their sector demands, and is backed by one accountable point of contact from first enquiry to ongoing delivery.",
+  // "Vision" used to be entirely absent from this file — navigation.ts carried a long
+  // comment explaining it had been removed because no vision statement existed anywhere
+  // in verified content, and inventing one wasn't ours to do (see git history on that
+  // file). This is that gap closed with the client's own words, from the same document.
+  visionStatement:
+    'To be the most trusted facilities partner for organisations that cannot afford to get cleaning and site upkeep wrong — where standards, compliance and reputation are always on the line.',
   values: [
     {
       icon: 'shield',

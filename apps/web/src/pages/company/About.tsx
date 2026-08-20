@@ -56,14 +56,39 @@ export function About() {
         </div>
       </section>
 
-      {/* Mission section. The `id` is load-bearing: COMPANY_PAGES (navigation.ts) links the
-          header/footer "Mission" item at /company#mission, and without an anchor here that
-          link silently landed at the top of the page instead. */}
-      <section id="mission" className="scroll-mt-20 bg-canvas-tint py-16 sm:py-20">
+      {/* Vision & Mission section. The `id` is load-bearing: COMPANY_PAGES (navigation.ts)
+          links the header/footer "About Us" item at /company#vision-mission, and without an
+          anchor here that link silently lands at the top of the page instead.
+
+          Two columns, not one "Mission" block: the client's content drop (2026-08-20,
+          "Atlas South-About-Us.pdf") supplied both a Vision and a Mission as distinct
+          statements, closing a gap navigation.ts used to carry a long comment about — no
+          vision statement existed anywhere in verified content, so the nav item pointing at
+          one was removed rather than left dead. `visionStatement` is optional on
+          CompanyContent (an already-seeded DB row predating this field won't have it), so
+          the Vision column only renders when present rather than showing an empty box. */}
+      <section id="vision-mission" className="scroll-mt-20 bg-canvas-tint py-16 sm:py-20">
         <div className="mx-auto max-w-4xl px-4">
-          <h2 className="mb-8 font-display text-3xl font-bold text-navy">Our Mission</h2>
-          <div className="prose prose-sm max-w-none sm:prose-base dark:prose-invert">
-            <p>{data.missionStatement}</p>
+          <h2 className="mb-8 font-display text-3xl font-bold text-navy">Vision & Mission</h2>
+          <div className="grid gap-8 sm:grid-cols-2">
+            {data.visionStatement && (
+              <div>
+                <h3 className="mb-3 font-display text-lg font-semibold uppercase tracking-wide text-accent-blue">
+                  Our Vision
+                </h3>
+                <div className="prose prose-sm max-w-none dark:prose-invert">
+                  <p>{data.visionStatement}</p>
+                </div>
+              </div>
+            )}
+            <div>
+              <h3 className="mb-3 font-display text-lg font-semibold uppercase tracking-wide text-accent-blue">
+                Our Mission
+              </h3>
+              <div className="prose prose-sm max-w-none dark:prose-invert">
+                <p>{data.missionStatement}</p>
+              </div>
+            </div>
           </div>
         </div>
       </section>

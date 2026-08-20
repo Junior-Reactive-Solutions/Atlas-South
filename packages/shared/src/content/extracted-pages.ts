@@ -87,10 +87,6 @@ export const EXTRACTED_PAGES: ExtractedPage[] = [
       ],
       "relatedServices": [
         {
-          "label": "Fire & Safety",
-          "path": "/hard-services/fire-safety"
-        },
-        {
           "label": "Reactive Maintenance",
           "path": "/hard-services/reactive-maintenance"
         }
@@ -164,10 +160,6 @@ export const EXTRACTED_PAGES: ExtractedPage[] = [
         {
           "label": "Electricals",
           "path": "/hard-services/electricals"
-        },
-        {
-          "label": "Fire Safety Systems",
-          "path": "/hard-services/fire-safety"
         }
       ]
     }
@@ -243,93 +235,12 @@ export const EXTRACTED_PAGES: ExtractedPage[] = [
         {
           "label": "Plumbing",
           "path": "/hard-services/plumbing"
-        },
-        {
-          "label": "Fire & Safety",
-          "path": "/hard-services/fire-safety"
         }
       ]
     }
   },
-  {
-    "slug": "fire-safety",
-    "type": "service",
-    "path": "/hard-services/fire-safety",
-    "data": {
-      "title": "Fire & Safety",
-      "icon": "flame",
-      "heroDescription": "Comprehensive fire safety, emergency lighting, and life-safety systems to keep your building code-compliant and people protected",
-      "overview": "Fire safety isn't optional—it's a legal duty and a moral imperative. Fire Safety Order 2005 requires regular testing, maintenance, and certification. Atlas South manages the full scope: sprinkler systems, emergency lighting, fire alarms, evacuation procedures, and compliance records.\n\nWe work with fire safety engineers, local authorities, and insurers to ensure your building meets all statutory requirements and your team understands emergency protocols.",
-      "features": [
-        {
-          "icon": "flame",
-          "title": "Sprinkler Systems",
-          "description": "Installation, testing, and annual certification of fire sprinkler systems per BS 9251 and insurance requirements."
-        },
-        {
-          "icon": "lightbulb",
-          "title": "Emergency Lighting",
-          "description": "Testing, maintenance, and battery replacement for emergency lighting and exit signage systems."
-        },
-        {
-          "icon": "alert-circle",
-          "title": "Fire Alarm Systems",
-          "description": "Design, installation, testing, and ongoing maintenance of fire detection and alarm systems."
-        },
-        {
-          "icon": "map-pin",
-          "title": "Evacuation Planning",
-          "description": "Risk assessment, evacuation route planning, assembly point setup, and staff training programs."
-        },
-        {
-          "icon": "shield-check",
-          "title": "Compliance & Audit",
-          "description": "Full compliance audits against Fire Safety Order, Building Regulations, and insurance requirements."
-        },
-        {
-          "icon": "clipboard-check",
-          "title": "Documentation",
-          "description": "Comprehensive maintenance records, test certificates, and compliance reports for insurers and authorities."
-        }
-      ],
-      "faqs": [
-        {
-          "question": "What tests do fire safety systems need?",
-          "answer": "Sprinklers annually (BS 9251); emergency lighting monthly walkthrough + annual full test; fire alarms weekly/monthly depending on system type. We schedule and document everything."
-        },
-        {
-          "question": "Who is responsible for fire safety compliance?",
-          "answer": "The building owner and occupier have a joint duty under Fire Safety Order 2005. We help you meet that duty through testing, training, and documentation."
-        },
-        {
-          "question": "What if your tests find a fault?",
-          "answer": "We report the fault, recommend remedial action, and provide quotations for repairs. Critical faults (failed sprinkler test, non-functional alarm) must be fixed before re-use."
-        },
-        {
-          "question": "Do you help with fire safety training?",
-          "answer": "We coordinate with accredited fire training providers. We can arrange on-site drill training and evacuation exercises tailored to your building layout."
-        },
-        {
-          "question": "Are fire safety costs covered by insurance?",
-          "answer": "No, fire safety compliance is a legal requirement, not an insurance-covered item. However, lapses in fire safety can void insurance, so staying compliant protects you."
-        }
-      ],
-      "relatedServices": [
-        {
-          "label": "Electricals",
-          "path": "/hard-services/electricals"
-        },
-        {
-          "label": "Plumbing",
-          "path": "/hard-services/plumbing"
-        },
-        {
-          "label": "Reactive Maintenance",
-          "path": "/hard-services/reactive-maintenance"
-        }
-      ]
-    }
-  },
+  // "fire-safety" record removed 2026-08-20 — page removed at the client's request; no
+  // replacement.
   {
     "slug": "facilities-management",
     "type": "service",
@@ -757,81 +668,8 @@ export const EXTRACTED_PAGES: ExtractedPage[] = [
       ]
     }
   },
-  {
-    "slug": "waste-recycling",
-    "type": "service",
-    "path": "/soft-services/waste-recycling",
-    "data": {
-      "title": "Waste & Recycling",
-      "icon": "recycle",
-      "heroDescription": "Comprehensive waste management, recycling programs, and sustainable disposal aligned with environmental compliance and ESG targets",
-      "overview": "Waste management isn't just about bins—it's about compliance, sustainability, and cost. Regulations around duty of care, waste tracking, and environmental reporting are strict. Atlas South manages waste streams, recycling programs, hazardous disposal, and documentation so you meet regulatory obligations and ESG commitments.\n\nWe handle collection, segregation, recycling optimization, hazardous waste certification, and data reporting—transforming waste into a managed, compliant, and increasingly sustainable operation.",
-      "features": [
-        {
-          "icon": "trash-2",
-          "title": "General Waste Collection",
-          "description": "Scheduled collection and disposal of general waste with flexible collection frequency and container sizing."
-        },
-        {
-          "icon": "recycle",
-          "title": "Recycling Programs",
-          "description": "Paper, cardboard, plastics, and mixed recycling streams with contamination control and optimization coaching."
-        },
-        {
-          "icon": "alert-circle",
-          "title": "Hazardous Waste Disposal",
-          "description": "Specialist handling and certified disposal of electrical waste, chemicals, medical waste, and other hazardous streams."
-        },
-        {
-          "icon": "chart-line",
-          "title": "Waste Auditing & Optimization",
-          "description": "Analysis of waste streams to identify cost savings, contamination issues, and recycling improvement opportunities."
-        },
-        {
-          "icon": "clipboard-check",
-          "title": "Compliance & Documentation",
-          "description": "Waste transfer notes, duty of care documentation, environmental permits, and ESG reporting support."
-        },
-        {
-          "icon": "leaf",
-          "title": "Sustainability Initiatives",
-          "description": "Zero-waste program consulting, circular-economy partnerships, and emissions tracking for carbon reporting."
-        }
-      ],
-      "faqs": [
-        {
-          "question": "What is duty of care for waste?",
-          "answer": "UK law requires waste producers to ensure waste is properly segregated, documented, and passed to licensed disposal firms. We handle all aspects, providing you with full compliance documentation."
-        },
-        {
-          "question": "How is recycling quality measured?",
-          "answer": "We track contamination rates in each stream (target: <5%), educate staff to reduce contamination, and provide data dashboards showing recycling rates."
-        },
-        {
-          "question": "Can you help with ESG waste targets?",
-          "answer": "Yes. We audit your waste streams, set realistic reduction targets, optimize recycling, and provide third-party verified reporting for ESG disclosure."
-        },
-        {
-          "question": "What counts as hazardous waste?",
-          "answer": "WEEE (electronics), batteries, chemicals, oils, fluorescent tubes, medical/sharps waste, and other classified materials. We determine your hazardous streams and arrange certified disposal."
-        },
-        {
-          "question": "How much do we save through recycling optimization?",
-          "answer": "Depends on your current profile, but many clients reduce disposal costs by 20-40% through better segregation, contamination control, and optimized collection frequency."
-        }
-      ],
-      "relatedServices": [
-        {
-          "label": "Facilities Management",
-          "path": "/soft-services/facilities-management"
-        },
-        {
-          "label": "Commercial Cleaning",
-          "path": "/soft-services/commercial-cleaning"
-        }
-      ]
-    }
-  },
+  // "waste-recycling" record removed 2026-08-20 — replaced in the Soft Services nav slot
+  // by "parking-lot-management" (see that record further down, moved here from Industries).
   {
     "slug": "corporate",
     "type": "industry",
@@ -883,10 +721,6 @@ export const EXTRACTED_PAGES: ExtractedPage[] = [
           "path": "/hard-services/reactive-maintenance"
         },
         {
-          "label": "Fire & Safety",
-          "path": "/hard-services/fire-safety"
-        },
-        {
           "label": "Facilities Management",
           "path": "/soft-services/facilities-management"
         },
@@ -904,34 +738,26 @@ export const EXTRACTED_PAGES: ExtractedPage[] = [
     "data": {
       "title": "Healthcare",
       "icon": "cross",
-      "heroDescription": "Critical infrastructure management for hospitals, clinics, and care facilities where downtime affects patient outcomes",
-      "overview": "Healthcare facilities operate 24/7 with zero tolerance for service failures. A plumbing issue, an electrical fault, or a fire safety system malfunction isn't just inconvenient — it can disrupt patient care, compromise sterile environments, and trigger regulatory scrutiny.\n\nAtlas South understands the operational constraints of healthcare estates. Our engineers work within your infection control protocols, coordinate around clinical schedules, and respond to emergencies with the prioritization your facility requires.",
-      "challenges": "- **Zero-downtime mandate:** Unlike a typical office, you cannot simply \"shut down\" a wing for maintenance. Work must be coordinated around clinical operations, visiting hours, and patient transfer protocols.\n- **Sterility and infection control:** Service engineers must understand your infection control zones, PPE requirements, and handover protocols — a standard tradesperson is not equipped for this.\n- **Regulatory weight:** Health & Safety Executive (HSE), CQC, Fire & Rescue, environmental health, and your own governance committee all audit your building services and compliance records.\n- **Critical systems:** Backup generators, emergency lighting, fire suppression, medical gas systems, water purity — failures ripple through clinical operations instantly.\n- **Aging estates:** Many healthcare buildings are decades old with legacy infrastructure that requires specialist knowledge and careful planning to maintain without disrupting modern services running on top.",
-      "ourApproach": "We embed ourselves into your healthcare operational model, not the other way around:\n\n- **Clinical-aware scheduling:** Maintenance is planned around clinical calendars, shift handovers, and patient flow — not imposed on you.\n- **Infection control compliance:** Our engineers are briefed on your facility's IC protocols and understand the segregation of \"clean\" and \"dirty\" zones, decontamination workflows, and PPE requirements.\n- **24/7 emergency response:** A senior, hospital-experienced engineer is dispatched to any critical system failure, and we coordinate with your facilities team and clinical leadership in real time.\n- **Compliance documentation:** Every service visit, inspection, and maintenance event is recorded and cross-referenced to your compliance calendar — feeding directly into your CQC and HSE evidence files.\n- **Legacy system expertise:** Older buildings often have mixed-age infrastructure. We maintain both vintage systems and newer additions without introducing incompatibilities or silent failures.",
+      "heroDescription": "Infection-control-conscious cleaning and facilities management for clinical and non-clinical healthcare spaces, with protocols built to protect patients, staff and visitors while keeping disruption to care to a minimum.",
+      "overview": "Cleaning protocols are built around infection prevention and control principles, with clear separation between clinical and non-clinical area procedures. Servicing is scheduled around ward routines, patient turnover and clinical activity, so care is never interrupted by facilities work.\n\nDocumentation and reporting are kept to the standard healthcare settings are expected to evidence at any time, and teams working in patient-facing environments are trained to work quietly, respectfully and with awareness of the setting.",
+      "challenges": "- **Infection control comes first:** Cleaning protocols are built around infection prevention and control principles, with clear separation between clinical and non-clinical area procedures.\n- **Minimal disruption to patient care:** Servicing is scheduled around ward routines, patient turnover and clinical activity, so care is never interrupted by facilities work.\n- **Hygiene standards ready for inspection:** Documentation and reporting are kept to the standard healthcare settings are expected to evidence at any time.\n- **Discretion and professionalism as standard:** Teams working in patient-facing environments are trained to work quietly, respectfully and with awareness of the setting.",
+      "ourApproach": "Servicing is scheduled around clinical activity, not the other way around:\n\n- **Clinical and non-clinical area cleaning**, kept to their own separate procedures.\n- **Infection-control-aligned cleaning protocols**, built around infection prevention and control principles.\n- **Ward turnaround and deep cleaning**, scheduled around patient turnover and clinical activity.\n- **Hygiene compliance documentation & reporting**, kept ready for inspection at any time.\n- **Facilities maintenance for healthcare buildings**, coordinated the same discreet way as cleaning.",
       "serviceHighlights": [
         {
-          "serviceLabel": "24/7 Emergency Response",
-          "description": "Senior engineers dispatched to critical infrastructure failures. Real-time coordination with clinical teams and facilities management."
+          "serviceLabel": "Clinical & Non-Clinical Area Cleaning",
+          "description": "Cleaning kept to its own separate procedure for clinical versus non-clinical areas, aligned to infection prevention and control principles."
         },
         {
-          "serviceLabel": "Preventative Maintenance",
-          "description": "Scheduled works planned around clinical operations, reducing the risk of emergency breakdowns affecting patient care."
+          "serviceLabel": "Ward Turnaround & Deep Cleaning",
+          "description": "Scheduled around patient turnover and clinical activity, so servicing never interrupts care."
         },
         {
-          "serviceLabel": "Compliance & Certification",
-          "description": "Fire safety, electrical testing, water safety, medical gas systems — all documented for HSE, CQC, and internal governance audits."
+          "serviceLabel": "Hygiene Compliance Documentation",
+          "description": "Documentation and reporting kept to the standard healthcare settings are expected to evidence at any time."
         },
         {
-          "serviceLabel": "Cleaning & Hygiene",
-          "description": "Deep facility cleaning and infection control coordination, with protocols tailored to healthcare standards."
-        },
-        {
-          "serviceLabel": "Security & Access Control",
-          "description": "Integrated with your clinical security needs — controlled access to equipment rooms, pharmacy areas, and sensitive infrastructure."
-        },
-        {
-          "serviceLabel": "Legacy System Support",
-          "description": "Experience with older healthcare estate infrastructure, mixed-age systems, and the knowledge to maintain without disrupting modern overlays."
+          "serviceLabel": "Facilities Maintenance",
+          "description": "Maintenance for healthcare buildings, coordinated around clinical schedules rather than imposed on them."
         }
       ],
       "relatedServices": [
@@ -946,10 +772,6 @@ export const EXTRACTED_PAGES: ExtractedPage[] = [
         {
           "label": "Reactive Maintenance",
           "path": "/hard-services/reactive-maintenance"
-        },
-        {
-          "label": "Fire & Safety",
-          "path": "/hard-services/fire-safety"
         },
         {
           "label": "Facilities Management",
@@ -1017,10 +839,6 @@ export const EXTRACTED_PAGES: ExtractedPage[] = [
           "path": "/hard-services/reactive-maintenance"
         },
         {
-          "label": "Fire & Safety",
-          "path": "/hard-services/fire-safety"
-        },
-        {
           "label": "Facilities Management",
           "path": "/soft-services/facilities-management"
         },
@@ -1042,34 +860,26 @@ export const EXTRACTED_PAGES: ExtractedPage[] = [
     "data": {
       "title": "Education & Learning Institutions",
       "icon": "graduation-cap",
-      "heroDescription": "Safe, compliant, and cost-effective building services for schools, universities, and training centres",
-      "overview": "Educational facilities are often multi-purpose environments serving hundreds or thousands of students, staff, and visitors daily. A single safety failure or unplanned closure affects education delivery, student welfare, and staff safety.\n\nAtlas South works with schools, sixth forms, universities, and specialist training centres, managing building services around term schedules and balancing safety, compliance, and budget constraints.",
-      "challenges": "- **Duty of care:** Educational institutions have explicit safeguarding and duty of care responsibilities to students and staff. Any building safety issue (faulty wiring, poor ventilation, blocked fire exits) triggers immediate liability.\n- **Budget constraints:** Educational budgets are typically tight, with competing priorities for teaching resources. Building services must deliver compliance and safety without excessive cost.\n- **Term-time operations:** Schools operate on term calendars with holiday breaks. Maintenance must fit around school hours, exams, term ends, and break periods.\n- **High-use environments:** Schools and universities pack intensive use into shared spaces — lecture halls, labs, kitchens, residences, sports facilities. Maintenance demand is high and wear predictable.\n- **Regulatory oversight:** HSE, DfE, local authority inspections, and Ofsted all assess your facility management and safety record.",
-      "ourApproach": "We align building services with educational operations, not the reverse:\n\n- **Term-aware scheduling:** Maintenance is planned around term calendars, holiday breaks, and exam schedules — minimizing disruption to teaching.\n- **Preventative focus:** Regular inspections and scheduled maintenance reduce emergency breakdowns that force closures or disrupt learning.\n- **Safety & compliance:** Fire safety, electrical testing, asbestos management (if applicable), water safety, and gas — all documented for HSE and Ofsted audits.\n- **Budget transparency:** Fixed-price maintenance contracts deliver cost predictability for institutional budgets, with clear documentation for governors/trustees.\n- **Emergency response:** When something breaks during term, we respond quickly and minimize impact on teaching and student welfare.",
+      "heroDescription": "Cleaning and facilities management for schools, colleges and training environments, keeping learning spaces safe, well-kept and ready — scheduled around term time and daily site occupancy.",
+      "overview": "Servicing runs around term time, holiday periods and daily occupancy, so classrooms and communal spaces are ready without disrupting learning. Staff working in education environments are prepared for the safeguarding expectations that come with working around students of all ages.\n\nClassrooms, canteens, washrooms and communal areas are cleaned to standards that hold up under heavy daily use, and ongoing maintenance support helps keep older school and college buildings safe, functional and well presented.",
+      "challenges": "- **Scheduled around the school day:** Servicing runs around term time, holiday periods and daily occupancy, so classrooms and communal spaces are ready without disrupting learning.\n- **Safeguarding-aware personnel:** Staff working in education environments are prepared for the safeguarding expectations that come with working around students of all ages.\n- **High-footfall hygiene standards:** Classrooms, canteens, washrooms and communal areas are cleaned to standards that hold up under heavy daily use.\n- **Facilities upkeep for ageing estates:** Ongoing maintenance support helps keep older school and college buildings safe, functional and well presented.",
+      "ourApproach": "Servicing is scheduled around the academic calendar, not the other way around:\n\n- **Classroom, canteen & communal area cleaning**, kept to a standard that holds up under heavy daily use.\n- **Term-time and holiday deep cleaning programmes**, timed to site occupancy rather than a fixed weekly round.\n- **Washroom & high-footfall hygiene servicing**, across the areas students and staff use most.\n- **Facilities maintenance for education buildings**, including support for ageing estates.\n- **Health & safety compliance support**, documented to the standard the institution needs.",
       "serviceHighlights": [
         {
-          "serviceLabel": "Term-Aware Planning",
-          "description": "Maintenance scheduled around term calendars, exams, and holiday breaks to minimize disruption to teaching."
+          "serviceLabel": "Term-Time & Holiday Cleaning",
+          "description": "Deep cleaning programmes timed to term time, holiday periods and daily site occupancy."
         },
         {
-          "serviceLabel": "Preventative Maintenance",
-          "description": "Regular inspections and scheduled works reduce emergency breakdowns that force closures or affect learning."
+          "serviceLabel": "Classroom & Communal Area Cleaning",
+          "description": "Classrooms, canteens and communal areas cleaned to a standard that holds up under heavy daily use."
         },
         {
-          "serviceLabel": "Safety & Compliance",
-          "description": "Fire safety, electrical testing, water quality, gas safety, and H&S audits — all documented for HSE, DfE, and Ofsted."
+          "serviceLabel": "Safeguarding-Aware Personnel",
+          "description": "Staff prepared for the safeguarding expectations that come with working around students of all ages."
         },
         {
-          "serviceLabel": "Budget Transparency",
-          "description": "Fixed-price annual contracts for institutional budgets with clear documentation for governors, trustees, and finance teams."
-        },
-        {
-          "serviceLabel": "Facilities Support",
-          "description": "Cleaning, catering support, security coordination, and day-to-day operations across the entire campus."
-        },
-        {
-          "serviceLabel": "Emergency Response",
-          "description": "When urgent repairs are needed during term, we respond quickly and coordinate with teaching staff to minimize impact."
+          "serviceLabel": "Facilities Maintenance",
+          "description": "Ongoing maintenance support for education buildings, including ageing estates."
         }
       ],
       "relatedServices": [
@@ -1084,10 +894,6 @@ export const EXTRACTED_PAGES: ExtractedPage[] = [
         {
           "label": "Reactive Maintenance",
           "path": "/hard-services/reactive-maintenance"
-        },
-        {
-          "label": "Fire & Safety",
-          "path": "/hard-services/fire-safety"
         },
         {
           "label": "Facilities Management",
@@ -1423,33 +1229,36 @@ export const EXTRACTED_PAGES: ExtractedPage[] = [
   },
   {
     "slug": "parking-lot-management",
-    "type": "industry",
-    "path": "/industries/parking-lot-management",
+    "type": "service",
+    "path": "/soft-services/parking-lot-management",
     "data": {
       "title": "Parking Lot Management",
       "icon": "square-parking",
       "heroDescription": "Cleaning and facilities management for car parks and parking facilities — keeping surfaces clean, markings clear, and equipment maintained across sites that never stop being used.",
       "overview": "A car park is often the first thing a visitor sees and the last thing they remember. Clean surfaces, clear markings and working lighting set the tone before anyone reaches the front door. Litter, spillages, faded line markings and poor lighting are trip, slip and safety risks — ongoing cleaning and maintenance keep car parks compliant and safe for daily use.\n\nCar parks at retail, corporate, healthcare and transport sites see constant vehicle and pedestrian traffic. Sweeping, waste management, pressure washing and facilities maintenance run under a single contract — one point of contact instead of multiple contractors and missed handoffs.",
-      "challenges": "- **The first and last impression of a site:** A car park is often the first thing a visitor sees and the last thing they remember. Clean surfaces, clear markings and working lighting set the tone before anyone reaches the front door.\n- **Safety is a facilities issue, not an afterthought:** Litter, spillages, faded line markings and poor lighting are trip, slip and safety risks. Ongoing cleaning and maintenance keep car parks compliant and safe for daily use.\n- **High footfall, all day, every day:** Car parks at retail, corporate, healthcare and transport sites see constant vehicle and pedestrian traffic. Servicing is scheduled to keep pace with that volume, not fall behind it.\n- **One team for cleaning and upkeep:** Sweeping, waste management, pressure washing and facilities maintenance run under a single contract — one point of contact instead of multiple contractors and missed handoffs.",
-      "ourApproach": "Servicing is scheduled around how the car park is actually used, not a fixed generic round:\n\n- **Sweeping & litter removal**, pressure washing and surface cleaning across the whole site.\n- **Waste bin management & collection**, plus graffiti removal where it appears.\n- **Line marking & signage upkeep**, and lighting, barrier & equipment maintenance.\n- **Multi-storey & basement car park cleaning**, including EV charging bay area upkeep.\n- **Scheduling around peak usage hours**, so servicing keeps pace with high footfall rather than falling behind it.",
-      "serviceHighlights": [
+      "features": [
         {
-          "serviceLabel": "Sweeping & Surface Cleaning",
-          "description": "Sweeping, litter removal and pressure washing across surface, multi-storey and basement car parks."
+          "icon": "spray-can",
+          "title": "Sweeping & Surface Cleaning",
+          "description": "Sweeping, litter removal and pressure washing across surface, multi-storey and basement car parks, scheduled around peak usage hours."
         },
         {
-          "serviceLabel": "Line Marking & Signage Upkeep",
-          "description": "Line marking and signage kept clear and legible, addressing a direct trip, slip and safety risk."
+          "icon": "square-parking",
+          "title": "Line Marking & Signage Upkeep",
+          "description": "Line marking and signage kept clear and legible — a direct trip, slip and safety risk when left to fade."
         },
         {
-          "serviceLabel": "Lighting, Barrier & Equipment Maintenance",
+          "icon": "wrench",
+          "title": "Lighting, Barrier & Equipment Maintenance",
           "description": "Facilities maintenance covering lighting, barriers and EV charging bay areas alongside cleaning."
         },
         {
-          "serviceLabel": "Waste & Graffiti Management",
+          "icon": "recycle",
+          "title": "Waste & Graffiti Management",
           "description": "Waste bin management and collection, plus graffiti removal, run under the same single contract."
         }
       ],
+      "faqs": [],
       "relatedServices": [
         {
           "label": "Facilities Management",
