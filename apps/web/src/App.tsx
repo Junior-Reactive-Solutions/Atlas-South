@@ -48,6 +48,16 @@ const Corporate = lazy(() => import('./pages/industries/Corporate.js').then((m) 
 const Healthcare = lazy(() => import('./pages/industries/Healthcare.js').then((m) => ({ default: m.Healthcare })));
 const Retail = lazy(() => import('./pages/industries/Retail.js').then((m) => ({ default: m.Retail })));
 const Education = lazy(() => import('./pages/industries/Education.js').then((m) => ({ default: m.Education })));
+const GovernmentPublicSector = lazy(() =>
+  import('./pages/industries/GovernmentPublicSector.js').then((m) => ({ default: m.GovernmentPublicSector }))
+);
+const OilGas = lazy(() => import('./pages/industries/OilGas.js').then((m) => ({ default: m.OilGas })));
+const Manufacturing = lazy(() => import('./pages/industries/Manufacturing.js').then((m) => ({ default: m.Manufacturing })));
+const DataCentres = lazy(() => import('./pages/industries/DataCentres.js').then((m) => ({ default: m.DataCentres })));
+const Venues = lazy(() => import('./pages/industries/Venues.js').then((m) => ({ default: m.Venues })));
+const ParkingLotManagement = lazy(() =>
+  import('./pages/industries/ParkingLotManagement.js').then((m) => ({ default: m.ParkingLotManagement }))
+);
 const CentralLondon = lazy(() => import('./pages/areas/CentralLondon.js').then((m) => ({ default: m.CentralLondon })));
 const SouthEastLondon = lazy(() => import('./pages/areas/SouthEastLondon.js').then((m) => ({ default: m.SouthEastLondon })));
 const NorthLondon = lazy(() => import('./pages/areas/NorthLondon.js').then((m) => ({ default: m.NorthLondon })));
@@ -131,6 +141,12 @@ export default function App() {
           <Route path="/industries/healthcare" element={<Healthcare />} />
           <Route path="/industries/retail" element={<Retail />} />
           <Route path="/industries/education" element={<Education />} />
+          <Route path="/industries/government-public-sector" element={<GovernmentPublicSector />} />
+          <Route path="/industries/oil-gas" element={<OilGas />} />
+          <Route path="/industries/manufacturing" element={<Manufacturing />} />
+          <Route path="/industries/data-centres" element={<DataCentres />} />
+          <Route path="/industries/venues" element={<Venues />} />
+          <Route path="/industries/parking-lot-management" element={<ParkingLotManagement />} />
 
           {/* Built-out service area pages (Sprint 6+) — lazy-loaded for performance */}
           <Route path="/areas/central-london" element={<CentralLondon />} />
