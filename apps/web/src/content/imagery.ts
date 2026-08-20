@@ -56,6 +56,16 @@ const HERO_BY_SLUG: Record<string, string> = {
   healthcare: 'photo-1777269749032-d8d458ae594d', // hospital corridor
   retail: 'photo-1694064500485-405140238c9c', // busy shopping centre concourse
   education: 'photo-1759732735643-39bbe53f27ea', // university buildings around a courtyard
+  // Industries added 2026-08-20 (client content drop — see extracted-pages.ts's
+  // government-public-sector/oil-gas/manufacturing/data-centres/venues/
+  // parking-lot-management entries). Same sourcing process as every id above: found via
+  // Unsplash search, excluding sponsored/Unsplash+ results, each URL confirmed HTTP 200.
+  'government-public-sector': 'photo-1781174849484-ec624747e197', // stone civic building entrance with columns
+  'oil-gas': 'photo-1781364486016-d83c39eb87f2', // industrial plant towers against a purple sky
+  manufacturing: 'photo-1730584474196-b0e8a29303e8', // welders working on a machine in a factory
+  'data-centres': 'photo-1584169417032-d34e8d805e8b', // server room aisle with metal equipment racks
+  venues: 'photo-1773730356782-e3044e73cf6f', // rows of empty theatre seats
+  'parking-lot-management': 'photo-1772461355574-3fcd84c6016b', // multi-level car park with directional signage
   // Areas — a recognisable landmark per area rather than the same London skyline six times
   'central-london': 'photo-1448906654166-444d494666b3', // St Paul's Cathedral
   'east-london': 'photo-1578793226777-3ce6ec6f911e', // 30 St Mary Axe, City fringe
@@ -109,6 +119,12 @@ const HERO_ALT_BY_SLUG: Record<string, string> = {
   healthcare: 'photo-1517120026326-d87759a7b63b', // clinical staff member walking a hospital corridor
   retail: 'photo-1567958436049-f2903793328b', // staff member organising stock inside a store
   education: 'photo-1758270704524-596810e891b5', // students in a lecture hall
+  'government-public-sector': 'photo-1773544015678-58d09366ad6e', // ornate classical building facade with columns
+  'oil-gas': 'photo-1678984239420-43cdc183bce6', // industrial plant with pipes, different vantage from the primary shot
+  manufacturing: 'photo-1717386255767-52643970d483', // factory floor with machinery, no people (vs. the primary's welders)
+  'data-centres': 'photo-1695668548342-c0c1ad479aee', // a different rack of servers in a server room
+  venues: 'photo-1762176264161-09219da49794', // rows of empty desks in a modern conference room
+  'parking-lot-management': 'photo-1637970067784-927e66e07e36', // empty parking garage at night, lit
   // Areas — a second recognisable landmark/street per area, not the same shot cropped
   'central-london': 'photo-1503566303019-ba141f5f9b76', // Big Ben, Westminster
   'east-london': 'photo-1626289296186-bb511ef4285b', // Canary Wharf skyline across the water

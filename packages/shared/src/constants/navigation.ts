@@ -43,21 +43,24 @@ export const SOFT_SERVICES: NavItem[] = [
   { id: 'security', label: 'Security Services', path: '/soft-services/security', icon: 'shield-check' },
   { id: 'commercial-cleaning', label: 'Commercial Cleaning', path: '/soft-services/commercial-cleaning', icon: 'spray-can' },
   { id: 'catering', label: 'Catering', path: '/soft-services/catering', icon: 'utensils', placeholder: true },
-  { id: 'aviation', label: 'Aviation Services', path: '/soft-services/aviation', icon: 'plane', placeholder: true },
+  { id: 'aviation', label: 'Aviation Services', path: '/soft-services/aviation', icon: 'plane' },
   { id: 'concierge', label: 'Concierge', path: '/soft-services/concierge', icon: 'concierge-bell', placeholder: true },
   { id: 'waste-recycling', label: 'Waste & Recycling', path: '/soft-services/waste-recycling', icon: 'recycle', placeholder: true },
 ];
 
 export const INDUSTRIES: NavItem[] = [
-  { id: 'government-public-sector', label: 'Government & Public Sector', path: '/industries/government-public-sector', icon: 'landmark', placeholder: true },
+  { id: 'government-public-sector', label: 'Government & Public Sector', path: '/industries/government-public-sector', icon: 'landmark' },
   { id: 'corporate', label: 'Corporate', path: '/industries/corporate', icon: 'briefcase' },
   { id: 'healthcare', label: 'Healthcare', path: '/industries/healthcare', icon: 'cross' },
-  { id: 'oil-gas', label: 'Oil & Gas', path: '/industries/oil-gas', icon: 'flame-kindling', placeholder: true },
+  { id: 'oil-gas', label: 'Oil & Gas', path: '/industries/oil-gas', icon: 'flame-kindling' },
   { id: 'retail', label: 'Retail', path: '/industries/retail', icon: 'shopping-bag' },
-  { id: 'manufacturing', label: 'Manufacturing', path: '/industries/manufacturing', icon: 'factory', placeholder: true },
+  { id: 'manufacturing', label: 'Manufacturing', path: '/industries/manufacturing', icon: 'factory' },
   { id: 'education', label: 'Education & Learning Institutions', path: '/industries/education', icon: 'graduation-cap' },
-  { id: 'data-centres', label: 'Data Centres', path: '/industries/data-centres', icon: 'server', placeholder: true },
-  { id: 'venues', label: 'Venues', path: '/industries/venues', icon: 'theater', placeholder: true },
+  { id: 'data-centres', label: 'Data Centres', path: '/industries/data-centres', icon: 'server' },
+  { id: 'venues', label: 'Venues', path: '/industries/venues', icon: 'theater' },
+  // New this round — no existing route before it; content sourced from the client's
+  // "Atlas South-Parking-Lot-Management.pdf" (2026-08-20 WhatsApp content drop).
+  { id: 'parking-lot-management', label: 'Parking Lot Management', path: '/industries/parking-lot-management', icon: 'square-parking' },
 ];
 
 export const SERVICE_AREAS: NavItem[] = [

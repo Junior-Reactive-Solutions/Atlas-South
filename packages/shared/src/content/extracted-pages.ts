@@ -643,64 +643,33 @@ export const EXTRACTED_PAGES: ExtractedPage[] = [
     "type": "service",
     "path": "/soft-services/aviation",
     "data": {
-      "title": "Aviation Services",
+      "title": "Aviation & Airfield Facilities",
       "icon": "plane",
-      "heroDescription": "Comprehensive airport and aviation facility services including ground handling, terminal operations, and maintenance support",
-      "overview": "Aviation facilities operate 24/7 under strict safety and regulatory requirements. From terminal cleaning and passenger facilities to aircraft ground handling and cargo operations, every service directly impacts safety, efficiency, and passenger experience. Atlas South brings specialist expertise in aviation operations, compliance, and rapid-response management.\n\nWe manage ground services, terminal facilities, security protocols, and coordination with air operators—all under strict CAA, Health & Safety, and aviation industry standards.",
+      "heroDescription": "Facility cleaning, technical maintenance, compliance-driven hygiene and ground support servicing for terminals, hangars, MRO facilities and corporate aviation — engineered around your operational windows, not around ours.",
+      "overview": "Aviation doesn't tolerate a delayed turnaround. Every hour a hangar bay, gate area or MRO facility is out of service has a cost. Our aviation offering is built around the industry's own constraints — tight windows, strict compliance, and zero tolerance for disruption.\n\nFacility servicing is scheduled around flight operations, curfews and shift changeovers — early mornings, overnight, and between-flight windows — so aircraft, gates and hangars stay operational. Cleaning and maintenance protocols are built around aviation hygiene, biosecurity and safety-critical facility standards, with documentation ready for audit at any time. Cleaning, technical maintenance and ground support area servicing run under a single point of contact and a single schedule — fewer contractors on-site, less coordination overhead for your operations team.",
       "features": [
         {
-          "icon": "plane-takeoff",
-          "title": "Ground Handling",
-          "description": "Aircraft servicing, passenger boarding, baggage handling, and flight deck coordination during turnaround."
-        },
-        {
-          "icon": "building-2",
-          "title": "Terminal Operations",
-          "description": "Passenger lounge management, gate operations, baggage claim supervision, and passenger amenities maintenance."
-        },
-        {
-          "icon": "sparkles",
-          "title": "Facilities Cleaning",
-          "description": "High-frequency terminal cleaning, aircraft interior sanitization, and cargo area decontamination."
-        },
-        {
-          "icon": "shield-check",
-          "title": "Security & Compliance",
-          "description": "Security staffing, access control, and compliance with CAA, DfT, and aviation-specific regulations."
+          "icon": "spray-can",
+          "title": "Facility Cleaning: Terminal & Hangar Cleaning",
+          "description": "High-standard cleaning for spaces where dust, debris and contamination are operational risks — hangar floors, bays and MRO work areas; terminal, lounge and gate area cleaning; deep cleans around scheduled maintenance checks; out-of-hours and overnight scheduling."
         },
         {
           "icon": "wrench",
-          "title": "Maintenance Support",
-          "description": "Line maintenance support, equipment upkeep, and coordination with aircraft maintenance providers."
+          "title": "Technical Maintenance: Building & Systems Upkeep",
+          "description": "Ongoing technical maintenance that keeps facility infrastructure reliable around continuous aviation operations — HVAC, lighting and electrical upkeep; planned preventative maintenance schedules; facility fabric and fixture repairs; rapid-response callouts for operational areas."
         },
         {
-          "icon": "radio",
-          "title": "24/7 Response",
-          "description": "Round-the-clock operational support, emergency response, and coordination with flight crew and air operators."
+          "icon": "shield-check",
+          "title": "Compliance-Driven Cleaning: Regulatory & Hygiene Standards",
+          "description": "Cleaning protocols mapped to the hygiene, biosecurity and safety documentation aviation sites are audited against — protocols aligned to aviation hygiene standards, biosecurity-conscious procedures, full audit-ready documentation and reporting, COSHH-compliant materials handling."
+        },
+        {
+          "icon": "plane",
+          "title": "Ground Support Services: Apron & Ground Area Servicing",
+          "description": "Facility-level support for ground operations areas, keeping ground support zones clean, maintained and ready — equipment storage area servicing, apron-adjacent facility cleaning and upkeep, staff welfare and ground crew facility maintenance, coordinated scheduling around flight rotations."
         }
       ],
-      "faqs": [
-        {
-          "question": "Are your teams aviation-trained and certified?",
-          "answer": "Yes. All our aviation staff are trained in CAA procedures, security protocols, and safety requirements. We hold all necessary aviation certifications."
-        },
-        {
-          "question": "Do you handle international flight operations?",
-          "answer": "Yes. We coordinate with international carriers, manage customs and immigration-adjacent support, and comply with international aviation standards."
-        },
-        {
-          "question": "Can you scale for peak travel periods?",
-          "answer": "Yes. We manage seasonal demand swings, holiday peaks, and emergency surge situations with trained associate network."
-        },
-        {
-          "question": "What happens during operational emergencies?",
-          "answer": "We follow CAA emergency protocols, coordinate with emergency services, and ensure immediate escalation to airport operations and air crews."
-        },
-        {
-          "question": "How do you handle security-sensitive operations?",
-          "answer": "All staff undergo background vetting, security clearance where required, and comply with airport security protocols and information handling procedures."
-        }
-      ],
+      "faqs": [],
       "relatedServices": [
         {
           "label": "Security Services",
@@ -1217,6 +1186,284 @@ export const EXTRACTED_PAGES: ExtractedPage[] = [
       "responseTime": "60 minutes for emergency call-outs across Surrey and Kent (postcodes CR, RH, TW, KT, DA, BR, ME, TN)",
       "coverage": "- **Croydon & South Croydon:** CR0, CR2 — major commercial hub with corporate offices, retail, and light industrial. Often the first point of contact for Surrey-wide clients.\n- **Surrey Hills & Epsom:** RH1–5, KT17–19 — business parks, corporate facilities, and light industrial estates with preventative maintenance focus.\n- **Guildford & Woking:** GU1–3, GU21–22 — major business park regions with large corporate campuses and logistics facilities.\n- **Kent East (Dartford, Erith):** DA1–9, BR4–5, BR7–8 — light industrial, logistics, and commercial estates. Extended response times (70+ min) depending on location.\n- **Kent Central (Maidstone, Sevenoaks):** ME, TN1–3 — regional business parks, light industrial, and suburban commercial.\n- **Kent Coastal Fringe:** CT, TN — limited coverage for established clients; coordinated with regional partners.",
       "localProof": "Over 90 Surrey and Kent clients rely on Atlas South for regional facilities management, ranging from single-site business park operators to multi-location corporate FM contracts. We've built regional expertise through partnerships with local specialists and direct hiring in key hubs like Croydon and Guildford."
+    }
+  },
+  {
+    "slug": "government-public-sector",
+    "type": "industry",
+    "path": "/industries/government-public-sector",
+    "data": {
+      "title": "Government & Public Sector",
+      "icon": "landmark",
+      "heroDescription": "Cleaning and facilities management for government offices, civic buildings and public sector sites — built around compliance, vetted personnel, and the standard of upkeep the public expects from its institutions.",
+      "overview": "Government and public sector contracts are held to a documented standard. Our cleaning and facilities protocols are built with compliance, health & safety records, and audit-ready reporting as the baseline, not an extra.\n\nStaff working in government offices, civic buildings and public-facing sites are prepared for the vetting, conduct and security expectations these environments require — because council offices, courts, libraries and civic buildings are judged on their upkeep, and a clean, well-maintained public building reflects directly on the institution behind it.",
+      "challenges": "- **Procurement-ready, compliance-first:** Government and public sector contracts are held to a documented standard — compliance, health & safety records and audit-ready reporting are the baseline, not an extra.\n- **Vetted personnel for public buildings:** Staff working in government offices, civic buildings and public-facing sites are prepared for the vetting, conduct and security expectations these environments require.\n- **Public trust is on the line:** Council offices, courts, libraries and civic buildings are judged on their upkeep. A clean, well-maintained public building reflects directly on the institution behind it.\n- **Continuity across long-term contracts:** Public sector work runs on service continuity. One point of contact, consistent teams and a single schedule reduce risk across multi-year facilities contracts.",
+      "ourApproach": "We build every public sector contract around procurement's own expectations, not around a standard commercial scope adapted afterward:\n\n- **Office & civic building cleaning**, including public-facing area and reception cleaning kept to the presentation standard a visitor-facing institution needs.\n- **Compliance-driven cleaning protocols**, with health & safety compliance documentation ready for audit at any time.\n- **Planned preventative facilities maintenance**, scheduled around the site rather than disrupting it.\n- **Vetted, security-conscious personnel**, prepared for the access and conduct expectations of council offices, courts, libraries and civic buildings.\n- **Out-of-hours and scheduled servicing**, plus multi-site contract management for local authorities running several sites under one contract.",
+      "serviceHighlights": [
+        {
+          "serviceLabel": "Office & Civic Building Cleaning",
+          "description": "Office and public-facing area cleaning, including reception spaces, kept to the presentation standard a public institution is judged on."
+        },
+        {
+          "serviceLabel": "Compliance-Driven Protocols",
+          "description": "Cleaning protocols built with health & safety compliance documentation as the baseline, ready for procurement audit at any time."
+        },
+        {
+          "serviceLabel": "Planned Preventative Maintenance",
+          "description": "Facilities maintenance scheduled around the site's own operations rather than imposed on it."
+        },
+        {
+          "serviceLabel": "Vetted, Security-Conscious Personnel",
+          "description": "Staff prepared for the vetting, conduct and security expectations of council offices, courts, libraries and civic buildings."
+        },
+        {
+          "serviceLabel": "Multi-Site Contract Management",
+          "description": "One point of contact and a single schedule across multi-year, multi-site local authority contracts."
+        }
+      ],
+      "relatedServices": [
+        {
+          "label": "Facilities Management",
+          "path": "/soft-services/facilities-management"
+        },
+        {
+          "label": "Security Services",
+          "path": "/soft-services/security"
+        },
+        {
+          "label": "Commercial Cleaning",
+          "path": "/soft-services/commercial-cleaning"
+        }
+      ]
+    }
+  },
+  {
+    "slug": "oil-gas",
+    "type": "industry",
+    "path": "/industries/oil-gas",
+    "data": {
+      "title": "Oil & Gas",
+      "icon": "flame-kindling",
+      "heroDescription": "Cleaning and facilities management for oil and gas operational sites, control rooms and office facilities — built around COSHH compliance, site safety inductions, and round-the-clock operational schedules.",
+      "overview": "Teams working on or near operational sites are trained in COSHH-compliant materials handling, so cleaning never becomes a site safety liability. Staff are prepared for site inductions, PPE requirements and access controls before ever stepping on-site.\n\nSites that run continuous shifts need servicing that fits around them — including night and weekend coverage without disrupting operations — with cleaning and facilities records kept audit-ready, in line with the health & safety documentation oil and gas sites are held to.",
+      "challenges": "- **Hazardous-materials awareness as standard:** Teams working on or near operational sites are trained in COSHH-compliant materials handling, so cleaning never becomes a site safety liability.\n- **Site induction and access-controlled personnel:** Staff are prepared for site inductions, PPE requirements and access controls before ever stepping on-site.\n- **Round-the-clock scheduling:** Sites that run continuous shifts need servicing that fits around them — including night and weekend coverage without disrupting operations.\n- **Compliance documentation on demand:** Cleaning and facilities records are kept audit-ready, in line with the health & safety documentation oil and gas sites are held to.",
+      "ourApproach": "Servicing is built to work inside a site's existing safety culture, not alongside it:\n\n- **Operational and office facility cleaning**, plus control room and site facility upkeep.\n- **COSHH-compliant materials handling** as standard practice, not a special request.\n- **Planned preventative maintenance** for site facilities, coordinated with operational schedules.\n- **Shift-pattern and 24/7 scheduling**, so servicing runs around continuous operations rather than against them.\n- **Health & safety compliance documentation**, kept audit-ready for the standard onshore sites are held to.",
+      "serviceHighlights": [
+        {
+          "serviceLabel": "Operational & Office Facility Cleaning",
+          "description": "Cleaning across operational areas, control rooms and office facilities, coordinated with site operations."
+        },
+        {
+          "serviceLabel": "COSHH-Compliant Materials Handling",
+          "description": "Materials handling trained and documented to COSHH compliance, so cleaning is never a site safety liability."
+        },
+        {
+          "serviceLabel": "Planned Preventative Maintenance",
+          "description": "Maintenance for site facilities scheduled to avoid disruption to continuous operations."
+        },
+        {
+          "serviceLabel": "Shift-Pattern & 24/7 Scheduling",
+          "description": "Night and weekend coverage built around continuous-shift operations, not office hours."
+        },
+        {
+          "serviceLabel": "Compliance Documentation",
+          "description": "Health & safety records kept audit-ready, in line with the documentation oil and gas sites are held to."
+        }
+      ],
+      "relatedServices": [
+        {
+          "label": "Facilities Management",
+          "path": "/soft-services/facilities-management"
+        },
+        {
+          "label": "Reactive Maintenance",
+          "path": "/hard-services/reactive-maintenance"
+        },
+        {
+          "label": "Commercial Cleaning",
+          "path": "/soft-services/commercial-cleaning"
+        }
+      ]
+    }
+  },
+  {
+    "slug": "manufacturing",
+    "type": "industry",
+    "path": "/industries/manufacturing",
+    "data": {
+      "title": "Manufacturing",
+      "icon": "factory",
+      "heroDescription": "Facility cleaning and maintenance for production floors, warehousing and office areas, scheduled to protect throughput while maintaining the housekeeping and safety standards manufacturing sites are held to.",
+      "overview": "Cleaning and maintenance are scheduled around downtime windows and shift changeovers, so servicing never slows the line. Clean, well-organised floors and walkways reduce workplace hazards — housekeeping is treated as part of site safety, not separate from it.\n\nCleaning near production and QA-sensitive areas is handled with awareness of contamination risk and material compatibility, with production floor, warehouse and office cleaning and maintenance running under a single schedule and point of contact.",
+      "challenges": "- **Production keeps running:** Cleaning and maintenance are scheduled around downtime windows and shift changeovers, so servicing never slows the line.\n- **Housekeeping as a safety standard:** Clean, well-organised floors and walkways reduce workplace hazards — housekeeping is treated as part of site safety, not separate from it.\n- **Contamination-conscious cleaning:** Cleaning near production and QA-sensitive areas is handled with awareness of contamination risk and material compatibility.\n- **One contract across the whole site:** Production floor, warehouse and office cleaning and maintenance run under a single schedule and point of contact.",
+      "ourApproach": "Servicing is scheduled to protect throughput first:\n\n- **Production floor & warehouse cleaning**, plus office and welfare facility cleaning under the same contract.\n- **Planned preventative maintenance**, coordinated with downtime windows and shift-pattern scheduling.\n- **Site housekeeping & walkway safety standards**, treated as part of site safety rather than a separate cleaning task.\n- **Health & safety compliance support** across production, warehousing and distribution areas.",
+      "serviceHighlights": [
+        {
+          "serviceLabel": "Production Floor & Warehouse Cleaning",
+          "description": "Cleaning across production and warehousing areas, handled with awareness of contamination risk near QA-sensitive zones."
+        },
+        {
+          "serviceLabel": "Downtime-Window Scheduling",
+          "description": "Cleaning and maintenance scheduled around downtime windows and shift changeovers so servicing never slows the line."
+        },
+        {
+          "serviceLabel": "Site Housekeeping & Walkway Safety",
+          "description": "Clean, well-organised floors and walkways, treated as part of site safety standards rather than separate from them."
+        },
+        {
+          "serviceLabel": "Planned Preventative Maintenance",
+          "description": "Maintenance for production, warehouse and office facilities under a single schedule and point of contact."
+        }
+      ],
+      "relatedServices": [
+        {
+          "label": "Reactive Maintenance",
+          "path": "/hard-services/reactive-maintenance"
+        },
+        {
+          "label": "Facilities Management",
+          "path": "/soft-services/facilities-management"
+        },
+        {
+          "label": "Commercial Cleaning",
+          "path": "/soft-services/commercial-cleaning"
+        }
+      ]
+    }
+  },
+  {
+    "slug": "data-centres",
+    "type": "industry",
+    "path": "/industries/data-centres",
+    "data": {
+      "title": "Data Centres",
+      "icon": "server",
+      "heroDescription": "Cleaning and facilities management for data centre environments — built around particulate control, security-cleared access, and scheduling that never touches an uptime-critical window.",
+      "overview": "Cleaning protocols are built to minimise dust and particulate contamination around server halls and technical equipment, using anti-static, low-residue methods. Personnel working in data centre environments are prepared for security clearance, access control and escort procedures before ever entering a facility.\n\nServicing is scheduled around maintenance windows and never scheduled in a way that risks operational uptime or equipment access protocols — with teams briefed on temperature, humidity and ESD-sensitive conditions specific to data hall environments, so cleaning never becomes a risk to equipment.",
+      "challenges": "- **Particulate control protects the hardware:** Cleaning protocols are built to minimise dust and particulate contamination around server halls and technical equipment, using anti-static, low-residue methods.\n- **Security and access come first:** Personnel working in data centre environments are prepared for security clearance, access control and escort procedures before ever entering a facility.\n- **Uptime is never negotiable:** Servicing is scheduled around maintenance windows and never scheduled in a way that risks operational uptime or equipment access protocols.\n- **Environmental sensitivity, understood:** Teams are briefed on temperature, humidity and ESD-sensitive conditions specific to data hall environments, so cleaning never becomes a risk to equipment.",
+      "ourApproach": "Every visit is planned around the facility's own uptime and access rules:\n\n- **Server hall & technical area cleaning**, using anti-static, low-particulate cleaning protocols throughout.\n- **Office, control room & welfare facility cleaning**, kept separate from technical-area protocols.\n- **Scheduling around maintenance windows**, so servicing is never a risk to operational uptime.\n- **Security-cleared, access-controlled personnel**, prepared for escort procedures before entering a facility.\n- **Facilities maintenance & planned preventative upkeep**, coordinated the same way as cleaning access.",
+      "serviceHighlights": [
+        {
+          "serviceLabel": "Server Hall & Technical Area Cleaning",
+          "description": "Anti-static, low-particulate cleaning protocols built specifically to minimise contamination risk around technical equipment."
+        },
+        {
+          "serviceLabel": "Security-Cleared Personnel",
+          "description": "Staff prepared for security clearance, access control and escort procedures before entering a facility."
+        },
+        {
+          "serviceLabel": "Uptime-Safe Scheduling",
+          "description": "Servicing scheduled around maintenance windows, never in a way that risks operational uptime or access protocols."
+        },
+        {
+          "serviceLabel": "Office, Control Room & Welfare Cleaning",
+          "description": "Non-technical area cleaning kept to its own protocol, separate from data hall procedures."
+        }
+      ],
+      "relatedServices": [
+        {
+          "label": "Security Services",
+          "path": "/soft-services/security"
+        },
+        {
+          "label": "Facilities Management",
+          "path": "/soft-services/facilities-management"
+        },
+        {
+          "label": "Reactive Maintenance",
+          "path": "/hard-services/reactive-maintenance"
+        }
+      ]
+    }
+  },
+  {
+    "slug": "venues",
+    "type": "industry",
+    "path": "/industries/venues",
+    "data": {
+      "title": "Venues",
+      "icon": "theater",
+      "heroDescription": "Cleaning and facilities management for event venues, conference centres and arenas — built around fast turnarounds between events and the front-of-house standard visitors expect the moment they walk in.",
+      "overview": "Venues move from one event to the next fast. Cleaning and reset are scheduled tightly around load-in, event hours and load-out, so the space is ready for what's next. Lobbies, auditoriums, washrooms and public areas are cleaned to a presentation standard that holds up under high footfall and full public view.\n\nGreen rooms, backstage corridors and technical/plant areas get the same standard of care as public-facing spaces, without getting in the way of production and technical crews — and high-volume waste and debris after events are cleared efficiently, so venues are event-ready again on schedule.",
+      "challenges": "- **Turnaround windows measured in hours, not days:** Venues move from one event to the next fast. Cleaning and reset are scheduled tightly around load-in, event hours and load-out.\n- **Front-of-house has to be flawless:** Lobbies, auditoriums, washrooms and public areas are cleaned to a presentation standard that holds up under high footfall and full public view.\n- **Backstage and technical areas matter just as much:** Green rooms, backstage corridors and technical/plant areas get the same standard of care as public-facing spaces, without getting in the way of production and technical crews.\n- **Post-event reset and waste management:** High-volume waste and debris after events are cleared efficiently, so venues are event-ready again on schedule.",
+      "ourApproach": "Scheduling is built around the event calendar, not a fixed weekly routine:\n\n- **Front-of-house & public area cleaning**, to a presentation standard that holds up under full public view.\n- **Post-event deep cleaning & reset**, including high-volume waste management, cleared efficiently between events.\n- **Backstage, green room & technical area cleaning**, without getting in the way of production and technical crews.\n- **Event turnaround & load-in/load-out scheduling**, plus facilities maintenance for the venue building itself.",
+      "serviceHighlights": [
+        {
+          "serviceLabel": "Front-of-House & Public Area Cleaning",
+          "description": "Lobbies, auditoriums and washrooms cleaned to a presentation standard that holds up under high footfall."
+        },
+        {
+          "serviceLabel": "Post-Event Deep Cleaning & Reset",
+          "description": "High-volume waste and debris cleared efficiently, so venues are event-ready again on schedule."
+        },
+        {
+          "serviceLabel": "Backstage & Technical Area Cleaning",
+          "description": "Green rooms, backstage corridors and technical/plant areas serviced without disrupting production and technical crews."
+        },
+        {
+          "serviceLabel": "Event Turnaround Scheduling",
+          "description": "Cleaning and reset scheduled tightly around load-in, event hours and load-out."
+        }
+      ],
+      "relatedServices": [
+        {
+          "label": "Commercial Cleaning",
+          "path": "/soft-services/commercial-cleaning"
+        },
+        {
+          "label": "Facilities Management",
+          "path": "/soft-services/facilities-management"
+        },
+        {
+          "label": "Security Services",
+          "path": "/soft-services/security"
+        }
+      ]
+    }
+  },
+  {
+    "slug": "parking-lot-management",
+    "type": "industry",
+    "path": "/industries/parking-lot-management",
+    "data": {
+      "title": "Parking Lot Management",
+      "icon": "square-parking",
+      "heroDescription": "Cleaning and facilities management for car parks and parking facilities — keeping surfaces clean, markings clear, and equipment maintained across sites that never stop being used.",
+      "overview": "A car park is often the first thing a visitor sees and the last thing they remember. Clean surfaces, clear markings and working lighting set the tone before anyone reaches the front door. Litter, spillages, faded line markings and poor lighting are trip, slip and safety risks — ongoing cleaning and maintenance keep car parks compliant and safe for daily use.\n\nCar parks at retail, corporate, healthcare and transport sites see constant vehicle and pedestrian traffic. Sweeping, waste management, pressure washing and facilities maintenance run under a single contract — one point of contact instead of multiple contractors and missed handoffs.",
+      "challenges": "- **The first and last impression of a site:** A car park is often the first thing a visitor sees and the last thing they remember. Clean surfaces, clear markings and working lighting set the tone before anyone reaches the front door.\n- **Safety is a facilities issue, not an afterthought:** Litter, spillages, faded line markings and poor lighting are trip, slip and safety risks. Ongoing cleaning and maintenance keep car parks compliant and safe for daily use.\n- **High footfall, all day, every day:** Car parks at retail, corporate, healthcare and transport sites see constant vehicle and pedestrian traffic. Servicing is scheduled to keep pace with that volume, not fall behind it.\n- **One team for cleaning and upkeep:** Sweeping, waste management, pressure washing and facilities maintenance run under a single contract — one point of contact instead of multiple contractors and missed handoffs.",
+      "ourApproach": "Servicing is scheduled around how the car park is actually used, not a fixed generic round:\n\n- **Sweeping & litter removal**, pressure washing and surface cleaning across the whole site.\n- **Waste bin management & collection**, plus graffiti removal where it appears.\n- **Line marking & signage upkeep**, and lighting, barrier & equipment maintenance.\n- **Multi-storey & basement car park cleaning**, including EV charging bay area upkeep.\n- **Scheduling around peak usage hours**, so servicing keeps pace with high footfall rather than falling behind it.",
+      "serviceHighlights": [
+        {
+          "serviceLabel": "Sweeping & Surface Cleaning",
+          "description": "Sweeping, litter removal and pressure washing across surface, multi-storey and basement car parks."
+        },
+        {
+          "serviceLabel": "Line Marking & Signage Upkeep",
+          "description": "Line marking and signage kept clear and legible, addressing a direct trip, slip and safety risk."
+        },
+        {
+          "serviceLabel": "Lighting, Barrier & Equipment Maintenance",
+          "description": "Facilities maintenance covering lighting, barriers and EV charging bay areas alongside cleaning."
+        },
+        {
+          "serviceLabel": "Waste & Graffiti Management",
+          "description": "Waste bin management and collection, plus graffiti removal, run under the same single contract."
+        }
+      ],
+      "relatedServices": [
+        {
+          "label": "Facilities Management",
+          "path": "/soft-services/facilities-management"
+        },
+        {
+          "label": "Commercial Cleaning",
+          "path": "/soft-services/commercial-cleaning"
+        },
+        {
+          "label": "Security Services",
+          "path": "/soft-services/security"
+        }
+      ]
     }
   }
 ];
