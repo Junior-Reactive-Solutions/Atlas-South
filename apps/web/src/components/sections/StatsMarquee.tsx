@@ -44,7 +44,7 @@ export function StatsMarquee() {
 
   return (
     <div
-      className="overflow-hidden border-y border-white/10 bg-navy py-5 [mask-image:linear-gradient(90deg,transparent,#000_8%,#000_92%,transparent)]"
+      className="overflow-hidden border-y border-white/10 bg-navy py-5"
       aria-label="Atlas South at a glance"
     >
       <div className="flex w-max animate-stats-marquee">
