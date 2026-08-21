@@ -17,22 +17,11 @@ export interface NavItem {
   placeholder?: boolean;
 }
 
-/**
- * Two items, not four. The Company dropdown used to be a flat list — Mission, Join Us,
- * Contact Us — with "Vision" removed entirely because no vision statement existed
- * anywhere in verified content (see git history on this file for that longer note). The
- * client's 2026-08-20 content drop supplied both a Vision and a Mission, closing that gap,
- * and the client separately asked for the dropdown itself to read as two destinations —
- * About Us (which now carries Vision & Mission together, About.tsx `id="vision-mission"`)
- * and Join Us — rather than four flat, oddly-uneven entries.
- *
- * Contact Us is not gone: it's still a real page at the path below, still linked directly
- * from the header CTA, the footer, and the Careers page's own "Contact Us" button — it's
- * just no longer a fifth flat item in this specific dropdown.
- */
 export const COMPANY_PAGES: NavItem[] = [
   { id: 'about-us', label: 'About Us', path: '/company', icon: 'building-2' },
+  { id: 'vision-mission', label: 'Vision & Mission', path: '/company/vision-mission', icon: 'compass' },
   { id: 'join-us', label: 'Join Us', path: '/company/join-us', icon: 'users' },
+  { id: 'contact-us', label: 'Contact Us', path: '/company/contact', icon: 'mail' },
 ];
 
 // Fire & Safety removed 2026-08-20 at the client's request — no replacement page.

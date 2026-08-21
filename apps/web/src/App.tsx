@@ -63,6 +63,7 @@ const EastLondon = lazy(() => import('./pages/areas/EastLondon.js').then((m) => 
 const WestLondon = lazy(() => import('./pages/areas/WestLondon.js').then((m) => ({ default: m.WestLondon })));
 const SurreyKent = lazy(() => import('./pages/areas/SurreyKent.js').then((m) => ({ default: m.SurreyKent })));
 const About = lazy(() => import('./pages/company/About.js').then((m) => ({ default: m.About })));
+const VisionMission = lazy(() => import('./pages/company/VisionMission.js').then((m) => ({ default: m.VisionMission })));
 const Contact = lazy(() => import('./pages/company/Contact.js').then((m) => ({ default: m.Contact })));
 const Packages = lazy(() => import('./pages/packages/Packages.js').then((m) => ({ default: m.Packages })));
 const Careers = lazy(() => import('./pages/careers/Careers.js').then((m) => ({ default: m.Careers })));
@@ -118,6 +119,7 @@ export default function App() {
 
           {/* Company pages */}
           <Route path="/company" element={<About />} />
+          <Route path="/company/vision-mission" element={<VisionMission />} />
           <Route path="/company/contact" element={<Contact />} />
           <Route path="/company/join-us" element={<Careers />} />
 
