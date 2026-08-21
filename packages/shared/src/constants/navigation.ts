@@ -21,7 +21,7 @@ export const COMPANY_PAGES: NavItem[] = [
   { id: 'about-us', label: 'About Us', path: '/company', icon: 'building-2' },
   { id: 'vision-mission', label: 'Vision & Mission', path: '/company/vision-mission', icon: 'compass' },
   { id: 'join-us', label: 'Join Us', path: '/company/join-us', icon: 'users' },
-  { id: 'contact-us', label: 'Contact Us', path: '/contact', icon: 'mail' },
+  { id: 'contact-us', label: 'Contact Us', path: '/company/contact', icon: 'mail' },
 ];
 
 // Fire & Safety removed 2026-08-20 at the client's request — no replacement page.
