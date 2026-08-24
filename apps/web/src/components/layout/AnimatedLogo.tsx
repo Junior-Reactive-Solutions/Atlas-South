@@ -52,7 +52,15 @@ export function AnimatedLogo() {
   }, []);
 
   const symbol = <img src="/brand/symbol.svg" alt="" aria-hidden="true" className="h-9 w-auto shrink-0" />;
-  const wordmark = <img src="/brand/wordmark.svg" alt="" aria-hidden="true" className="h-5 w-auto" />;
+  // max-w-none: the global `img { max-width: 100% }` reset (needed everywhere else on the
+  // site for responsive images) resolves that 100% against this element's containing
+  // block — but the reveal `<span>` below is `position: absolute` with no explicit width
+  // of its own, sized via shrink-to-fit *from this very image*. That's a circular
+  // percentage the browser can't resolve, and it computes to 0 rather than falling back to
+  // "no cap": the wordmark was loading correctly (confirmed via naturalWidth) and the
+  // reveal's opacity/transform state was toggling correctly, but the image itself rendered
+  // at 0px wide — invisible despite every other part of the animation firing correctly.
+  const wordmark = <img src="/brand/wordmark.svg" alt="" aria-hidden="true" className="h-5 w-auto max-w-none" />;
 
   if (!canHover) {
     // Touch devices: no hover concept, so show the full mark permanently rather than
