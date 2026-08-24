@@ -6,7 +6,6 @@ import {
   SOFT_SERVICES,
   INDUSTRIES,
   SERVICE_AREAS,
-  PACKAGES_PAGE,
   type NavItem,
 } from '@atlas-south/shared';
 
@@ -26,7 +25,6 @@ const GROUPS: Array<{ label: string; items: NavItem[] }> = [
   { label: 'Soft Services', items: SOFT_SERVICES },
   { label: 'Industries', items: INDUSTRIES },
   { label: 'Areas We Cover', items: SERVICE_AREAS },
-  { label: 'Other', items: [PACKAGES_PAGE] },
 ];
 
 /**

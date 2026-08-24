@@ -10,8 +10,6 @@
  * document the one env var this app's code actually reads.
  */
 interface ImportMetaEnv {
-  /** PayPal's public client id — see apps/web/src/lib/paypalSdk.ts. Not a secret. */
-  readonly VITE_PAYPAL_CLIENT_ID?: string;
 }
 
 interface ImportMeta {

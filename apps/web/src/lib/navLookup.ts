@@ -3,7 +3,6 @@ import {
   SOFT_SERVICES,
   INDUSTRIES,
   SERVICE_AREAS,
-  PACKAGES_PAGE,
 } from '@atlas-south/shared';
 
 /**
@@ -15,7 +14,7 @@ import {
  *
  * Built from the shared navigation constants, so it cannot drift from the real IA.
  */
-const ALL_NAV_ITEMS = [...HARD_SERVICES, ...SOFT_SERVICES, ...INDUSTRIES, ...SERVICE_AREAS, PACKAGES_PAGE];
+const ALL_NAV_ITEMS = [...HARD_SERVICES, ...SOFT_SERVICES, ...INDUSTRIES, ...SERVICE_AREAS];
 
 const PATH_TO_NAV_ID: ReadonlyMap<string, string> = new Map(ALL_NAV_ITEMS.map((item) => [item.path, item.id]));
 

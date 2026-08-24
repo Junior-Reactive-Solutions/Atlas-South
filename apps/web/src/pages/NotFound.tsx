@@ -36,12 +36,6 @@ export function NotFound() {
         >
           Contact Us
         </Link>
-        <Link
-          to="/packages"
-          className="flex min-h-[44px] items-center rounded border border-navy px-5 text-sm font-semibold uppercase tracking-wide text-navy"
-        >
-          Packages
-        </Link>
       </div>
     </div>
   );

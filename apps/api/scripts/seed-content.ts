@@ -18,17 +18,15 @@ import {
   HOME_CONTENT,
   COMPANY_CONTENT,
   CAREERS_CONTENT,
-  PACKAGES_CONTENT,
 } from '@atlas-south/shared';
 
 const prisma = new PrismaClient();
 
-/** The four hand-authored pages, with the type/path metadata the table needs. */
+/** The three hand-authored pages, with the type/path metadata the table needs. */
 const SINGLETON_PAGES = [
   { slug: 'home', type: 'home', path: '/', data: HOME_CONTENT },
   { slug: 'company', type: 'company', path: '/company', data: COMPANY_CONTENT },
   { slug: 'careers', type: 'careers', path: '/company/join-us', data: CAREERS_CONTENT },
-  { slug: 'packages', type: 'packages', path: '/packages', data: PACKAGES_CONTENT },
 ] as const;
 
 async function upsertPage(slug: string, type: string, path: string, data: unknown) {

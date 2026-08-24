@@ -39,9 +39,9 @@ export const SOFT_SERVICES: NavItem[] = [
   { id: 'facilities-management', label: 'Facilities Management', path: '/soft-services/facilities-management', icon: 'building-2' },
   { id: 'security', label: 'Security Services', path: '/soft-services/security', icon: 'shield-check' },
   { id: 'commercial-cleaning', label: 'Commercial Cleaning', path: '/soft-services/commercial-cleaning', icon: 'spray-can' },
-  { id: 'catering', label: 'Catering', path: '/soft-services/catering', icon: 'utensils', placeholder: true },
+  { id: 'catering', label: 'Catering', path: '/soft-services/catering', icon: 'utensils' },
   { id: 'aviation', label: 'Aviation Services', path: '/soft-services/aviation', icon: 'plane' },
-  { id: 'concierge', label: 'Concierge', path: '/soft-services/concierge', icon: 'concierge-bell', placeholder: true },
+  { id: 'concierge', label: 'Concierge', path: '/soft-services/concierge', icon: 'concierge-bell' },
   { id: 'parking-lot-management', label: 'Parking Lot Management', path: '/soft-services/parking-lot-management', icon: 'square-parking' },
 ];
 
@@ -66,14 +66,8 @@ export const SERVICE_AREAS: NavItem[] = [
   { id: 'surrey-kent', label: 'Surrey & Kent', path: '/areas/surrey-kent', icon: 'map-pin' },
 ];
 
-/** Commercial service-agreement tiers — SLA/pricing page for corporate clients. */
-export const PACKAGES_PAGE: NavItem = {
-  id: 'packages',
-  label: 'Packages',
-  path: '/packages',
-  icon: 'package',
-};
-
+// PACKAGES_PAGE (the /packages pricing page) removed 2026-08-24 at the client's explicit
+// request: no pricing of any kind is to be displayed anywhere on the site.
 export const LEGAL_PAGES: NavItem[] = [
   { id: 'privacy-policy', label: 'Privacy Policy', path: '/legal/privacy', icon: 'shield' },
   { id: 'terms-of-use', label: 'Terms of Use', path: '/legal/terms', icon: 'file-text' },
@@ -89,6 +83,5 @@ export const ALL_NAV_ITEMS = [
   ...SOFT_SERVICES,
   ...INDUSTRIES,
   ...SERVICE_AREAS,
-  PACKAGES_PAGE,
   ...LEGAL_PAGES,
 ] as const;
