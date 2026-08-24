@@ -13,6 +13,7 @@ import { eventsRouter } from './routes/events.js';
 import { contentRouter } from './routes/content.js';
 import { visibilityRouter } from './routes/visibility.js';
 import { careersRouter } from './routes/careers.js';
+import { leadsRouter } from './routes/leads.js';
 import adminAuthRouter from './routes/admin/auth.js';
 import adminEnquiriesRouter from './routes/admin/enquiries.js';
 import { adminApplicationsRouter } from './routes/admin/applications.js';
@@ -22,6 +23,7 @@ import adminTotpRouter from './routes/admin/totp.js';
 import adminAnalyticsRouter from './routes/admin/analytics.js';
 import adminContentRouter from './routes/admin/content.js';
 import adminVisibilityRouter from './routes/admin/visibility.js';
+import { adminLeadsRouter } from './routes/admin/leads.js';
 
 const app = express();
 
@@ -93,6 +95,7 @@ app.use('/api', eventsRouter);
 app.use('/api', contentRouter);
 app.use('/api', visibilityRouter);
 app.use('/api', careersRouter);
+app.use('/api', leadsRouter);
 
 // Admin routes — secured with JWT authentication
 // loginLimiter applies specifically to the auth endpoint (5 attempts / 15 min);
@@ -106,6 +109,7 @@ app.use('/api/admin/totp', adminApiLimiter, adminTotpRouter);
 app.use('/api/admin/analytics', adminApiLimiter, adminAnalyticsRouter);
 app.use('/api/admin/content', adminApiLimiter, adminContentRouter);
 app.use('/api/admin/visibility', adminApiLimiter, adminVisibilityRouter);
+app.use('/api/admin', adminApiLimiter, adminLeadsRouter);
 
 // Centralised error handler — never leak stack traces to the client.
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

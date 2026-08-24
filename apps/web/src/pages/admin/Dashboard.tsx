@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { BarChart3, Eye, MessageSquare, Settings, TrendingUp, Users } from 'lucide-react';
+import { BarChart3, Bot, Eye, MessageSquare, Settings, TrendingUp, Users } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext.js';
 import { animate, stagger } from 'animejs';
 import { useAnimationScope, DURATION, EASE, STAGGER_GAP } from '@atlas-south/design-system';
@@ -159,6 +159,17 @@ export function AdminDashboard() {
             <p className="text-sm text-slate-600">Traffic insights</p>
           </div>
           <BarChart3 className="h-6 w-6 text-accent-blue" />
+        </Link>
+
+        <Link
+          to="/admin/leads"
+          className="flex items-center justify-between rounded-lg border border-slate-200 bg-white p-6 hover:bg-slate-50"
+        >
+          <div>
+            <p className="font-semibold text-navy">Chat Leads</p>
+            <p className="text-sm text-slate-600">Chatbot-captured contacts</p>
+          </div>
+          <Bot className="h-6 w-6 text-accent-blue" />
         </Link>
 
         <Link

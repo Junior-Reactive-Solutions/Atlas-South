@@ -146,6 +146,22 @@ model PageVisibility {
   @@index([visible])
 }
 
+/// Leads captured by the on-site chatbot — name, email, and the service(s)
+/// the visitor expressed interest in. Separate from Enquiry so the two
+/// pipelines stay distinct in the admin panel (chatbot = warm lead at top
+/// of funnel; enquiry = explicit quote request further down).
+model ChatLead {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  services  String   // comma-separated service labels
+  message   String?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([email])
+}
+
 model JobApplication {
   id           String   @id @default(cuid())
   fullName     String
