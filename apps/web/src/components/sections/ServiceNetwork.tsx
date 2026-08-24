@@ -291,6 +291,7 @@ export function ServiceNetwork() {
         // display:none at mount). Park the node rather than pinning it off-screen at t=0.
         if (!total) {
           node.style.transform = '';
+          node.style.opacity = '';
           return;
         }
 
@@ -306,6 +307,15 @@ export function ServiceNetwork() {
         const dx = (current.x - rest.x) * scaleX;
         const dy = (current.y - rest.y) * scaleY;
         node.style.transform = `translate3d(${dx.toFixed(2)}px, ${dy.toFixed(2)}px, 0)`;
+
+        // Fully faded in by the first ~22% of the journey, not held at full opacity for
+        // the entire ride. Without this a node clipped by the mobile stage's own
+        // `overflow-hidden` (see the note on that wrapper) was still fully opaque the
+        // instant it crossed the clip edge — technically hidden a frame earlier, but the
+        // reveal itself still read as a hard cut rather than an *emergence*. Fading
+        // alongside the very start of the movement is what makes it read as coming out of
+        // a hidden layer rather than an element that was simply invisible a moment ago.
+        node.style.opacity = clamp01(t / 0.22).toFixed(2);
       });
 
       if (Math.abs(smoothedVelocity) < SETTLED && Math.abs(delta) < SETTLED) {
@@ -487,10 +497,19 @@ export function ServiceNetwork() {
             below the copy (this wrapper is `relative`, not `absolute`, so nothing here
             fights the desktop layer for space), and is its own self-contained box: the
             decorative SVG and the node layer both cover exactly this box, the same
-            same-box-same-scale relationship the desktop layer has with the full section. */}
+            same-box-same-scale relationship the desktop layer has with the full section.
+
+            `overflow-hidden` here is load-bearing, not tidiness: MOBILE_TRACKS' top two rows
+            start at y=-120, above this box's own 420px height. The desktop layer never
+            needed this — its off-screen start (x=-100) sits outside the whole *section*,
+            which already clips at that boundary — but this stage is a box nested well
+            inside the section, so without its own clip, a node "hidden above the stage" was
+            actually rendering in normal position, plainly visible overlapping the copy
+            above, and only slid into the grid once scrolled — the opposite of hidden.
+            Clipped here, it now visibly emerges from behind the stage's own top edge. */}
         <div
           ref={mobileStageRef}
-          className="pointer-events-none relative mt-10 h-[420px] w-full lg:hidden"
+          className="pointer-events-none relative mt-10 h-[420px] w-full overflow-hidden lg:hidden"
         >
           <svg
             aria-hidden="true"
