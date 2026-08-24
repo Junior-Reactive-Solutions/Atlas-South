@@ -12,6 +12,7 @@ import {
   Menu,
   X,
   Eye,
+  Bot,
   type LucideIcon,
 } from 'lucide-react';
 import { useNoIndex } from '../../hooks/useNoIndex.js';
@@ -20,6 +21,7 @@ import { useAuth } from '../../contexts/AuthContext.js';
 const NAV_ITEMS: Array<{ to: string; icon: LucideIcon; label: string }> = [
   { to: '/admin/dashboard', icon: BarChart3, label: 'Dashboard' },
   { to: '/admin/enquiries', icon: MessageSquare, label: 'Enquiries' },
+  { to: '/admin/leads', icon: Bot, label: 'Chat Leads' },
   { to: '/admin/applications', icon: Users, label: 'Applications' },
   { to: '/admin/content', icon: FileText, label: 'Content' },
   { to: '/admin/visibility', icon: Eye, label: 'Visibility' },

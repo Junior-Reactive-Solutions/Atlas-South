@@ -24,6 +24,8 @@ import { AdminAnalytics } from './pages/admin/Analytics.js';
 import { AdminContent } from './pages/admin/Content.js';
 import { AdminVisibility } from './pages/admin/Visibility.js';
 import { AdminContentEdit } from './pages/admin/ContentEdit.js';
+import { AdminLeads } from './pages/admin/Leads.js';
+import { ChatBot } from './components/chat/ChatBot.js';
 
 // Legal pages
 import { TermsOfUse } from './pages/legal/TermsOfUse.js';
@@ -88,6 +90,7 @@ function stubRoutes(items: NavItem[], specRef: string) {
 export default function App() {
   return (
     <>
+      <ChatBot />
       <Suspense fallback={<PageLoadingFallback />}>
         <Routes>
           {/* Admin panel routes — separate from public site layout */}
@@ -104,6 +107,7 @@ export default function App() {
             <Route path="/admin/visibility" element={<AdminVisibility />} />
             <Route path="/admin/content/:slug" element={<AdminContentEdit />} />
             <Route path="/admin/settings" element={<AdminSettings />} />
+            <Route path="/admin/leads" element={<AdminLeads />} />
           </Route>
 
           {/* Legal pages */}
