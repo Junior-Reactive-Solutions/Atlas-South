@@ -44,13 +44,11 @@
     X-Frame-Options = "DENY"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
-    Permissions-Policy = "geolocation=(), camera=(), microphone=(), payment=(self \"https://www.paypal.com\")"
+    Permissions-Policy = "geolocation=(), camera=(), microphone=(), payment=()"
     # connect-src is 'self' only — every API call from the app is a relative /api/... path and
     # is proxied above, so it never leaves this origin. The Render host deliberately is NOT
     # listed: adding it would widen the policy for requests the app doesn't make.
-    # paypal.com/paypalobjects.com are required by PayPal's JS SDK — see
-    # docs/build/15-PAYPAL-INTEGRATION.md §6.
-    Content-Security-Policy = "default-src 'self'; img-src 'self' res.cloudinary.com images.unsplash.com; script-src 'self' https://www.paypal.com https://www.paypalobjects.com; style-src 'self' fonts.googleapis.com; font-src 'self' fonts.gstatic.com; connect-src 'self' https://www.paypal.com; frame-src https://www.paypal.com; frame-ancestors 'none'"
+    Content-Security-Policy = "default-src 'self'; img-src 'self' res.cloudinary.com images.unsplash.com; script-src 'self'; style-src 'self' fonts.googleapis.com; font-src 'self' fonts.gstatic.com; connect-src 'self'; frame-ancestors 'none'"
 
 # Vite emits content-hashed filenames into /assets, so these are safe to cache forever.
 [[headers]]

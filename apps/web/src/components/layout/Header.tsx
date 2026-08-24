@@ -7,7 +7,6 @@ import {
   HARD_SERVICES,
   SOFT_SERVICES,
   INDUSTRIES,
-  PACKAGES_PAGE,
   type NavItem,
 } from '@atlas-south/shared';
 import { Icon, useAnimationScope, DURATION, EASE, STAGGER_GAP } from '@atlas-south/design-system';
@@ -190,12 +189,6 @@ export function Header() {
             <NavDropdown label="Hard Services" items={HARD_SERVICES} />
             <NavDropdown label="Soft Services" items={SOFT_SERVICES} />
             <NavDropdown label="Company" items={COMPANY_PAGES} />
-            <Link
-              to={PACKAGES_PAGE.path}
-              className="flex min-h-[44px] items-center gap-1 px-3 text-sm font-semibold uppercase tracking-wide text-navy hover:text-accent-blue"
-            >
-              Pricing
-            </Link>
           </nav>
 
           {/*
@@ -265,14 +258,6 @@ export function Header() {
               <MobileDrawerSection label="Hard Services" items={HARD_SERVICES} onNavigate={() => setMobileOpen(false)} />
               <MobileDrawerSection label="Soft Services" items={SOFT_SERVICES} onNavigate={() => setMobileOpen(false)} />
               <MobileDrawerSection label="Company" items={COMPANY_PAGES} onNavigate={() => setMobileOpen(false)} />
-              <Link
-                to={PACKAGES_PAGE.path}
-                className="mobile-drawer-item flex min-h-[48px] items-center gap-3 border-b border-border py-3 text-sm font-semibold uppercase tracking-wide text-navy"
-                onClick={() => setMobileOpen(false)}
-              >
-                <Icon name={PACKAGES_PAGE.icon} size={18} />
-                Pricing
-              </Link>
             </div>
 
             {/* CTAs pinned near the bottom, matching the desktop header's set — see the

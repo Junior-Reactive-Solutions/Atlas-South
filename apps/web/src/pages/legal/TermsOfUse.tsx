@@ -85,10 +85,11 @@ export function TermsOfUse() {
         </section>
 
         <section>
-          <h2 className="text-xl font-bold text-navy">7. Quotes and Pricing</h2>
+          <h2 className="text-xl font-bold text-navy">7. Quotes</h2>
           <p>
-            All quotes and pricing displayed on this website are indicative only and do not constitute a binding contract. Prices are
-            subject to change without notice and may vary based on specific project requirements, site conditions, and market factors.
+            All quotes provided by Atlas South Technical Services are indicative only and do not constitute a binding contract. Costs are
+            subject to change based on specific project requirements, site conditions, and market factors, and are confirmed in writing
+            before any work commences.
           </p>
           <p>
             A formal written quote and confirmation is required before any work commences. All quotes are valid for 30 days from issue

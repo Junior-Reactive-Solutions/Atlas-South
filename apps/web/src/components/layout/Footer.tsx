@@ -9,7 +9,6 @@ import {
   INDUSTRIES,
   SERVICE_AREAS,
   LEGAL_PAGES,
-  PACKAGES_PAGE,
   type NavItem,
 } from '@atlas-south/shared';
 import { Icon, useAnimationScope, DURATION, EASE, STAGGER_GAP } from '@atlas-south/design-system';
@@ -76,9 +75,7 @@ export function Footer() {
     });
   }, []);
 
-  // Packages/pricing sits with Company rather than getting a seventh column — it's one
-  // link, not a category, and the grid is already a tight fit at lg:grid-cols-6.
-  const companyColumnItems = [...COMPANY_PAGES, PACKAGES_PAGE];
+  const companyColumnItems = [...COMPANY_PAGES];
 
   const legalConnectItems = [
     ...LEGAL_PAGES,

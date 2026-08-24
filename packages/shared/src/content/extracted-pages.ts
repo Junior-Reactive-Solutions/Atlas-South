@@ -479,62 +479,62 @@ export const EXTRACTED_PAGES: ExtractedPage[] = [
     "type": "service",
     "path": "/soft-services/catering",
     "data": {
-      "title": "Catering",
+      "title": "Corporate Catering",
       "icon": "utensils",
-      "heroDescription": "On-site and contracted catering for corporate events, staff canteens, and hospitality across London and the South East",
-      "overview": "Food and hospitality leave lasting impressions. Whether it's daily staff canteen services, corporate event catering, or hospitality for client meetings, excellence in catering reflects on your business. Atlas South manages kitchen operations, menus, procurement, and service to professional standards.\n\nWe work with corporate dining cultures, dietary requirements, budgets, and event scale—handling everything from menu planning to kitchen management to post-event cleanup.",
+      "heroDescription": "On-site catering for corporate functions — from boardroom meetings to full corporate events — delivered with the same reliability and standard of presentation as the rest of our facilities services.",
+      "overview": "Atlas South provides on-site catering for corporate environments — from everyday boardroom meetings to full corporate functions and events — delivered with the same reliability and standard of presentation as the rest of our facilities services.\n\nCatering is planned, delivered and cleared down by us, so your team can focus on the meeting, not the menu. Every order is prepared and handled to full food hygiene and allergen compliance, with documentation available whenever your site or event requires it — and service is timed around your agenda, whether that's a breakfast briefing, a full day of back-to-back meetings, or an evening function.",
       "features": [
         {
-          "icon": "utensils",
-          "title": "Staff Canteen Service",
-          "description": "Daily meal preparation and service for on-site staff, with flexible menu rotations and dietary accommodations."
-        },
-        {
-          "icon": "party-popper",
-          "title": "Event Catering",
-          "description": "Full event catering for conferences, product launches, client entertainment, and team celebrations of any size."
-        },
-        {
-          "icon": "leaf",
-          "title": "Dietary & Allergen Support",
-          "description": "Vegan, vegetarian, gluten-free, halal, kosher, and allergen-aware menus tailored to your population."
-        },
-        {
-          "icon": "chef-hat",
-          "title": "Menu Planning",
-          "description": "Seasonal menus, nutritional balance, and culinary variety designed with your team or event theme in mind."
-        },
-        {
-          "icon": "package",
-          "title": "Procurement & Stock",
-          "description": "Sourcing, supplier relationships, and kitchen stock management to control costs and reduce waste."
-        },
-        {
           "icon": "briefcase",
-          "title": "Hospitality & Service",
-          "description": "Professional service for VIP events, client entertainment, and high-touch hospitality scenarios."
+          "title": "Boardroom & Meeting Catering",
+          "description": "Corporate breakfast and lunch service for boardroom lunches, executive briefings and back-to-back meetings."
+        },
+        {
+          "icon": "users",
+          "title": "Conference & Corporate Event Catering",
+          "description": "Multi-day conference catering, corporate functions, receptions and corporate hospitality, catered end-to-end."
+        },
+        {
+          "icon": "utensils",
+          "title": "Bespoke & Dietary-Accommodating Menus",
+          "description": "Menus built around your occasion and your guests, with dietary and allergen accommodations as standard."
+        },
+        {
+          "icon": "shield-check",
+          "title": "Allergen & Food Hygiene Compliance",
+          "description": "Every order is prepared and handled to full food hygiene and allergen compliance, with documentation available whenever your site or event requires it."
+        },
+        {
+          "icon": "clock",
+          "title": "Flexible Scheduling Around Your Agenda",
+          "description": "Breakfast briefings, all-day conferences or evening functions — catering is timed to fit your agenda, not the other way around."
+        },
+        {
+          "icon": "badge-check",
+          "title": "On-Site Setup, Service & Clear-Down",
+          "description": "Food and service presentation handled with the same professionalism expected in the boardrooms and venues we serve, from setup through to clear-down."
         }
       ],
       "faqs": [
         {
-          "question": "Can you handle dietary restrictions and allergies?",
-          "answer": "Yes, absolutely. We maintain separate preparation areas, ingredient tracking, and service protocols for allergen-free and dietary-specific menus."
+          "question": "What occasions do you cater for?",
+          "answer": "Board meetings and executive briefings, team meetings and training sessions, conferences and multi-day corporate events, client receptions and corporate hospitality, and product launches or company celebrations."
         },
         {
-          "question": "How is catering priced?",
-          "answer": "Staff canteen: monthly contract based on headcount and service levels. Event catering: per-head pricing based on menu and service style."
+          "question": "Can you accommodate dietary requirements and allergies?",
+          "answer": "Yes. Every menu can be built around dietary needs and allergen requirements, with full allergen and food hygiene compliance documentation available whenever your site or event requires it."
         },
         {
-          "question": "Do you manage the kitchen facilities or supply your own?",
-          "answer": "We can use your existing kitchen with our staff, or bring mobile catering units for events. Depends on your facilities and the scope."
+          "question": "Do you handle setup, service and clear-down?",
+          "answer": "Yes — on-site setup, service and clear-down are part of every booking, so your team isn't left managing logistics on the day."
         },
         {
-          "question": "Can you adjust menus seasonally or for preferences?",
-          "answer": "Yes. We rotate menus quarterly, gather feedback from staff, and adjust based on popular items and seasonal ingredients."
+          "question": "Can catering fit around a full-day agenda, not just a lunch slot?",
+          "answer": "Yes. Whether it's a breakfast briefing, back-to-back meetings, an all-day conference or an evening function, catering is timed to fit your agenda rather than a fixed menu slot."
         },
         {
-          "question": "What if an event needs last-minute changes?",
-          "answer": "We accommodate menu adjustments, guest-count changes, and timing shifts up to 24 hours before. Last-minute changes incur a small surcharge."
+          "question": "How do I get a quote for a meeting or event?",
+          "answer": "Tell us the occasion, headcount and date, and we'll come back with a menu and service plan built around your event rather than a standard package."
         }
       ],
       "relatedServices": [
@@ -599,61 +599,61 @@ export const EXTRACTED_PAGES: ExtractedPage[] = [
     "path": "/soft-services/concierge",
     "data": {
       "title": "Concierge Services",
-      "icon": "user-check",
-      "heroDescription": "Professional visitor management, reception, and hospitality services enhancing your building's first impression and operational flow",
-      "overview": "Your building's first line of contact shapes every visitor's experience. Professional concierge and reception services require training, judgment, and attention to detail. Atlas South manages reception desks, visitor screening, package handling, and white-glove hospitality services that reflect positively on your organization.\n\nWe handle everything from day-to-day visitor check-in to VIP reception, package coordination, and liaison with tenants—allowing your team to focus on core business.",
+      "icon": "concierge-bell",
+      "heroDescription": "Front-of-house concierge cover for corporate and commercial buildings — reception, access, visitors and daily requests managed with the same reliability as the rest of our facilities services.",
+      "overview": "Atlas South provides on-site concierge services for corporate and commercial buildings — professional front-of-house cover that manages reception, access, visitors and daily requests with the same reliability as the rest of our facilities services.\n\nOne concierge team acts as a single point of contact for every request, from front-desk reception to day-to-day operational needs, so staff and visitors always know exactly who to ask. Access management, visitor handling, deliveries and daily requests are managed the way your site actually operates, not as a generic front-desk routine — and concierge sits alongside our cleaning, technical maintenance and facilities management services, so front-of-house and back-of-house are run by one accountable provider.",
       "features": [
         {
-          "icon": "user-check",
-          "title": "Reception & Visitor Management",
-          "description": "Professional reception staff managing visitor sign-in, badge issuance, access control, and direction."
+          "icon": "user",
+          "title": "Front-of-House & Reception Cover",
+          "description": "Professional reception and front-of-house presence that sets the tone before a single meeting starts — often the first interaction anyone has with your building."
+        },
+        {
+          "icon": "badge-check",
+          "title": "Visitor Management & Sign-In",
+          "description": "Visitor sign-in and handling managed to a consistent standard, so staff and visitors always know exactly what to expect."
+        },
+        {
+          "icon": "shield-check",
+          "title": "Access Control & Key Management",
+          "description": "Access and key management run the way your site actually operates, not a generic front-desk script."
         },
         {
           "icon": "package",
-          "title": "Package & Parcel Handling",
-          "description": "Receiving, logging, storage, and delivery of parcels and mail to tenants with secure handling protocols."
+          "title": "Mail, Courier & Delivery Handling",
+          "description": "Mail, courier and delivery handling managed on-site as part of day-to-day concierge cover."
         },
         {
-          "icon": "phone",
-          "title": "Multi-Line Switchboard",
-          "description": "Professional telephone answering, message taking, and call routing to tenants and departments."
+          "icon": "calendar",
+          "title": "Meeting Room Setup & Coordination",
+          "description": "Meeting room setup and coordination handled alongside tenant and staff enquiry handling, so requests go to one team."
         },
         {
-          "icon": "briefcase",
-          "title": "VIP & Executive Hospitality",
-          "description": "Premium greeting services, beverage service, and white-glove hospitality for VIP visits and client entertainment."
-        },
-        {
-          "icon": "clipboard-check",
-          "title": "Building Coordination",
-          "description": "Vendor management, delivery coordination, access scheduling, and event liaison."
-        },
-        {
-          "icon": "smile",
-          "title": "Professional Appearance",
-          "description": "Uniformed staff trained in corporate etiquette, multi-language support, and professional interpersonal skills."
+          "icon": "clock",
+          "title": "Out-of-Hours & Event Concierge Cover",
+          "description": "Concierge cover extends to out-of-hours building access management and event concierge cover, built around your building's hours and footfall."
         }
       ],
       "faqs": [
         {
-          "question": "Can concierge staff represent our brand values?",
-          "answer": "Absolutely. We hire and train staff to embody professionalism and reflect your brand tone. Uniforms, greeting standards, and service protocols are customized to your building culture."
+          "question": "What types of buildings do you provide concierge cover for?",
+          "answer": "Corporate offices and business parks, multi-tenant commercial buildings, and any building that needs reception, front-of-house or out-of-hours access cover."
         },
         {
-          "question": "Do you offer multi-language support?",
-          "answer": "Yes. Our London and South East team includes multi-lingual staff. We can arrange language support for regular or event-based needs."
+          "question": "Do you provide out-of-hours cover?",
+          "answer": "Yes. Concierge cover extends to out-of-hours building access management and event concierge cover, built around your site's actual hours and footfall."
         },
         {
-          "question": "How is concierge service priced?",
-          "answer": "Based on desk hours (full-time 24/7, business hours, or evening/weekend coverage) and scope of services. Premium VIP services have additional fees."
+          "question": "Can concierge extend into our wider facilities services?",
+          "answer": "Yes. Concierge sits alongside our cleaning, technical maintenance and facilities management services, so front-of-house and back-of-house are run by one accountable provider."
         },
         {
-          "question": "Can you handle package delivery volume surges?",
-          "answer": "Yes. We scale storage and handling during peak holiday periods and can implement surge protocols if delivery volume increases."
+          "question": "How do you handle access control and key management?",
+          "answer": "Access management, visitor handling and key control are managed the way your site actually operates, not a generic front-desk routine."
         },
         {
-          "question": "What if a situation requires judgment calls?",
-          "answer": "Our staff are trained in visitor safety assessment, problem-solving, and escalation procedures. Sensitive situations are escalated to your security or management immediately."
+          "question": "How do I get a concierge cover proposal?",
+          "answer": "Tell us about your site, hours and footfall, and we'll come back with a concierge cover plan built around how your building actually runs."
         }
       ],
       "relatedServices": [

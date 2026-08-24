@@ -109,38 +109,7 @@ export interface CareersContent {
   rightToWorkNote?: string;
 }
 
-export interface PricingTier {
-  label: string;
-  startingFrom: string;
-  description: string;
-  /**
-   * Optional, not required: earlier seeded content omitted this field entirely on every
-   * tier, and something reading `.length` off it unconditionally crashed the whole page.
-   * Render call sites must guard for it being absent, not just empty.
-   */
-  includes?: string[];
-  /**
-   * Features shown struck through / greyed out — what this tier does NOT cover. The
-   * original site's packages section showed both included and excluded items side by
-   * side per tier (e.g. Starter: "✗ Security services", "✗ Commercial cleaning"), which
-   * the audit called out as a genuine strength: it pre-qualifies leads by letting a buyer
-   * self-select before enquiring, rather than finding out after contact that a tier
-   * doesn't cover what they need.
-   */
-  excludes?: string[];
-  /** Renders the "Most Popular" badge and a highlighted card treatment on this tier. */
-  popular?: boolean;
-  /** PayPal billing plan id for this tier's recurring subscription — see paypal.ts. */
-  paypalPlanId?: string;
-  icon: IconName;
-}
-
-export interface PackagesContent {
-  eyebrow?: string;
-  title: string;
-  heroDescription: string;
-  intro: string;
-  /** e.g. "Cancel anytime · 30 days notice" — shown near the pricing grid. */
-  cancellationNote?: string;
-  tiers: PricingTier[];
-}
+// PricingTier / PackagesContent removed 2026-08-24 at the client's explicit request: no
+// pricing of any kind is to be displayed on the website. The /packages page, its nav entry,
+// footer/header links, the homepage pricing teaser, and the PayPal subscription components
+// that rendered on it were removed in the same change — see git history on this file.
