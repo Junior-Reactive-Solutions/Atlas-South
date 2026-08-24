@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { COMPANY } from '@atlas-south/shared';
 
@@ -36,8 +36,20 @@ function computeCanHover(): boolean {
  * mouse being connected to a tablet) — not just a snapshot taken once on mount.
  */
 export function AnimatedLogo() {
-  const [canHover] = useState(computeCanHover);
+  const [canHover, setCanHover] = useState(computeCanHover);
   const [revealed, setRevealed] = useState(false);
+
+  // Keeps `canHover` correct if the device's pointer situation changes without a reload —
+  // a 2-in-1 laptop docking/undocking its keyboard, or an external mouse being connected to
+  // a tablet. The doc comment above described this listener before it actually existed;
+  // this closes that gap rather than leaving the claim false.
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.matchMedia) return;
+    const query = window.matchMedia('(hover: hover) and (pointer: fine)');
+    const onChange = () => setCanHover(query.matches);
+    query.addEventListener('change', onChange);
+    return () => query.removeEventListener('change', onChange);
+  }, []);
 
   const symbol = <img src="/brand/symbol.svg" alt="" aria-hidden="true" className="h-9 w-auto shrink-0" />;
   const wordmark = <img src="/brand/wordmark.svg" alt="" aria-hidden="true" className="h-5 w-auto" />;
