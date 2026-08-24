@@ -66,14 +66,8 @@ export const SERVICE_AREAS: NavItem[] = [
   { id: 'surrey-kent', label: 'Surrey & Kent', path: '/areas/surrey-kent', icon: 'map-pin' },
 ];
 
-/** Commercial service-agreement tiers — SLA/pricing page for corporate clients. */
-export const PACKAGES_PAGE: NavItem = {
-  id: 'packages',
-  label: 'Packages',
-  path: '/packages',
-  icon: 'package',
-};
-
+// PACKAGES_PAGE (the /packages pricing page) removed 2026-08-24 at the client's explicit
+// request: no pricing of any kind is to be displayed anywhere on the site.
 export const LEGAL_PAGES: NavItem[] = [
   { id: 'privacy-policy', label: 'Privacy Policy', path: '/legal/privacy', icon: 'shield' },
   { id: 'terms-of-use', label: 'Terms of Use', path: '/legal/terms', icon: 'file-text' },
@@ -89,6 +83,5 @@ export const ALL_NAV_ITEMS = [
   ...SOFT_SERVICES,
   ...INDUSTRIES,
   ...SERVICE_AREAS,
-  PACKAGES_PAGE,
   ...LEGAL_PAGES,
 ] as const;

@@ -1,8 +1,8 @@
 import { EXTRACTED_PAGES } from './extracted-pages.js';
-import { HOME_CONTENT, COMPANY_CONTENT, CAREERS_CONTENT, PACKAGES_CONTENT } from './pages.js';
+import { HOME_CONTENT, COMPANY_CONTENT, CAREERS_CONTENT } from './pages.js';
 
 export { EXTRACTED_PAGES, type ExtractedPage } from './extracted-pages.js';
-export { HOME_CONTENT, COMPANY_CONTENT, CAREERS_CONTENT, PACKAGES_CONTENT } from './pages.js';
+export { HOME_CONTENT, COMPANY_CONTENT, CAREERS_CONTENT } from './pages.js';
 
 /**
  * Every page's content, keyed by the same slug the Content API serves it under.
@@ -30,5 +30,4 @@ export const STATIC_PAGE_CONTENT: Record<string, Record<string, unknown>> = {
   home: HOME_CONTENT as unknown as Record<string, unknown>,
   company: COMPANY_CONTENT as unknown as Record<string, unknown>,
   careers: CAREERS_CONTENT as unknown as Record<string, unknown>,
-  packages: PACKAGES_CONTENT as unknown as Record<string, unknown>,
 };

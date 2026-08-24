@@ -5,7 +5,7 @@ import { CoverageMap } from '../components/home/CoverageMap';
 import { Seo } from '../components/seo/Seo.js';
 import { useContentPage } from '../hooks/useContentPage';
 import { HARD_SERVICES, SOFT_SERVICES, INDUSTRIES, COMPANY } from '@atlas-south/shared';
-import { Icon, useSpotlight } from '@atlas-south/design-system';
+import { Icon } from '@atlas-south/design-system';
 import { useVisibleNavItems } from '../hooks/useNavVisibility.js';
 import {
   SectionHeading,
@@ -17,11 +17,10 @@ import {
   type GridCard,
 } from '../components/sections';
 import { photo, heroImageFor, heroImageAltFor } from '../content/imagery';
-import { trackCTAClick } from '../lib/analytics.js';
 // HomeContent used to be re-declared locally here, duplicating the definition in
 // types/content.ts — the two then had to be edited in lockstep, which is exactly how the
 // stale residential fields survived in one copy after being changed in the other.
-import type { HomeContent, PackagesContent, PricingTier } from '../types/content';
+import type { HomeContent } from '../types/content';
 
 /**
  * Short brand statement shown under the hero.
@@ -80,51 +79,8 @@ const WHY_US = [
  *   generated one; real teaser copy belongs in the CMS.
  */
 
-/**
- * One pricing teaser card — its own component, not inlined in the `.tiers.map()` below,
- * so `useSpotlight` gets a genuine per-card hook instance (calling a hook conditionally
- * inside a loop body breaks React's rules of hooks). The same `.spotlight-card` class as
- * Packages.tsx's TierCard — same family of component, same effect, no separate copy of it.
- */
-function HomePricingCard({ tier }: { tier: PricingTier }) {
-  const spotlightRef = useSpotlight<HTMLAnchorElement>();
-
-  return (
-    // Links to the comparison page, not straight to the contact form — these are
-    // "browsing" chips. The form-prefilling deep link lives on /packages itself,
-    // once someone has actually picked a tier to act on.
-    <Link
-      ref={spotlightRef}
-      to="/packages"
-      onClick={() => trackCTAClick(`home-pricing-${tier.label}`)}
-      className={`spotlight-card group relative flex flex-col rounded-2xl border p-6 transition-colors hover:border-accent-blue ${
-        tier.popular ? 'border-accent-blue bg-accent-blue/5' : 'border-border bg-canvas'
-      }`}
-    >
-      {tier.popular && (
-        <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-accent-blue px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-white">
-          Most Popular
-        </span>
-      )}
-      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent-blue/10">
-        <Icon name={tier.icon} size={20} className="text-accent-blue" />
-      </div>
-      <h3 className="mt-4 font-display text-base font-bold text-navy">{tier.label}</h3>
-      <p className="mt-1 text-lg font-bold text-accent-blue">
-        {tier.startingFrom}
-        <span className="text-sm font-normal text-slate">/mo</span>
-      </p>
-      <span className="mt-4 flex items-center gap-1 text-sm font-semibold text-accent-blue">
-        See what's included
-        <Icon name="arrow-right" size={14} className="transition-transform group-hover:translate-x-1" />
-      </span>
-    </Link>
-  );
-}
-
 export function Home() {
   const { data: content } = useContentPage<HomeContent>('home');
-  const { data: packages } = useContentPage<PackagesContent>('packages');
 
   // Coming-soon (placeholder) and admin-hidden entries are filtered out before a card is
   // ever built — the client doesn't want "Coming Soon" pages visible at all, so these
@@ -283,51 +239,6 @@ export function Home() {
         heading="Trusted by organisations across London"
         subcopy="Built steadily since 2018, one contract at a time."
       />
-
-      {/*
-        Transparent pricing teaser.
-
-        The client's own pre-rebuild site published its pricing on-page — the audit
-        named this a genuine advantage over the inspiration site, which publishes none
-        (docs/agile/inspiration-gap-analysis.md: "Monthly subscription tiers with
-        transparent pricing — ABM publishes none"). The /packages page carrying that
-        pricing was live but linked from nowhere — not the header, not the footer, not
-        the homepage — so a visitor had no way to discover it short of typing the URL.
-        This surfaces it where "insight the user to pay" actually has to happen: on the
-        page most visitors land on first.
-
-        Figures are read from the same 'packages' content page /packages itself renders
-        (never restated by hand here), so there is exactly one place a price can be
-        wrong, and this section simply doesn't render until that content has loaded —
-        no placeholder numbers stand in for it.
-      */}
-      {packages && packages.tiers.length > 0 && (
-        <section aria-label="Pricing" className="py-16 sm:py-20">
-          <div className="mx-auto max-w-7xl px-4">
-            <SectionHeading
-              eyebrow="Transparent pricing"
-              title="Published prices, no quote required to see them"
-              subcopy="Three service-agreement tiers, each with a monthly price you can see before you ever pick up the phone."
-              align="center"
-            />
-            <div className="mx-auto mt-12 grid max-w-4xl gap-4 sm:grid-cols-3">
-              {packages.tiers.map((tier) => (
-                <HomePricingCard key={tier.label} tier={tier} />
-              ))}
-            </div>
-            <div className="mt-8 text-center">
-              <Link
-                to="/packages"
-                onClick={() => trackCTAClick('home-pricing-view-all')}
-                className="inline-flex min-h-[44px] items-center gap-2 font-semibold text-accent-blue hover:underline"
-              >
-                Compare all packages
-                <Icon name="arrow-right" size={16} />
-              </Link>
-            </div>
-          </div>
-        </section>
-      )}
 
       {/* Why Atlas South */}
       <section aria-label="Why Atlas South" className="py-16 sm:py-20">

@@ -189,82 +189,8 @@ export const CAREERS_CONTENT = {
     'Atlas South is committed to equal opportunities. All candidates must have the right to work in the UK. We follow all UK employment law and regulations.',
 };
 
-/**
- * Prices and tier structure restored verbatim from the pre-rebuild live site — see
- * docs/audit/screenshots/atlas-sec-packages.png, captured 2026-07-29 and cited in the
- * audit as "Monthly packages — genuinely strong. Transparent tiers, clear feature
- * comparison, explicit inclusions/exclusions. Protect this in the redesign."
- * (docs/audit/report.html §5.4). An earlier seed had replaced it with four invented tiers
- * (£500/£1,200/£2,500/custom) bearing no relation to the real £75/£180/£450 structure.
- *
- * Every price, tier name, inclusion and exclusion below is that original, unchanged.
- * The tier *descriptions* are not: the originals sold to "single-property homeowners" and
- * "landlords", because the old site served residential customers. The client has since
- * confirmed this site is commercial/industrial only, so those three sentences (and the
- * intro) are rewritten to their commercial equivalents. Prices and feature lists are
- * untouched — see the note in the summary flagged to the client, since this is the one
- * place where "match the original exactly" and "no residential mention" genuinely
- * conflicted.
- */
-export const PACKAGES_CONTENT = {
-  eyebrow: 'Monthly Plans',
-  title: 'Subscribe & never pay emergency rates',
-  heroDescription:
-    'Our monthly packages give you priority cover, regular maintenance visits and capped emergency callout costs — saving you hundreds every year.',
-  intro:
-    'Whether you run a single site or manage a portfolio of buildings, we have flexible packages designed to fit your operation and your budget.',
-  cancellationNote: 'Cancel anytime · 30 days notice',
-  tiers: [
-    {
-      label: 'Starter',
-      startingFrom: '£75',
-      description: 'For a single commercial site that needs essential cover and predictable costs.',
-      icon: 'box',
-      includes: [
-        '1 property covered',
-        'Priority booking (next day)',
-        'Emergency callout capped at £50',
-        '1 annual maintenance visit',
-        'Plumbing & electrical cover',
-        'Monthly email report',
-      ],
-      excludes: ['Security services', 'Commercial cleaning'],
-    },
-    {
-      label: 'Professional',
-      startingFrom: '£180',
-      description: 'For portfolios of up to five sites, or a growing business needing every trade covered.',
-      icon: 'briefcase',
-      popular: true,
-      includes: [
-        'Up to 5 properties',
-        'Priority booking (same day)',
-        'Emergency callout FREE',
-        'Quarterly maintenance visits',
-        'All trades covered',
-        'Monthly inspection report',
-        // Originally "Domestic & commercial cleaning" — "domestic" dropped for the same
-        // no-residential reason as the descriptions above; the commercial half is intact.
-        'Commercial cleaning',
-      ],
-      excludes: ['Security services'],
-    },
-    {
-      label: 'Enterprise',
-      startingFrom: '£450',
-      description: 'Full-service contract for property portfolios and commercial clients needing everything covered.',
-      icon: 'crown',
-      includes: [
-        'Unlimited properties',
-        '24/7 priority emergency cover',
-        'Emergency callout FREE always',
-        'Monthly maintenance visits',
-        'All trades + security included',
-        'Compliance management',
-        'Commercial cleaning included',
-        'Dedicated account manager',
-      ],
-      excludes: [],
-    },
-  ],
-};
+// PACKAGES_CONTENT (the /packages pricing page's tiers, prices and inclusions) removed
+// 2026-08-24 at the client's explicit request: no pricing of any kind is to be displayed
+// anywhere on the site. See git history on this file for the removed £75/£180/£450 tier
+// structure, and packages/shared/src/constants/navigation.ts for the corresponding nav
+// removal.

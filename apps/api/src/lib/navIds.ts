@@ -3,7 +3,6 @@ import {
   SOFT_SERVICES,
   INDUSTRIES,
   SERVICE_AREAS,
-  PACKAGES_PAGE,
 } from '@atlas-south/shared';
 
 /**
@@ -23,7 +22,7 @@ import {
  * all rather than to rely on an operator not pressing it.
  */
 export const TOGGLEABLE_NAV_IDS: ReadonlySet<string> = new Set(
-  [...HARD_SERVICES, ...SOFT_SERVICES, ...INDUSTRIES, ...SERVICE_AREAS, PACKAGES_PAGE].map(
+  [...HARD_SERVICES, ...SOFT_SERVICES, ...INDUSTRIES, ...SERVICE_AREAS].map(
     (item) => item.id,
   ),
 );
@@ -38,7 +37,7 @@ export function isToggleableNavId(navId: string): boolean {
  * Built from the same constants so it cannot fall out of sync with the router.
  */
 export const NAV_ID_TO_PATH: ReadonlyMap<string, string> = new Map(
-  [...HARD_SERVICES, ...SOFT_SERVICES, ...INDUSTRIES, ...SERVICE_AREAS, PACKAGES_PAGE].map(
+  [...HARD_SERVICES, ...SOFT_SERVICES, ...INDUSTRIES, ...SERVICE_AREAS].map(
     (item) => [item.id, item.path],
   ),
 );

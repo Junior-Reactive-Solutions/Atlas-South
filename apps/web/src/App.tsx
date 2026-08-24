@@ -5,7 +5,6 @@ import {
   SOFT_SERVICES,
   INDUSTRIES,
   SERVICE_AREAS,
-  PACKAGES_PAGE,
   type NavItem,
 } from '@atlas-south/shared';
 import { Layout } from './components/layout/Layout';
@@ -65,7 +64,6 @@ const SurreyKent = lazy(() => import('./pages/areas/SurreyKent.js').then((m) => 
 const About = lazy(() => import('./pages/company/About.js').then((m) => ({ default: m.About })));
 const VisionMission = lazy(() => import('./pages/company/VisionMission.js').then((m) => ({ default: m.VisionMission })));
 const Contact = lazy(() => import('./pages/company/Contact.js').then((m) => ({ default: m.Contact })));
-const Packages = lazy(() => import('./pages/packages/Packages.js').then((m) => ({ default: m.Packages })));
 const Careers = lazy(() => import('./pages/careers/Careers.js').then((m) => ({ default: m.Careers })));
 
 
@@ -159,8 +157,6 @@ export default function App() {
           {stubRoutes(INDUSTRIES, 'docs/build/06-PAGE-SPECIFICATIONS.md — Industries')}
           {stubRoutes(SERVICE_AREAS, 'docs/build/06-PAGE-SPECIFICATIONS.md — Service Areas')}
 
-          {/* Packages page */}
-          <Route path={PACKAGES_PAGE.path} element={<Packages />} />
 
             <Route path="*" element={<NotFound />} />
           </Route>

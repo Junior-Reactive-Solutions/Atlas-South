@@ -9,7 +9,7 @@ type JsonRecord = Record<string, unknown>;
 interface ContentPageDoc {
   id: string;
   slug: string;
-  type: 'service' | 'industry' | 'area' | 'home' | 'company' | 'careers' | 'packages';
+  type: 'service' | 'industry' | 'area' | 'home' | 'company' | 'careers';
   path: string;
   status: 'draft' | 'published';
   draftData: JsonRecord;
@@ -61,7 +61,6 @@ export function AdminContentEdit() {
   const [certifications, setCertifications] = useState<Row[]>([]);
   const [benefits, setBenefits] = useState<Row[]>([]);
   const [openRoles, setOpenRoles] = useState<Row[]>([]);
-  const [tiers, setTiers] = useState<Row[]>([]);
 
   const { authFetch } = useAuth();
 
@@ -83,7 +82,6 @@ export function AdminContentEdit() {
         setCertifications(withKeys(recordArray(data.draftData.certifications)));
         setBenefits(withKeys(recordArray(data.draftData.benefits)));
         setOpenRoles(withKeys(recordArray(data.draftData.openRoles)));
-        setTiers(withKeys(recordArray(data.draftData.tiers)));
       } catch (error) {
         console.error('Error fetching content page:', error);
       } finally {
@@ -114,9 +112,6 @@ export function AdminContentEdit() {
     if (page?.type === 'careers') {
       data.benefits = stripKeys(benefits);
       data.openRoles = stripKeys(openRoles);
-    }
-    if (page?.type === 'packages') {
-      data.tiers = stripKeys(tiers);
     }
     return data;
   };
@@ -188,7 +183,6 @@ export function AdminContentEdit() {
       setCertifications(withKeys(recordArray(updated.draftData.certifications)));
       setBenefits(withKeys(recordArray(updated.draftData.benefits)));
       setOpenRoles(withKeys(recordArray(updated.draftData.openRoles)));
-      setTiers(withKeys(recordArray(updated.draftData.tiers)));
       setMessage({ text: 'Reverted to the last published version', tone: 'success' });
     } catch (err) {
       setMessage({ text: err instanceof Error ? err.message : 'Failed to discard', tone: 'error' });
@@ -457,35 +451,6 @@ export function AdminContentEdit() {
             value={str(fields.rightToWorkNote)}
             onChange={(v) => setFields((f) => ({ ...f, rightToWorkNote: v }))}
             multiline
-          />
-        </>
-      )}
-
-      {page.type === 'packages' && (
-        <>
-          <Field label="Title" value={str(fields.title)} onChange={(v) => setFields((f) => ({ ...f, title: v }))} />
-          <Field
-            label="Hero description"
-            value={str(fields.heroDescription)}
-            onChange={(v) => setFields((f) => ({ ...f, heroDescription: v }))}
-            multiline
-          />
-          <MarkdownField
-            label="Intro"
-            value={str(fields.intro)}
-            onChange={(v) => setFields((f) => ({ ...f, intro: v }))}
-          />
-          <ReorderableList
-            label="Pricing tiers"
-            rows={tiers}
-            setRows={setTiers}
-            fieldConfig={[
-              { key: 'label', label: 'Label' },
-              { key: 'startingFrom', label: 'Starting from (price)' },
-              { key: 'description', label: 'Description', multiline: true },
-              { key: 'icon', label: 'Icon name (lucide)' },
-            ]}
-            newRow={{ label: '', startingFrom: '', description: '', icon: 'box' }}
           />
         </>
       )}
