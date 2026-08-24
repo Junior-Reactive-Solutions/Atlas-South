@@ -116,28 +116,43 @@ const TRACKS = [
  *
  * Direction is deliberately different from TRACKS, not just re-scaled: TRACKS travels
  * left-to-right because that's the reading/scan direction on a wide desktop panel, but a
- * phone or tablet is scrolled vertically, so these enter from *above* and descend — motion
- * that reads as "arriving as you scroll down" rather than a sideways slide that has nothing
- * to do with how the page is actually being navigated.
+ * phone or tablet is scrolled vertically, so the top two rows enter from *above* and
+ * descend — motion that reads as "arriving as you scroll down" — rather than a sideways
+ * slide that has nothing to do with how the page is actually being navigated.
  *
- * Column 0 (x=100) tracks run mostly straight down — there's no text to dodge in this
- * dedicated stage, so the elbow that matters is reserved for column 1 (x=300), which
- * dog-legs sideways into its column after descending, keeping the same "turning a corner
- * reads as following a track" principle TRACKS relies on, just rotated 90°. Index order
- * matches TRACKS/services 1:1 (both are 8 long), alternating column each step exactly as
- * TRACKS alternates band, so the same delay stagger keeps neighbours apart in time.
+ * The bottom two rows deliberately break that pattern rather than repeating it: they enter
+ * from the side (alternating left/right, not the same side every time) and corner down into
+ * their spot, so the stage doesn't read as one mechanical rule applied eight times. Every
+ * row also has its own distinct path shape — a straight run, a single corner, a corrective
+ * S-bend, a long cross-stage sweep — so there's real geometric variety to draw on rather
+ * than one template stamped out with different numbers, and room to add more nodes later
+ * without repeating a shape that's already on stage.
+ *
+ * Column 0 (x=100) / column 1 (x=300) is still the resting grid; index order matches
+ * TRACKS/services 1:1 (both are 8 long), alternating column each step exactly as TRACKS
+ * alternates band, so the same delay stagger keeps neighbours apart in time.
  */
 const MOBILE_VB_W = 400;
 const MOBILE_VB_H = 420;
 const MOBILE_TRACKS = [
+  // Row 0 — straight down / single corner, same as the initial vertical-descent version.
   { d: 'M100,-120 L100,55', endX: 100, endY: 55, delay: 0, size: 'sm' },
   { d: 'M340,-120 L340,25 Q340,55 300,55', endX: 300, endY: 55, delay: 0.1, size: 'sm' },
-  { d: 'M100,-120 L100,155', endX: 100, endY: 155, delay: 0.2, size: 'sm' },
-  { d: 'M340,-120 L340,125 Q340,155 300,155', endX: 300, endY: 155, delay: 0.3, size: 'sm' },
-  { d: 'M100,-120 L100,255', endX: 100, endY: 255, delay: 0.4, size: 'sm' },
-  { d: 'M340,-120 L340,225 Q340,255 300,255', endX: 300, endY: 255, delay: 0.5, size: 'sm' },
-  { d: 'M100,-120 L100,355', endX: 100, endY: 355, delay: 0.6, size: 'sm' },
-  { d: 'M340,-120 L340,325 Q340,355 300,355', endX: 300, endY: 355, delay: 0.7, size: 'sm' },
+  // Row 1 — still predominantly a descent, but each track now corrects sideways into its
+  // column partway down (an S-bend on the right) instead of running dead straight, so the
+  // top half of the stage isn't just row 0's shapes repeated.
+  { d: 'M60,-120 L60,90 Q60,120 100,120 L100,155', endX: 100, endY: 155, delay: 0.2, size: 'sm' },
+  { d: 'M300,-120 L300,90 Q300,120 340,120 L340,140 Q340,155 300,155', endX: 300, endY: 155, delay: 0.3, size: 'sm' },
+  // Row 2 — side entry starts here: a horizontal run off the left/right edge of the stage,
+  // then a single corner down into the row. This is the "come from the side" the lower
+  // rows use instead of repeating the top rows' vertical approach.
+  { d: 'M-140,220 L60,220 Q100,220 100,255', endX: 100, endY: 255, delay: 0.4, size: 'sm' },
+  { d: 'M540,220 L340,220 Q300,220 300,255', endX: 300, endY: 255, delay: 0.5, size: 'sm' },
+  // Row 3 — side entry again, but crossing from the *opposite* edge each track was on in
+  // row 2 (and with a longer sweep / a double corner), so the bottom row doesn't just
+  // mirror row 2's shapes either.
+  { d: 'M540,320 L140,320 Q100,320 100,355', endX: 100, endY: 355, delay: 0.6, size: 'sm' },
+  { d: 'M-140,300 L200,300 Q240,300 240,330 Q240,355 300,355', endX: 300, endY: 355, delay: 0.7, size: 'sm' },
 ] as const;
 
 const SIZE_CLASS = {
