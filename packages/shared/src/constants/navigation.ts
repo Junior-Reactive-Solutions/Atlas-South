@@ -39,9 +39,9 @@ export const SOFT_SERVICES: NavItem[] = [
   { id: 'facilities-management', label: 'Facilities Management', path: '/soft-services/facilities-management', icon: 'building-2' },
   { id: 'security', label: 'Security Services', path: '/soft-services/security', icon: 'shield-check' },
   { id: 'commercial-cleaning', label: 'Commercial Cleaning', path: '/soft-services/commercial-cleaning', icon: 'spray-can' },
-  { id: 'catering', label: 'Catering', path: '/soft-services/catering', icon: 'utensils', placeholder: true },
+  { id: 'catering', label: 'Catering', path: '/soft-services/catering', icon: 'utensils' },
   { id: 'aviation', label: 'Aviation Services', path: '/soft-services/aviation', icon: 'plane' },
-  { id: 'concierge', label: 'Concierge', path: '/soft-services/concierge', icon: 'concierge-bell', placeholder: true },
+  { id: 'concierge', label: 'Concierge', path: '/soft-services/concierge', icon: 'concierge-bell' },
   { id: 'parking-lot-management', label: 'Parking Lot Management', path: '/soft-services/parking-lot-management', icon: 'square-parking' },
 ];
 
