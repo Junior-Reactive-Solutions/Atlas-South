@@ -114,24 +114,30 @@ const TRACKS = [
  * kept, but folded into a compact two-column grid of parking spots instead of one long run
  * across a 1200-unit-wide canvas.
  *
- * Column 0 (x=100) tracks run in mostly straight from the left edge — there's no text to
- * dodge in this dedicated stage, so the elbow that matters is reserved for column 1
- * (x=300), which dog-legs down to its row after entering higher, keeping the same
- * "turning a corner reads as following a track" principle TRACKS relies on. Index order
+ * Direction is deliberately different from TRACKS, not just re-scaled: TRACKS travels
+ * left-to-right because that's the reading/scan direction on a wide desktop panel, but a
+ * phone or tablet is scrolled vertically, so these enter from *above* and descend — motion
+ * that reads as "arriving as you scroll down" rather than a sideways slide that has nothing
+ * to do with how the page is actually being navigated.
+ *
+ * Column 0 (x=100) tracks run mostly straight down — there's no text to dodge in this
+ * dedicated stage, so the elbow that matters is reserved for column 1 (x=300), which
+ * dog-legs sideways into its column after descending, keeping the same "turning a corner
+ * reads as following a track" principle TRACKS relies on, just rotated 90°. Index order
  * matches TRACKS/services 1:1 (both are 8 long), alternating column each step exactly as
  * TRACKS alternates band, so the same delay stagger keeps neighbours apart in time.
  */
 const MOBILE_VB_W = 400;
 const MOBILE_VB_H = 420;
 const MOBILE_TRACKS = [
-  { d: 'M-100,55 L100,55', endX: 100, endY: 55, delay: 0, size: 'sm' },
-  { d: 'M-100,25 L200,25 Q240,25 240,55 L300,55', endX: 300, endY: 55, delay: 0.1, size: 'sm' },
-  { d: 'M-100,155 L100,155', endX: 100, endY: 155, delay: 0.2, size: 'sm' },
-  { d: 'M-100,125 L200,125 Q240,125 240,155 L300,155', endX: 300, endY: 155, delay: 0.3, size: 'sm' },
-  { d: 'M-100,255 L100,255', endX: 100, endY: 255, delay: 0.4, size: 'sm' },
-  { d: 'M-100,225 L200,225 Q240,225 240,255 L300,255', endX: 300, endY: 255, delay: 0.5, size: 'sm' },
-  { d: 'M-100,355 L100,355', endX: 100, endY: 355, delay: 0.6, size: 'sm' },
-  { d: 'M-100,325 L200,325 Q240,325 240,355 L300,355', endX: 300, endY: 355, delay: 0.7, size: 'sm' },
+  { d: 'M100,-120 L100,55', endX: 100, endY: 55, delay: 0, size: 'sm' },
+  { d: 'M340,-120 L340,25 Q340,55 300,55', endX: 300, endY: 55, delay: 0.1, size: 'sm' },
+  { d: 'M100,-120 L100,155', endX: 100, endY: 155, delay: 0.2, size: 'sm' },
+  { d: 'M340,-120 L340,125 Q340,155 300,155', endX: 300, endY: 155, delay: 0.3, size: 'sm' },
+  { d: 'M100,-120 L100,255', endX: 100, endY: 255, delay: 0.4, size: 'sm' },
+  { d: 'M340,-120 L340,225 Q340,255 300,255', endX: 300, endY: 255, delay: 0.5, size: 'sm' },
+  { d: 'M100,-120 L100,355', endX: 100, endY: 355, delay: 0.6, size: 'sm' },
+  { d: 'M340,-120 L340,325 Q340,355 300,355', endX: 300, endY: 355, delay: 0.7, size: 'sm' },
 ] as const;
 
 const SIZE_CLASS = {
