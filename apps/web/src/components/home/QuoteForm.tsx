@@ -149,7 +149,7 @@ export function QuoteForm() {
 
   if (submitted) {
     return (
-      <section aria-label="Quote form" className="bg-navy py-16 text-white sm:py-20">
+      <section aria-label="Quote form" className="bg-navy py-16 text-white sm:py-20" data-widget-theme="dark">
         <div className="mx-auto max-w-2xl px-4">
           <div className="flex items-center gap-4 rounded-2xl border border-white/10 bg-white/5 p-8 shadow-xl backdrop-blur-sm">
             <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-full bg-success/15">
@@ -168,7 +168,7 @@ export function QuoteForm() {
   }
 
   return (
-    <section ref={root} aria-label="Quote form" className="bg-navy py-16 text-white sm:py-20">
+    <section ref={root} aria-label="Quote form" className="bg-navy py-16 text-white sm:py-20" data-widget-theme="dark">
       <div className="mx-auto max-w-2xl px-4">
         <div className="mb-8 text-center">
           {/* text-white is load-bearing: index.css applies `text-navy` to every h1-h4

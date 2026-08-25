@@ -36,7 +36,7 @@ const VIDEO_POSTER = '/hero-plant-room-inspection-poster.jpg';
 
 export function HeroCarousel({ children }: HeroCarouselProps) {
   return (
-    <div className="relative overflow-hidden bg-navy">
+    <div className="relative overflow-hidden bg-navy" data-widget-theme="dark">
       {/*
         `object-right` below the md breakpoint is the fix for a real mobile bug, not a
         stylistic preference. This clip's subject (the technician, the switchgear, the

@@ -394,6 +394,7 @@ export function ServiceNetwork() {
       // link (Hero.tsx) — without it, the sticky header would cover the top of this panel
       // whenever it's scrolled to via #services.
       className="isolate relative scroll-mt-20 overflow-hidden bg-navy py-20 text-white sm:py-24 lg:min-h-[820px] lg:py-32"
+      data-widget-theme="dark"
     >
       {/*
         The lines the nodes ride. Decorative, so aria-hidden, and stroked in brand-blue —
