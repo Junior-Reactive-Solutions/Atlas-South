@@ -84,7 +84,7 @@ export function Footer() {
   ];
 
   return (
-    <footer aria-label="Site footer" className="bg-navy text-white">
+    <footer aria-label="Site footer" className="bg-navy text-white" data-widget-theme="dark">
       <div className="mx-auto max-w-7xl px-4 py-8">
         {/* Trust bar — docs/build/04-FOOTER-SPEC.md §3 */}
         <div className="mb-8 flex flex-wrap items-center gap-x-8 gap-y-3 border-b border-white/10 pb-8 text-sm text-white/80">

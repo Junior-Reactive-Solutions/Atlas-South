@@ -36,6 +36,7 @@ export function CtaBand({
   return (
     <section
       className={`py-16 sm:py-20 ${isNavy ? 'bg-navy text-white' : 'bg-canvas-tint'}`}
+      data-widget-theme={isNavy ? 'dark' : undefined}
     >
       <div className="mx-auto flex max-w-7xl flex-col gap-8 px-4 lg:flex-row lg:items-center lg:justify-between">
         <div className="max-w-2xl">
