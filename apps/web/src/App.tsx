@@ -14,18 +14,33 @@ import { PageStub } from './pages/PageStub';
 import { NotFound } from './pages/NotFound';
 import { PageLoadingFallback } from './components/PageLoadingFallback.js';
 
-// Admin pages — not lazy loaded (small, always together)
+// Admin login stays eager — it's the door every admin visit opens through, and unlike
+// the pages behind it, it doesn't pull in any of the heavy libraries below.
 import { AdminLogin } from './pages/admin/Login.js';
-import { AdminDashboard } from './pages/admin/Dashboard.js';
-import { AdminEnquiries } from './pages/admin/Enquiries.js';
-import { AdminApplications } from './pages/admin/Applications.js';
-import { AdminSettings } from './pages/admin/Settings.js';
-import { AdminAnalytics } from './pages/admin/Analytics.js';
-import { AdminContent } from './pages/admin/Content.js';
-import { AdminVisibility } from './pages/admin/Visibility.js';
-import { AdminContentEdit } from './pages/admin/ContentEdit.js';
-import { AdminLeads } from './pages/admin/Leads.js';
 import { ChatBot } from './components/chat/ChatBot.js';
+
+// Every other admin page is lazy-loaded. They were previously bundled eagerly on the
+// assumption they were "small, always together" — but Enquiries/Dashboard pull in the
+// `motion` animation library and Analytics pulls in the full @visx charting stack, and
+// eager-importing them meant every public-site visitor downloaded both in the ~750KB
+// main chunk before seeing a single page, even though the overwhelming majority of
+// visitors are customers who never touch /admin at all. Splitting these out means a
+// first-time visitor's bundle no longer pays for code only staff ever run.
+const AdminDashboard = lazy(() => import('./pages/admin/Dashboard.js').then((m) => ({ default: m.AdminDashboard })));
+const AdminEnquiries = lazy(() => import('./pages/admin/Enquiries.js').then((m) => ({ default: m.AdminEnquiries })));
+const AdminApplications = lazy(() =>
+  import('./pages/admin/Applications.js').then((m) => ({ default: m.AdminApplications }))
+);
+const AdminSettings = lazy(() => import('./pages/admin/Settings.js').then((m) => ({ default: m.AdminSettings })));
+const AdminAnalytics = lazy(() => import('./pages/admin/Analytics.js').then((m) => ({ default: m.AdminAnalytics })));
+const AdminContent = lazy(() => import('./pages/admin/Content.js').then((m) => ({ default: m.AdminContent })));
+const AdminVisibility = lazy(() =>
+  import('./pages/admin/Visibility.js').then((m) => ({ default: m.AdminVisibility }))
+);
+const AdminContentEdit = lazy(() =>
+  import('./pages/admin/ContentEdit.js').then((m) => ({ default: m.AdminContentEdit }))
+);
+const AdminLeads = lazy(() => import('./pages/admin/Leads.js').then((m) => ({ default: m.AdminLeads })));
 
 // Legal pages
 import { TermsOfUse } from './pages/legal/TermsOfUse.js';

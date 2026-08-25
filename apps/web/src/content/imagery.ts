@@ -89,6 +89,24 @@ export function heroImageFor(slug: string, width = 1600): string {
 }
 
 /**
+ * Widths offered in a hero `srcset` — from the smallest phone up to a 1600px desktop
+ * render. The browser picks whichever is closest to the actual rendered size at the
+ * actual device pixel ratio, rather than everyone downloading the same 1600px file this
+ * hero used to serve unconditionally regardless of viewport or connection speed.
+ */
+const HERO_SRCSET_WIDTHS = [480, 768, 1080, 1440, 1920];
+
+/**
+ * `srcset` string for a hero photograph — pairs with `heroImageFor` (same source image,
+ * every candidate width) on the full-bleed page heroes (PhotoHero.tsx). Callers pass
+ * `sizes="100vw"` alongside it since these heroes are always full viewport width.
+ */
+export function heroImageSrcSetFor(slug: string): string {
+  const id = HERO_BY_SLUG[slug] ?? HERO_FALLBACK;
+  return HERO_SRCSET_WIDTHS.map((w) => `${img(id, w)} ${w}w`).join(', ');
+}
+
+/**
  * A second, distinct photograph per slug — shown on hover via <HoverImage>
  * (components/shared/HoverImage.tsx) wherever a card carries both `image` and
  * `imageAlt` (see CardGrid.tsx). Same sourcing rigor and provenance as HERO_BY_SLUG:

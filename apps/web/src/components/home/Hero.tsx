@@ -50,7 +50,7 @@ interface HeroProps {
  */
 const DEFAULT_HEADLINE_LINES: [string, string, string] = [
   'Trades & facilities services',
-  'you can trust —',
+  'you can trust,',
   'for commercial & industrial sites.',
 ];
 
@@ -160,6 +160,19 @@ export function Hero({
       const LINE_GAP_MS = 260; // pause before the next line starts
       const START_DELAY_MS = 300; // roughly when the eyebrow has landed
 
+      // Every timer this effect schedules gets tracked here and cleared on cleanup below.
+      // Without this, a fast remount (React StrictMode's dev-only mount→cleanup→mount, or a
+      // genuine route-away-and-back) left the first run's timers alive — they kept firing
+      // into the second run's freshly-cleared text, so two typewriters raced and the
+      // headline visibly stuttered/duplicated characters. scope.revert() already tears down
+      // anime.js-registered animations on cleanup; returning a cleanup callback here (anime
+      // v4 scopes support this, same shape as a useEffect cleanup) hooks these raw timers
+      // into that same teardown.
+      const timeoutIds: ReturnType<typeof setTimeout>[] = [];
+      const schedule = (fn: () => void, delay: number) => {
+        timeoutIds.push(setTimeout(fn, delay));
+      };
+
       let cursor: HTMLSpanElement | null = null;
       const placeCursorAfter = (el: HTMLElement) => {
         if (!cursor) {
@@ -176,10 +189,10 @@ export function Hero({
         const text = fullTexts[lineIndex];
         for (let charIndex = 1; charIndex <= text.length; charIndex++) {
           const revealed = text.slice(0, charIndex);
-          setTimeout(() => {
-            // Guards against a race with unmount — this component mounts once on initial
-            // page load, but the timers are plain setTimeout, not tied to React's own
-            // cleanup, so this keeps a very late timer from writing into a detached node.
+          schedule(() => {
+            // Guards against a race with unmount — timers are plain setTimeout, not tied
+            // to React's own cleanup, so this keeps a very late timer from writing into a
+            // detached node.
             if (!el.isConnected) return;
             el.textContent = revealed;
             placeCursorAfter(el);
@@ -189,7 +202,11 @@ export function Hero({
         delay += LINE_GAP_MS;
       });
       const finalDelay = delay;
-      setTimeout(() => cursor?.remove(), finalDelay);
+      schedule(() => cursor?.remove(), finalDelay);
+
+      return () => {
+        timeoutIds.forEach(clearTimeout);
+      };
     }
   }, []);
 

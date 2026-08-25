@@ -35,6 +35,14 @@
       href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Inter:wght@400;500;600&display=swap"
       rel="stylesheet"
     />
+    <!--
+      The home hero's poster frame (components/home/HeroCarousel.tsx) is the LCP element
+      on the site's single most-visited page. Without this hint it only starts downloading
+      once the router has resolved the Home route and React has rendered the <img>/<video>
+      — this preload lets the browser fetch it in parallel with parsing the app bundle,
+      so the hero has a real photograph on screen well before JS has finished loading.
+    -->
+    <link rel="preload" as="image" href="/hero-plant-room-inspection-poster.jpg" fetchpriority="high" />
     <title>Atlas South Technical Services</title>
   </head>
   <body>

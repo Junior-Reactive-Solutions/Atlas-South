@@ -7,6 +7,9 @@ interface PhotoHeroProps {
   description: string;
   /** Full-bleed background photograph URL — see content/imagery.ts. */
   image: string;
+  /** `srcset` for `image` — e.g. content/imagery.ts's heroImageSrcSetFor(slug). Optional so
+   * a caller passing a raw URL without size variants still renders correctly. */
+  imageSrcSet?: string;
   ctaLabel?: string;
   ctaPath?: string;
 }
@@ -27,6 +30,7 @@ export function PhotoHero({
   title,
   description,
   image,
+  imageSrcSet,
   ctaLabel = 'Get a Free Quote',
   ctaPath = '/company/contact',
 }: PhotoHeroProps) {
@@ -43,8 +47,16 @@ export function PhotoHero({
       */}
       <img
         src={image}
+        srcSet={imageSrcSet}
+        sizes={imageSrcSet ? '100vw' : undefined}
         alt=""
         aria-hidden="true"
+        // This is the largest above-the-fold image on every detail page — the LCP element
+        // on all of them. fetchpriority tells the browser to fetch it ahead of
+        // lower-priority assets queued behind it (fonts, below-fold card images);
+        // decoding="async" keeps that fetch off the thread painting the rest of the page.
+        fetchPriority="high"
+        decoding="async"
         className="absolute inset-0 h-full w-full animate-hero-zoom object-cover motion-reduce:animate-none"
       />
       {/* Navy wash — text sits on this, never directly on the photo. */}
