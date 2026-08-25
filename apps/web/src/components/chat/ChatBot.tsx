@@ -1,5 +1,5 @@
 ﻿import { useState, useEffect, useRef, useCallback } from 'react';
-import { X, Send, ChevronRight } from 'lucide-react';
+import { X, Send, ChevronRight, MessageSquarePlus, CircleHelp } from 'lucide-react';
 import { prefersReducedMotion } from '@atlas-south/design-system';
 import { useSectionTheme } from '../../hooks/useSectionTheme.js';
 import { ChatBadgeIcon } from './ChatBadgeIcon.js';
@@ -413,48 +413,54 @@ export function ChatBot() {
 
       {/* ── Chat window ── */}
       <div
-        className={`fixed bottom-24 right-6 z-50 flex w-[calc(100vw-3rem)] max-w-sm flex-col overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-slate-200 transition-all duration-300 ease-out ${
+        className={`fixed bottom-24 right-6 z-50 flex w-[calc(100vw-3rem)] max-w-sm flex-col overflow-hidden rounded-[20px] border border-border bg-canvas shadow-[0_24px_60px_-16px_rgba(0,36,132,0.35),0_4px_14px_rgba(0,36,132,0.12)] transition-all duration-300 ease-out ${
           open
             ? 'translate-y-0 opacity-100 pointer-events-auto'
             : 'translate-y-6 opacity-0 pointer-events-none'
         }`}
-        style={{ height: '480px' }}
+        style={{ height: 'min(600px, 75vh)' }}
         role="dialog"
         aria-label="Atlas South chat assistant"
         aria-modal="false"
       >
         {/* Header — badge is always drawn against this navy bar, so theme is fixed to
-            'dark' (behind = dark) regardless of what section the page is scrolled to. */}
-        <div className="flex items-center gap-3 bg-navy px-4 py-3">
+            'dark' (behind = dark) regardless of what section the page is scrolled to.
+            border-b in accent-blue at low opacity gives the header a defined edge in the
+            brand's own colour rather than a plain flat cut. */}
+        <div className="flex items-center gap-3 border-b border-accent-blue/40 bg-navy px-4 py-3.5">
           <ChatBadgeIcon theme="dark" size={36} />
           <div className="min-w-0 flex-1">
-            <p className="text-sm font-bold text-white leading-tight">Atlas South</p>
-            <p className="flex items-center gap-1.5 text-xs text-slate-400 leading-tight">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" aria-hidden="true" />
+            <p className="font-display text-sm font-bold leading-tight text-white">Atlas South</p>
+            <p className="flex items-center gap-1.5 text-xs leading-tight text-white/60">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="absolute inset-0 animate-ping rounded-full bg-success opacity-75" />
+                <span className="relative h-1.5 w-1.5 rounded-full bg-success" />
+              </span>
               Online now
             </p>
           </div>
           <button
             onClick={handleClose}
             aria-label="Close chat"
-            className="flex h-8 w-8 items-center justify-center rounded-full text-slate-400 hover:bg-white/10 hover:text-white transition-colors"
+            className="flex h-8 w-8 items-center justify-center rounded-full text-white/60 transition-colors hover:bg-white/10 hover:text-white"
           >
             <X className="h-4 w-4" />
           </button>
         </div>
 
-        {/* Messages */}
-        <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3 scroll-smooth">
+        {/* Messages — canvas-tint background so the white message bubbles read as
+            floating cards rather than sitting flush with the panel's own surface. */}
+        <div className="flex-1 space-y-3 overflow-y-auto bg-canvas-tint px-4 py-4 scroll-smooth">
           {messages.map((msg, i) => (
             <div
               key={i}
-              className={`flex ${msg.from === 'user' ? 'justify-end' : 'justify-start'}`}
+              className={`flex motion-safe:animate-message-in ${msg.from === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               <div
                 className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
                   msg.from === 'user'
-                    ? 'bg-navy text-white rounded-tr-sm'
-                    : 'bg-slate-100 text-slate-800 rounded-tl-sm'
+                    ? 'rounded-tr-sm bg-navy text-white'
+                    : 'rounded-tl-sm border border-border bg-canvas text-ink shadow-sm'
                 }`}
               >
                 {msg.text}
@@ -465,8 +471,8 @@ export function ChatBot() {
           {/* Typing indicator — shown while botSay's delay is running, so replies read
               as composed in real time rather than teleporting in. */}
           {isTyping && (
-            <div className="flex justify-start">
-              <div className="flex items-center gap-1 rounded-2xl rounded-tl-sm bg-slate-100 px-4 py-3">
+            <div className="flex justify-start motion-safe:animate-message-in">
+              <div className="flex items-center gap-1 rounded-2xl rounded-tl-sm border border-border bg-canvas px-4 py-3 shadow-sm">
                 <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-accent-blue [animation-delay:-0.3s]" />
                 <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-accent-blue [animation-delay:-0.15s]" />
                 <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-accent-blue" />
@@ -476,27 +482,33 @@ export function ChatBot() {
 
           {/* Greeting quick-actions */}
           {step === 'greeting' && messages.length > 0 && (
-            <div className="flex flex-col gap-2 pt-1">
+            <div className="flex flex-col gap-2 pt-1 motion-safe:animate-message-in">
               <button
                 onClick={startQuote}
-                className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-3 text-left text-sm font-medium text-navy hover:bg-slate-50 transition-colors"
+                className="group flex items-center gap-3 rounded-xl border border-border bg-canvas px-4 py-3 text-left shadow-sm transition-all hover:-translate-y-0.5 hover:border-accent-blue hover:shadow-md"
               >
-                Get a quote
-                <ChevronRight className="h-4 w-4 text-accent-blue" />
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent-blue/10 text-accent-blue">
+                  <MessageSquarePlus className="h-4 w-4" />
+                </span>
+                <span className="min-w-0 flex-1 text-sm font-medium text-navy">Get a quote</span>
+                <ChevronRight className="h-4 w-4 shrink-0 text-accent-blue transition-transform group-hover:translate-x-0.5" />
               </button>
               <button
                 onClick={startFAQ}
-                className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-3 text-left text-sm font-medium text-navy hover:bg-slate-50 transition-colors"
+                className="group flex items-center gap-3 rounded-xl border border-border bg-canvas px-4 py-3 text-left shadow-sm transition-all hover:-translate-y-0.5 hover:border-accent-blue hover:shadow-md"
               >
-                Ask a question
-                <ChevronRight className="h-4 w-4 text-accent-blue" />
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent-blue/10 text-accent-blue">
+                  <CircleHelp className="h-4 w-4" />
+                </span>
+                <span className="min-w-0 flex-1 text-sm font-medium text-navy">Ask a question</span>
+                <ChevronRight className="h-4 w-4 shrink-0 text-accent-blue transition-transform group-hover:translate-x-0.5" />
               </button>
             </div>
           )}
 
           {/* Service selector */}
           {step === 'lead-services' && (
-            <div className="space-y-2 pt-1">
+            <div className="space-y-2 pt-1 motion-safe:animate-message-in">
               <div className="flex flex-wrap gap-2">
                 {SERVICES.map((s) => (
                   <button
@@ -505,7 +517,7 @@ export function ChatBot() {
                     className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
                       leadServices.includes(s)
                         ? 'border-accent-blue bg-accent-blue text-white'
-                        : 'border-slate-300 bg-white text-slate-700 hover:border-accent-blue'
+                        : 'border-border bg-canvas text-ink hover:border-accent-blue'
                     }`}
                   >
                     {s}
@@ -515,7 +527,7 @@ export function ChatBot() {
               {leadServices.length > 0 && (
                 <button
                   onClick={confirmServices}
-                  className="mt-1 flex w-full items-center justify-center gap-2 rounded-xl bg-navy py-2.5 text-sm font-semibold text-white hover:bg-navy/90 transition-colors"
+                  className="mt-1 flex w-full items-center justify-center gap-2 rounded-xl bg-navy py-2.5 text-sm font-semibold text-white transition-colors hover:bg-navy/90"
                 >
                   Confirm selection
                   <ChevronRight className="h-4 w-4" />
@@ -526,17 +538,20 @@ export function ChatBot() {
 
           {/* Post-submit actions */}
           {step === 'submitted' && (
-            <div className="flex flex-col gap-2 pt-1">
+            <div className="flex flex-col gap-2 pt-1 motion-safe:animate-message-in">
               <button
                 onClick={startFAQ}
-                className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-3 text-left text-sm font-medium text-navy hover:bg-slate-50 transition-colors"
+                className="group flex items-center gap-3 rounded-xl border border-border bg-canvas px-4 py-3 text-left shadow-sm transition-all hover:-translate-y-0.5 hover:border-accent-blue hover:shadow-md"
               >
-                Ask another question
-                <ChevronRight className="h-4 w-4 text-accent-blue" />
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent-blue/10 text-accent-blue">
+                  <CircleHelp className="h-4 w-4" />
+                </span>
+                <span className="min-w-0 flex-1 text-sm font-medium text-navy">Ask another question</span>
+                <ChevronRight className="h-4 w-4 shrink-0 text-accent-blue transition-transform group-hover:translate-x-0.5" />
               </button>
               <button
                 onClick={reset}
-                className="text-center text-xs text-slate-400 hover:text-slate-600 transition-colors py-1"
+                className="py-1 text-center text-xs text-slate/70 transition-colors hover:text-ink"
               >
                 Start over
               </button>
@@ -547,10 +562,12 @@ export function ChatBot() {
         </div>
 
         {/* Input bar — hidden during service-selection (chip grid takes its place) and
-            faq-mode (its own input bar below has a different placeholder/validation) */}
+            faq-mode (its own input bar below has a different placeholder/validation).
+            Bordered field + accent-blue focus ring matches QuoteForm.tsx's convention
+            rather than a flat filled pill, so it reads as a real form field. */}
         {step !== 'lead-services' && step !== 'greeting' && step !== 'submitted' && step !== 'faq-mode' && (
-          <div className="border-t border-slate-100 px-3 py-3">
-            <div className="flex items-center gap-2 rounded-xl bg-slate-100 px-3 py-2">
+          <div className="border-t border-border bg-canvas px-3 py-3">
+            <div className="flex items-center gap-2 rounded-xl border border-border bg-canvas px-3 py-2 transition-colors focus-within:border-accent-blue focus-within:ring-2 focus-within:ring-accent-blue/25">
               <input
                 ref={inputRef}
                 type={step === 'lead-email' ? 'email' : 'text'}
@@ -566,7 +583,7 @@ export function ChatBot() {
                     ? 'Any extra details… (optional)'
                     : 'Type a message…'
                 }
-                className="min-w-0 flex-1 bg-transparent text-sm text-slate-800 placeholder:text-slate-400 outline-none"
+                className="min-w-0 flex-1 bg-transparent text-sm text-ink placeholder:text-slate/60 outline-none"
                 disabled={submitting}
                 aria-label="Chat input"
               />
@@ -574,7 +591,7 @@ export function ChatBot() {
                 onClick={handleSend}
                 disabled={submitting || !input.trim()}
                 aria-label="Send message"
-                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-navy text-white disabled:opacity-40 transition-opacity hover:bg-navy/80"
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-navy text-white transition-opacity hover:bg-navy/80 disabled:opacity-40"
               >
                 <Send className="h-4 w-4" />
               </button>
@@ -583,7 +600,7 @@ export function ChatBot() {
               <button
                 onClick={() => submitLead()}
                 disabled={submitting}
-                className="mt-2 w-full text-center text-xs text-slate-400 hover:text-slate-600 transition-colors"
+                className="mt-2 w-full text-center text-xs text-slate/70 transition-colors hover:text-ink"
               >
                 Skip and submit →
               </button>
@@ -593,8 +610,8 @@ export function ChatBot() {
 
         {/* FAQ / greeting input */}
         {(step === 'faq-mode') && (
-          <div className="border-t border-slate-100 px-3 py-3">
-            <div className="flex items-center gap-2 rounded-xl bg-slate-100 px-3 py-2">
+          <div className="border-t border-border bg-canvas px-3 py-3">
+            <div className="flex items-center gap-2 rounded-xl border border-border bg-canvas px-3 py-2 transition-colors focus-within:border-accent-blue focus-within:ring-2 focus-within:ring-accent-blue/25">
               <input
                 ref={inputRef}
                 type="text"
@@ -602,14 +619,14 @@ export function ChatBot() {
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="Ask me anything…"
-                className="min-w-0 flex-1 bg-transparent text-sm text-slate-800 placeholder:text-slate-400 outline-none"
+                className="min-w-0 flex-1 bg-transparent text-sm text-ink placeholder:text-slate/60 outline-none"
                 aria-label="Chat input"
               />
               <button
                 onClick={handleSend}
                 disabled={!input.trim()}
                 aria-label="Send message"
-                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-navy text-white disabled:opacity-40 transition-opacity hover:bg-navy/80"
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-navy text-white transition-opacity hover:bg-navy/80 disabled:opacity-40"
               >
                 <Send className="h-4 w-4" />
               </button>

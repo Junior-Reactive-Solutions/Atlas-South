@@ -11,9 +11,13 @@ interface ChatBadgeIconProps {
 /**
  * The chatbot's own mark — not a stock speech-bubble icon. It's the real Atlas South "AS"
  * symbol (apps/web/public/brand/symbol.svg / symbol-light.svg — the same two files the nav
- * logo and footer already use) set into a circular badge with a small speech-bubble tail,
- * so the launcher reads as "this is Atlas South, and it opens a chat" rather than a generic
- * bot icon a visitor has to decode.
+ * logo and footer already use) set into a plain circular badge, so the launcher reads as
+ * "this is Atlas South" rather than a generic bot icon a visitor has to decode. An earlier
+ * version added a speech-bubble tail (a rotated square poking past the circle's edge) to
+ * spell out "this opens a chat" — dropped on review: it read as a stray corner rather than
+ * a tail, and every contemporary chat launcher (Intercom, Crisp, Drift) makes the same call
+ * — a plain circle plus the pulsing status dot below is enough to say "chat, available now"
+ * without fighting the badge's own shape.
  *
  * Colour inverts based on `theme`: a white disc + the navy/blue symbol.svg over a dark
  * section, a navy disc + the white/blue symbol-light.svg over a light one — always the
@@ -28,20 +32,6 @@ export function ChatBadgeIcon({ theme, size = 56, showStatusDot = false }: ChatB
 
   return (
     <div className="relative shrink-0" style={{ width: size, height: size }}>
-      {/* Speech-bubble tail — a same-colour square rotated 45deg, tucked behind the main
-          disc so only its outer corner peeks past the circle's edge. */}
-      <div
-        className="absolute rounded-[3px] transition-colors duration-300"
-        style={{
-          width: size * 0.24,
-          height: size * 0.24,
-          background: discFill,
-          left: size * 0.04,
-          bottom: -size * 0.04,
-          transform: 'rotate(45deg)',
-        }}
-        aria-hidden="true"
-      />
       {/* Main disc. The boxShadow is a fixed (non-adaptive) white ring + dark contact
           shadow — belt-and-suspenders on top of the fill inversion above. Fill inversion
           handles the common case (a tagged navy section vs. everything else) correctly;
@@ -68,11 +58,11 @@ export function ChatBadgeIcon({ theme, size = 56, showStatusDot = false }: ChatB
       />
       {showStatusDot && (
         <span
-          className="absolute rounded-full border-2 border-white bg-emerald-500"
+          className="absolute rounded-full border-2 border-white bg-success"
           style={{ width: size * 0.24, height: size * 0.24, right: -1, bottom: -1 }}
           aria-hidden="true"
         >
-          <span className="absolute inset-[-4px] animate-ping rounded-full border border-emerald-400 opacity-70" />
+          <span className="absolute inset-[-4px] animate-ping rounded-full border border-success opacity-70" />
         </span>
       )}
     </div>
