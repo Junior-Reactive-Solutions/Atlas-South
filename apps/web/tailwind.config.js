@@ -44,10 +44,18 @@ export default {
           from: { transform: 'translateX(0)' },
           to: { transform: 'translateX(-50%)' },
         },
+        // ChatBot.tsx — each new message (and the typing indicator) settles in rather
+        // than appearing instantly, matching the rest of the site's "renders arrive
+        // gently" convention.
+        'message-in': {
+          from: { opacity: '0', transform: 'translateY(6px)' },
+          to: { opacity: '1', transform: 'translateY(0)' },
+        },
       },
       animation: {
         'hero-zoom': 'hero-zoom 20s ease-out forwards',
         'stats-marquee': 'stats-marquee 26s linear infinite',
+        'message-in': 'message-in 0.25s ease-out both',
       },
       fontFamily: {
         // Montserrat replaces Big Shoulders Display — the previous pick read too thin
