@@ -132,7 +132,7 @@ export function AdminEnquiries() {
                     className="rounded-lg border border-slate-200 bg-white p-3 transition-shadow focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-accent-blue"
                   >
                     <p className="font-medium text-navy">{enquiry.fullName}</p>
-                    <p className="text-xs text-slate-600">{enquiry.email}</p>
+                    <p className="truncate text-xs text-slate-600" title={enquiry.email}>{enquiry.email}</p>
                     <p className="mt-2 line-clamp-2 text-xs text-slate-700">{enquiry.message}</p>
 
                     {/* Status Buttons */}
