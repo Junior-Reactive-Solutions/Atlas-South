@@ -15,7 +15,7 @@ import {
   type GridCard,
   type SectionLink,
 } from '../sections';
-import { heroImageFor, heroImageAltFor, beforeAfterFor } from '../../content/imagery';
+import { heroImageFor, heroImageAltFor, heroImageSrcSetFor, beforeAfterFor } from '../../content/imagery';
 import { navIdForPath, isPlaceholderPath } from '../../lib/navLookup';
 import { useNavVisibility } from '../../hooks/useNavVisibility.js';
 import { CompareSlider } from '../shared/CompareSlider.js';
@@ -157,6 +157,7 @@ export function ServiceDetailPage({
         title={title}
         description={heroDescription}
         image={heroImageFor(id)}
+        imageSrcSet={heroImageSrcSetFor(id)}
       />
 
       <SectionNav sections={sectionLinks} />

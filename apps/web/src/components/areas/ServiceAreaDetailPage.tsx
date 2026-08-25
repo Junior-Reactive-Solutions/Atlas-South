@@ -12,7 +12,7 @@ import {
   CardGrid,
   type GridCard,
 } from '../sections';
-import { heroImageFor, heroImageAltFor } from '../../content/imagery';
+import { heroImageFor, heroImageAltFor, heroImageSrcSetFor } from '../../content/imagery';
 import { parseBulletPanels } from '../../lib/parseBulletPanels';
 import { useVisibleNavItems } from '../../hooks/useNavVisibility.js';
 
@@ -99,6 +99,7 @@ export function ServiceAreaDetailPage({
         title={title}
         description={heroDescription}
         image={heroImageFor(id)}
+        imageSrcSet={heroImageSrcSetFor(id)}
       />
 
       {/* Overview */}
