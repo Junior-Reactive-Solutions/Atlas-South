@@ -1,5 +1,5 @@
 import { Suspense, lazy } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import {
   HARD_SERVICES,
   SOFT_SERVICES,
@@ -88,9 +88,12 @@ function stubRoutes(items: NavItem[], specRef: string) {
 }
 
 export default function App() {
+  const { pathname } = useLocation();
+  const isAdminRoute = pathname.startsWith('/admin');
+
   return (
     <>
-      <ChatBot />
+      {!isAdminRoute && <ChatBot />}
       <Suspense fallback={<PageLoadingFallback />}>
         <Routes>
           {/* Admin panel routes — separate from public site layout */}
