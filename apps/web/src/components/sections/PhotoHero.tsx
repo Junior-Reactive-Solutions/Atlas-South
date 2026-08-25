@@ -31,7 +31,7 @@ export function PhotoHero({
   ctaPath = '/company/contact',
 }: PhotoHeroProps) {
   return (
-    <section className="relative overflow-hidden bg-navy">
+    <section className="relative overflow-hidden bg-navy" data-widget-theme="dark">
       {/*
         Very slow zoom (a "Ken Burns"): 1.0 → 1.08 over 20s, once, no loop.
 

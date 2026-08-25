@@ -97,7 +97,7 @@ export function StatBand({ eyebrow, heading, subcopy, stats = DEFAULT_STATS }: S
   }, [root, stats]);
 
   return (
-    <section ref={root} className="bg-navy py-16 text-white sm:py-20">
+    <section ref={root} className="bg-navy py-16 text-white sm:py-20" data-widget-theme="dark">
       <div className="mx-auto max-w-7xl px-4">
         {(eyebrow || heading || subcopy) && (
           <div className="mb-12 max-w-3xl">

@@ -29,7 +29,11 @@ export function StatsMarquee() {
   // screen-reader or keyboard user never encounters the doubled list at all.
   if (prefersReducedMotion()) {
     return (
-      <div className="border-y border-white/10 bg-navy py-5" aria-label="Atlas South at a glance">
+      <div
+        className="border-y border-white/10 bg-navy py-5"
+        aria-label="Atlas South at a glance"
+        data-widget-theme="dark"
+      >
         <div className="mx-auto flex max-w-7xl flex-wrap justify-center gap-x-10 gap-y-3 px-4">
           {items.map((item) => (
             <span key={item.label} className="flex items-baseline gap-2 text-white">
@@ -46,6 +50,7 @@ export function StatsMarquee() {
     <div
       className="overflow-hidden border-y border-white/10 bg-navy py-5"
       aria-label="Atlas South at a glance"
+      data-widget-theme="dark"
     >
       <div className="flex w-max animate-stats-marquee">
         {/* Rendered twice back-to-back so the CSS animation (translateX -50%) loops with

@@ -1,6 +1,8 @@
 ﻿import { useState, useEffect, useRef, useCallback } from 'react';
-import { X, MessageCircle, Send, ChevronRight } from 'lucide-react';
+import { X, Send, ChevronRight } from 'lucide-react';
 import { prefersReducedMotion } from '@atlas-south/design-system';
+import { useSectionTheme } from '../../hooks/useSectionTheme.js';
+import { ChatBadgeIcon } from './ChatBadgeIcon.js';
 
 // ─── Knowledge base ──────────────────────────────────────────────────────────
 
@@ -147,8 +149,12 @@ export function ChatBot() {
   const [submitting, setSubmitting] = useState(false);
   const [pulsing, setPulsing] = useState(false);
   const [labelVisible, setLabelVisible] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  // Which page section is behind the launcher right now — drives the badge's colour
+  // inversion so it never gets drowned out by whatever it's floating over.
+  const sectionTheme = useSectionTheme();
 
   // Attention pulse — fires on mount (after a short delay so the page has settled)
   // and then every 12 s while the widget is closed.
@@ -183,10 +189,28 @@ export function ChatBot() {
     setMessages((prev) => [...prev, { from: 'user', text }]);
   }, []);
 
-  // Scroll to bottom whenever messages change
+  // Shows the typing indicator, waits a beat, then delivers the message — makes replies
+  // feel like they're actually being composed rather than teleporting in instantly.
+  // Skips the wait under prefers-reduced-motion (indicator would just be a flash anyway).
+  const botSay = useCallback(
+    (text: string) => {
+      const delay = prefersReducedMotion() ? 0 : 850;
+      setIsTyping(true);
+      return new Promise<void>((resolve) => {
+        window.setTimeout(() => {
+          setIsTyping(false);
+          pushBot(text);
+          resolve();
+        }, delay);
+      });
+    },
+    [pushBot],
+  );
+
+  // Scroll to bottom whenever messages change, or the typing indicator appears/disappears
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+  }, [messages, isTyping]);
 
   // Focus input when chat opens
   useEffect(() => {
@@ -200,12 +224,13 @@ export function ChatBot() {
     if (!open) return;
     if (messages.length === 0) {
       window.setTimeout(() => {
-        pushBot(
-          'Hi there 👋 I\'m the Atlas South assistant. I can answer questions about our services, or help you get in touch with the team.',
+        botSay(
+          "Hi there — I'm the Atlas South assistant. I can answer questions about our services, or help you get in touch with the team.",
         );
       }, 300);
     }
-  }, [open, messages.length, pushBot]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, messages.length]);
 
   function handleOpen() {
     setOpen(true);
@@ -227,27 +252,21 @@ export function ChatBot() {
 
   // ── Quick action handlers ──────────────────────────────────────────────────
 
-  function startQuote() {
+  async function startQuote() {
     pushUser("I'd like to get a quote");
-    window.setTimeout(() => {
-      pushBot('Great! Let\'s get you connected with the team. What\'s your name?');
-      setStep('lead-name');
-    }, 400);
+    await botSay("Great! Let's get you connected with the team. What's your name?");
+    setStep('lead-name');
   }
 
-  function startFAQ() {
+  async function startFAQ() {
     pushUser('I have a question');
-    window.setTimeout(() => {
-      pushBot(
-        "Ask me anything — I know Atlas South's services, coverage areas, and how we work.",
-      );
-      setStep('faq-mode');
-    }, 400);
+    await botSay("Ask me anything — I know Atlas South's services, coverage areas, and how we work.");
+    setStep('faq-mode');
   }
 
   // ── Submit handlers ────────────────────────────────────────────────────────
 
-  function handleSend() {
+  async function handleSend() {
     const text = input.trim();
     if (!text) return;
     setInput('');
@@ -256,22 +275,14 @@ export function ChatBot() {
       pushUser(text);
       const answer = matchFAQ(text);
       if (answer) {
-        window.setTimeout(() => {
-          pushBot(answer);
-          window.setTimeout(() => {
-            pushBot('Can I help with anything else, or would you like to get a quote?');
-          }, 800);
-        }, 400);
+        await botSay(answer);
+        await botSay('Can I help with anything else, or would you like to get a quote?');
       } else {
-        window.setTimeout(() => {
-          pushBot(
-            'I don\'t have a specific answer for that, but our team will. Would you like to leave your details so we can get back to you?',
-          );
-          window.setTimeout(() => {
-            pushBot('What\'s your name?');
-            setStep('lead-name');
-          }, 600);
-        }, 400);
+        await botSay(
+          "I don't have a specific answer for that, but our team will. Would you like to leave your details so we can get back to you?",
+        );
+        await botSay("What's your name?");
+        setStep('lead-name');
       }
       return;
     }
@@ -279,10 +290,8 @@ export function ChatBot() {
     if (step === 'lead-name') {
       pushUser(text);
       setLeadName(text);
-      window.setTimeout(() => {
-        pushBot(`Nice to meet you, ${text.split(' ')[0]}! What's your email address?`);
-        setStep('lead-email');
-      }, 400);
+      await botSay(`Nice to meet you, ${text.split(' ')[0]}! What's your email address?`);
+      setStep('lead-email');
       return;
     }
 
@@ -290,15 +299,13 @@ export function ChatBot() {
       const emailRx = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRx.test(text)) {
         pushUser(text);
-        window.setTimeout(() => pushBot('That doesn\'t look like a valid email — please try again.'), 400);
+        await botSay("That doesn't look like a valid email — please try again.");
         return;
       }
       pushUser(text);
       setLeadEmail(text);
-      window.setTimeout(() => {
-        pushBot('Which service(s) are you interested in? Select all that apply, then hit Send.');
-        setStep('lead-services');
-      }, 400);
+      await botSay('Which service(s) are you interested in? Select all that apply, then hit Send.');
+      setStep('lead-services');
       return;
     }
 
@@ -315,13 +322,11 @@ export function ChatBot() {
     );
   }
 
-  function confirmServices() {
+  async function confirmServices() {
     if (leadServices.length === 0) return;
     pushUser(leadServices.join(', '));
-    window.setTimeout(() => {
-      pushBot('Got it. Anything else you\'d like us to know before we reach out? (Or press Send to skip.)');
-      setStep('lead-message');
-    }, 400);
+    await botSay("Got it. Anything else you'd like us to know before we reach out? (Or press Send to skip.)");
+    setStep('lead-message');
   }
 
   async function submitLead(message?: string) {
@@ -341,12 +346,10 @@ export function ChatBot() {
       // best-effort — still show success to the user
     } finally {
       setSubmitting(false);
-      window.setTimeout(() => {
-        pushBot(
-          `Thanks, ${leadName.split(' ')[0]}! We've got your details and will be in touch at ${leadEmail} shortly. Is there anything else I can help with?`,
-        );
-        setStep('submitted');
-      }, 400);
+      await botSay(
+        `Thanks, ${leadName.split(' ')[0]}! We've got your details and will be in touch at ${leadEmail} shortly. Is there anything else I can help with?`,
+      );
+      setStep('submitted');
     }
   }
 
@@ -363,46 +366,47 @@ export function ChatBot() {
     <>
       {/* ── Floating trigger button ── */}
       <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2">
-        {/* "Chat with us" peek label */}
+        {/* "Chat with us" peek label — same colour inversion as the badge, so the two
+            always read as one piece regardless of what's behind them. */}
         <div
-          className={`pointer-events-none select-none whitespace-nowrap rounded-full bg-navy px-4 py-2 text-sm font-semibold text-white shadow-lg transition-all duration-500 ${
+          className={`pointer-events-none select-none whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-semibold shadow-lg transition-all duration-500 ${
             labelVisible && !open ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
+          } ${
+            sectionTheme === 'dark' ? 'bg-white text-navy' : 'bg-navy text-white'
           }`}
           aria-hidden="true"
         >
-          Chat with us ✨
+          Chat with us
         </div>
-
-        {/* Pulse ring — sits behind the button */}
-        {!open && (
-          <span
-            className={`pointer-events-none absolute inset-0 rounded-full bg-accent-blue/40 ${
-              pulsing && !prefersReducedMotion()
-                ? 'animate-ping'
-                : ''
-            }`}
-            aria-hidden="true"
-          />
-        )}
 
         <button
           onClick={open ? handleClose : handleOpen}
           aria-label={open ? 'Close chat' : 'Open chat'}
-          className="relative flex h-14 w-14 items-center justify-center rounded-full bg-navy text-white shadow-xl ring-2 ring-accent-blue/30 transition-transform duration-200 hover:scale-105 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-accent-blue active:scale-95"
+          className="relative flex h-14 w-14 items-center justify-center rounded-full transition-transform duration-200 hover:scale-105 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-accent-blue active:scale-95"
         >
+          {/* Pulse ring — sits behind the badge, colour-matched to it */}
+          {!open && (
+            <span
+              className={`pointer-events-none absolute inset-0 rounded-full ${
+                sectionTheme === 'dark' ? 'bg-white/40' : 'bg-accent-blue/40'
+              } ${pulsing && !prefersReducedMotion() ? 'animate-ping' : ''}`}
+              aria-hidden="true"
+            />
+          )}
+
           <span
-            className={`absolute inset-0 flex items-center justify-center transition-all duration-200 ${
-              open ? 'opacity-100 rotate-0' : 'opacity-0 -rotate-90'
-            }`}
+            className={`absolute inset-0 flex items-center justify-center rounded-full shadow-xl transition-all duration-200 ${
+              sectionTheme === 'dark' ? 'bg-white' : 'bg-navy'
+            } ${open ? 'opacity-100 rotate-0' : 'opacity-0 -rotate-90'}`}
           >
-            <X className="h-6 w-6" />
+            <X className={`h-6 w-6 ${sectionTheme === 'dark' ? 'text-navy' : 'text-white'}`} />
           </span>
           <span
             className={`absolute inset-0 flex items-center justify-center transition-all duration-200 ${
               open ? 'opacity-0 rotate-90' : 'opacity-100 rotate-0'
             }`}
           >
-            <MessageCircle className="h-6 w-6" />
+            <ChatBadgeIcon theme={sectionTheme} size={56} showStatusDot />
           </span>
         </button>
       </div>
@@ -419,14 +423,16 @@ export function ChatBot() {
         aria-label="Atlas South chat assistant"
         aria-modal="false"
       >
-        {/* Header */}
+        {/* Header — badge is always drawn against this navy bar, so theme is fixed to
+            'dark' (behind = dark) regardless of what section the page is scrolled to. */}
         <div className="flex items-center gap-3 bg-navy px-4 py-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-accent-blue/20">
-            <MessageCircle className="h-5 w-5 text-accent-blue" />
-          </div>
+          <ChatBadgeIcon theme="dark" size={36} />
           <div className="min-w-0 flex-1">
             <p className="text-sm font-bold text-white leading-tight">Atlas South</p>
-            <p className="text-xs text-slate-400 leading-tight">Usually replies instantly</p>
+            <p className="flex items-center gap-1.5 text-xs text-slate-400 leading-tight">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" aria-hidden="true" />
+              Online now
+            </p>
           </div>
           <button
             onClick={handleClose}
@@ -455,6 +461,18 @@ export function ChatBot() {
               </div>
             </div>
           ))}
+
+          {/* Typing indicator — shown while botSay's delay is running, so replies read
+              as composed in real time rather than teleporting in. */}
+          {isTyping && (
+            <div className="flex justify-start">
+              <div className="flex items-center gap-1 rounded-2xl rounded-tl-sm bg-slate-100 px-4 py-3">
+                <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-accent-blue [animation-delay:-0.3s]" />
+                <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-accent-blue [animation-delay:-0.15s]" />
+                <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-accent-blue" />
+              </div>
+            </div>
+          )}
 
           {/* Greeting quick-actions */}
           {step === 'greeting' && messages.length > 0 && (
@@ -528,8 +546,9 @@ export function ChatBot() {
           <div ref={bottomRef} />
         </div>
 
-        {/* Input bar — hidden during service-selection step (chip grid takes its place) */}
-        {step !== 'lead-services' && step !== 'greeting' && step !== 'submitted' && (
+        {/* Input bar — hidden during service-selection (chip grid takes its place) and
+            faq-mode (its own input bar below has a different placeholder/validation) */}
+        {step !== 'lead-services' && step !== 'greeting' && step !== 'submitted' && step !== 'faq-mode' && (
           <div className="border-t border-slate-100 px-3 py-3">
             <div className="flex items-center gap-2 rounded-xl bg-slate-100 px-3 py-2">
               <input
