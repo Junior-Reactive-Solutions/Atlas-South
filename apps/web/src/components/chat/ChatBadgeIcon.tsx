@@ -42,10 +42,20 @@ export function ChatBadgeIcon({ theme, size = 56, showStatusDot = false }: ChatB
         }}
         aria-hidden="true"
       />
-      {/* Main disc */}
+      {/* Main disc. The boxShadow is a fixed (non-adaptive) white ring + dark contact
+          shadow — belt-and-suspenders on top of the fill inversion above. Fill inversion
+          handles the common case (a tagged navy section vs. everything else) correctly;
+          this ring is what keeps the badge legible against backgrounds that were never
+          tagged at all — photos, client-uploaded imagery, a future section nobody thought
+          to mark up. A white rim reads as a highlight against virtually anything except a
+          pure-white page, and pure white is exactly the case the disc's own navy fill
+          already handles on its own. */}
       <div
         className="absolute inset-0 rounded-full transition-colors duration-300"
-        style={{ background: discFill }}
+        style={{
+          background: discFill,
+          boxShadow: '0 0 0 2.5px rgba(255,255,255,0.92), 0 6px 16px rgba(0,0,0,0.3)',
+        }}
         aria-hidden="true"
       />
       {/* The actual Atlas South mark, centred */}
