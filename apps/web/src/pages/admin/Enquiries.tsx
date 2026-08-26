@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext.js';
-import { ArrowRight, Trash2 } from 'lucide-react';
+import { ArrowRight, Trash2, Reply } from 'lucide-react';
 import { animate, stagger } from 'animejs';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAnimationScope, DURATION, EASE, STAGGER_GAP } from '@atlas-south/design-system';
+import { ReplyPanel } from '../../components/admin/ReplyPanel.js';
 
 interface Enquiry {
   id: string;
@@ -38,6 +39,7 @@ const STATUS_COLORS: Record<Status, string> = {
 export function AdminEnquiries() {
   const [enquiries, setEnquiries] = useState<Enquiry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [replyingId, setReplyingId] = useState<string | null>(null);
   const { authFetch } = useAuth();
 
   useEffect(() => {
@@ -167,7 +169,27 @@ export function AdminEnquiries() {
                           <Trash2 className="h-3 w-3" />
                         </motion.button>
                       )}
+
+                      <motion.button
+                        whileTap={{ scale: 0.96 }}
+                        onClick={() => setReplyingId(replyingId === enquiry.id ? null : enquiry.id)}
+                        className="flex min-h-[40px] items-center justify-center gap-1 rounded border border-slate-200 bg-white px-2 py-1 text-xs font-medium text-slate-700 hover:bg-slate-50"
+                      >
+                        Reply
+                        <Reply className="h-3 w-3" />
+                      </motion.button>
                     </div>
+
+                    {replyingId === enquiry.id && (
+                      <div className="mt-3">
+                        <ReplyPanel
+                          endpoint={`/api/admin/enquiries/${enquiry.id}/reply`}
+                          recipientFirstName={enquiry.fullName.split(' ')[0]}
+                          recipientEmail={enquiry.email}
+                          defaultSubject="Re: your enquiry with Atlas South"
+                        />
+                      </div>
+                    )}
 
                     <p className="mt-2 text-xs text-slate-500">
                       {new Date(enquiry.createdAt).toLocaleDateString()}

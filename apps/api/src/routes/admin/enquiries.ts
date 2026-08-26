@@ -2,6 +2,7 @@ import { Router, Response } from 'express';
 import { z } from 'zod';
 import { authMiddleware, AuthRequest } from '../../middleware/auth.js';
 import { requireDb } from '../../lib/prisma.js';
+import { sendAdminReply } from '../../lib/email.js';
 
 const router = Router();
 
@@ -68,6 +69,50 @@ router.patch('/:id', async (req: AuthRequest, res: Response) => {
   } catch (error) {
     console.error('Error updating enquiry:', error);
     res.status(400).json({ error: 'Failed to update enquiry' });
+  }
+});
+
+const ReplySchema = z.object({
+  subject: z.string().trim().min(1).max(200).optional(),
+  message: z.string().trim().min(1).max(5000),
+});
+
+/** POST /api/admin/enquiries/:id/reply — send a themed reply email to the enquirer. */
+router.post('/:id/reply', async (req: AuthRequest, res: Response) => {
+  try {
+    const db = requireDb();
+    const enquiry = await db.enquiry.findUnique({ where: { id: req.params.id } });
+    if (!enquiry) {
+      return res.status(404).json({ error: 'Enquiry not found' });
+    }
+
+    const { subject, message } = ReplySchema.parse(req.body);
+    const sent = await sendAdminReply({
+      to: enquiry.email,
+      recipientFirstName: enquiry.fullName.split(' ')[0],
+      subject: subject || 'Re: your enquiry with Atlas South',
+      message,
+    });
+
+    if (!sent) {
+      return res.status(503).json({ error: 'Email is not configured for this environment.' });
+    }
+
+    await db.adminAuditLog.create({
+      data: {
+        event: `enquiry_reply_sent:${req.params.id}`,
+        ip: req.ip ?? 'unknown',
+        adminUserId: req.adminId,
+      },
+    });
+
+    res.json({ ok: true });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ error: 'Invalid request', details: error.flatten() });
+    }
+    console.error('Error sending enquiry reply:', error);
+    res.status(500).json({ error: 'Failed to send reply' });
   }
 });
 

@@ -1,4 +1,5 @@
 import { Resend } from 'resend';
+import { renderReplyEmail, type ReplyEmailTheme } from './emailThemes.js';
 
 /**
  * Email service — docs/build/12-HOSTING-DEPLOYMENT.md §6.
@@ -11,6 +12,15 @@ const resend = apiKey ? new Resend(apiKey) : null;
 
 const SENDER_EMAIL = 'noreply@atlassouthes.com';
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'enquiries@atlassouthes.com';
+
+/**
+ * Which of the three themed layouts (lib/emailThemes.ts) admin replies go out in — set
+ * once the client picks between the three options presented for review. Ships defaulted
+ * to 'navy-header' (the closest match to the existing confirmation emails' navy-and-white
+ * feel) so the reply feature works end-to-end before that choice is locked in; swapping
+ * this constant is the only change needed once it is.
+ */
+const ADMIN_REPLY_THEME: ReplyEmailTheme = 'navy-header';
 
 export interface EnquiryEmailData {
   fullName: string;
@@ -191,4 +201,36 @@ export async function sendJobApplicationAdminNotification(
     console.error('Failed to send application admin notification email:', err);
     // Don't throw — application is already created. This is a nice-to-have notification.
   }
+}
+
+export interface AdminReplyData {
+  to: string;
+  recipientFirstName: string;
+  subject: string;
+  message: string;
+}
+
+/**
+ * Sends a themed reply from the admin panel (Enquiries or Applications "Reply" action) —
+ * unlike the automated confirmations above, this carries the admin's own written message,
+ * so a failure here is surfaced to the caller (returns false) rather than swallowed: the
+ * admin needs to know the reply didn't actually go out, not just see a green success toast.
+ */
+export async function sendAdminReply(data: AdminReplyData): Promise<boolean> {
+  if (!resend) {
+    console.warn('Resend not configured — cannot send admin reply');
+    return false;
+  }
+
+  await resend.emails.send({
+    from: SENDER_EMAIL,
+    to: data.to,
+    subject: data.subject,
+    html: renderReplyEmail(ADMIN_REPLY_THEME, {
+      recipientFirstName: data.recipientFirstName,
+      message: data.message,
+      subject: data.subject,
+    }),
+  });
+  return true;
 }

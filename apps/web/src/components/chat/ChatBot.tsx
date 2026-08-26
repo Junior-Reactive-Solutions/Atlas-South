@@ -1,5 +1,5 @@
 ﻿import { useState, useEffect, useRef, useCallback } from 'react';
-import { X, Send, ChevronRight, MessageSquarePlus, CircleHelp } from 'lucide-react';
+import { X, Send, ChevronRight, MessageSquarePlus, CircleHelp, Mail, Phone } from 'lucide-react';
 import { prefersReducedMotion } from '@atlas-south/design-system';
 import { useSectionTheme } from '../../hooks/useSectionTheme.js';
 import { ChatBadgeIcon } from './ChatBadgeIcon.js';
@@ -129,7 +129,20 @@ function matchFAQ(input: string): string | null {
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type Step = 'greeting' | 'faq-mode' | 'lead-name' | 'lead-email' | 'lead-services' | 'lead-message' | 'submitted';
+type Step =
+  | 'greeting'
+  | 'faq-mode'
+  | 'lead-first-name'
+  | 'lead-last-name'
+  | 'lead-company'
+  | 'lead-phone'
+  | 'lead-preferred-contact'
+  | 'lead-email'
+  | 'lead-services'
+  | 'lead-message'
+  | 'submitted';
+
+type PreferredContact = 'email' | 'phone';
 
 interface Message {
   from: 'bot' | 'user';
@@ -143,7 +156,11 @@ export function ChatBot() {
   const [step, setStep] = useState<Step>('greeting');
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
-  const [leadName, setLeadName] = useState('');
+  const [leadFirstName, setLeadFirstName] = useState('');
+  const [leadLastName, setLeadLastName] = useState('');
+  const [leadCompany, setLeadCompany] = useState('');
+  const [leadPhone, setLeadPhone] = useState('');
+  const [leadPreferredContact, setLeadPreferredContact] = useState<PreferredContact | null>(null);
   const [leadEmail, setLeadEmail] = useState('');
   const [leadServices, setLeadServices] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
@@ -245,7 +262,11 @@ export function ChatBot() {
     setMessages([]);
     setStep('greeting');
     setInput('');
-    setLeadName('');
+    setLeadFirstName('');
+    setLeadLastName('');
+    setLeadCompany('');
+    setLeadPhone('');
+    setLeadPreferredContact(null);
     setLeadEmail('');
     setLeadServices([]);
   }
@@ -254,8 +275,8 @@ export function ChatBot() {
 
   async function startQuote() {
     pushUser("I'd like to get a quote");
-    await botSay("Great! Let's get you connected with the team. What's your name?");
-    setStep('lead-name');
+    await botSay("Great! Let's get you connected with the team. What's your first name?");
+    setStep('lead-first-name');
   }
 
   async function startFAQ() {
@@ -281,17 +302,41 @@ export function ChatBot() {
         await botSay(
           "I don't have a specific answer for that, but our team will. Would you like to leave your details so we can get back to you?",
         );
-        await botSay("What's your name?");
-        setStep('lead-name');
+        await botSay("What's your first name?");
+        setStep('lead-first-name');
       }
       return;
     }
 
-    if (step === 'lead-name') {
+    if (step === 'lead-first-name') {
       pushUser(text);
-      setLeadName(text);
-      await botSay(`Nice to meet you, ${text.split(' ')[0]}! What's your email address?`);
-      setStep('lead-email');
+      setLeadFirstName(text);
+      await botSay(`Nice to meet you, ${text}! What's your last name?`);
+      setStep('lead-last-name');
+      return;
+    }
+
+    if (step === 'lead-last-name') {
+      pushUser(text);
+      setLeadLastName(text);
+      await botSay('Which company are you with?');
+      setStep('lead-company');
+      return;
+    }
+
+    if (step === 'lead-company') {
+      pushUser(text);
+      setLeadCompany(text);
+      await botSay("And what's the best phone number to reach you on?");
+      setStep('lead-phone');
+      return;
+    }
+
+    if (step === 'lead-phone') {
+      pushUser(text);
+      setLeadPhone(text);
+      await botSay('Would you rather we follow up by email or phone?');
+      setStep('lead-preferred-contact');
       return;
     }
 
@@ -316,6 +361,23 @@ export function ChatBot() {
     }
   }
 
+  // Preferred-contact is a button choice (like the greeting quick actions) rather than
+  // free text — there are exactly two valid answers, so typing invites typos a button
+  // can't produce. Email is only asked for afterwards if they picked "Email"; a
+  // phone-preference lead already gave a phone number in the previous step, so there's
+  // nothing more to collect before moving to services.
+  async function choosePreferredContact(choice: PreferredContact) {
+    pushUser(choice === 'email' ? 'Email' : 'Phone');
+    setLeadPreferredContact(choice);
+    if (choice === 'email') {
+      await botSay("What's your email address?");
+      setStep('lead-email');
+    } else {
+      await botSay('Which service(s) are you interested in? Select all that apply, then hit Send.');
+      setStep('lead-services');
+    }
+  }
+
   function handleServiceToggle(service: string) {
     setLeadServices((prev) =>
       prev.includes(service) ? prev.filter((s) => s !== service) : [...prev, service],
@@ -336,8 +398,14 @@ export function ChatBot() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: leadName,
-          email: leadEmail,
+          firstName: leadFirstName,
+          lastName: leadLastName,
+          company: leadCompany,
+          phone: leadPhone,
+          preferredContact: leadPreferredContact,
+          // Only sent at all when they chose email as their preferred method — the API
+          // schema (routes/leads.ts) only requires it in that case.
+          email: leadPreferredContact === 'email' ? leadEmail : undefined,
           services: leadServices.join(', '),
           message: message || undefined,
         }),
@@ -346,8 +414,9 @@ export function ChatBot() {
       // best-effort — still show success to the user
     } finally {
       setSubmitting(false);
+      const via = leadPreferredContact === 'email' ? `at ${leadEmail}` : `on ${leadPhone}`;
       await botSay(
-        `Thanks, ${leadName.split(' ')[0]}! We've got your details and will be in touch at ${leadEmail} shortly. Is there anything else I can help with?`,
+        `Thanks, ${leadFirstName}! We've got your details and will be in touch ${via} shortly. Is there anything else I can help with?`,
       );
       setStep('submitted');
     }
@@ -506,6 +575,33 @@ export function ChatBot() {
             </div>
           )}
 
+          {/* Preferred contact method — a button choice rather than free text, same
+              reasoning as the greeting quick-actions: exactly two valid answers. */}
+          {step === 'lead-preferred-contact' && (
+            <div className="flex flex-col gap-2 pt-1 motion-safe:animate-message-in">
+              <button
+                onClick={() => choosePreferredContact('email')}
+                className="group flex items-center gap-3 rounded-xl border border-border bg-canvas px-4 py-3 text-left shadow-sm transition-all hover:-translate-y-0.5 hover:border-accent-blue hover:shadow-md"
+              >
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent-blue/10 text-accent-blue">
+                  <Mail className="h-4 w-4" />
+                </span>
+                <span className="min-w-0 flex-1 text-sm font-medium text-navy">Email</span>
+                <ChevronRight className="h-4 w-4 shrink-0 text-accent-blue transition-transform group-hover:translate-x-0.5" />
+              </button>
+              <button
+                onClick={() => choosePreferredContact('phone')}
+                className="group flex items-center gap-3 rounded-xl border border-border bg-canvas px-4 py-3 text-left shadow-sm transition-all hover:-translate-y-0.5 hover:border-accent-blue hover:shadow-md"
+              >
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent-blue/10 text-accent-blue">
+                  <Phone className="h-4 w-4" />
+                </span>
+                <span className="min-w-0 flex-1 text-sm font-medium text-navy">Phone</span>
+                <ChevronRight className="h-4 w-4 shrink-0 text-accent-blue transition-transform group-hover:translate-x-0.5" />
+              </button>
+            </div>
+          )}
+
           {/* Service selector */}
           {step === 'lead-services' && (
             <div className="space-y-2 pt-1 motion-safe:animate-message-in">
@@ -561,22 +657,33 @@ export function ChatBot() {
           <div ref={bottomRef} />
         </div>
 
-        {/* Input bar — hidden during service-selection (chip grid takes its place) and
-            faq-mode (its own input bar below has a different placeholder/validation).
-            Bordered field + accent-blue focus ring matches QuoteForm.tsx's convention
-            rather than a flat filled pill, so it reads as a real form field. */}
-        {step !== 'lead-services' && step !== 'greeting' && step !== 'submitted' && step !== 'faq-mode' && (
+        {/* Input bar — hidden during service-selection and preferred-contact (both are
+            button choices) and faq-mode (its own input bar below has a different
+            placeholder/validation). Bordered field + accent-blue focus ring matches
+            QuoteForm.tsx's convention rather than a flat filled pill, so it reads as a
+            real form field. */}
+        {step !== 'lead-services' &&
+          step !== 'lead-preferred-contact' &&
+          step !== 'greeting' &&
+          step !== 'submitted' &&
+          step !== 'faq-mode' && (
           <div className="border-t border-border bg-canvas px-3 py-3">
             <div className="flex items-center gap-2 rounded-xl border border-border bg-canvas px-3 py-2 transition-colors focus-within:border-accent-blue focus-within:ring-2 focus-within:ring-accent-blue/25">
               <input
                 ref={inputRef}
-                type={step === 'lead-email' ? 'email' : 'text'}
+                type={step === 'lead-email' ? 'email' : step === 'lead-phone' ? 'tel' : 'text'}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder={
-                  step === 'lead-name'
-                    ? 'Your full name…'
+                  step === 'lead-first-name'
+                    ? 'Your first name…'
+                    : step === 'lead-last-name'
+                    ? 'Your last name…'
+                    : step === 'lead-company'
+                    ? 'Your company…'
+                    : step === 'lead-phone'
+                    ? 'Your phone number…'
                     : step === 'lead-email'
                     ? 'Your email address…'
                     : step === 'lead-message'

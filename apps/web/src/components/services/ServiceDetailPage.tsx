@@ -182,7 +182,7 @@ export function ServiceDetailPage({
               subcopy="Every engagement covers the full lifecycle — not just the call-out."
             />
             <div className="mt-12">
-              <BenefitPanels panels={features} />
+              <BenefitPanels panels={features} slug={id} />
             </div>
           </div>
         </section>

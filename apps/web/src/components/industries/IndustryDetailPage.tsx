@@ -157,7 +157,7 @@ export function IndustryDetailPage({
           />
           <div className="mt-12">
             {challengePanels ? (
-              <BenefitPanels panels={challengePanels.panels} />
+              <BenefitPanels panels={challengePanels.panels} slug={id} />
             ) : (
               <div className="prose prose-sm max-w-3xl sm:prose-base dark:prose-invert">
                 <Markdown content={challenges} />
@@ -183,7 +183,11 @@ export function IndustryDetailPage({
           />
           <div className="mt-12">
             {approachPanels ? (
-              <BenefitPanels panels={approachPanels.panels} />
+              <BenefitPanels
+                panels={approachPanels.panels}
+                slug={id}
+                indexOffset={challengePanels?.panels.length ?? 0}
+              />
             ) : (
               <div className="prose prose-sm max-w-3xl sm:prose-base dark:prose-invert">
                 <Markdown content={ourApproach} />
