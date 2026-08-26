@@ -257,6 +257,123 @@ const PANEL_FALLBACK_ROTATION: string[] = [
 ];
 
 /**
+ * Per-breakdown panel photography — one image per individual "What we provide" item on
+ * each service page (the panels BenefitPanels.tsx renders), keyed by slug then matched to
+ * the feature at that index in the page's published content.
+ *
+ * This exists because matching photography to the *service* still was not accurate enough.
+ * Every page previously drew its panels from a 2-4 photo per-slug pool (hero + hover-alt +
+ * any before/after), cycled by index — so the plumbing page's "CCTV inspections" panel
+ * landed back on a generic tradesperson-with-tools shot, and Facilities Management showed
+ * an office-building exterior against all six of its breakdowns. The point was that the
+ * image beside "CCTV inspections" should show a drain survey, not plumbing in general, so
+ * each entry below is sourced against that specific breakdown's own title and description,
+ * in the same order the features appear in the published content.
+ *
+ * Sourced from Pexels (free for commercial use, no attribution required), each id opened
+ * and visually confirmed to depict its breakdown before being committed, and each URL
+ * confirmed HTTP 200 (2026-08-26). Two judgement calls worth knowing about:
+ *   - plumbing "CCTV inspections": Pexels has no photo of an actual push-rod drain camera.
+ *     This is a night drainage crew working at a street drain with a hose/cable reel —
+ *     genuinely drain-survey work, and far closer than the tool-wall shot it replaces, but
+ *     not literally a camera. Swap it the day real Atlas South photography exists.
+ *   - aviation "Building & Systems Upkeep": deliberately a hangar *facility* interior
+ *     rather than one of the many aircraft-under-maintenance shots. Atlas South maintains
+ *     the buildings, not the aircraft, and an aircraft-on-jacks photo would imply a service
+ *     it does not sell.
+ *
+ * A slug absent from this map (every industry and area page, which have no per-item
+ * breakdowns of this kind) falls through to the per-slug pool in panelImageFor below, so
+ * this map only has to cover the pages that actually needed the finer-grained treatment.
+ */
+const PANEL_BY_SLUG: Record<string, PhotoRef[]> = {
+  electricals: [
+    { pexels: '32497160' }, // Planned Maintenance - electrician inspecting a consumer unit
+    { pexels: '9679179' }, // Installation & Upgrades - wiring out an open distribution panel
+    { pexels: '30226733' }, // Emergency Response - technician with a torch in a dark plant room
+    { pexels: '35138694' }, // Compliance & Testing - clamp meter against a distribution board
+    { pexels: '34054464' }, // Fault Diagnosis - multimeter probes tracing a circuit in a live panel
+    { pexels: '11105159' }, // Energy Optimization - LED panel light in a modern ceiling
+  ],
+  plumbing: [
+    { pexels: '15206136' }, // Emergency response - pipe actively leaking and dripping
+    { pexels: '29226620' }, // System installation - fitting new pipework to a manifold
+    { pexels: '7859953' }, // Preventative maintenance - servicing a boiler/pump
+    { pexels: '5532838' }, // Compliance & certification - pressure gauges on a tested system
+    { pexels: '11658940' }, // Leak detection - concealed water meter/valve set into a wall
+    { pexels: '36842620' }, // CCTV inspections - night drainage crew with hose/cable reel at a street drain
+  ],
+  'reactive-maintenance': [
+    { pexels: '7709113' }, // 24/7 Hotline - operator on a headset at a desk, after dark
+    { pexels: '29286299' }, // Multi-Trade Capability - wall of many different trade tools
+    { pexels: '5463585' }, // Rapid Diagnosis - handheld diagnostic meter on plant equipment
+    { pexels: '8488034' }, // Documentation - engineer writing up a job sheet on site
+    { pexels: '15603042' }, // Stock & Spares - shelving of parts and fittings
+    { pexels: '32497161' }, // Breakdown Prevention - planned servicing of an HVAC unit
+  ],
+  'facilities-management': [
+    { pexels: '12903031' }, // Single Point of Contact - handshake, one accountable relationship
+    { pexels: '6804077' }, // Integrated Planning - schedule board with in-progress/complete columns
+    { pexels: '37604386' }, // Hard + Soft Services - building plant room, all services in one place
+    { pexels: '7054403' }, // Cost Optimization - monthly budget report and spend chart
+    { pexels: '7821684' }, // Compliance & Reporting - reviewing reports and documentation
+    { pexels: '30481728' }, // 24/7 Support - out-of-hours monitoring/control room
+  ],
+  security: [
+    { pexels: '34622629' }, // Security Staffing - uniformed officers on duty in a public building
+    { pexels: '30692441' }, // CCTV Systems - operator watching a bank of CCTV screens
+    { pexels: '13657523' }, // Access Control - badging in at a card reader on an office door
+    { pexels: '17649450' }, // Incident Response - hi-vis officers with body-worn cameras responding
+    { pexels: '37429780' }, // Audit & Compliance - officer completing written records on site
+    { pexels: '11783119' }, // Integration - many camera feeds brought together on one wall
+  ],
+  'commercial-cleaning': [
+    { pexels: '8273517' }, // Daily Cleaning - operative vacuuming a large commercial floor
+    { pexels: '17041923' }, // Specialist Cleaning - abseil window cleaning on a building facade
+    { pexels: '4098837' }, // Hygiene & Compliance - gloved washroom sanitising, infection control
+    { pexels: '8293680' }, // Quality Control - printed inspection checklist being worked through
+    { pexels: '4098187' }, // Emergency Response - full PPE decontamination of a washroom
+    { pexels: '10557898' }, // Eco-Friendly Options - eco cleaning products
+  ],
+  catering: [
+    { pexels: '34644333' }, // Boardroom & Meeting Catering - platter of meeting sandwiches
+    { pexels: '18749086' }, // Conference & Corporate Event Catering - delegates at a hot buffet line
+    { pexels: '37322893' }, // Bespoke & Dietary-Accommodating Menus - spread of varied plated dishes
+    { pexels: '6035333' }, // Allergen & Food Hygiene Compliance - digital temperature probe in food
+    { pexels: '34597470' }, // Flexible Scheduling - coffee/refreshment station set for a break
+    { pexels: '11566309' }, // On-Site Setup, Service & Clear-Down - gloved staff laying a table
+  ],
+  aviation: [
+    { pexels: '4064147' }, // Terminal & Hangar Cleaning - spotless empty terminal check-in hall
+    { pexels: '14777212' }, // Building & Systems Upkeep - hangar facility interior (the building, not the aircraft)
+    { pexels: '4098021' }, // Compliance-Driven Cleaning - PPE sanitising of passenger seating
+    { pexels: '16108906' }, // Ground Support - apron ground-handling beside an aircraft stand
+  ],
+  concierge: [
+    { pexels: '4269273' }, // Front-of-House & Reception Cover - receptionist at a modern front desk
+    { pexels: '6809656' }, // Visitor Management & Sign-In - visitor completing paperwork at reception
+    { pexels: '29372699' }, // Access Control & Key Management - wall-mounted key cabinet in use
+    { pexels: '6170188' }, // Mail, Courier & Delivery Handling - parcels and post sorted at a desk
+    { pexels: '3906592' }, // Meeting Room Setup - boardroom laid out and ready
+    { pexels: '6122305' }, // Out-of-Hours & Event Cover - staffed lobby desk after dark
+  ],
+  'parking-lot-management': [
+    { pexels: '34783531' }, // Sweeping & Surface Cleaning - sweeper/washer machine and operator
+    { pexels: '33966251' }, // Line Marking & Signage Upkeep - crisp white bay markings on tarmac
+    { pexels: '8696219' }, // Lighting, Barrier & Equipment Maintenance - car park barrier arm
+    { pexels: '10133570' }, // Waste & Graffiti Management - pressure-washing graffiti off a wall
+  ],
+  'rail-facilities': [
+    { pexels: '12305700' }, // Station & Platform Cleaning - immaculate empty platform
+    { pexels: '28381378' }, // Depot & Operational Facility Cleaning - modern train maintenance depot
+    { pexels: '34490331' }, // Washroom & High-Footfall Hygiene - clean public washroom basin run
+    { pexels: '33337641' }, // Planned Preventative Maintenance - track maintenance in progress
+    { pexels: '20798334' }, // Engineering-Window Scheduling - deserted lit platform at night
+    { pexels: '14189337' }, // Vetted Personnel & Compliance - briefed rail worker in full PPE
+  ],
+};
+
+/**
  * Image for the nth benefit panel on a page — every service, industry and area detail
  * page's "what we provide" / "the challenge" / "our approach" panels (BenefitPanels.tsx).
  *
@@ -274,7 +391,13 @@ const PANEL_FALLBACK_ROTATION: string[] = [
  * (there currently isn't one — every service, industry and area slug has at least a hero
  * + alt pair) rather than ever rendering a broken image.
  */
-export function panelImageFor(slug: string, index: number, width = 900): string {
+function panelPhotoRef(slug: string, index: number): PhotoRef | null {
+  // Per-breakdown photography wins whenever this page has it (see PANEL_BY_SLUG). Looked
+  // up by index rather than keyed on slug alone, so a page that gains an extra feature in
+  // the CMS without a matching image falls through to the pool below rather than breaking.
+  const exact = PANEL_BY_SLUG[slug]?.[index];
+  if (exact) return exact;
+
   const pool: PhotoRef[] = [];
   const altRef = HERO_ALT_BY_SLUG[slug];
   const heroRef = HERO_BY_SLUG[slug];
@@ -283,10 +406,33 @@ export function panelImageFor(slug: string, index: number, width = 900): string 
   if (heroRef) pool.push(heroRef);
   if (beforeAfter) pool.push(beforeAfter.before, beforeAfter.after);
 
-  if (pool.length === 0) {
+  return pool.length > 0 ? pool[index % pool.length] : null;
+}
+
+export function panelImageFor(slug: string, index: number, width = 900): string {
+  const ref = panelPhotoRef(slug, index);
+  if (!ref) {
     return img(PANEL_FALLBACK_ROTATION[index % PANEL_FALLBACK_ROTATION.length], width);
   }
-  return resolvePhoto(pool[index % pool.length], width);
+  return resolvePhoto(ref, width);
+}
+
+/**
+ * Widths offered in a benefit panel's `srcset`. A panel image renders at roughly half the
+ * 1280px content column on desktop and full width on a phone, so its useful range tops out
+ * far below the hero's — serving the same single 900px file to every device (what this
+ * used to do) meant a phone downloaded several times the pixels it could actually display,
+ * on exactly the connections least able to afford it.
+ */
+const PANEL_SRCSET_WIDTHS = [400, 600, 900, 1200];
+
+/** `srcset` for the nth benefit panel image — pairs with panelImageFor's `src`. */
+export function panelImageSrcSetFor(slug: string, index: number): string {
+  const ref = panelPhotoRef(slug, index);
+  const at = ref
+    ? (w: number) => resolvePhoto(ref, w)
+    : (w: number) => img(PANEL_FALLBACK_ROTATION[index % PANEL_FALLBACK_ROTATION.length], w);
+  return PANEL_SRCSET_WIDTHS.map((w) => `${at(w)} ${w}w`).join(', ');
 }
 
 /**
@@ -303,4 +449,5 @@ export const ALL_PHOTO_URLS: string[] = [
   ...PANEL_FALLBACK_ROTATION,
   ...Object.values(BEFORE_AFTER_BY_SLUG).flatMap((pair) => [pair.before, pair.after]),
   ...Object.values(HERO_ALT_BY_SLUG),
+  ...Object.values(PANEL_BY_SLUG).flat(),
 ].map((ref) => resolvePhoto(ref, 400));
