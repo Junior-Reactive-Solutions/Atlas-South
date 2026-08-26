@@ -169,7 +169,6 @@ export const CAREERS_CONTENT = {
       icon: 'wrench',
       location: 'London-based, travel to sites',
       hours: 'Full-time, 40 hours/week',
-      payRange: '£45,000—£55,000',
       startAvailability: 'Immediate',
       description:
         "We're looking for an experienced plumber with commercial and industrial facilities experience to join our growing team.",
@@ -179,7 +178,6 @@ export const CAREERS_CONTENT = {
       icon: 'briefcase',
       location: 'Central London office',
       hours: 'Full-time, 37.5 hours/week',
-      payRange: '£35,000—£45,000',
       startAvailability: 'Next month',
       description:
         'Manage client relationships, coordinate service scheduling, and oversee our operations. Great opportunity for someone looking to move into management.',

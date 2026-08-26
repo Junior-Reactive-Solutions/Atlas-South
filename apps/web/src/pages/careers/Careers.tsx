@@ -105,7 +105,6 @@ export function Careers() {
                           {role.location}
                         </div>
                         <div>{role.hours}</div>
-                        <div>{role.payRange}</div>
                         <div>Start: {role.startAvailability}</div>
                       </div>
                     </div>

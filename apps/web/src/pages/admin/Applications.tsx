@@ -4,6 +4,7 @@ import { FileText, Calendar, Mail, Phone } from 'lucide-react';
 import { animate, stagger } from 'animejs';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAnimationScope, DURATION, EASE, STAGGER_GAP } from '@atlas-south/design-system';
+import { ReplyPanel } from '../../components/admin/ReplyPanel.js';
 
 interface JobApplication {
   id: string;
@@ -151,13 +152,13 @@ export function AdminApplications() {
                           </div>
                         )}
 
-                        <div className="mt-4 flex gap-2 border-t border-slate-200 pt-4">
-                          <a
-                            href={`mailto:${app.email}?subject=Re: Your job application`}
-                            className="flex-1 rounded-lg bg-accent-blue px-4 py-2 text-center text-sm font-medium text-white hover:bg-blue-700"
-                          >
-                            Reply via Email
-                          </a>
+                        <div className="mt-4 border-t border-slate-200 pt-4">
+                          <ReplyPanel
+                            endpoint={`/api/admin/applications/${app.id}/reply`}
+                            recipientFirstName={app.fullName.split(' ')[0]}
+                            recipientEmail={app.email}
+                            defaultSubject={`Re: your application — ${app.roleTitle ?? 'Atlas South Careers'}`}
+                          />
                         </div>
                       </div>
                     </motion.div>

@@ -130,7 +130,7 @@ export function ServiceAreaDetailPage({
           />
           <div className="mt-12">
             {coveragePanels ? (
-              <BenefitPanels panels={coveragePanels.panels} />
+              <BenefitPanels panels={coveragePanels.panels} slug={id} />
             ) : (
               <div className="prose prose-sm max-w-3xl sm:prose-base dark:prose-invert">
                 <Markdown content={coverage} />

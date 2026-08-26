@@ -440,11 +440,12 @@ export function AdminContentEdit() {
               { key: 'icon', label: 'Icon name (lucide)' },
               { key: 'location', label: 'Location' },
               { key: 'hours', label: 'Hours' },
-              { key: 'payRange', label: 'Pay range' },
               { key: 'startAvailability', label: 'Start availability' },
               { key: 'description', label: 'Description', multiline: true },
             ]}
-            newRow={{ title: '', icon: 'briefcase', location: '', hours: '', payRange: '', startAvailability: '', description: '' }}
+            // No pay-range field — deliberately, per types/content.ts's note on OpenRole:
+            // pay is set per candidate based on experience, not published on the listing.
+            newRow={{ title: '', icon: 'briefcase', location: '', hours: '', startAvailability: '', description: '' }}
           />
           <Field
             label="Right to work note"

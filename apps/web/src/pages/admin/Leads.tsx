@@ -1,11 +1,15 @@
 import { useEffect, useState } from 'react';
-import { Trash2, Bot, Download } from 'lucide-react';
+import { Trash2, Bot, Download, Mail, Phone } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext.js';
 
 interface ChatLead {
   id: string;
-  name: string;
-  email: string;
+  firstName: string;
+  lastName: string;
+  company: string | null;
+  email: string | null;
+  phone: string | null;
+  preferredContact: 'email' | 'phone' | null;
   services: string;
   message?: string;
   createdAt: string;
@@ -39,10 +43,14 @@ export function AdminLeads() {
   }
 
   function exportCSV() {
-    const header = ['Name', 'Email', 'Services', 'Message', 'Date'];
+    const header = ['First name', 'Last name', 'Company', 'Phone', 'Preferred contact', 'Email', 'Services', 'Message', 'Date'];
     const rows = leads.map((l) => [
-      l.name,
-      l.email,
+      l.firstName,
+      l.lastName,
+      l.company ?? '',
+      l.phone ?? '',
+      l.preferredContact ?? '',
+      l.email ?? '',
       l.services,
       l.message ?? '',
       new Date(l.createdAt).toLocaleString('en-GB'),
@@ -98,7 +106,8 @@ export function AdminLeads() {
               <thead>
                 <tr className="border-b border-slate-100 bg-slate-50 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
                   <th className="px-5 py-3">Name</th>
-                  <th className="px-5 py-3">Email</th>
+                  <th className="px-5 py-3">Company</th>
+                  <th className="px-5 py-3">Contact</th>
                   <th className="px-5 py-3">Services</th>
                   <th className="px-5 py-3">Message</th>
                   <th className="px-5 py-3">Date</th>
@@ -108,14 +117,40 @@ export function AdminLeads() {
               <tbody className="divide-y divide-slate-100">
                 {leads.map((lead) => (
                   <tr key={lead.id} className="hover:bg-slate-50 transition-colors">
-                    <td className="px-5 py-4 font-medium text-navy">{lead.name}</td>
+                    <td className="px-5 py-4 font-medium text-navy">
+                      {lead.firstName} {lead.lastName}
+                    </td>
+                    <td className="px-5 py-4 text-slate-600">
+                      {lead.company || <span className="text-slate-300 italic">—</span>}
+                    </td>
                     <td className="px-5 py-4">
-                      <a
-                        href={`mailto:${lead.email}`}
-                        className="text-accent-blue hover:underline"
-                      >
-                        {lead.email}
-                      </a>
+                      <div className="flex flex-col gap-1">
+                        {lead.phone && (
+                          <a
+                            href={`tel:${lead.phone}`}
+                            className={`flex items-center gap-1.5 hover:underline ${
+                              lead.preferredContact === 'phone' ? 'font-semibold text-navy' : 'text-slate-500'
+                            }`}
+                            title={lead.preferredContact === 'phone' ? 'Preferred contact method' : undefined}
+                          >
+                            <Phone className="h-3 w-3 shrink-0" />
+                            {lead.phone}
+                          </a>
+                        )}
+                        {lead.email && (
+                          <a
+                            href={`mailto:${lead.email}`}
+                            className={`flex items-center gap-1.5 hover:underline ${
+                              lead.preferredContact === 'email' ? 'font-semibold text-accent-blue' : 'text-slate-500'
+                            }`}
+                            title={lead.preferredContact === 'email' ? 'Preferred contact method' : undefined}
+                          >
+                            <Mail className="h-3 w-3 shrink-0" />
+                            {lead.email}
+                          </a>
+                        )}
+                        {!lead.phone && !lead.email && <span className="text-slate-300 italic">—</span>}
+                      </div>
                     </td>
                     <td className="px-5 py-4">
                       <div className="flex flex-wrap gap-1">
@@ -143,7 +178,7 @@ export function AdminLeads() {
                       <button
                         onClick={() => handleDelete(lead.id)}
                         disabled={deletingId === lead.id}
-                        aria-label={`Delete lead from ${lead.name}`}
+                        aria-label={`Delete lead from ${lead.firstName} ${lead.lastName}`}
                         className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:bg-red-50 hover:text-red-500 transition-colors disabled:opacity-40"
                       >
                         <Trash2 className="h-4 w-4" />

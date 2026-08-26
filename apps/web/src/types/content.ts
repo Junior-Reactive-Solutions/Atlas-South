@@ -97,7 +97,12 @@ export interface OpenRole {
   icon: IconName;
   location: string;
   hours: string;
-  payRange: string;
+  /** Deliberately not shown on the public Careers page — pay is set per candidate based on
+   * experience, so a fixed range on the listing either undersells a strong candidate or
+   * sets an expectation the offer then has to walk back. Kept optional (rather than
+   * removed outright) so old published content carrying it doesn't break; the admin editor
+   * and public page both just ignore it now. */
+  payRange?: string;
   startAvailability: string;
   description?: string;
 }

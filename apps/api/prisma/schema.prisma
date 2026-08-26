@@ -146,17 +146,38 @@ model PageVisibility {
   @@index([visible])
 }
 
-/// Leads captured by the on-site chatbot — name, email, and the service(s)
-/// the visitor expressed interest in. Separate from Enquiry so the two
-/// pipelines stay distinct in the admin panel (chatbot = warm lead at top
-/// of funnel; enquiry = explicit quote request further down).
+/// How a chat lead would rather be followed up — captured directly rather than inferred,
+/// so the team calls someone who asked to be called instead of emailing them by default.
+enum PreferredContact {
+  email
+  phone
+}
+
+/// Leads captured by the on-site chatbot — contact details and the service(s) the visitor
+/// expressed interest in. Separate from Enquiry so the two pipelines stay distinct in the
+/// admin panel (chatbot = warm lead at top of funnel; enquiry = explicit quote request
+/// further down).
+///
+/// firstName/lastName replaced the original single `name` column (migration
+/// 20260826140000_update_chat_lead_fields backfills every existing row by splitting `name`
+/// on its first space). company/phone/preferredContact are new fields the chat flow now
+/// always asks for, and email became optional — it's only collected when the visitor picks
+/// "Email" as their preferredContact. All four are nullable at the DB level because leads
+/// captured before this change genuinely don't have company/phone/preferredContact, and
+/// there's no honest value to backfill them with; what's actually required for a *new*
+/// submission is enforced by the Zod schema in routes/leads.ts, not by a DB constraint that
+/// would otherwise have to fabricate data for old rows.
 model ChatLead {
-  id        String   @id @default(cuid())
-  name      String
-  email     String
-  services  String   // comma-separated service labels
-  message   String?
-  createdAt DateTime @default(now())
+  id                String            @id @default(cuid())
+  firstName         String
+  lastName          String            @default("")
+  company           String?
+  email             String?
+  phone             String?
+  preferredContact  PreferredContact?
+  services          String   // comma-separated service labels
+  message           String?
+  createdAt         DateTime @default(now())
 
   @@index([createdAt])
   @@index([email])

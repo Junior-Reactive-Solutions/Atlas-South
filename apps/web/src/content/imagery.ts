@@ -13,11 +13,15 @@
  * Provenance: every id below was taken from an Unsplash search result page, excluding
  * sponsored iStock placements and Unsplash+ (paid) results, and each URL was confirmed to
  * return HTTP 200. Unsplash License: free for commercial use, no attribution required.
+ * A handful of entries (marked `{ pexels: '…' }` — currently just rail-facilities) come
+ * from Pexels instead, sourced and verified the same way, chosen when a candidate on that
+ * site read as more clearly relevant and had no distracting non-UK signage in frame.
+ * Pexels License: free for commercial use, no attribution required.
  *
- * Served straight from Unsplash's CDN with `auto=format`, matching the pattern already
- * shipped in HeroCarousel.tsx. `03-HERO-SECTION-SPEC.md` specced a Cloudinary round-trip,
- * but Cloudinary was never provisioned (the CLOUDINARY_* env vars are empty). The API's
- * CSP already allows images.unsplash.com.
+ * Served straight from each site's own CDN with format/quality params, matching the
+ * pattern already shipped in HeroCarousel.tsx. `03-HERO-SECTION-SPEC.md` specced a
+ * Cloudinary round-trip, but Cloudinary was never provisioned (the CLOUDINARY_* env vars
+ * are empty). The API's CSP allows both images.unsplash.com and images.pexels.com.
  *
  * ⚠ These remain stock. ABM — the inspiration site this structure mirrors — uses its own
  * photography of its own people and sites, and that is a large part of why it reads as
@@ -26,10 +30,25 @@
  */
 
 const UNSPLASH = 'https://images.unsplash.com';
+const PEXELS = 'https://images.pexels.com';
+
+/** A photo reference: a bare Unsplash id (the long-standing convention), or an explicit
+ * `{ pexels: id }` for the handful of images sourced from Pexels instead. */
+type PhotoRef = string | { pexels: string };
 
 /** Builds a sized, format-negotiated Unsplash CDN URL. */
 function img(id: string, width = 1200): string {
   return `${UNSPLASH}/${id}?auto=format&fit=crop&w=${width}&q=70`;
+}
+
+/** Builds a sized, format-negotiated Pexels CDN URL. */
+function pexelsImg(id: string, width = 1200): string {
+  return `${PEXELS}/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=${width}`;
+}
+
+/** Resolves any PhotoRef to a concrete, sized CDN URL regardless of source. */
+function resolvePhoto(ref: PhotoRef, width: number): string {
+  return typeof ref === 'string' ? img(ref, width) : pexelsImg(ref.pexels, width);
 }
 
 /**
@@ -37,7 +56,7 @@ function img(id: string, width = 1200): string {
  * so `heroImageFor('healthcare')` works for any service, industry or area page.
  * The comment on each line is what the photograph actually shows.
  */
-const HERO_BY_SLUG: Record<string, string> = {
+const HERO_BY_SLUG: Record<string, PhotoRef> = {
   // Hard services
   electricals: 'photo-1621905251189-08b45d6a269e', // electrician wiring a panel, hard hat
   plumbing: 'photo-1673870861507-d72aa6855d89', // tradesperson with wrench at a tool wall
@@ -57,6 +76,12 @@ const HERO_BY_SLUG: Record<string, string> = {
   // parking-lot-management moved here from the Industries block below, 2026-08-20 — see
   // the note on its navigation.ts entry.
   'parking-lot-management': 'photo-1772461355574-3fcd84c6016b', // multi-level car park with directional signage
+  // Added 2026-08-26 from the client's Rail sector one-pager. Sourced from Pexels rather
+  // than Unsplash — several Unsplash-style candidates for "platform cleaning" carried
+  // visible non-UK station signage (Bengali, Chinese), which would visibly signal the
+  // wrong country on a London/South East contractor's own page; this one is a generic,
+  // unbranded modern platform with no readable signage in frame.
+  'rail-facilities': { pexels: '10390781' }, // empty modern underground platform, warm lighting, no readable signage
   // Industries
   corporate: 'photo-1560264280-88b68371db39', // open-plan office in use
   healthcare: 'photo-1777269749032-d8d458ae594d', // hospital corridor
@@ -85,7 +110,7 @@ const HERO_FALLBACK = 'photo-1694521787193-9293daeddbaa';
 
 /** Hero photograph for a content slug. Never returns empty. */
 export function heroImageFor(slug: string, width = 1600): string {
-  return img(HERO_BY_SLUG[slug] ?? HERO_FALLBACK, width);
+  return resolvePhoto(HERO_BY_SLUG[slug] ?? HERO_FALLBACK, width);
 }
 
 /**
@@ -102,8 +127,8 @@ const HERO_SRCSET_WIDTHS = [480, 768, 1080, 1440, 1920];
  * `sizes="100vw"` alongside it since these heroes are always full viewport width.
  */
 export function heroImageSrcSetFor(slug: string): string {
-  const id = HERO_BY_SLUG[slug] ?? HERO_FALLBACK;
-  return HERO_SRCSET_WIDTHS.map((w) => `${img(id, w)} ${w}w`).join(', ');
+  const ref = HERO_BY_SLUG[slug] ?? HERO_FALLBACK;
+  return HERO_SRCSET_WIDTHS.map((w) => `${resolvePhoto(ref, w)} ${w}w`).join(', ');
 }
 
 /**
@@ -123,7 +148,7 @@ export function heroImageSrcSetFor(slug: string): string {
  * `surrey-kent`'s alternate is a Cotswolds village street, not literally Surrey or Kent —
  * described generically in its comment rather than claiming a specific wrong location.
  */
-const HERO_ALT_BY_SLUG: Record<string, string> = {
+const HERO_ALT_BY_SLUG: Record<string, PhotoRef> = {
   // Hard services
   electricals: 'photo-1751486289943-0428133c367c', // exposed wiring mid-installation, raw plaster wall
   plumbing: 'photo-1611021061421-93741ec41ce1', // hand holding a length of copper pipe
@@ -140,6 +165,7 @@ const HERO_ALT_BY_SLUG: Record<string, string> = {
   concierge: 'photo-1553369728-15ec6971afaf', // man standing beside a reception counter
   // parking-lot-management moved here from the Industries block below, 2026-08-20.
   'parking-lot-management': 'photo-1637970067784-927e66e07e36', // empty parking garage at night, lit
+  'rail-facilities': { pexels: '27806682' }, // blue-tiled modern platform, different angle/scene from the primary shot, no readable signage
   // Industries
   corporate: 'photo-1557804506-669a67965ba0', // team meeting around a whiteboard
   healthcare: 'photo-1517120026326-d87759a7b63b', // clinical staff member walking a hospital corridor
@@ -161,8 +187,8 @@ const HERO_ALT_BY_SLUG: Record<string, string> = {
 
 /** Second photograph for a slug, for hover-reveal — null if this slug has no alternate. */
 export function heroImageAltFor(slug: string, width = 1600): string | null {
-  const id = HERO_ALT_BY_SLUG[slug];
-  return id ? img(id, width) : null;
+  const ref = HERO_ALT_BY_SLUG[slug];
+  return ref ? resolvePhoto(ref, width) : null;
 }
 
 /**
@@ -218,34 +244,63 @@ export function beforeAfterFor(slug: string, width = 1000): { before: string; af
 }
 
 /**
- * Images illustrating the alternating benefit panels. Deliberately generic working shots
- * — these sit beside claims like "planned maintenance" or "compliance documentation"
- * that no single photograph depicts literally, so a real person doing real technical work
- * is a better fit than a literal-minded match.
+ * Generic working-shot fallback for the alternating benefit panels, used only when a
+ * slug has no curated photography at all (see panelImageFor below). Kept deliberately
+ * generic rather than trade-specific, since a page falling back to this has no per-slug
+ * photo to be specific WITH.
  */
-const PANEL_ROTATION: string[] = [
+const PANEL_FALLBACK_ROTATION: string[] = [
   'photo-1621905251918-48416bd8575a', // engineer in hard hat holding a tool
-  'photo-1758101755915-462eddc23f57', // testing an electrical panel with a multimeter
   'photo-1660330589487-39cc0177ba89', // worker in a hi-vis jacket
-  'photo-1698479603408-1a66a6d9e80f', // bank of air-conditioning units
   'photo-1615774925655-a0e97fc85c14', // engineer on site
   'photo-1694521787193-9293daeddbaa', // crew on site
 ];
 
-/** Image for the nth benefit panel on a page, cycling through the rotation. */
-export function panelImage(index: number, width = 900): string {
-  return img(PANEL_ROTATION[index % PANEL_ROTATION.length], width);
+/**
+ * Image for the nth benefit panel on a page — every service, industry and area detail
+ * page's "what we provide" / "the challenge" / "our approach" panels (BenefitPanels.tsx).
+ *
+ * Previously this cycled through one fixed 6-photo PANEL_FALLBACK_ROTATION sitewide,
+ * regardless of which page it rendered on — an electricals-page panel and a catering-page
+ * panel pulled from the exact same array, which is why "testing an electrical panel with
+ * a multimeter" turned up on pages that have nothing to do with electrics. This instead
+ * builds a per-slug pool from photography already curated and verified for that specific
+ * page (its hero photo, its hover-alt photo, and — for the three services with one — its
+ * before/after pair), so every panel image is guaranteed to actually be that page's
+ * subject. The alt photo is listed first, not the hero photo, so the panel directly under
+ * the hero doesn't repeat the exact image the visitor just saw.
+ *
+ * Falls back to the generic rotation only for a slug with no curated photography at all
+ * (there currently isn't one — every service, industry and area slug has at least a hero
+ * + alt pair) rather than ever rendering a broken image.
+ */
+export function panelImageFor(slug: string, index: number, width = 900): string {
+  const pool: PhotoRef[] = [];
+  const altRef = HERO_ALT_BY_SLUG[slug];
+  const heroRef = HERO_BY_SLUG[slug];
+  const beforeAfter = BEFORE_AFTER_BY_SLUG[slug];
+  if (altRef) pool.push(altRef);
+  if (heroRef) pool.push(heroRef);
+  if (beforeAfter) pool.push(beforeAfter.before, beforeAfter.after);
+
+  if (pool.length === 0) {
+    return img(PANEL_FALLBACK_ROTATION[index % PANEL_FALLBACK_ROTATION.length], width);
+  }
+  return resolvePhoto(pool[index % pool.length], width);
 }
 
 /**
- * Every id referenced above, for the verification script that confirms each one still
- * resolves. Exported so a broken image is caught by a check rather than by a visitor.
+ * Every photo referenced above, resolved to a concrete fetchable URL, for the
+ * verification script that confirms each one still resolves. Exported as full URLs
+ * (rather than bare ids) since entries now come from more than one CDN — a script
+ * checking these doesn't need to know which. Broken image caught by a check, not a
+ * visitor.
  */
-export const ALL_PHOTO_IDS: string[] = [
+export const ALL_PHOTO_URLS: string[] = [
   ...Object.values(HERO_BY_SLUG),
   HERO_FALLBACK,
   ...Object.values(NAMED),
-  ...PANEL_ROTATION,
+  ...PANEL_FALLBACK_ROTATION,
   ...Object.values(BEFORE_AFTER_BY_SLUG).flatMap((pair) => [pair.before, pair.after]),
   ...Object.values(HERO_ALT_BY_SLUG),
-];
+].map((ref) => resolvePhoto(ref, 400));

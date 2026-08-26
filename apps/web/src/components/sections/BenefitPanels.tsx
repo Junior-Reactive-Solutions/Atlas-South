@@ -1,5 +1,5 @@
 import { Icon, type IconName, useScrollReveal } from '@atlas-south/design-system';
-import { panelImage } from '../../content/imagery';
+import { panelImageFor } from '../../content/imagery';
 
 export interface BenefitPanel {
   title: string;
@@ -11,6 +11,14 @@ interface BenefitPanelsProps {
   panels: BenefitPanel[];
   /** Alternate the image side per row. Off gives a plain image-left grid. */
   alternate?: boolean;
+  /** Content slug — e.g. "electricals", "healthcare", "central-london" — used to pull
+   * photography that actually matches this page (content/imagery.ts's panelImageFor)
+   * instead of a generic sitewide rotation. */
+  slug: string;
+  /** Starting position in the slug's image pool. IndustryDetailPage renders two separate
+   * BenefitPanels for the same slug ("challenges" then "approach") — without an offset
+   * both would start at index 0 and open on the exact same photo. */
+  indexOffset?: number;
 }
 
 /**
@@ -22,7 +30,7 @@ interface BenefitPanelsProps {
  * which is what lets the same underlying copy carry visual weight. Images come from
  * content/imagery.ts by position, so content authors never have to pick one.
  */
-export function BenefitPanels({ panels, alternate = true }: BenefitPanelsProps) {
+export function BenefitPanels({ panels, alternate = true, slug, indexOffset = 0 }: BenefitPanelsProps) {
   // Panels rise in as the section reaches the viewport, one after the other — the thing
   // that makes a long page feel like it's unfolding rather than just being long.
   const root = useScrollReveal('.benefit-panel');
@@ -41,7 +49,7 @@ export function BenefitPanels({ panels, alternate = true }: BenefitPanelsProps) 
           >
             <div className={imageRight ? 'lg:order-2' : ''}>
               <img
-                src={panelImage(index)}
+                src={panelImageFor(slug, index + indexOffset)}
                 alt=""
                 aria-hidden="true"
                 loading="lazy"

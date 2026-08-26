@@ -43,6 +43,13 @@ export const SOFT_SERVICES: NavItem[] = [
   { id: 'aviation', label: 'Aviation Services', path: '/soft-services/aviation', icon: 'plane' },
   { id: 'concierge', label: 'Concierge', path: '/soft-services/concierge', icon: 'concierge-bell' },
   { id: 'parking-lot-management', label: 'Parking Lot Management', path: '/soft-services/parking-lot-management', icon: 'square-parking' },
+  // Added 2026-08-26 from the client's Rail sector one-pager (Atlas-South-Rail-Facilities.pdf)
+  // — cleaning and facilities management for stations, platforms, depots and rail
+  // infrastructure. Sector-specific rather than folded into the general Facilities
+  // Management listing above, since the actual sell here (engineering-window scheduling,
+  // trackside-adjacent access, rail-operator compliance documentation) is specific to rail
+  // environments and doesn't apply to a typical office/retail FM contract.
+  { id: 'rail-facilities', label: 'Rail Facilities', path: '/soft-services/rail-facilities', icon: 'train-front' },
 ];
 
 export const INDUSTRIES: NavItem[] = [
