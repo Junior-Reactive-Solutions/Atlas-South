@@ -282,9 +282,14 @@ const PANEL_FALLBACK_ROTATION: string[] = [
  *     the buildings, not the aircraft, and an aircraft-on-jacks photo would imply a service
  *     it does not sell.
  *
- * A slug absent from this map (every industry and area page, which have no per-item
- * breakdowns of this kind) falls through to the per-slug pool in panelImageFor below, so
- * this map only has to cover the pages that actually needed the finer-grained treatment.
+ * Industry and area pages are covered too, further down. Their panels aren't a `features`
+ * array — they're parsed out of the markdown bullets in `challenges` / `ourApproach` /
+ * `coverage` by lib/parseBulletPanels.ts — but they reach BenefitPanels the same way and
+ * index the same way, so one map serves all three page types.
+ *
+ * A slug absent from this map still falls through to the per-slug pool in panelImageFor
+ * below, so an unmapped or newly-added page degrades to on-brand photography rather than
+ * to a broken image.
  */
 const PANEL_BY_SLUG: Record<string, PhotoRef[]> = {
   electricals: [
@@ -370,6 +375,168 @@ const PANEL_BY_SLUG: Record<string, PhotoRef[]> = {
     { pexels: '33337641' }, // Planned Preventative Maintenance - track maintenance in progress
     { pexels: '20798334' }, // Engineering-Window Scheduling - deserted lit platform at night
     { pexels: '14189337' }, // Vetted Personnel & Compliance - briefed rail worker in full PPE
+  ],
+
+  // ── Industry pages ───────────────────────────────────────────────────────────────────
+  // These render TWO BenefitPanels blocks from one slug: "The challenge" (parsed from the
+  // `challenges` field) then "Our approach" (from `ourApproach`), the second offset by the
+  // first's length (IndustryDetailPage.tsx passes indexOffset). So each array below runs
+  // challenge panels first, then approach panels, in exactly that order.
+  'government-public-sector': [
+    { pexels: '8470831' }, // Procurement-ready, compliance-first - formal contract being signed
+    { pexels: '8761297' }, // Vetted personnel - ID badges on lanyards
+    { pexels: '11968592' }, // Public trust is on the line - civic council chambers building
+    { pexels: '6814521' }, // Continuity across long-term contracts - agreement signed round a table
+    { pexels: '16058002' }, // Office & civic building cleaning - public library reading room in use
+    { pexels: '13804490' }, // Compliance-driven cleaning protocols - checklist walked through on site
+    { pexels: '32032996' }, // Planned preventative facilities maintenance - building ventilation plant
+    { pexels: '5483147' }, // Vetted, security-conscious personnel - staff pass worn on a lanyard
+    { pexels: '13141583' }, // Out-of-hours and scheduled servicing - empty office after dark
+  ],
+  // Corporate's `ourApproach` is prose, not bullets, so it renders as text and only the five
+  // challenge panels take images here — deliberately five entries, not ten.
+  corporate: [
+    { pexels: '35627327' }, // Spread-out sites - aerial of an office estate and its car parks
+    { pexels: '19143940' }, // Regulatory weight - fire alarm panel and extinguisher
+    { pexels: '8296977' }, // Cost control - budget worked through with a calculator
+    { pexels: '12526862' }, // Tenant/employee safety - occupied open-plan office floor
+    { pexels: '8441784' }, // Partner coordination - suppliers meeting round one table
+  ],
+  healthcare: [
+    { pexels: '4098787' }, // Infection control comes first - full PPE disinfection
+    { pexels: '11660582' }, // Minimal disruption to patient care - ward corridor in service
+    { pexels: '6627665' }, // Hygiene standards ready for inspection - sterilisation autoclave load
+    { pexels: '9574344' }, // Discretion and professionalism - staff working quietly down a clinical corridor
+    { pexels: '8413089' }, // Clinical and non-clinical area cleaning - gloved surface sanitising
+    { pexels: '6627782' }, // Infection-control-aligned protocols - clinical hand hygiene at the sink
+    { pexels: '36595246' }, // Ward turnaround and deep cleaning - stripped room between patients
+    { pexels: '5622274' }, // Hygiene compliance documentation - sterile instrument tray checked off
+    { pexels: '37036967' }, // Facilities maintenance for healthcare buildings - hospital corridor fabric
+  ],
+  'oil-gas': [
+    { pexels: '16100084' }, // Hazardous-materials awareness - hazard placard on a tanker
+    { pexels: '30179842' }, // Site induction and access control - crew briefed before entering site
+    { pexels: '6045858' }, // Round-the-clock scheduling - plant running through the night
+    { pexels: '12234106' }, // Compliance documentation on demand - records completed on site
+    { pexels: '37602851' }, // Operational and office facility cleaning - plant hall interior
+    { pexels: '209230' }, // COSHH-compliant materials handling - chemicals handled in full PPE
+    { pexels: '5878442' }, // Planned preventative maintenance - engineer working on site plant
+    { pexels: '36778676' }, // Shift-pattern and 24/7 scheduling - operative walking the tank farm
+    { pexels: '2282658' }, // Health & safety compliance - extinguisher provision on an industrial wall
+  ],
+  retail: [
+    { pexels: '37175314' }, // Trading hours constraints - centre closed, shutters down
+    { pexels: '19335728' }, // Multi-tenant coordination - multi-level centre of separate units
+    { pexels: '33803366' }, // Customer safety liability - high-footfall public mall floor
+    { pexels: '38247968' }, // Energy efficiency - external cooling plant serving the building
+    { pexels: '29834274' }, // Specialist areas - refrigerated retail display units
+    { pexels: '32094984' }, // Trading-hours aware scheduling - empty mall concourse out of hours
+    { pexels: '18042461' }, // Multi-site coordination - centre concourse across several floors
+    { pexels: '7653776' }, // Tenant liaison - working session between two parties
+    { pexels: '21299748' }, // Compliance & safety - fire extinguisher provision
+    { pexels: '8297856' }, // Cost optimization - HVAC ductwork whose upkeep drives the bills
+  ],
+  manufacturing: [
+    { pexels: '34718930' }, // Production keeps running - live production hall
+    { pexels: '34718926' }, // Housekeeping as a safety standard - marked walkway beside the line
+    { pexels: '5953714' }, // Contamination-conscious cleaning - PPE in a food-grade production area
+    { pexels: '4483863' }, // One contract across the whole site - warehouse racking alongside production
+    { pexels: '4487382' }, // Production floor & warehouse cleaning - operative working the aisles
+    { pexels: '16045268' }, // Planned preventative maintenance - hot work on plant machinery
+    { pexels: '9201898' }, // Site housekeeping & walkway safety - marked pedestrian route
+    { pexels: '16091360' }, // Health & safety compliance support - hazard-marked step edges
+  ],
+  education: [
+    { pexels: '33807234' }, // Scheduled around the school day - classroom between lessons
+    { pexels: '5745170' }, // Safeguarding-aware personnel - staff pass worn on site
+    { pexels: '34779210' }, // High-footfall hygiene standards - school dining hall
+    { pexels: '36650154' }, // Facilities upkeep for ageing estates - older classroom and fabric
+    { pexels: '28987495' }, // Classroom, canteen & communal area cleaning - school corridor
+    { pexels: '37991788' }, // Term-time and holiday deep cleaning - lockers in an empty school
+    { pexels: '17461785' }, // Washroom & high-footfall hygiene servicing - washroom basin run
+    { pexels: '33089236' }, // Facilities maintenance for education buildings - corridor and building fabric
+    { pexels: '8452290' }, // Health & safety compliance support - extinguisher and safety signage
+  ],
+  'data-centres': [
+    { pexels: '17489153' }, // Particulate control - clean server hall
+    { pexels: '33335255' }, // Security and access come first - access reader at a controlled door
+    { pexels: '37730212' }, // Uptime is never negotiable - live racks under load
+    { pexels: '2464420' }, // Environmental sensitivity - cooling and airflow overhead
+    { pexels: '1181354' }, // Server hall & technical area cleaning - working the rack aisle
+    { pexels: '37605911' }, // Office, control room & welfare cleaning - control desk
+    { pexels: '19226354' }, // Scheduling around maintenance windows - hardware swapped in-window
+    { pexels: '7824263' }, // Security-cleared personnel - keypad-controlled entry
+    { pexels: '6466141' }, // Facilities maintenance & PPM - rack infrastructure and cabling
+  ],
+  venues: [
+    { pexels: '10880677' }, // Turnaround windows - full auditorium reset between events
+    { pexels: '13331292' }, // Front-of-house has to be flawless - ornate balcony detail
+    { pexels: '29858811' }, // Backstage and technical areas - bare stage with access equipment
+    { pexels: '8273618' }, // Post-event reset and waste - clearing an auditorium aisle after a show
+    { pexels: '18665399' }, // Front-of-house & public area cleaning - seating and balcony in public view
+    { pexels: '3709370' }, // Post-event deep cleaning & reset - emptied auditorium
+    { pexels: '26285734' }, // Backstage, green room & technical cleaning - stage and technical walls
+    { pexels: '4990819' }, // Event turnaround & load-in/load-out - waste staged at a venue entrance
+  ],
+
+  // ── Service area pages ───────────────────────────────────────────────────────────────
+  // These are the honest exception in this file. An area panel names a place AND the kind
+  // of estate found there ("Bermondsey & Canada Water — larger commercial estates,
+  // warehouses, and logistics facilities"). Stock photography can genuinely show the
+  // well-known London locations, but nothing on Pexels is truthfully identifiable as, say,
+  // "Holloway & Archway, N7" — and captioning a generic street as a specific postcode is
+  // exactly the inaccuracy this whole exercise exists to remove. So: where the location is
+  // genuinely photographable it IS that location (Oxford Street for the West End, the
+  // Gherkin cluster for the City, King's Cross for King's Cross, Camden High Street for the
+  // Camden/Islington fringe, Greenwich Park for the SE skyline). Everywhere else the image
+  // matches the PROPERTY TYPE the panel's own text names, which is the part that is
+  // actually true of it. Replace these first if the client ever supplies real site photos.
+  'central-london': [
+    { pexels: '14494407' }, // West End & Theatreland - Oxford Street (genuine location)
+    { pexels: '28250030' }, // Financial District - the City cluster with the Gherkin (genuine location)
+    { pexels: '8461520' }, // South Bank & Southwark - the riverside skyline (genuine location)
+    { pexels: '30797258' }, // Westminster & Lambeth - institutional London (property type: civic/institutional)
+    { pexels: '15520906' }, // Central ancillary areas - Camden High Street (genuine location)
+  ],
+  'south-east-london': [
+    { pexels: '38769057' }, // Lewisham & Deptford - south London suburban retail parade
+    { pexels: '13599821' }, // Elephant & Castle - new commercial development under construction
+    { pexels: '2451566' }, // Camberwell & Peckham - converted-warehouse creative studio space
+    { pexels: '2804929' }, // Bermondsey & Canada Water - logistics estate with trucking
+    { pexels: '13657362' }, // Crystal Palace & Dulwich - suburban mixed-use terraces
+    { pexels: '5899910' }, // Croydon fringe - London seen from the south-east (genuine vantage)
+  ],
+  'north-london': [
+    { pexels: '10661105' }, // King's Cross & St Pancras - King's Cross concourse (genuine location)
+    { pexels: '32477992' }, // Islington & Finsbury - boutique commercial frontage
+    { pexels: '23496667' }, // Hackney & Shoreditch - creative/tech workspace
+    { pexels: '18004076' }, // Holloway & Archway - terraced small commercial units
+    { pexels: '37938605' }, // Finchley, Barnet & Enfield - suburban office park
+    { pexels: '36006588' }, // Waltham Forest edge - light industrial unit
+  ],
+  'east-london': [
+    { pexels: '7674645' }, // Tower Hamlets - mixed creative and commercial workspace
+    { pexels: '4170185' }, // Bow, Stratford & Olympic Zone - large-scale mixed-use development
+    { pexels: '11666903' }, // Newham - light industrial loading and logistics
+    { pexels: '8517442' }, // Waltham Forest - suburban mixed residential and commercial
+    { pexels: '14060483' }, // Barking & Dagenham - large-footprint distribution centre
+    { pexels: '23496609' }, // Hackney Wick - emerging creative workspace
+  ],
+  'west-london': [
+    { pexels: '30683472' }, // Knightsbridge, Kensington, Chelsea - west London stucco terraces
+    { pexels: '39160136' }, // Mayfair, Belgravia, Pimlico - Pall Mall frontage (genuine location)
+    { pexels: '5625930' }, // South Kensington & museums - heritage institutional architecture
+    { pexels: '7872012' }, // Hammersmith & Fulham - modern commercial office block
+    { pexels: '19034601' }, // Ealing & Acton - suburban commercial estate
+    { pexels: '19034554' }, // Brentford & Richmond fringe - light industrial and logistics premises
+  ],
+  'surrey-kent': [
+    { pexels: '7885670' }, // Croydon & South Croydon - regional corporate office tower
+    { pexels: '35052489' }, // Surrey Hills & Epsom - landscaped business park
+    { pexels: '269077' }, // Guildford & Woking - corporate campus building
+    { pexels: '19033919' }, // Kent East - light industrial and commercial estate
+    { pexels: '28579364' }, // Kent Central - regional town commercial district
+    { pexels: '12625463' }, // Kent Coastal Fringe - edge-of-town premises in open country
   ],
 };
 
