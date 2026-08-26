@@ -14,13 +14,13 @@ const SENDER_EMAIL = 'noreply@atlassouthes.com';
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'enquiries@atlassouthes.com';
 
 /**
- * Which of the three themed layouts (lib/emailThemes.ts) admin replies go out in — set
- * once the client picks between the three options presented for review. Ships defaulted
- * to 'navy-header' (the closest match to the existing confirmation emails' navy-and-white
- * feel) so the reply feature works end-to-end before that choice is locked in; swapping
- * this constant is the only change needed once it is.
+ * Which of the three themed layouts (lib/emailThemes.ts) admin replies go out in. The
+ * client reviewed all three and chose 'light-editorial' (2026-08-26) — the quieter
+ * treatment where the logo sits on white and the brand shows up as an accent rule rather
+ * than a navy background band, so a reply reads as a note from the team rather than a
+ * marketing send.
  */
-const ADMIN_REPLY_THEME: ReplyEmailTheme = 'navy-header';
+const ADMIN_REPLY_THEME: ReplyEmailTheme = 'light-editorial';
 
 export interface EnquiryEmailData {
   fullName: string;

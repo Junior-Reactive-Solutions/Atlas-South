@@ -1,5 +1,5 @@
 import { Icon, type IconName, useScrollReveal } from '@atlas-south/design-system';
-import { panelImageFor } from '../../content/imagery';
+import { panelImageFor, panelImageSrcSetFor } from '../../content/imagery';
 
 export interface BenefitPanel {
   title: string;
@@ -50,9 +50,17 @@ export function BenefitPanels({ panels, alternate = true, slug, indexOffset = 0 
             <div className={imageRight ? 'lg:order-2' : ''}>
               <img
                 src={panelImageFor(slug, index + indexOffset)}
+                srcSet={panelImageSrcSetFor(slug, index + indexOffset)}
+                // Two columns from lg up inside a max-w-7xl (1280px) container, minus the
+                // gap — so ~45vw there, full width below it.
+                sizes="(min-width: 1024px) 45vw, 100vw"
                 alt=""
                 aria-hidden="true"
+                // Every panel is below the fold on every page, so nothing here competes
+                // with the hero for bandwidth: a visitor who never scrolls past the
+                // intro downloads none of these at all.
                 loading="lazy"
+                decoding="async"
                 className="aspect-[4/3] w-full rounded-2xl object-cover shadow-lg"
               />
             </div>
