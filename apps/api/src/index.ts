@@ -33,10 +33,54 @@ const app = express();
 // (empirically confirmed: two requests with different X-Forwarded-For headers both
 // logged as `::1`), which silently turns every per-IP rate limiter (login, enquiry,
 // general API) into one budget shared by every visitor to the site combined, and
-// destroys IP attribution in AdminAuditLog. `1` trusts exactly one hop — the immediate
-// proxy Express is connected to is trusted to have set X-Forwarded-For correctly;
-// anything that client sent further upstream is not re-trusted beyond that.
-app.set('trust proxy', 1);
+// destroys IP attribution in AdminAuditLog.
+//
+// `1` (the first attempt) was wrong: it moved the bug from "everyone is ::1" to
+// "everyone is one of Render's private 10.x load-balancer addresses" — still not the
+// real client, just a different wrong answer, confirmed by re-running the same
+// spoofed-XFF test after deploying it. A temporary diagnostic on /api/health (echoing
+// the raw XFF chain back for a request with a known spoofed prefix) then showed the
+// *actual* chain for this deployment:
+//   <attacker-supplied XFF...>, <true client IP>, <Cloudflare's own edge IP>, <Render's
+//   private internal LB IP (which is also the raw socket peer, so it appears twice)>
+// — three trusted entries after whatever the client sent, not one.
+//
+// A hardcoded hop-count (`3`) would "fix" this today but is fragile: it silently breaks
+// again, in the same wrong-IP way, the moment Render adds or removes an internal hop —
+// and a fixed count trusts N hops unconditionally, so anything that ever ends up that
+// many hops out gets believed too. Trusting by what each hop actually *is* instead of
+// how many there are survives both problems: 'uniquelocal' trusts Render's private
+// (RFC 1918) internal address(es) regardless of how many times the request bounces
+// through them, and the explicit ranges below trust only Cloudflare's own published
+// edge IPs (https://www.cloudflare.com/ips/) — nothing else can inject an
+// X-Forwarded-For entry this app will believe.
+const CLOUDFLARE_IPV4_RANGES = [
+  '173.245.48.0/20',
+  '103.21.244.0/22',
+  '103.22.200.0/22',
+  '103.31.4.0/22',
+  '141.101.64.0/18',
+  '108.162.192.0/18',
+  '190.93.240.0/20',
+  '188.114.96.0/20',
+  '197.234.240.0/22',
+  '198.41.128.0/17',
+  '162.158.0.0/15',
+  '104.16.0.0/13',
+  '104.24.0.0/14',
+  '172.64.0.0/13',
+  '131.0.72.0/22',
+];
+const CLOUDFLARE_IPV6_RANGES = [
+  '2400:cb00::/32',
+  '2606:4700::/32',
+  '2803:f800::/32',
+  '2405:b500::/32',
+  '2405:8100::/32',
+  '2a06:98c0::/29',
+  '2c0f:f248::/32',
+];
+app.set('trust proxy', ['loopback', 'linklocal', 'uniquelocal', ...CLOUDFLARE_IPV4_RANGES, ...CLOUDFLARE_IPV6_RANGES]);
 
 // Swagger UI — registered BEFORE helmet so it can set its own relaxed CSP
 // for the docs route only. All other routes still get the strict helmet policy.
