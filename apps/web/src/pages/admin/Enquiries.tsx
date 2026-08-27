@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext.js';
-import { ArrowRight, Trash2, Reply } from 'lucide-react';
+import { ArrowRight, Trash2, Reply, Eye } from 'lucide-react';
 import { animate, stagger } from 'animejs';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAnimationScope, DURATION, EASE, STAGGER_GAP } from '@atlas-south/design-system';
 import { ReplyPanel } from '../../components/admin/ReplyPanel.js';
+import { DetailDrawer, DetailField } from '../../components/admin/DetailDrawer.js';
 
 interface Enquiry {
   id: string;
@@ -39,7 +40,7 @@ const STATUS_COLORS: Record<Status, string> = {
 export function AdminEnquiries() {
   const [enquiries, setEnquiries] = useState<Enquiry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [replyingId, setReplyingId] = useState<string | null>(null);
+  const [selectedEnquiry, setSelectedEnquiry] = useState<Enquiry | null>(null);
   const { authFetch } = useAuth();
 
   useEffect(() => {
@@ -133,9 +134,28 @@ export function AdminEnquiries() {
                     transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                     className="rounded-lg border border-slate-200 bg-white p-3 transition-shadow focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-accent-blue"
                   >
-                    <p className="font-medium text-navy">{enquiry.fullName}</p>
-                    <p className="truncate text-xs text-slate-600" title={enquiry.email}>{enquiry.email}</p>
-                    <p className="mt-2 line-clamp-2 text-xs text-slate-700">{enquiry.message}</p>
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <p className="font-medium text-navy">{enquiry.fullName}</p>
+                        <p className="truncate text-xs text-slate-600" title={enquiry.email}>{enquiry.email}</p>
+                      </div>
+                      <button
+                        onClick={() => setSelectedEnquiry(enquiry)}
+                        aria-label={`View full details for ${enquiry.fullName}`}
+                        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-accent-blue"
+                      >
+                        <Eye className="h-4 w-4" />
+                      </button>
+                    </div>
+                    {/* line-clamp keeps cards a uniform height on the board; the full
+                        message (and everything else about this enquiry) is one click
+                        away via the Eye button or clicking the message itself. */}
+                    <button
+                      onClick={() => setSelectedEnquiry(enquiry)}
+                      className="mt-2 line-clamp-2 text-left text-xs text-slate-700 hover:text-navy"
+                    >
+                      {enquiry.message}
+                    </button>
 
                     {/* Status Buttons */}
                     <div className="mt-3 flex flex-col gap-2">
@@ -170,26 +190,19 @@ export function AdminEnquiries() {
                         </motion.button>
                       )}
 
+                      {/* Reply now opens the same detail drawer the Eye button and the
+                          message text open — one consistent place to read the full
+                          enquiry and reply to it, rather than a second inline panel
+                          competing for room on an already-narrow card. */}
                       <motion.button
                         whileTap={{ scale: 0.96 }}
-                        onClick={() => setReplyingId(replyingId === enquiry.id ? null : enquiry.id)}
+                        onClick={() => setSelectedEnquiry(enquiry)}
                         className="flex min-h-[40px] items-center justify-center gap-1 rounded border border-slate-200 bg-white px-2 py-1 text-xs font-medium text-slate-700 hover:bg-slate-50"
                       >
                         Reply
                         <Reply className="h-3 w-3" />
                       </motion.button>
                     </div>
-
-                    {replyingId === enquiry.id && (
-                      <div className="mt-3">
-                        <ReplyPanel
-                          endpoint={`/api/admin/enquiries/${enquiry.id}/reply`}
-                          recipientFirstName={enquiry.fullName.split(' ')[0]}
-                          recipientEmail={enquiry.email}
-                          defaultSubject="Re: your enquiry with Atlas South"
-                        />
-                      </div>
-                    )}
 
                     <p className="mt-2 text-xs text-slate-500">
                       {new Date(enquiry.createdAt).toLocaleDateString()}
@@ -201,6 +214,62 @@ export function AdminEnquiries() {
           </div>
         ))}
       </div>
+
+      <DetailDrawer
+        open={selectedEnquiry !== null}
+        onClose={() => setSelectedEnquiry(null)}
+        title={selectedEnquiry?.fullName ?? ''}
+        subtitle={
+          selectedEnquiry
+            ? new Date(selectedEnquiry.createdAt).toLocaleString('en-GB', {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+              })
+            : undefined
+        }
+        footer={
+          selectedEnquiry && (
+            <ReplyPanel
+              endpoint={`/api/admin/enquiries/${selectedEnquiry.id}/reply`}
+              recipientFirstName={selectedEnquiry.fullName.split(' ')[0]}
+              recipientEmail={selectedEnquiry.email}
+              defaultSubject="Re: your enquiry with Atlas South"
+            />
+          )
+        }
+      >
+        {selectedEnquiry && (
+          <dl>
+            <DetailField label="Status">
+              <span
+                className={`inline-flex rounded-full px-2 py-0.5 text-xs font-bold ${STATUS_COLORS[selectedEnquiry.status]}`}
+              >
+                {STATUS_LABELS[selectedEnquiry.status]}
+              </span>
+            </DetailField>
+            <DetailField label="Email">
+              <a href={`mailto:${selectedEnquiry.email}`} className="text-accent-blue hover:underline">
+                {selectedEnquiry.email}
+              </a>
+            </DetailField>
+            <DetailField label="Phone">
+              <a href={`tel:${selectedEnquiry.phone}`} className="text-accent-blue hover:underline">
+                {selectedEnquiry.phone}
+              </a>
+            </DetailField>
+            <DetailField label="Service requested">
+              {selectedEnquiry.serviceId || <span className="italic text-slate-400">Not specified</span>}
+            </DetailField>
+            <DetailField label="Submitted from">{selectedEnquiry.sourcePage}</DetailField>
+            <DetailField label="Message">
+              <p className="whitespace-pre-wrap leading-relaxed">{selectedEnquiry.message}</p>
+            </DetailField>
+          </dl>
+        )}
+      </DetailDrawer>
     </div>
   );
 }

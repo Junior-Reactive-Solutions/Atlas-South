@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Trash2, Bot, Download, Mail, Phone } from 'lucide-react';
+import { Trash2, Bot, Download, Mail, Phone, Eye } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext.js';
+import { DetailDrawer, DetailField } from '../../components/admin/DetailDrawer.js';
 
 interface ChatLead {
   id: string;
@@ -19,6 +20,7 @@ export function AdminLeads() {
   const [leads, setLeads] = useState<ChatLead[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [selectedLead, setSelectedLead] = useState<ChatLead | null>(null);
   const { authFetch } = useAuth();
 
   useEffect(() => {
@@ -116,7 +118,11 @@ export function AdminLeads() {
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {leads.map((lead) => (
-                  <tr key={lead.id} className="hover:bg-slate-50 transition-colors">
+                  <tr
+                    key={lead.id}
+                    onClick={() => setSelectedLead(lead)}
+                    className="cursor-pointer transition-colors hover:bg-slate-50"
+                  >
                     <td className="px-5 py-4 font-medium text-navy">
                       {lead.firstName} {lead.lastName}
                     </td>
@@ -175,14 +181,29 @@ export function AdminLeads() {
                       })}
                     </td>
                     <td className="px-5 py-4">
-                      <button
-                        onClick={() => handleDelete(lead.id)}
-                        disabled={deletingId === lead.id}
-                        aria-label={`Delete lead from ${lead.firstName} ${lead.lastName}`}
-                        className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:bg-red-50 hover:text-red-500 transition-colors disabled:opacity-40"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
+                      <div className="flex items-center gap-1">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedLead(lead);
+                          }}
+                          aria-label={`View lead from ${lead.firstName} ${lead.lastName}`}
+                          className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-accent-blue"
+                        >
+                          <Eye className="h-4 w-4" />
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDelete(lead.id);
+                          }}
+                          disabled={deletingId === lead.id}
+                          aria-label={`Delete lead from ${lead.firstName} ${lead.lastName}`}
+                          className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-red-50 hover:text-red-500 disabled:opacity-40"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -191,6 +212,75 @@ export function AdminLeads() {
           </div>
         </div>
       )}
+
+      <DetailDrawer
+        open={selectedLead !== null}
+        onClose={() => setSelectedLead(null)}
+        title={selectedLead ? `${selectedLead.firstName} ${selectedLead.lastName}` : ''}
+        subtitle={
+          selectedLead
+            ? new Date(selectedLead.createdAt).toLocaleString('en-GB', {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+              })
+            : undefined
+        }
+      >
+        {selectedLead && (
+          <dl>
+            <DetailField label="Company">
+              {selectedLead.company || <span className="italic text-slate-400">Not provided</span>}
+            </DetailField>
+            <DetailField label="Preferred contact method">
+              {selectedLead.preferredContact === 'email'
+                ? 'Email'
+                : selectedLead.preferredContact === 'phone'
+                ? 'Phone'
+                : <span className="italic text-slate-400">Not provided</span>}
+            </DetailField>
+            <DetailField label="Phone">
+              {selectedLead.phone ? (
+                <a href={`tel:${selectedLead.phone}`} className="text-accent-blue hover:underline">
+                  {selectedLead.phone}
+                </a>
+              ) : (
+                <span className="italic text-slate-400">Not provided</span>
+              )}
+            </DetailField>
+            <DetailField label="Email">
+              {selectedLead.email ? (
+                <a href={`mailto:${selectedLead.email}`} className="text-accent-blue hover:underline">
+                  {selectedLead.email}
+                </a>
+              ) : (
+                <span className="italic text-slate-400">Not provided</span>
+              )}
+            </DetailField>
+            <DetailField label="Services of interest">
+              <div className="flex flex-wrap gap-1.5">
+                {selectedLead.services.split(',').map((s) => (
+                  <span
+                    key={s}
+                    className="rounded-full bg-accent-blue/10 px-2 py-0.5 text-xs font-medium text-accent-blue"
+                  >
+                    {s.trim()}
+                  </span>
+                ))}
+              </div>
+            </DetailField>
+            <DetailField label="Message">
+              {selectedLead.message ? (
+                <p className="whitespace-pre-wrap leading-relaxed">{selectedLead.message}</p>
+              ) : (
+                <span className="italic text-slate-400">No additional message</span>
+              )}
+            </DetailField>
+          </dl>
+        )}
+      </DetailDrawer>
     </div>
   );
 }
