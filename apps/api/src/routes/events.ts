@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { TrackEventSchema } from '@atlas-south/shared';
+import { TrackEventSchema, PageViewEventSchema, InteractionEventSchema } from '@atlas-south/shared';
 import { validateBody } from '../middleware/validate.js';
 import { requireDb } from '../lib/prisma.js';
 
@@ -43,18 +43,20 @@ eventsRouter.post('/events', validateBody(TrackEventSchema), async (req, res) =>
   }
 });
 
-// Page view tracking endpoint (used by usePageTracking hook)
-eventsRouter.post('/events/page-view', async (req, res) => {
+// Page view tracking endpoint (used by usePageTracking hook). Previously accepted
+// unvalidated, unbounded path/referrer/sessionId via a bare String(...) cast — a
+// security-audit finding (2026-08-27), unauthenticated and inconsistent with every other
+// public write endpoint on the site. validateBody rejects malformed input with a plain
+// 400; the caller (apps/web/src/lib/analytics.ts) never inspects the response status, so
+// this doesn't change the "analytics never breaks the page" contract the DB-error handling
+// below still upholds.
+eventsRouter.post('/events/page-view', validateBody(PageViewEventSchema), async (req, res) => {
   try {
     const db = requireDb();
     const { path, referrer, sessionId } = req.body;
 
     await db.pageView.create({
-      data: {
-        path: String(path),
-        referrer: referrer ? String(referrer) : null,
-        sessionId: String(sessionId),
-      },
+      data: { path, referrer: referrer ?? null, sessionId },
     });
 
     return res.status(202).json({ ok: true });
@@ -64,19 +66,15 @@ eventsRouter.post('/events/page-view', async (req, res) => {
   }
 });
 
-// Interaction event tracking endpoint (CTA clicks, form submissions, etc.)
-eventsRouter.post('/events/interaction', async (req, res) => {
+// Interaction event tracking endpoint (CTA clicks, form submissions, etc.) — same
+// validation fix as page-view above.
+eventsRouter.post('/events/interaction', validateBody(InteractionEventSchema), async (req, res) => {
   try {
     const db = requireDb();
     const { type, label, path, sessionId } = req.body;
 
     await db.event.create({
-      data: {
-        type: String(type),
-        label: label ? String(label) : null,
-        path: String(path),
-        sessionId: String(sessionId),
-      },
+      data: { type, label, path, sessionId },
     });
 
     return res.status(202).json({ ok: true });

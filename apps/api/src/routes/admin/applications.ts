@@ -1,5 +1,7 @@
 import { Router, Response } from 'express';
 import { z } from 'zod';
+import fs from 'fs';
+import path from 'path';
 import { authMiddleware, AuthRequest } from '../../middleware/auth.js';
 import { requireDb } from '../../lib/prisma.js';
 import { sendAdminReply } from '../../lib/email.js';
@@ -49,6 +51,54 @@ adminApplicationsRouter.get('/applications/:id', async (req: AuthRequest, res: R
   } catch (err) {
     console.error('Failed to fetch application:', err);
     return res.status(500).json({ error: 'Failed to fetch application' });
+  }
+});
+
+/**
+ * GET /api/admin/applications/:id/cv — lets an admin actually retrieve a submitted CV.
+ * No such route existed before (a security-audit finding, 2026-08-27): every CV was
+ * accepted, confirmed by email, and then permanently unreachable — nothing ever served
+ * the upload directory back out. This closes that for as long as the file still exists
+ * on disk.
+ *
+ * It does NOT fix the underlying data-loss problem: Render's free-tier disk is ephemeral
+ * and wipes on every deploy or restart, so a CV uploaded before the next deploy is still
+ * gone regardless of this route existing. A real fix needs persistent storage (Cloudinary
+ * is an already-present but unconfigured dependency — CLOUDINARY_* env vars are unset —
+ * or S3-compatible object storage); provisioning that needs a decision and credentials
+ * only the client can supply, so it's tracked as a separate follow-up rather than
+ * silently deferred here.
+ */
+adminApplicationsRouter.get('/applications/:id/cv', async (req: AuthRequest, res: Response) => {
+  try {
+    const db = requireDb();
+    const application = await db.jobApplication.findUnique({
+      where: { id: req.params.id },
+      select: { cvFilePath: true, cvFileName: true },
+    });
+
+    if (!application?.cvFilePath) {
+      return res.status(404).json({ error: 'No CV on file for this application.' });
+    }
+
+    // cvFilePath is never derived from user input at read time — it's the exact path
+    // this server itself wrote the file to (routes/careers.ts), read back from the
+    // database, so no path-traversal input reaches this call.
+    if (!fs.existsSync(application.cvFilePath)) {
+      return res.status(410).json({
+        error: 'This CV is no longer available — it was likely lost in a subsequent deploy (see the note on this route).',
+      });
+    }
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename="${(application.cvFileName || 'cv.pdf').replace(/"/g, '')}"`,
+    );
+    return res.sendFile(path.resolve(application.cvFilePath));
+  } catch (err) {
+    console.error('Failed to serve CV:', err);
+    return res.status(500).json({ error: 'Something went wrong — please try again.' });
   }
 });
 

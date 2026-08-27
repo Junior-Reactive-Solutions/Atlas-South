@@ -27,6 +27,17 @@ import { adminLeadsRouter } from './routes/admin/leads.js';
 
 const app = express();
 
+// Trust the platform's reverse proxy chain so req.ip resolves to the real client IP
+// instead of the proxy's own loopback address. Render sits this app behind Cloudflare
+// and its own load balancer — without this, every request looks identical to Express
+// (empirically confirmed: two requests with different X-Forwarded-For headers both
+// logged as `::1`), which silently turns every per-IP rate limiter (login, enquiry,
+// general API) into one budget shared by every visitor to the site combined, and
+// destroys IP attribution in AdminAuditLog. `1` trusts exactly one hop — the immediate
+// proxy Express is connected to is trusted to have set X-Forwarded-For correctly;
+// anything that client sent further upstream is not re-trusted beyond that.
+app.set('trust proxy', 1);
+
 // Swagger UI — registered BEFORE helmet so it can set its own relaxed CSP
 // for the docs route only. All other routes still get the strict helmet policy.
 // Accessible at GET /api/docs (or /api/docs/ for the redirect).

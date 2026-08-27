@@ -103,6 +103,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         res = await fetch(url, withToken(newToken));
       }
 
+      // The API now enforces mustChangePassword server-side (a security-audit fix —
+      // it was previously only ever checked once, right after login) — every admin
+      // endpoint except the change-password route itself returns 403 with this flag
+      // while it's set. Route to Settings the same way the post-login flow already
+      // does, rather than letting the calling page's own fetch-error handling (usually
+      // just `console.error`) leave the admin looking at a page that silently never
+      // loaded any data. Peek the body via a clone so the caller can still read the
+      // original response if it wants to.
+      if (res.status === 403) {
+        try {
+          const body = (await res.clone().json()) as { mustChangePassword?: boolean };
+          if (body.mustChangePassword) {
+            navigate('/admin/settings');
+          }
+        } catch {
+          // Not JSON, or no such flag — not our concern, let the caller handle the 403.
+        }
+      }
+
       return res;
     },
     [silentRefresh, navigate],
