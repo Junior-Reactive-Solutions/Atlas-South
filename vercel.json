@@ -1,7 +1,7 @@
 {
-  "installCommand": "npm install --ignore-scripts",
-  "buildCommand": "npm run build --workspace=packages/shared && npm run build --workspace=packages/design-system && npm run build --workspace=apps/web",
-  "outputDirectory": "apps/web/dist",
+  "installCommand": "cd ../.. && npm install --ignore-scripts",
+  "buildCommand": "cd ../.. && npm run build --workspace=packages/shared && npm run build --workspace=packages/design-system && npm run build --workspace=apps/web",
+  "outputDirectory": "dist",
   "rewrites": [
     {
       "source": "/api/:path*",
