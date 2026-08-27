@@ -68,7 +68,7 @@ The Terms of Use must state plainly, not implicitly:
 The Privacy Policy explicitly lists, in plain language: right to access, rectify, erase,
 restrict processing, data portability, object to processing (incl. marketing), and
 withdraw consent — plus a named contact route for exercising them
-(`fm@atlassouthes.com`, per `13-COMPANY-FACTS-VERIFIED.md`) and the right to complain to
+(`start@atlassouthes.com`, per `13-COMPANY-FACTS-VERIFIED.md`) and the right to complain to
 the ICO if unsatisfied.
 
 ## 5. Cookie policy & consent banner

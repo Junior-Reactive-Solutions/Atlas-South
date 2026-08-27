@@ -61,7 +61,7 @@ interaction:
 
 ```
 [Logo]  Atlas South Technical Services
-07778 858278  ·  fm@atlassouthes.com  ·  4th Floor, Silverstream House, 45 Fitzroy St, London W1T 6EB
+07778 858278  ·  start@atlassouthes.com  ·  4th Floor, Silverstream House, 45 Fitzroy St, London W1T 6EB
 Gas Safe Registered  ·  Part P Certified  ·  SIA Licensed  ·  £5m Public Liability Insurance
 ```
 
@@ -119,7 +119,7 @@ TBC; the public page cannot claim an unverified fact).
   "url": "https://www.atlassouthes.com",
   "logo": "https://res.cloudinary.com/.../atlas-south-logo.png",
   "telephone": "+447778858278",
-  "email": "fm@atlassouthes.com",
+  "email": "start@atlassouthes.com",
   "address": {
     "@type": "PostalAddress",
     "streetAddress": "4th Floor, Silverstream House, 45 Fitzroy Street, Fitzrovia",

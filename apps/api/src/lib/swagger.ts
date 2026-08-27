@@ -28,7 +28,7 @@ Rate limits:
     version: '1.0.0',
     contact: {
       name: 'Atlas South Technical Services',
-      email: 'fm@atlassouthes.com',
+      email: 'start@atlassouthes.com',
       url: 'https://atlassouth.co.uk',
     },
     license: {

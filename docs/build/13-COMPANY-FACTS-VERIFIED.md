@@ -17,7 +17,7 @@ site is marked **UNVERIFIED — confirm with client** and must not be invented.
 | Incorporated | 2022, as a Limited company | about.html |
 | Registered/trading address | 4th Floor, Silverstream House, 45 Fitzroy Street, Fitzrovia, London, W1T 6EB | contact-us.html |
 | Primary phone (24/7) | **07778 858278** | site-wide (canonical format — see below) |
-| Primary email | fm@atlassouthes.com | forms, contact-us.html |
+| Primary email | start@atlassouthes.com | forms, contact-us.html |
 | WhatsApp | https://wa.me/447778858278 | homepage |
 | Clients served | 700+ | homepage stats |
 | Jobs completed | 12,000+ | homepage stats |

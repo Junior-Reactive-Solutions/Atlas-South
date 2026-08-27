@@ -148,7 +148,7 @@ export function PrivacyPolicy() {
             <li>• <strong>Withdraw Consent:</strong> Withdraw any consent you've given</li>
           </ul>
           <p className="mt-4">
-            To exercise these rights, contact us at <strong>fm@atlassouthes.com</strong>. We will respond within 30 days.
+            To exercise these rights, contact us at <strong>start@atlassouthes.com</strong>. We will respond within 30 days.
           </p>
         </section>
 
@@ -209,7 +209,7 @@ export function PrivacyPolicy() {
         <section>
           <h2 className="text-xl font-bold text-navy">13. Data Protection Officer & Complaints</h2>
           <p>
-            If you have concerns about how we handle your data, please contact us at <strong>fm@atlassouthes.com</strong>. You also have
+            If you have concerns about how we handle your data, please contact us at <strong>start@atlassouthes.com</strong>. You also have
             the right to lodge a complaint with the Information Commissioner's Office (ICO):
           </p>
           <div className="mt-4 rounded bg-slate-50 p-4">
@@ -225,7 +225,7 @@ export function PrivacyPolicy() {
           <p>For any questions about this Privacy Policy or our data practices:</p>
           <div className="mt-4 rounded bg-slate-50 p-4">
             <p className="font-semibold text-navy">Atlas South Technical Services</p>
-            <p>Email: fm@atlassouthes.com</p>
+            <p>Email: start@atlassouthes.com</p>
             <p>Phone: 07778 858278</p>
             <p>Address: 4th Floor, Silverstream House, 45 Fitzroy Street, Fitzrovia, London W1T 6EB</p>
           </div>
