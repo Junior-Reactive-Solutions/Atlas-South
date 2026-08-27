@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext.js';
-import { FileText, Calendar, Mail, Phone } from 'lucide-react';
+import { FileText, Calendar, Mail, Phone, Eye } from 'lucide-react';
 import { animate, stagger } from 'animejs';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAnimationScope, DURATION, EASE, STAGGER_GAP } from '@atlas-south/design-system';
 import { ReplyPanel } from '../../components/admin/ReplyPanel.js';
+import { DetailDrawer, DetailField } from '../../components/admin/DetailDrawer.js';
 
 interface JobApplication {
   id: string;
@@ -20,7 +21,7 @@ interface JobApplication {
 export function AdminApplications() {
   const [applications, setApplications] = useState<JobApplication[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [selected, setSelected] = useState<JobApplication | null>(null);
   const { authFetch } = useAuth();
 
   useEffect(() => {
@@ -79,96 +80,110 @@ export function AdminApplications() {
         <div className="space-y-3">
           <AnimatePresence initial={false}>
             {applications.map((app) => (
-              <motion.div
+              <motion.button
                 key={app.id}
                 layoutId={app.id}
                 layout
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
+                whileHover={{ backgroundColor: 'rgb(248, 250, 252)' }}
                 transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                className="application-row"
+                onClick={() => setSelected(app)}
+                className="application-row w-full rounded-lg border border-slate-200 bg-white p-4 text-left transition-colors focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-accent-blue"
               >
-                <motion.button
-                  onClick={() => setExpandedId(expandedId === app.id ? null : app.id)}
-                  whileHover={{ backgroundColor: 'rgb(248, 250, 252)' }}
-                  className="w-full rounded-lg border border-slate-200 bg-white p-4 text-left transition-colors focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-accent-blue"
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <p className="font-semibold text-navy">{app.fullName}</p>
-                      <div className="mt-2 flex flex-wrap gap-4 text-sm text-slate-600">
-                        <div className="flex items-center gap-1">
-                          <Mail className="h-4 w-4" />
-                          <a href={`mailto:${app.email}`} className="hover:text-accent-blue">
-                            {app.email}
-                          </a>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Phone className="h-4 w-4" />
-                          <a href={`tel:${app.phone}`} className="hover:text-accent-blue">
-                            {app.phone}
-                          </a>
-                        </div>
-                        {app.roleTitle && (
-                          <div className="rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
-                            {app.roleTitle}
-                          </div>
-                        )}
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <p className="font-semibold text-navy">{app.fullName}</p>
+                    <div className="mt-2 flex flex-wrap gap-4 text-sm text-slate-600">
+                      <div className="flex items-center gap-1">
+                        <Mail className="h-4 w-4" />
+                        {app.email}
                       </div>
+                      <div className="flex items-center gap-1">
+                        <Phone className="h-4 w-4" />
+                        {app.phone}
+                      </div>
+                      {app.roleTitle && (
+                        <div className="rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
+                          {app.roleTitle}
+                        </div>
+                      )}
                     </div>
-                    <div className="flex items-center gap-2 text-xs text-slate-500">
+                  </div>
+                  <div className="flex items-center gap-3 text-xs text-slate-500">
+                    <div className="flex items-center gap-2">
                       <Calendar className="h-4 w-4" />
                       {new Date(app.createdAt).toLocaleDateString()}
                     </div>
+                    <Eye className="h-4 w-4 text-slate-400" aria-hidden="true" />
                   </div>
-                </motion.button>
-
-                {/* Expanded Details */}
-                <AnimatePresence>
-                  {expandedId === app.id && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      transition={{ duration: 0.2 }}
-                      className="overflow-hidden"
-                    >
-                      <div className="border-t border-slate-200 bg-slate-50 p-4">
-                        {app.coverLetter && (
-                          <div className="mb-4">
-                            <h3 className="mb-2 font-semibold text-navy">Cover Letter</h3>
-                            <p className="whitespace-pre-wrap text-sm text-slate-700">{app.coverLetter}</p>
-                          </div>
-                        )}
-
-                        {app.cvFileName && (
-                          <div className="flex items-center gap-2 rounded-lg bg-white p-3">
-                            <FileText className="h-5 w-5 text-accent-blue" />
-                            <div className="flex-1">
-                              <p className="text-sm font-medium text-navy">{app.cvFileName}</p>
-                              <p className="text-xs text-slate-600">CV Document</p>
-                            </div>
-                          </div>
-                        )}
-
-                        <div className="mt-4 border-t border-slate-200 pt-4">
-                          <ReplyPanel
-                            endpoint={`/api/admin/applications/${app.id}/reply`}
-                            recipientFirstName={app.fullName.split(' ')[0]}
-                            recipientEmail={app.email}
-                            defaultSubject={`Re: your application — ${app.roleTitle ?? 'Atlas South Careers'}`}
-                          />
-                        </div>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </motion.div>
+                </div>
+              </motion.button>
             ))}
           </AnimatePresence>
         </div>
       )}
+
+      <DetailDrawer
+        open={selected !== null}
+        onClose={() => setSelected(null)}
+        title={selected?.fullName ?? ''}
+        subtitle={
+          selected
+            ? new Date(selected.createdAt).toLocaleString('en-GB', {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+              })
+            : undefined
+        }
+        footer={
+          selected && (
+            <ReplyPanel
+              endpoint={`/api/admin/applications/${selected.id}/reply`}
+              recipientFirstName={selected.fullName.split(' ')[0]}
+              recipientEmail={selected.email}
+              defaultSubject={`Re: your application — ${selected.roleTitle ?? 'Atlas South Careers'}`}
+            />
+          )
+        }
+      >
+        {selected && (
+          <dl>
+            <DetailField label="Role applied for">
+              {selected.roleTitle || <span className="italic text-slate-400">Not specified</span>}
+            </DetailField>
+            <DetailField label="Email">
+              <a href={`mailto:${selected.email}`} className="text-accent-blue hover:underline">
+                {selected.email}
+              </a>
+            </DetailField>
+            <DetailField label="Phone">
+              <a href={`tel:${selected.phone}`} className="text-accent-blue hover:underline">
+                {selected.phone}
+              </a>
+            </DetailField>
+            {selected.cvFileName && (
+              <DetailField label="CV">
+                <div className="flex items-center gap-2 rounded-lg bg-slate-50 p-3">
+                  <FileText className="h-5 w-5 shrink-0 text-accent-blue" />
+                  <span className="truncate text-sm font-medium text-navy">{selected.cvFileName}</span>
+                </div>
+              </DetailField>
+            )}
+            <DetailField label="Cover letter">
+              {selected.coverLetter ? (
+                <p className="whitespace-pre-wrap leading-relaxed">{selected.coverLetter}</p>
+              ) : (
+                <span className="italic text-slate-400">No cover letter submitted</span>
+              )}
+            </DetailField>
+          </dl>
+        )}
+      </DetailDrawer>
     </div>
   );
 }
