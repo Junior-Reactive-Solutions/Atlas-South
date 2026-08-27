@@ -19,7 +19,7 @@ export const COMPANY = {
   whatsapp: {
     url: 'https://wa.me/447778858278',
   },
-  email: 'fm@atlassouthes.com',
+  email: 'start@atlassouthes.com',
 
   address: {
     line1: '4th Floor, Silverstream House',

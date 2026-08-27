@@ -140,7 +140,7 @@ export function TermsOfUse() {
           </p>
           <div className="mt-4 rounded bg-slate-50 p-4">
             <p className="font-semibold text-navy">Atlas South Technical Services</p>
-            <p>Email: fm@atlassouthes.com</p>
+            <p>Email: start@atlassouthes.com</p>
             <p>Phone: 07778 858278</p>
           </div>
         </section>
