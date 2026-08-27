@@ -1,9 +1,12 @@
 import { Router } from 'express';
 import { requireDb } from '../lib/prisma.js';
 import { sendJobApplicationConfirmation, sendJobApplicationAdminNotification } from '../lib/email.js';
+import { validateBody } from '../middleware/validate.js';
+import { JobApplicationSchema } from '@atlas-south/shared';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
+import { randomUUID } from 'crypto';
 
 export const careersRouter = Router();
 
@@ -17,15 +20,25 @@ const storage = multer.diskStorage({
   destination: (_req, _file, cb) => {
     cb(null, uploadDir);
   },
-  filename: (_req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    cb(null, uniqueSuffix + path.extname(file.originalname));
+  // The stored filename is a server-generated UUID with a hardcoded .pdf extension —
+  // never derived from file.originalname. Previously this reused
+  // path.extname(file.originalname), which is attacker-controlled: a file uploaded as
+  // "resume.html" with a spoofed application/pdf Content-Type would have been written to
+  // disk as <random>.html (a security-audit finding, 2026-08-27). Every file accepted by
+  // fileFilter below is verified to actually be a PDF before it's ever served back, so a
+  // fixed .pdf extension here is correct regardless of what the client claimed.
+  filename: (_req, _file, cb) => {
+    cb(null, `${randomUUID()}.pdf`);
   },
 });
 
 const upload = multer({
   storage,
   fileFilter: (_req, file, cb) => {
+    // This only checks the client-supplied Content-Type header — trivially spoofable,
+    // and NOT a substitute for the magic-number check performed after upload below. Kept
+    // as a cheap first-pass rejection so an obviously-wrong file type never gets written
+    // to disk at all.
     if (file.mimetype === 'application/pdf') {
       cb(null, true);
     } else {
@@ -35,13 +48,43 @@ const upload = multer({
   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
 });
 
-careersRouter.post('/careers/apply', upload.single('cv'), async (req, res) => {
+/** The real PDF magic number — every valid PDF file begins with these 5 bytes. */
+const PDF_MAGIC = Buffer.from('%PDF-');
+
+/**
+ * Confirms an uploaded file's actual content, not its declared Content-Type — a
+ * security-audit finding (2026-08-27). multer's fileFilter above only ever sees what the
+ * uploader's browser/client claims the file is; this reads the first 5 real bytes off
+ * disk and checks them against the format's own signature, the same way a virus scanner
+ * or a file-type sniffer would. Deletes the file and returns false if it doesn't match.
+ */
+function verifyIsRealPdf(filePath: string): boolean {
+  let fd: number | null = null;
+  try {
+    fd = fs.openSync(filePath, 'r');
+    const header = Buffer.alloc(PDF_MAGIC.length);
+    fs.readSync(fd, header, 0, PDF_MAGIC.length, 0);
+    return header.equals(PDF_MAGIC);
+  } catch {
+    return false;
+  } finally {
+    if (fd !== null) fs.closeSync(fd);
+  }
+}
+
+careersRouter.post('/careers/apply', upload.single('cv'), validateBody(JobApplicationSchema), async (req, res) => {
   try {
     const { fullName, email, phone, coverLetter, roleTitle } = req.body;
 
-    // Validate required fields
-    if (!fullName || !email || !phone) {
-      return res.status(400).json({ error: 'Missing required fields: fullName, email, phone' });
+    if (req.file) {
+      const isRealPdf = verifyIsRealPdf(req.file.path);
+      if (!isRealPdf) {
+        fs.unlink(req.file.path, () => {
+          // best-effort cleanup — nothing further to do if this fails, the file just
+          // sits unreferenced (no DB row is ever created for it) until manual cleanup.
+        });
+        return res.status(400).json({ error: 'The uploaded file is not a valid PDF.' });
+      }
     }
 
     const db = requireDb();
@@ -88,3 +131,8 @@ careersRouter.post('/careers/apply', upload.single('cv'), async (req, res) => {
     return res.status(500).json({ error: 'Something went wrong — please try again.' });
   }
 });
+
+// The admin-facing "download this CV" route lives in routes/admin/applications.ts,
+// alongside the rest of the admin JobApplication endpoints, not here — this file stays
+// public-only. See the note there on why a route existing doesn't fully fix the
+// underlying data-loss problem.

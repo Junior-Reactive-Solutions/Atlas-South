@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext.js';
-import { FileText, Calendar, Mail, Phone, Eye } from 'lucide-react';
+import { FileText, Calendar, Mail, Phone, Eye, Download, Loader2 } from 'lucide-react';
 import { animate, stagger } from 'animejs';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAnimationScope, DURATION, EASE, STAGGER_GAP } from '@atlas-south/design-system';
@@ -22,7 +22,29 @@ export function AdminApplications() {
   const [applications, setApplications] = useState<JobApplication[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selected, setSelected] = useState<JobApplication | null>(null);
+  const [cvStatus, setCvStatus] = useState<'idle' | 'downloading' | 'error'>('idle');
   const { authFetch } = useAuth();
+
+  // The download route requires the same Bearer token every other admin request does, so
+  // a plain <a href> can't be used (the browser wouldn't attach it) — fetch the file
+  // through authFetch, then hand the browser a local object URL to save.
+  async function handleDownloadCv(app: JobApplication) {
+    setCvStatus('downloading');
+    try {
+      const res = await authFetch(`/api/admin/applications/${app.id}/cv`);
+      if (!res.ok) throw new Error('Download failed');
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = app.cvFileName || `${app.fullName.replace(/\s+/g, '-')}-cv.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
+      setCvStatus('idle');
+    } catch {
+      setCvStatus('error');
+    }
+  }
 
   useEffect(() => {
     const fetchApplications = async () => {
@@ -89,7 +111,10 @@ export function AdminApplications() {
                 exit={{ opacity: 0, scale: 0.95 }}
                 whileHover={{ backgroundColor: 'rgb(248, 250, 252)' }}
                 transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                onClick={() => setSelected(app)}
+                onClick={() => {
+                  setSelected(app);
+                  setCvStatus('idle');
+                }}
                 className="application-row w-full rounded-lg border border-slate-200 bg-white p-4 text-left transition-colors focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-accent-blue"
               >
                 <div className="flex items-start justify-between">
@@ -168,10 +193,24 @@ export function AdminApplications() {
             </DetailField>
             {selected.cvFileName && (
               <DetailField label="CV">
-                <div className="flex items-center gap-2 rounded-lg bg-slate-50 p-3">
-                  <FileText className="h-5 w-5 shrink-0 text-accent-blue" />
-                  <span className="truncate text-sm font-medium text-navy">{selected.cvFileName}</span>
-                </div>
+                <button
+                  onClick={() => handleDownloadCv(selected)}
+                  disabled={cvStatus === 'downloading'}
+                  className="flex w-full items-center gap-2 rounded-lg bg-slate-50 p-3 text-left transition-colors hover:bg-slate-100 disabled:opacity-60"
+                >
+                  {cvStatus === 'downloading' ? (
+                    <Loader2 className="h-5 w-5 shrink-0 animate-spin text-accent-blue" />
+                  ) : (
+                    <FileText className="h-5 w-5 shrink-0 text-accent-blue" />
+                  )}
+                  <span className="min-w-0 flex-1 truncate text-sm font-medium text-navy">{selected.cvFileName}</span>
+                  <Download className="h-4 w-4 shrink-0 text-slate-400" />
+                </button>
+                {cvStatus === 'error' && (
+                  <p className="mt-1.5 text-xs text-red-600">
+                    Couldn't download this CV — it may have been lost in a deploy since it was submitted.
+                  </p>
+                )}
               </DetailField>
             )}
             <DetailField label="Cover letter">

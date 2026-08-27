@@ -32,7 +32,7 @@ export async function authMiddleware(req: AuthRequest, res: Response, next: Next
     const db = requireDb();
     const admin = await db.adminUser.findUnique({
       where: { id: payload.adminId },
-      select: { tokenVersion: true },
+      select: { tokenVersion: true, mustChangePassword: true },
     });
 
     if (!admin) {
@@ -42,6 +42,18 @@ export async function authMiddleware(req: AuthRequest, res: Response, next: Next
     if (admin.tokenVersion !== payload.tokenVersion) {
       // Token was issued before a password change or forced logout — reject it.
       return res.status(401).json({ error: 'Session invalidated — please log in again' });
+    }
+
+    // mustChangePassword was previously only ever READ by the frontend to decide whether
+    // to show the "change your password" screen — nothing on the server actually blocked
+    // a request from an account that still needed to. That made the flag a suggestion,
+    // not a control (a security audit finding — 2026-08-27). This is the fix: every admin
+    // request is rejected except the change-password endpoint itself while the flag is
+    // set, so a still-default/still-shared password can't keep working indefinitely just
+    // because nobody happened to click through the prompt.
+    const isChangePasswordRoute = req.baseUrl === '/api/admin/users' && req.path === '/change-password';
+    if (admin.mustChangePassword && !isChangePasswordRoute) {
+      return res.status(403).json({ error: 'Password change required before continuing', mustChangePassword: true });
     }
   } catch (err) {
     // If the DB is unavailable, reject rather than allow through (fail-closed).
