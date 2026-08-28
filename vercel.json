@@ -1,5 +1,5 @@
 {
-  "installCommand": "cd ../.. && npm install --ignore-scripts",
+  "installCommand": "cd ../.. && npm ci --ignore-scripts",
   "buildCommand": "cd ../.. && npm run build --workspace=packages/shared && npm run build --workspace=packages/design-system && npm run build --workspace=apps/web",
   "outputDirectory": "dist"
 }
