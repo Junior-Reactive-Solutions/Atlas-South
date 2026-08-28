@@ -46,6 +46,18 @@
     <title>Atlas South Technical Services</title>
   </head>
   <body>
+    <!--
+      Skip-navigation link — bypasses the repeated header/nav for keyboard and screen-reader
+      users (WCAG 2.4.1 Bypass Blocks). Visually hidden until focused via sr-only; the
+      matching anchor is id="main-content" on the <main> element in Layout.tsx.
+      Tailwind's sr-only + focus:not-sr-only pattern is standard for this pattern.
+    -->
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[9999] focus:rounded focus:bg-navy focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white focus:shadow-lg focus:outline-none"
+    >
+      Skip to main content
+    </a>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
