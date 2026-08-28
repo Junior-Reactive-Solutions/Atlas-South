@@ -41,9 +41,11 @@ const AdminContentEdit = lazy(() =>
   import('./pages/admin/ContentEdit.js').then((m) => ({ default: m.AdminContentEdit }))
 );
 const AdminLeads = lazy(() => import('./pages/admin/Leads.js').then((m) => ({ default: m.AdminLeads })));
+const AdminSecurity = lazy(() => import('./pages/admin/Security.js').then((m) => ({ default: m.AdminSecurity })));
 
 // Legal pages
 import { TermsOfUse } from './pages/legal/TermsOfUse.js';
+import { ThankYou } from './pages/ThankYou.js';
 import { PrivacyPolicy } from './pages/legal/PrivacyPolicy.js';
 import { CookiePolicy } from './pages/legal/CookiePolicy.js';
 
@@ -129,12 +131,16 @@ export default function App() {
             <Route path="/admin/content/:slug" element={<AdminContentEdit />} />
             <Route path="/admin/settings" element={<AdminSettings />} />
             <Route path="/admin/leads" element={<AdminLeads />} />
+            <Route path="/admin/security" element={<AdminSecurity />} />
           </Route>
 
           {/* Legal pages */}
           <Route path="/legal/terms" element={<TermsOfUse />} />
           <Route path="/legal/privacy" element={<PrivacyPolicy />} />
           <Route path="/legal/cookies" element={<CookiePolicy />} />
+
+          {/* Transactional pages — no Layout header/footer, noindex */}
+          <Route path="/thank-you" element={<ThankYou />} />
 
           {/* Public site wrapped in Layout */}
           <Route element={<Layout />}>

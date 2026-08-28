@@ -43,27 +43,42 @@ router.get('/:id', async (req: AuthRequest, res: Response) => {
 });
 
 const UpdateEnquirySchema = z.object({
-  status: z.enum(['new', 'contacted', 'quoted', 'won', 'lost']),
+  status: z.enum(['new', 'contacted', 'quoted', 'won', 'lost']).optional(),
+  notes: z.string().max(5000).optional(),
+}).refine((v) => v.status !== undefined || v.notes !== undefined, {
+  message: 'At least one of status or notes must be provided',
 });
 
 router.patch('/:id', async (req: AuthRequest, res: Response) => {
   try {
     const db = requireDb();
-    const { status } = UpdateEnquirySchema.parse(req.body);
+    const patch = UpdateEnquirySchema.parse(req.body);
 
     const enquiry = await db.enquiry.update({
       where: { id: req.params.id },
-      data: { status },
+      data: patch,
     });
 
-    // Audit trail: every enquiry status change is logged with the acting admin
-    await db.adminAuditLog.create({
-      data: {
-        event: `enquiry_status_updated:${req.params.id}:${status}`,
-        ip: req.ip ?? 'unknown',
-        adminUserId: req.adminId,
-      },
-    });
+    // Audit trail — log status changes and note saves separately so the Security
+    // view can distinguish between them without parsing a compound event string.
+    if (patch.status) {
+      await db.adminAuditLog.create({
+        data: {
+          event: `enquiry_status_updated:${req.params.id}:${patch.status}`,
+          ip: req.ip ?? 'unknown',
+          adminUserId: req.adminId,
+        },
+      });
+    }
+    if (patch.notes !== undefined) {
+      await db.adminAuditLog.create({
+        data: {
+          event: `enquiry_note_saved:${req.params.id}`,
+          ip: req.ip ?? 'unknown',
+          adminUserId: req.adminId,
+        },
+      });
+    }
 
     res.json(enquiry);
   } catch (error) {
