@@ -10,7 +10,7 @@ export function Contact() {
   return (
     <>
       <Seo
-        title="Contact Atlas South | Get a Free Quote"
+        title="Contact Us — Get a Free Quote"
         description="Ready to discuss your project? Contact Atlas South today. 24/7 emergency line: 07778 858278"
         path="/company/contact"
         jsonLd={{
