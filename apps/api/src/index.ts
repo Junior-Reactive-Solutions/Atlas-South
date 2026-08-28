@@ -24,6 +24,7 @@ import adminAnalyticsRouter from './routes/admin/analytics.js';
 import adminContentRouter from './routes/admin/content.js';
 import adminVisibilityRouter from './routes/admin/visibility.js';
 import { adminLeadsRouter } from './routes/admin/leads.js';
+import adminAuditLogRouter from './routes/admin/auditLog.js';
 
 const app = express();
 
@@ -165,6 +166,7 @@ app.use('/api/admin/analytics', adminApiLimiter, adminAnalyticsRouter);
 app.use('/api/admin/content', adminApiLimiter, adminContentRouter);
 app.use('/api/admin/visibility', adminApiLimiter, adminVisibilityRouter);
 app.use('/api/admin', adminApiLimiter, adminLeadsRouter);
+app.use('/api/admin/audit-log', adminApiLimiter, adminAuditLogRouter);
 
 // Centralised error handler — never leak stack traces to the client.
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

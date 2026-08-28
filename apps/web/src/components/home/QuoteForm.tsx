@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { animate, stagger } from 'animejs';
 import { CreateEnquirySchema, ALL_SERVICES, type CreateEnquiryInput } from '@atlas-south/shared';
 import { Icon, useAnimationScope, DURATION, EASE, STAGGER_GAP } from '@atlas-south/design-system';
@@ -24,6 +24,7 @@ function prefilledMessageFromQuery(searchParams: URLSearchParams): string {
  */
 export function QuoteForm() {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState<Partial<CreateEnquiryInput>>({
     fullName: '',
     email: '',
@@ -34,7 +35,6 @@ export function QuoteForm() {
     companyWebsite: '', // honeypot
   });
 
-  const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -113,17 +113,9 @@ export function QuoteForm() {
           setErrors({ submit: 'Failed to submit enquiry. Please try again.' });
         }
       } else {
-        setSubmitted(true);
-        setFormData({
-          fullName: '',
-          email: '',
-          phone: '',
-          serviceId: undefined,
-          message: '',
-          sourcePage: typeof window !== 'undefined' ? window.location.pathname : '/',
-          companyWebsite: '',
-        });
-        setTimeout(() => setSubmitted(false), 5000);
+        // Navigate to the dedicated Thank You page so the submission gets a
+        // clean, trackable conversion URL — docs/build/06-PAGE-SPECIFICATIONS.md §3.
+        navigate('/thank-you');
       }
     } catch (err) {
       if (err instanceof Error) {
@@ -146,26 +138,6 @@ export function QuoteForm() {
       setIsSubmitting(false);
     }
   };
-
-  if (submitted) {
-    return (
-      <section aria-label="Quote form" className="bg-navy py-16 text-white sm:py-20" data-widget-theme="dark">
-        <div className="mx-auto max-w-2xl px-4">
-          <div className="flex items-center gap-4 rounded-2xl border border-white/10 bg-white/5 p-8 shadow-xl backdrop-blur-sm">
-            <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-full bg-success/15">
-              <Icon name="badge-check" size={32} className="text-success" />
-            </div>
-            <div>
-              <h2 className="text-2xl font-bold text-white">Enquiry submitted</h2>
-              <p className="mt-1 text-white/80">
-                We'll be in touch within 24 hours. Check your email for a confirmation.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-    );
-  }
 
   return (
     <section ref={root} aria-label="Quote form" className="bg-navy py-16 text-white sm:py-20" data-widget-theme="dark">

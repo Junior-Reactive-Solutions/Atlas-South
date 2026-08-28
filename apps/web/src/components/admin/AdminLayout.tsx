@@ -13,6 +13,7 @@ import {
   X,
   Eye,
   Bot,
+  ShieldCheck,
   type LucideIcon,
 } from 'lucide-react';
 import { useNoIndex } from '../../hooks/useNoIndex.js';
@@ -26,6 +27,7 @@ const NAV_ITEMS: Array<{ to: string; icon: LucideIcon; label: string }> = [
   { to: '/admin/content', icon: FileText, label: 'Content' },
   { to: '/admin/visibility', icon: Eye, label: 'Visibility' },
   { to: '/admin/analytics', icon: BarChart3, label: 'Analytics' },
+  { to: '/admin/security', icon: ShieldCheck, label: 'Security' },
   { to: '/admin/settings', icon: Settings, label: 'Settings' },
 ];
 

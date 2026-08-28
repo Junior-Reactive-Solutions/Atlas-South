@@ -15,6 +15,7 @@ interface Enquiry {
   message: string;
   serviceId: string | null;
   status: 'new' | 'contacted' | 'quoted' | 'won' | 'lost';
+  notes: string | null;
   sourcePage: string;
   createdAt: string;
 }
@@ -41,6 +42,8 @@ export function AdminEnquiries() {
   const [enquiries, setEnquiries] = useState<Enquiry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedEnquiry, setSelectedEnquiry] = useState<Enquiry | null>(null);
+  const [notes, setNotes] = useState('');
+  const [notesSaving, setNotesSaving] = useState(false);
   const { authFetch } = useAuth();
 
   useEffect(() => {
@@ -60,6 +63,32 @@ export function AdminEnquiries() {
 
     fetchEnquiries();
   }, [authFetch]);
+
+  const openEnquiry = (enquiry: Enquiry) => {
+    setSelectedEnquiry(enquiry);
+    setNotes(enquiry.notes ?? '');
+  };
+
+  const saveNotes = async () => {
+    if (!selectedEnquiry) return;
+    setNotesSaving(true);
+    try {
+      const response = await authFetch(`/api/admin/enquiries/${selectedEnquiry.id}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ notes }),
+      });
+      if (response.ok) {
+        setEnquiries(enquiries.map((e) =>
+          e.id === selectedEnquiry.id ? { ...e, notes } : e,
+        ));
+        setSelectedEnquiry({ ...selectedEnquiry, notes });
+      }
+    } catch (error) {
+      console.error('Error saving notes:', error);
+    } finally {
+      setNotesSaving(false);
+    }
+  };
 
   const updateStatus = async (id: string, newStatus: Status) => {
     try {
@@ -140,7 +169,7 @@ export function AdminEnquiries() {
                         <p className="truncate text-xs text-slate-600" title={enquiry.email}>{enquiry.email}</p>
                       </div>
                       <button
-                        onClick={() => setSelectedEnquiry(enquiry)}
+                        onClick={() => openEnquiry(enquiry)}
                         aria-label={`View full details for ${enquiry.fullName}`}
                         className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-accent-blue"
                       >
@@ -151,7 +180,7 @@ export function AdminEnquiries() {
                         message (and everything else about this enquiry) is one click
                         away via the Eye button or clicking the message itself. */}
                     <button
-                      onClick={() => setSelectedEnquiry(enquiry)}
+                      onClick={() => openEnquiry(enquiry)}
                       className="mt-2 line-clamp-2 text-left text-xs text-slate-700 hover:text-navy"
                     >
                       {enquiry.message}
@@ -196,7 +225,7 @@ export function AdminEnquiries() {
                           competing for room on an already-narrow card. */}
                       <motion.button
                         whileTap={{ scale: 0.96 }}
-                        onClick={() => setSelectedEnquiry(enquiry)}
+                        onClick={() => openEnquiry(enquiry)}
                         className="flex min-h-[40px] items-center justify-center gap-1 rounded border border-slate-200 bg-white px-2 py-1 text-xs font-medium text-slate-700 hover:bg-slate-50"
                       >
                         Reply
@@ -217,7 +246,7 @@ export function AdminEnquiries() {
 
       <DetailDrawer
         open={selectedEnquiry !== null}
-        onClose={() => setSelectedEnquiry(null)}
+        onClose={() => { setSelectedEnquiry(null); setNotes(''); }}
         title={selectedEnquiry?.fullName ?? ''}
         subtitle={
           selectedEnquiry
@@ -266,6 +295,22 @@ export function AdminEnquiries() {
             <DetailField label="Submitted from">{selectedEnquiry.sourcePage}</DetailField>
             <DetailField label="Message">
               <p className="whitespace-pre-wrap leading-relaxed">{selectedEnquiry.message}</p>
+            </DetailField>
+            <DetailField label="Internal notes">
+              <textarea
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                rows={4}
+                placeholder="Add private notes visible only to you…"
+                className="w-full resize-y rounded border border-slate-200 p-2 text-sm text-navy placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-accent-blue"
+              />
+              <button
+                onClick={saveNotes}
+                disabled={notesSaving || notes === (selectedEnquiry.notes ?? '')}
+                className="mt-2 flex items-center gap-1 rounded bg-accent-blue px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+              >
+                {notesSaving ? 'Saving…' : 'Save notes'}
+              </button>
             </DetailField>
           </dl>
         )}

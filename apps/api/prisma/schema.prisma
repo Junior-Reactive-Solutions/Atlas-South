@@ -30,6 +30,7 @@ model Enquiry {
   message        String
   sourcePage     String
   status         EnquiryStatus @default(new)
+  notes          String?       // internal admin notes; not visible to the enquirer
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
 
