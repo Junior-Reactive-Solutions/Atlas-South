@@ -73,10 +73,10 @@ export function ThankYou() {
               Home <ArrowRight className="h-3 w-3" />
             </Link>
             <Link
-              to="/packages"
+              to="/company"
               className="flex items-center gap-1 text-accent-blue hover:underline"
             >
-              Packages <ArrowRight className="h-3 w-3" />
+              About us <ArrowRight className="h-3 w-3" />
             </Link>
             <Link
               to="/company/contact"
