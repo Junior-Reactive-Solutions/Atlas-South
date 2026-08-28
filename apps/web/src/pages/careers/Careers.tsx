@@ -17,7 +17,7 @@ export function Careers() {
   return (
     <>
       <Seo
-        title="Careers at Atlas South | Join Our Team"
+        title="Careers — Join Our Team"
         description="Grow with Atlas South. We're hiring talented professionals to join our London-based team."
         path="/company/join-us"
         jsonLd={{

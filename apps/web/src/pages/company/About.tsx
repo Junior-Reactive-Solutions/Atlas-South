@@ -17,7 +17,7 @@ export function About() {
   return (
     <>
       <Seo
-        title="About Atlas South | Trusted London Trade & Facilities Services"
+        title="About Us — Trusted London Facilities Partner"
         description="Founded in 2018, Atlas South has grown into London's full-service facilities company. Meet our team, learn our story."
         path="/company"
         jsonLd={{
