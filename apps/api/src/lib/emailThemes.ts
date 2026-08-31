@@ -10,6 +10,7 @@
  * from the same hex values apps/web/tailwind.config.js defines, copied by value since an
  * email can't import that file.
  */
+import { SITE_ORIGIN } from '@atlas-south/shared';
 
 const BRAND = {
   navy: '#002484',
@@ -21,9 +22,20 @@ const BRAND = {
   border: '#DCE3F0',
 };
 
-/** Hosted at the production web origin — email clients can't resolve a relative path. */
-const LOGO_URL = 'https://atlassouthes.com/atlas-south-logo.jpg';
-const SITE_URL = 'https://atlassouthes.com';
+/**
+ * Hosted at the production web origin — email clients can't resolve a relative path, and
+ * unlike a browser they never retry, so the URL must resolve on the FIRST request.
+ *
+ * Built from SITE_ORIGIN, not COMPANY.domain: this was `https://atlassouthes.com/...`
+ * until 2026-08-31, which meant the logo silently failed to load in every email this
+ * system has ever sent — atlassouthes.com still serves the client's OLD site until the
+ * DNS cutover, and that site has no /atlas-south-logo.jpg. Every admin reply and every
+ * automated confirmation sent so far has shown a broken image where the logo should be.
+ * Flip this back to `https://${COMPANY.domain}` as part of the DNS cutover checklist in
+ * README.md, alongside SITE_ORIGIN itself.
+ */
+const LOGO_URL = `${SITE_ORIGIN}/atlas-south-logo.jpg`;
+const SITE_URL = SITE_ORIGIN;
 
 /**
  * The only logo file the site has is the full-colour wordmark on a white background
@@ -51,7 +63,7 @@ export interface ReplyEmailData {
   subject: string;
 }
 
-function escapeHtml(text: string): string {
+export function escapeHtml(text: string): string {
   return text
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
@@ -116,8 +128,15 @@ function navyHeader(data: ReplyEmailData): string {
  * sits directly on white, a slim accent-blue rule marks the sign-off. Quieter and more
  * like a personal note from the team than a marketing template; the brand shows up as an
  * accent rather than a background colour.
+ *
+ * `lightEditorialShell` is the table structure factored out of this option specifically
+ * (not the other two) — it's the shell used by the automated confirmation emails below,
+ * per the client's request that those "be of the theme we had set up earlier": rather than
+ * introduce a fourth, separate template, confirmations reuse the exact theme already
+ * reviewed and chosen for admin replies (2026-08-26), so every automated and manual
+ * correspondence from the site shares one visual identity.
  */
-function lightEditorial(data: ReplyEmailData): string {
+function lightEditorialShell(bodyHtml: string, ctaHtml: string): string {
   return `
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${BRAND.canvasTint};padding:32px 16px;font-family:Arial,Helvetica,sans-serif;">
   <tr><td align="center">
@@ -130,16 +149,12 @@ function lightEditorial(data: ReplyEmailData): string {
       <tr>
         <td style="padding:28px 32px 4px;">
           <div style="width:48px;height:3px;background:${BRAND.accentBlue};margin-bottom:24px;"></div>
-          <p style="margin:0 0 20px;font-size:16px;color:${BRAND.ink};">Hi ${escapeHtml(data.recipientFirstName)},</p>
-          <div style="font-size:15px;line-height:1.6;color:${BRAND.ink};">${messageToHtml(data.message)}</div>
-          <p style="margin:24px 0 0;font-size:15px;color:${BRAND.ink};">
-            Best,<br /><strong>The Atlas South Team</strong>
-          </p>
+          ${bodyHtml}
         </td>
       </tr>
       <tr>
         <td style="padding:28px 32px 32px;">
-          <a href="${SITE_URL}/company/contact" style="color:${BRAND.accentBlue};text-decoration:underline;font-weight:bold;font-size:14px;">Get in touch →</a>
+          ${ctaHtml}
         </td>
       </tr>
       <tr>
@@ -151,6 +166,17 @@ function lightEditorial(data: ReplyEmailData): string {
     </table>
   </td></tr>
 </table>`;
+}
+
+function lightEditorial(data: ReplyEmailData): string {
+  const body = `
+    <p style="margin:0 0 20px;font-size:16px;color:${BRAND.ink};">Hi ${escapeHtml(data.recipientFirstName)},</p>
+    <div style="font-size:15px;line-height:1.6;color:${BRAND.ink};">${messageToHtml(data.message)}</div>
+    <p style="margin:24px 0 0;font-size:15px;color:${BRAND.ink};">
+      Best,<br /><strong>The Atlas South Team</strong>
+    </p>`;
+  const cta = `<a href="${SITE_URL}/company/contact" style="color:${BRAND.accentBlue};text-decoration:underline;font-weight:bold;font-size:14px;">Get in touch →</a>`;
+  return lightEditorialShell(body, cta);
 }
 
 /**
@@ -200,4 +226,37 @@ const RENDERERS: Record<ReplyEmailTheme, (data: ReplyEmailData) => string> = {
 /** Renders a full HTML email body for an admin reply, in the chosen theme. */
 export function renderReplyEmail(theme: ReplyEmailTheme, data: ReplyEmailData): string {
   return RENDERERS[theme](data);
+}
+
+export interface ConfirmationEmailData {
+  /** First name only — "Thank you, James!" not "Thank you, James Carter!" */
+  recipientFirstName: string;
+  /**
+   * Body paragraphs as HTML — built by the caller (lib/email.ts) so each confirmation type
+   * (enquiry vs. job application) controls its own wording, but always through `escapeHtml`
+   * (exported above) for any value that came from the submission itself — a name or role
+   * title shouldn't be able to break the surrounding markup.
+   */
+  bodyHtml: string;
+  /** Optional — omit for a confirmation with no natural next action (e.g. a job
+   * application, where the CTA would be "call us", which contradicts "apply through the
+   * form, not the phone" already established for the careers funnel). */
+  cta?: { label: string; href: string };
+}
+
+/**
+ * Automated confirmation emails (enquiry received, application received) — the client
+ * asked these be sent for every form that collects an email address, and be "of the theme
+ * we had set up earlier". Built on the same `lightEditorialShell` as the admin-reply
+ * theme rather than a new one-off template, so an automated confirmation and a manual
+ * admin reply look like they came from the same place.
+ */
+export function renderConfirmationEmail(data: ConfirmationEmailData): string {
+  const body = `
+    <p style="margin:0 0 20px;font-size:20px;font-weight:bold;color:${BRAND.ink};">Thank you, ${escapeHtml(data.recipientFirstName)}!</p>
+    <div style="font-size:15px;line-height:1.6;color:${BRAND.ink};">${data.bodyHtml}</div>`;
+  const cta = data.cta
+    ? `<a href="${data.cta.href}" style="color:${BRAND.accentBlue};text-decoration:underline;font-weight:bold;font-size:14px;">${escapeHtml(data.cta.label)} →</a>`
+    : `<p style="margin:0;font-size:12px;color:${BRAND.slate};">This is an automated confirmation — no reply needed.</p>`;
+  return lightEditorialShell(body, cta);
 }
