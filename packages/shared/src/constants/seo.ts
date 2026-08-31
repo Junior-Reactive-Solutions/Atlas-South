@@ -87,17 +87,18 @@ export const PAGE_SEO = {
     title: `${COMPANY.name} | Trades & Facilities Management`,
     titleIncludesSiteName: true,
     /**
-     * The client's own sentence, used verbatim — it lands at 141 characters, inside the
-     * 140-160 standard, and names the three sectors, the coverage area and the
-     * single-provider differentiator in one line.
+     * The client's own sentence, naming the three sectors, the coverage area and the
+     * single-provider differentiator — then the same phone CTA every commercial-intent page
+     * carries (client request, 2026-08-31).
      *
-     * No phone CTA here, unlike the service/industry/area pages: "One provider, every
-     * discipline." is the stronger close, and appending the number would push this to 160
-     * exactly, right on the truncation boundary. The number still appears on every
-     * commercial-intent page via SEO_PHONE_CTA.
+     * Two ampersands stand in for "and" ("Trades &", "corporate & government"). That is not
+     * a style preference: the sentence verbatim is 143 characters and the CTA adds 19,
+     * which overruns the ~160 limit by two — and the part that gets truncated is the tail,
+     * i.e. the phone number itself. The contraction buys exactly the room needed to keep
+     * both the differentiator and the number intact, and matches the title's own "Trades &
+     * Facilities Management".
      */
-    description:
-      'Trades and facilities management for commercial, corporate and government sites across London & the South East. One provider, every discipline.',
+    description: `Trades & facilities management for commercial, corporate & government sites across London & the South East. One provider, every discipline.${SEO_PHONE_CTA}`,
   },
 
   '/company': {
