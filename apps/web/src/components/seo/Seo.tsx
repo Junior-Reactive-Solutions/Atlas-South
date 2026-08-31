@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { COMPANY } from '@atlas-south/shared';
+import { COMPANY, SITE_ORIGIN } from '@atlas-south/shared';
 
 /**
  * Per-page SEO metadata — docs/build/09-SEO-PERFORMANCE-CHECKLIST.md §2 and
@@ -15,7 +15,10 @@ import { COMPANY } from '@atlas-south/shared';
  */
 
 const SITE_NAME = COMPANY.name;
-const SITE_URL = `https://${COMPANY.domain}`;
+// SITE_ORIGIN, not COMPANY.domain — these URLs must actually resolve for a crawler, and
+// atlassouthes.com still serves the old site until the DNS cutover. See the note on
+// SITE_ORIGIN in packages/shared/src/constants/seo.ts.
+const SITE_URL = SITE_ORIGIN;
 
 export interface SeoProps {
   /** ≤60 characters, primary keyword near the front — checklist §2. Site name is appended automatically. */

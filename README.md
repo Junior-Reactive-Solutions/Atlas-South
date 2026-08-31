@@ -211,9 +211,14 @@ Explicitly awaiting client authorisation. When ready:
 1. Add the custom domain in Vercel → Settings → Domains, and point DNS at the exact records
    Vercel shows for that domain (don't hardcode an IP from memory — Vercel's differ by apex
    vs subdomain and change over time).
-2. Add Resend domain verification records so transactional email is deliverable.
-3. Update `CORS_ALLOWED_ORIGIN` in the Render dashboard to `https://atlassouthes.com`.
-4. Submit the sitemap to Google Search Console.
+2. **Flip `SITE_ORIGIN`** in `packages/shared/src/constants/seo.ts` to
+   `https://${COMPANY.domain}`. It currently points at the Vercel URL because `og:image`,
+   `og:url` and `canonical` have to resolve, and atlassouthes.com still serves the old site
+   until this cutover happens.
+3. Add Resend domain verification records so transactional email is deliverable.
+4. Update `CORS_ALLOWED_ORIGIN` in the Render dashboard to `https://atlassouthes.com`.
+5. Submit the sitemap to Google Search Console. `public/sitemap.xml` already lists
+   `atlassouthes.com` URLs, which become correct at this point.
 
 `emailThemes.ts` (`LOGO_URL` / `SITE_URL`) already points at `atlassouthes.com`.
 

@@ -37,12 +37,12 @@ import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { EXTRACTED_PAGES, CAREERS_CONTENT, COMPANY, PAGE_SEO } from '@atlas-south/shared';
+import { EXTRACTED_PAGES, CAREERS_CONTENT, COMPANY, PAGE_SEO, SITE_ORIGIN } from '@atlas-south/shared';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DIST_DIR = path.join(__dirname, '..', 'dist');
 const SITE_NAME = COMPANY.name;
-const SITE_URL = `https://${COMPANY.domain}`;
+const SITE_URL = SITE_ORIGIN; // see the note on SITE_ORIGIN in packages/shared — atlassouthes.com still serves the old site
 
 /**
  * Static pages — every entry comes straight from PAGE_SEO in @atlas-south/shared, which is
