@@ -125,10 +125,17 @@ export const PAGE_SEO = {
 
   '/company/join-us': {
     path: '/company/join-us',
-    // No phone CTA: candidates should apply through the form, not ring the sales line.
+    /**
+     * Deliberately no phone CTA here or on the three job detail pages
+     * (CAREERS_CONTENT.openRoles in content/pages.ts) — candidates should apply through the
+     * form, not ring the sales line. The number was briefly added across all 37 pages on
+     * client instruction (2026-08-31) and then pulled back from careers specifically, at
+     * their request, for exactly that reason. Don't reinstate it here for consistency with
+     * the other pages: the inconsistency is the point.
+     */
     title: 'Careers — Facilities & Trades Jobs in London',
     description:
-      `Careers at Atlas South Technical Services. Openings across cleaning operations and corporate facilities sales in our London-based team.${SEO_PHONE_CTA}`,
+      'Careers at Atlas South Technical Services. Current openings across cleaning operations and corporate facilities sales in our London-based team. Apply online.',
   },
 
   '/legal/privacy': {
