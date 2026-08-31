@@ -34,6 +34,26 @@
 import { COMPANY } from './company.js';
 
 /**
+ * The origin the site is actually served from **right now** — used to build the absolute
+ * URLs that have to resolve for a crawler: `og:image`, `og:url` and `canonical`.
+ *
+ * Deliberately NOT `https://${COMPANY.domain}`. Those are two different facts:
+ * COMPANY.domain is a *business* fact (the company's domain, correct in JSON-LD and on
+ * letterheads); this is a *deployment* fact (where the HTML and its assets genuinely
+ * resolve today). Until the DNS cutover, atlassouthes.com still serves the client's OLD
+ * site — so `https://atlassouthes.com/og-image.png` returned 404, crawlers fetched nothing,
+ * and every shared link rendered with no preview image at all. A canonical pointing at a
+ * 404 is worse still, since search engines may drop the page entirely.
+ *
+ * ⚠️ Flip this to `https://${COMPANY.domain}` as part of the DNS cutover checklist in
+ * README.md — it is step 1 of making the site's own domain authoritative.
+ *
+ * (public/sitemap.xml deliberately still lists atlassouthes.com URLs: it is submitted to
+ * Search Console *after* cutover, by which point those are the right ones.)
+ */
+export const SITE_ORIGIN = 'https://atlas-south-web.vercel.app';
+
+/**
  * The call-to-action closing service, industry and area descriptions.
  *
  * Built from COMPANY rather than typed into each string — the previous site carried two
