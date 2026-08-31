@@ -20,6 +20,15 @@ const SITE_URL = `https://${COMPANY.domain}`;
 export interface SeoProps {
   /** ≤60 characters, primary keyword near the front — checklist §2. Site name is appended automatically. */
   title: string;
+  /**
+   * Set when `title` already leads with the company name, so it's used verbatim instead of
+   * having " | Atlas South Technical Services" appended to it a second time.
+   *
+   * The homepage is the only page that does this — it uses the brand-first title format the
+   * client's previous site established (see HOME_SEO in packages/shared), while every
+   * interior page keeps the keyword-first/brand-last order.
+   */
+  titleIncludesSiteName?: boolean;
   /** 140–160 characters — checklist §2. */
   description: string;
   /** Path only, e.g. "/hard-services/electricals" — the canonical/OG URL is built from this + the site origin. */
@@ -38,9 +47,9 @@ function upsertMeta(attr: 'name' | 'property', key: string, content: string): HT
   return el;
 }
 
-export function Seo({ title, description, path, image, jsonLd }: SeoProps) {
+export function Seo({ title, titleIncludesSiteName, description, path, image, jsonLd }: SeoProps) {
   useEffect(() => {
-    const fullTitle = `${title} | ${SITE_NAME}`;
+    const fullTitle = titleIncludesSiteName ? title : `${title} | ${SITE_NAME}`;
     const url = `${SITE_URL}${path}`;
     const shareImage = image ?? `${SITE_URL}/og-image.png`;
 
@@ -87,7 +96,7 @@ export function Seo({ title, description, path, image, jsonLd }: SeoProps) {
       document.title = previousTitle;
       createdElements.forEach((el) => el.remove());
     };
-  }, [title, description, path, image, jsonLd]);
+  }, [title, titleIncludesSiteName, description, path, image, jsonLd]);
 
   return null;
 }

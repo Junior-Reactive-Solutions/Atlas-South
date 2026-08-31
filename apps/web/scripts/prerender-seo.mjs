@@ -37,7 +37,7 @@ import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { EXTRACTED_PAGES, CAREERS_CONTENT, COMPANY } from '@atlas-south/shared';
+import { EXTRACTED_PAGES, CAREERS_CONTENT, COMPANY, HOME_SEO } from '@atlas-south/shared';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DIST_DIR = path.join(__dirname, '..', 'dist');
@@ -52,9 +52,13 @@ const SITE_URL = `https://${COMPANY.domain}`;
 const STATIC_ROUTES = [
   {
     path: '/',
-    title: 'Trades & Facilities Services in London & the South East',
-    description:
-      'Atlas South delivers electrical, plumbing, fire safety and full facilities management for commercial buildings across London and the South East. 24/7 emergency cover.',
+    // Imported, not duplicated — Home.tsx renders the same two strings via <Seo/>, and the
+    // client-side tags must match this prerendered copy exactly.
+    title: HOME_SEO.title,
+    // HOME_SEO.title already leads with the company name, so it is NOT suffixed with it
+    // again here. Mirrors <Seo/>'s `titleIncludesSiteName` prop.
+    titleIncludesSiteName: true,
+    description: HOME_SEO.description,
   },
   {
     path: '/company',
@@ -127,7 +131,7 @@ function upsertMetaTag(html, attr, key, content) {
 }
 
 function renderPage(template, route) {
-  const fullTitle = `${route.title} | ${SITE_NAME}`;
+  const fullTitle = route.titleIncludesSiteName ? route.title : `${route.title} | ${SITE_NAME}`;
   const url = `${SITE_URL}${route.path}`;
   const image = `${SITE_URL}/og-image.png`;
 
