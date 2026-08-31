@@ -82,6 +82,8 @@ export interface CertificationItem {
 
 export interface CompanyContent {
   tagline: string;
+  /** Intro paragraph below the headline, describing Atlas South's focus and mission. */
+  intro?: string;
   timeline: TimelineEntry[];
   missionStatement: string;
   /**

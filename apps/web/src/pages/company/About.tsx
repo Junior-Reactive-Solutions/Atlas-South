@@ -43,6 +43,11 @@ export function About() {
         <div className="mx-auto max-w-4xl px-4">
           <p className="font-display text-sm uppercase tracking-widest text-accent-blue">Founded 2018 · London</p>
           <h1 className="mt-2 font-display text-4xl font-bold text-navy sm:text-5xl">{data.tagline}</h1>
+          {data.intro && (
+            <p className="mt-6 max-w-2xl text-lg text-slate">
+              {data.intro}
+            </p>
+          )}
         </div>
       </section>
 
@@ -96,7 +101,7 @@ export function About() {
       {/* Values section */}
       <section className="py-16 sm:py-20">
         <div className="mx-auto max-w-7xl px-4">
-          <h2 className="mb-12 font-display text-3xl font-bold text-navy">Why We Do What We Do</h2>
+          <h2 className="mb-12 font-display text-3xl font-bold text-navy">Why We're the Best Choice</h2>
           <ValuesGrid values={data.values} />
         </div>
       </section>

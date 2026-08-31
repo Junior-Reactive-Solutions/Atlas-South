@@ -30,7 +30,9 @@ export const HOME_CONTENT = {
 };
 
 export const COMPANY_CONTENT = {
-  tagline: 'Trusted London facilities partner since 2018',
+  tagline: 'Facilities Support Built on Precision, Trust & Accountability',
+  intro:
+    'Atlas South Technical Services is a London-based provider of cleaning and facilities management for commercial, corporate and government environments — from offices and aviation facilities to healthcare, manufacturing, education and public sector sites. We exist to give organisations one dependable partner for the standard of upkeep their operations, their compliance obligations and their reputation demand.',
   timeline: [
     {
       year: 2018,
@@ -73,19 +75,34 @@ export const COMPANY_CONTENT = {
     'To be the most trusted facilities partner for organisations that cannot afford to get cleaning and site upkeep wrong — where standards, compliance and reputation are always on the line.',
   values: [
     {
-      icon: 'shield',
-      title: 'Reliability',
-      body: "You can count on us to show up, on time, every time. Our 24/7 emergency line means you're never without support.",
+      icon: 'badge-check',
+      title: 'Compliance-first, not compliance-eventually',
+      body: 'Documentation, health & safety records and audit-ready reporting are built into every contract from day one — the standard both commercial clients and public sector procurement expect as a baseline.',
     },
     {
-      icon: 'target',
-      title: 'Excellence',
-      body: "We don't just fix problems—we deliver solutions. Every job is an opportunity to exceed expectations.",
+      icon: 'briefcase',
+      title: 'One provider, full facilities scope',
+      body: 'Cleaning, technical maintenance and facilities management run under a single contract and point of contact, across every sector we serve — fewer contractors on-site, less coordination overhead for you.',
     },
     {
-      icon: 'heart',
-      title: 'Care',
-      body: 'We treat every site as if it were our own. Your satisfaction is our measure of success.',
+      icon: 'users',
+      title: 'Vetted, trained, sector-briefed teams',
+      body: 'Personnel are prepared for the specific access, conduct and safety expectations of the environment they're working in, from corporate offices to regulated and public sector sites.',
+    },
+    {
+      icon: 'settings',
+      title: 'Built around your operations, not ours',
+      body: 'Servicing is scheduled around your operational windows, shift patterns and downtime — not the other way around — so facilities work never becomes the disruption.',
+    },
+    {
+      icon: 'trending-up',
+      title: 'Continuity you can build a contract on',
+      body: 'Consistent teams, clear reporting and a single schedule reduce risk across long-term commercial and multi-year public sector contracts.',
+    },
+    {
+      icon: 'map-pin',
+      title: 'London-based, London-focused',
+      body: 'Based in London and focused on London & South East delivery, with the local presence to respond quickly and the accountability of a provider that's actually nearby.',
     },
   ],
   team: [
