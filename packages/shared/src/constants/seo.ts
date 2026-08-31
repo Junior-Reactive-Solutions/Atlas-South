@@ -105,14 +105,14 @@ export const PAGE_SEO = {
     path: '/company',
     title: 'About Us — Trusted London Facilities Partner',
     description:
-      'Founded in 2018, Atlas South is a London-based cleaning and facilities management provider for commercial, corporate and government sites. Our story and team.',
+      `Founded in 2018, Atlas South is a London-based cleaning and facilities management provider for commercial, corporate & government sites.${SEO_PHONE_CTA}`,
   },
 
   '/company/vision-mission': {
     path: '/company/vision-mission',
     title: 'Our Vision & Mission — Trusted Facilities Partner',
     description:
-      'Our vision and mission: to be the most trusted facilities partner for organisations where standards, compliance and reputation are always on the line.',
+      `Our vision and mission: to be the most trusted facilities partner where standards, compliance and reputation are always on the line.${SEO_PHONE_CTA}`,
   },
 
   '/company/contact': {
@@ -128,27 +128,27 @@ export const PAGE_SEO = {
     // No phone CTA: candidates should apply through the form, not ring the sales line.
     title: 'Careers — Facilities & Trades Jobs in London',
     description:
-      'Careers at Atlas South Technical Services. Current openings across cleaning operations and corporate facilities sales in our London-based team.',
+      `Careers at Atlas South Technical Services. Openings across cleaning operations and corporate facilities sales in our London-based team.${SEO_PHONE_CTA}`,
   },
 
   '/legal/privacy': {
     path: '/legal/privacy',
     title: 'Privacy Policy',
     description:
-      'How Atlas South Technical Services collects, uses, stores and protects your personal data, and the rights you have over it under UK data protection law.',
+      `How Atlas South collects, uses, stores and protects your personal data, and the rights you have over it under UK data protection law.${SEO_PHONE_CTA}`,
   },
 
   '/legal/terms': {
     path: '/legal/terms',
     title: 'Terms of Use',
     description:
-      'The terms and conditions governing your use of the Atlas South Technical Services website and the services provided through it. Please read before use.',
+      `The terms and conditions governing your use of the Atlas South website and the services provided through it. Please read before use.${SEO_PHONE_CTA}`,
   },
 
   '/legal/cookies': {
     path: '/legal/cookies',
     title: 'Cookie Policy',
     description:
-      'How Atlas South Technical Services uses cookies on this website, what each type does, and how you can control or disable them in your browser.',
+      `How Atlas South Technical Services uses cookies, what each type does, and how you can control or disable them in your browser.${SEO_PHONE_CTA}`,
   },
 } as const satisfies Record<string, PageSeo>;
