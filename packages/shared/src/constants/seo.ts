@@ -78,17 +78,26 @@ export interface PageSeo {
 export const PAGE_SEO = {
   '/': {
     path: '/',
-    title: `${COMPANY.name} | London Plumbing, Electrical, Cleaning, Security & Facilities Management`,
+    /**
+     * Client-supplied positioning (2026-08-31), fitted to the standard ~60-character title
+     * slot. Their raw line ran 148 characters — description length, not title length — so
+     * the full sentence became the description below and the title keeps the brand plus the
+     * core offering. Brand-first, matching the format their previous site used.
+     */
+    title: `${COMPANY.name} | Trades & Facilities Management`,
     titleIncludesSiteName: true,
     /**
-     * Mirrors the previous site's description shape (brand, then services, then a phone
-     * call to action) but lists only services this site actually offers. Two things from
-     * that copy are deliberately absent: "handyman" (residential framing — this site is
-     * commercial/industrial only) and "Monthly packages available" (all pricing was removed
-     * at the client's request along with the /packages page, so it would advertise a page
-     * that no longer exists).
+     * The client's own sentence, used verbatim — it lands at 141 characters, inside the
+     * 140-160 standard, and names the three sectors, the coverage area and the
+     * single-provider differentiator in one line.
+     *
+     * No phone CTA here, unlike the service/industry/area pages: "One provider, every
+     * discipline." is the stronger close, and appending the number would push this to 160
+     * exactly, right on the truncation boundary. The number still appears on every
+     * commercial-intent page via SEO_PHONE_CTA.
      */
-    description: `${COMPANY.name}: London plumbing, electrical, painting, cleaning, security and facilities management for commercial sites.${SEO_PHONE_CTA}`,
+    description:
+      'Trades and facilities management for commercial, corporate and government sites across London & the South East. One provider, every discipline.',
   },
 
   '/company': {
