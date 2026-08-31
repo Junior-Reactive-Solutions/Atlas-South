@@ -28,6 +28,8 @@ interface ServiceHighlight {
 interface IndustryDetailPageProps {
   id: string;
   title: string;
+  /** Optional, more detailed <title> tag — see the field comment on IndustryContent. */
+  seoTitle?: string;
   icon: IconName;
   /** Route this page is mounted at, e.g. "/industries/healthcare" — feeds Seo's canonical/OG URL. */
   path: string;
@@ -59,6 +61,7 @@ interface IndustryDetailPageProps {
 export function IndustryDetailPage({
   id,
   title,
+  seoTitle,
   path,
   heroDescription,
   overview,
@@ -105,13 +108,13 @@ export function IndustryDetailPage({
   return (
     <>
       <Seo
-        title={`${title} Facilities & Technical Services`}
+        title={seoTitle ?? `${title} Facilities & Technical Services`}
         description={heroDescription}
         path={path}
         jsonLd={{
           '@context': 'https://schema.org',
           '@type': 'WebPage',
-          name: `${title} Facilities & Technical Services`,
+          name: seoTitle ?? `${title} Facilities & Technical Services`,
           description: heroDescription,
           about: title,
           isPartOf: {

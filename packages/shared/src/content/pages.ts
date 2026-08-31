@@ -163,24 +163,77 @@ export const CAREERS_CONTENT = {
       description: 'Top-tier health and safety standards across all roles and locations.',
     },
   ],
+  // Client-supplied job descriptions (2026-08-31 WhatsApp drop, three PDFs — one per role).
+  // Replaces the two previous listings ("Experienced Plumber", "Facilities Manager"), which
+  // were invented during seeding and never sourced from the client — see
+  // docs on placeholder-content risk. slug drives each role's own page at
+  // /company/careers/:slug (Careers.tsx links out to it instead of expanding inline).
   openRoles: [
     {
-      title: 'Experienced Plumber',
-      icon: 'wrench',
-      location: 'London-based, travel to sites',
-      hours: 'Full-time, 40 hours/week',
+      slug: 'cleaning-supervisor',
+      title: 'Cleaning Supervisor',
+      icon: 'spray-can',
+      department: 'Cleaning Operations',
+      reportsTo: 'Operations Manager',
+      location: 'London (On-Site)',
+      hours: 'Full-Time, Permanent',
       startAvailability: 'Immediate',
-      description:
-        "We're looking for an experienced plumber with commercial and industrial facilities experience to join our growing team.",
+      summary:
+        "Lead our on-site cleaning teams across corporate and commercial client sites — a hands-on role for an experienced cleaning professional who can lead a team and be the day-to-day point of contact clients trust.",
+      roleOverview:
+        "As Cleaning Supervisor, you'll lead a team of cleaning operatives across one or more client sites, ensuring work is delivered to Atlas South's standard, on schedule, and in line with health & safety requirements. You'll be the first point of contact for site-level issues and a key link between the cleaning team and our operations function.",
+      responsibilities:
+        "Lead and supervise on-site cleaning teams across assigned client sites, ensuring work is completed to Atlas South's standard and schedule.\nPlan and allocate daily cleaning tasks, rotas and coverage across the team, including holiday and sickness cover.\nCarry out regular site inspections and quality checks, addressing any issues before they become client concerns.\nEnsure all cleaning is carried out in line with health & safety, COSHH and site-specific compliance requirements.\nTrain new starters and provide ongoing coaching to cleaning operatives on correct procedures, products and equipment use.\nManage stock levels of cleaning materials and equipment, and raise orders as needed.\nAct as the on-site point of contact for client facilities managers, resolving day-to-day issues quickly and professionally.\nMaintain accurate records of inspections, incidents, and team attendance, and report into the operations team.",
+      requirements:
+        "Previous experience as a cleaning supervisor, team leader, or senior cleaning operative, ideally in a commercial or corporate setting.\nStrong working knowledge of cleaning methods, products, equipment and health & safety / COSHH requirements.\nConfident leading and motivating a team, including managing rotas and performance.\nClear communicator, comfortable liaising directly with clients and site managers.\nWell organised, with the ability to manage multiple tasks and priorities across a site or sites.\nFlexible and reliable, with willingness to cover early mornings, evenings or out-of-hours shifts as required by site schedules.\nBased in or around London, with the ability to travel between sites as needed.",
+      workingPattern:
+        "This is a site-based role, working across Atlas South's client sites in London. Shift patterns may include early mornings, evenings or out-of-hours cover depending on the sites you're assigned to.",
+      whatWeOffer:
+        "Competitive salary, reflective of experience.\nStable, full-time hours with clear shift patterns.\nOngoing training and development, including health & safety and COSHH certifications.\nA clear path to progress into wider operations or contract management roles.\nThe chance to work across a growing range of sectors and client sites.",
     },
     {
-      title: 'Facilities Manager',
+      slug: 'junior-sales-executive',
+      title: 'Junior Sales Executive — Corporate Facilities Solutions',
+      icon: 'trending-up',
+      department: 'Sales & Business Dev.',
+      reportsTo: 'Senior Sales Manager',
+      location: 'London (Hybrid)',
+      hours: 'Full-Time, Permanent',
+      startAvailability: 'Immediate',
+      summary:
+        "Join our growing sales team — a hybrid role for someone early in their sales career who's eager to learn, build a pipeline, and support the Senior Sales Manager in winning new corporate facilities management contracts.",
+      roleOverview:
+        "As Junior Sales Executive, you'll work closely with the Senior Sales Manager to identify leads, build the pipeline, and support proposal preparation across Atlas South's full facilities management range. This is a hands-on, learning-focused role for someone who wants to build a career in B2B sales.",
+      responsibilities:
+        "Support the Senior Sales Manager in identifying and qualifying new business opportunities across corporate and commercial clients.\nResearch prospective clients and sectors to build a pipeline of qualified leads.\nAssist in preparing and formatting proposals covering Atlas South's facilities management services.\nMake outbound calls and emails to introduce Atlas South's services and set up client meetings.\nMaintain accurate records of leads, contacts and pipeline activity in the CRM.\nAttend client meetings and site visits alongside senior sales staff to learn the full proposal-to-close process.\nFollow up on proposals and enquiries to keep opportunities moving through the pipeline.\nBuild a working knowledge of Atlas South's full service range across all sectors served.",
+      requirements:
+        "Some experience in a sales, business development, or customer-facing role (B2B experience is a plus but not essential).\nStrong communication skills, both written and verbal, with confidence on the phone and in person.\nOrganised, with good attention to detail when managing leads and proposal documents.\nA genuine interest in building a career in B2B sales, ideally within facilities management or commercial services.\nSelf-motivated and eager to learn, with the ability to work both independently and as part of a small team.\nComfortable using CRM tools, spreadsheets and standard office software.\nBased in or around London, with flexibility to attend the office and occasional client site visits.",
+      workingPattern:
+        'This role is based in London with a hybrid working pattern — combining remote work, time in the office, and on-site client meetings and proposal presentations as required. Flexibility to travel to client sites across London and the South East is expected.',
+      whatWeOffer:
+        'Competitive base salary with performance-related bonus potential.\nHybrid working — a mix of remote work, office time, and client-facing site visits.\nDirect mentorship from the Senior Sales Manager, with a clear path to growing into a more senior sales role.\nExposure to a wide range of sectors and client types from day one.\nThe chance to grow with an expanding, multi-sector business.',
+    },
+    {
+      slug: 'senior-sales-manager',
+      title: 'Senior Sales Manager — Corporate Facilities Solutions',
       icon: 'briefcase',
-      location: 'Central London office',
-      hours: 'Full-time, 37.5 hours/week',
-      startAvailability: 'Next month',
-      description:
-        'Manage client relationships, coordinate service scheduling, and oversee our operations. Great opportunity for someone looking to move into management.',
+      department: 'Sales & Business Dev.',
+      reportsTo: 'Director / HR Manager',
+      location: 'London (Hybrid)',
+      hours: 'Full-Time, Permanent',
+      startAvailability: 'Immediate',
+      summary:
+        'Lead new business development across our corporate and commercial client base — a hybrid role for an experienced B2B sales professional who can confidently present our full facilities management offering and turn it into won business.',
+      roleOverview:
+        "As Senior Sales Manager, you will be responsible for winning new corporate facilities management contracts by identifying opportunities, building relationships with key decision-makers, and delivering compelling, tailored proposals across Atlas South's full service range. You'll work closely with leadership and operations to convert prospects into long-term client relationships.",
+      responsibilities:
+        "Identify, pursue and win new corporate and commercial facilities management contracts across London and the South East.\nBuild and present tailored proposals covering Atlas South's full facilities management range — cleaning, technical maintenance, compliance-driven servicing and sector-specific solutions.\nOwn the full sales cycle from initial approach through to proposal, negotiation and contract close.\nDevelop a strong pipeline across target sectors, including corporate offices, aviation, healthcare, manufacturing, education, venues, data centres, rail, and government & public sector bodies.\nBuild lasting relationships with facilities managers, procurement leads and senior decision-makers at prospective client organisations.\nWork closely with operations to ensure proposals reflect realistic, deliverable scopes and pricing.\nRepresent Atlas South at industry events, site visits and client meetings.\nTrack pipeline, forecast accurately, and report on sales performance against targets.",
+      requirements:
+        'Proven track record in B2B sales, ideally within facilities management, cleaning services, or a related commercial services sector.\nExperience selling into corporate, commercial or public sector clients, with confidence engaging senior stakeholders and procurement teams.\nStrong proposal writing and presentation skills — able to translate a service range into a compelling, client-specific pitch.\nComfortable managing a full sales cycle independently, from prospecting to close.\nExcellent communication and relationship-building skills.\nSelf-motivated, target-driven, and comfortable working autonomously in a hybrid role.\nBased in or around London, with flexibility to travel to client sites and the office as needed.',
+      workingPattern:
+        'This role is based in London with a hybrid working pattern — combining remote work, time in the office, and on-site client meetings and proposal presentations as required. Flexibility to travel to client sites across London and the South East is expected.',
+      whatWeOffer:
+        'Competitive base salary plus performance-based commission.\nHybrid working — a mix of remote work, office time, and client-facing site visits.\nThe opportunity to shape and grow a senior sales function across a widening range of sectors.\nDirect access to leadership and a genuine say in how proposals and client strategy are shaped.\nA growing, multi-sector business with an expanding service range to sell into.',
     },
   ],
   rightToWorkNote:

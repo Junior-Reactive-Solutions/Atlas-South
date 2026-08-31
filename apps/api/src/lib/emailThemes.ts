@@ -22,8 +22,8 @@ const BRAND = {
 };
 
 /** Hosted at the production web origin — email clients can't resolve a relative path. */
-const LOGO_URL = 'https://atlas-south-web.vercel.app/atlas-south-logo.jpg';
-const SITE_URL = 'https://atlas-south-web.vercel.app';
+const LOGO_URL = 'https://atlassouthes.com/atlas-south-logo.jpg';
+const SITE_URL = 'https://atlassouthes.com';
 
 /**
  * The only logo file the site has is the full-colour wordmark on a white background

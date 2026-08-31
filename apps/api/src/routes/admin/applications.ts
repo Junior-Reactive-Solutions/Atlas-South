@@ -102,6 +102,42 @@ adminApplicationsRouter.get('/applications/:id/cv', async (req: AuthRequest, res
   }
 });
 
+/**
+ * GET /api/admin/applications/:id/cover-letter — same pattern as the CV route above, for
+ * the separate Cover Letter file added 2026-08-31. Same ephemeral-disk caveat applies.
+ */
+adminApplicationsRouter.get('/applications/:id/cover-letter', async (req: AuthRequest, res: Response) => {
+  try {
+    const db = requireDb();
+    const application = await db.jobApplication.findUnique({
+      where: { id: req.params.id },
+      select: { coverLetterFilePath: true, coverLetterFileName: true },
+    });
+
+    if (!application?.coverLetterFilePath) {
+      return res.status(404).json({ error: 'No cover letter file on file for this application.' });
+    }
+
+    // coverLetterFilePath is never derived from user input at read time — same guarantee
+    // as cvFilePath above.
+    if (!fs.existsSync(application.coverLetterFilePath)) {
+      return res.status(410).json({
+        error: 'This cover letter is no longer available — it was likely lost in a subsequent deploy.',
+      });
+    }
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename="${(application.coverLetterFileName || 'cover-letter.pdf').replace(/"/g, '')}"`,
+    );
+    return res.sendFile(path.resolve(application.coverLetterFilePath));
+  } catch (err) {
+    console.error('Failed to serve cover letter:', err);
+    return res.status(500).json({ error: 'Something went wrong — please try again.' });
+  }
+});
+
 const ReplySchema = z.object({
   subject: z.string().trim().min(1).max(200).optional(),
   message: z.string().trim().min(1).max(5000),

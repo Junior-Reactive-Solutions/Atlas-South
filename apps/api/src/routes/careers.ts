@@ -72,19 +72,43 @@ function verifyIsRealPdf(filePath: string): boolean {
   }
 }
 
-careersRouter.post('/careers/apply', upload.single('cv'), validateBody(JobApplicationSchema), async (req, res) => {
+/** Named fields, not upload.single — the form now takes an optional Cover Letter file
+ * alongside the CV, added 2026-08-31 (client feedback: "allow a user upload a CV and
+ * Cover Letter"). Same 5MB-per-file limit and PDF-only fileFilter apply to both. */
+const uploadFields = upload.fields([
+  { name: 'cv', maxCount: 1 },
+  { name: 'coverLetterFile', maxCount: 1 },
+]);
+
+/** Runs the magic-number check (see verifyIsRealPdf above) on every file multer accepted,
+ * deleting and rejecting the whole request if any one of them isn't a real PDF. Returns
+ * the files that passed, keyed the same way req.files is. */
+function verifyUploadedFiles(files: { [field: string]: Express.Multer.File[] } | undefined) {
+  if (!files) return { ok: true as const };
+  for (const field of Object.keys(files)) {
+    const file = files[field]?.[0];
+    if (file && !verifyIsRealPdf(file.path)) {
+      // Clean up every file in this request, not just the bad one — a legitimate CV
+      // sitting alongside a spoofed cover letter shouldn't be kept without its pair.
+      for (const f of Object.values(files).flat()) {
+        fs.unlink(f.path, () => {});
+      }
+      return { ok: false as const };
+    }
+  }
+  return { ok: true as const };
+}
+
+careersRouter.post('/careers/apply', uploadFields, validateBody(JobApplicationSchema), async (req, res) => {
   try {
     const { fullName, email, phone, coverLetter, roleTitle } = req.body;
+    const files = req.files as { [field: string]: Express.Multer.File[] } | undefined;
+    const cvFile = files?.cv?.[0];
+    const coverLetterFile = files?.coverLetterFile?.[0];
 
-    if (req.file) {
-      const isRealPdf = verifyIsRealPdf(req.file.path);
-      if (!isRealPdf) {
-        fs.unlink(req.file.path, () => {
-          // best-effort cleanup — nothing further to do if this fails, the file just
-          // sits unreferenced (no DB row is ever created for it) until manual cleanup.
-        });
-        return res.status(400).json({ error: 'The uploaded file is not a valid PDF.' });
-      }
+    const verified = verifyUploadedFiles(files);
+    if (!verified.ok) {
+      return res.status(400).json({ error: 'One of the uploaded files is not a valid PDF.' });
     }
 
     const db = requireDb();
@@ -95,8 +119,10 @@ careersRouter.post('/careers/apply', upload.single('cv'), validateBody(JobApplic
         phone,
         roleTitle: roleTitle || null,
         coverLetter: coverLetter || null,
-        cvFileName: req.file?.originalname || null,
-        cvFilePath: req.file?.path || null,
+        cvFileName: cvFile?.originalname || null,
+        cvFilePath: cvFile?.path || null,
+        coverLetterFileName: coverLetterFile?.originalname || null,
+        coverLetterFilePath: coverLetterFile?.path || null,
       },
     });
 
@@ -114,7 +140,8 @@ careersRouter.post('/careers/apply', upload.single('cv'), validateBody(JobApplic
         phone,
         roleTitle: roleTitle || 'General Application',
         coverLetter,
-        cvFileName: req.file?.originalname,
+        cvFileName: cvFile?.originalname,
+        coverLetterFileName: coverLetterFile?.originalname,
       }),
     ]).catch((err) => {
       // eslint-disable-next-line no-console

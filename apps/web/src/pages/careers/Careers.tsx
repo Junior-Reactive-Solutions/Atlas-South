@@ -1,8 +1,6 @@
-import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useContentPage } from '../../hooks/useContentPage';
 import { PageLoadingFallback } from '../../components/PageLoadingFallback';
-import { JobApplicationForm } from '../../components/careers/JobApplicationForm';
 import { Seo } from '../../components/seo/Seo.js';
 import { COMPANY } from '@atlas-south/shared';
 import { Icon } from '@atlas-south/design-system';
@@ -10,14 +8,13 @@ import type { CareersContent } from '../../types/content';
 
 export function Careers() {
   const { data, isLoading } = useContentPage<CareersContent>('careers');
-  const [selectedRole, setSelectedRole] = useState<string | null>(null);
 
   if (isLoading || !data) return <PageLoadingFallback />;
 
   return (
     <>
       <Seo
-        title="Careers — Join Our Team"
+        title="Careers — Facilities & Trades Jobs in London"
         description="Grow with Atlas South. We're hiring talented professionals to join our London-based team."
         path="/company/join-us"
         jsonLd={{
@@ -88,17 +85,15 @@ export function Careers() {
           ) : (
             <div className="space-y-4">
               {data.openRoles.map((role) => (
-                <div
-                  key={role.title}
-                  role="button"
-                  tabIndex={0}
-                  className="cursor-pointer rounded-lg border border-border bg-canvas p-6 transition-colors hover:bg-canvas-tint"
-                  onClick={() => setSelectedRole(selectedRole === role.title ? null : role.title)}
-                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelectedRole(selectedRole === role.title ? null : role.title); } }}
+                <Link
+                  key={role.slug}
+                  to={`/company/join-us/${role.slug}`}
+                  className="group block rounded-lg border border-border bg-canvas p-6 transition-colors hover:border-accent-blue hover:bg-canvas-tint"
                 >
-                  <div className="flex items-start justify-between">
+                  <div className="flex items-start justify-between gap-4">
                     <div>
-                      <h3 className="font-semibold text-navy">{role.title}</h3>
+                      <h3 className="font-semibold text-navy group-hover:text-accent-blue">{role.title}</h3>
+                      {role.summary && <p className="mt-2 text-sm text-slate">{role.summary}</p>}
                       <div className="mt-3 flex flex-wrap gap-4 text-sm text-slate">
                         <div className="flex items-center gap-1">
                           <Icon name={role.icon} size={16} />
@@ -108,24 +103,13 @@ export function Careers() {
                         <div>Start: {role.startAvailability}</div>
                       </div>
                     </div>
+                    <Icon
+                      name="arrow-right"
+                      size={20}
+                      className="mt-1 shrink-0 text-slate-300 transition-colors group-hover:text-accent-blue"
+                    />
                   </div>
-
-                  {selectedRole === role.title && (
-                    <div className="mt-6 space-y-6 border-t border-border pt-6">
-                      <div>
-                        <h4 className="font-semibold text-navy">About this role</h4>
-                        <p className="mt-2 text-sm text-slate">{role.description}</p>
-                      </div>
-
-                      <div>
-                        <h4 className="font-semibold text-navy">Apply now</h4>
-                        <div className="mt-4">
-                          <JobApplicationForm roleTitle={role.title} />
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
+                </Link>
               ))}
             </div>
           )}

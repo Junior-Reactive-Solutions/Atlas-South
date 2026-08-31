@@ -12,7 +12,7 @@ export function VisionMission() {
   return (
     <>
       <Seo
-        title="Vision & Mission"
+        title="Our Vision & Mission — Trusted Facilities Partner"
         description="Our vision is to be the most trusted facilities partner for organisations where standards and compliance are always on the line. Our mission drives every job we deliver."
         path="/company/vision-mission"
         jsonLd={{
