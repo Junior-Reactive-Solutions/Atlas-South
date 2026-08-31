@@ -66,6 +66,9 @@ const ParkingLotManagement = lazy(() =>
 const RailFacilities = lazy(() =>
   import('./pages/services/RailFacilities.js').then((m) => ({ default: m.RailFacilities }))
 );
+const InteriorPainting = lazy(() =>
+  import('./pages/services/InteriorPainting.js').then((m) => ({ default: m.InteriorPainting }))
+);
 const Corporate = lazy(() => import('./pages/industries/Corporate.js').then((m) => ({ default: m.Corporate })));
 const Healthcare = lazy(() => import('./pages/industries/Healthcare.js').then((m) => ({ default: m.Healthcare })));
 const Retail = lazy(() => import('./pages/industries/Retail.js').then((m) => ({ default: m.Retail })));
@@ -169,6 +172,7 @@ export default function App() {
           <Route path="/soft-services/concierge" element={<Concierge />} />
           <Route path="/soft-services/parking-lot-management" element={<ParkingLotManagement />} />
           <Route path="/soft-services/rail-facilities" element={<RailFacilities />} />
+          <Route path="/soft-services/interior-painting" element={<InteriorPainting />} />
 
           {/* Built-out industry pages (Sprint 5+) — lazy-loaded for performance */}
           <Route path="/industries/corporate" element={<Corporate />} />
