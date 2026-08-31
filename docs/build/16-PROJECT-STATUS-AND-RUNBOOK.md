@@ -2,6 +2,16 @@
 
 Last updated **2026-08-17**, at the merge of [PR #36](https://github.com/Junior-Reactive-Solutions/Atlas-South/pull/36).
 
+> ⚠️ **Superseded as of 2026-08-31.** Everything below describes the Netlify + first Render
+> account iteration of the infrastructure. That's no longer live: **Vercel is the current
+> frontend host** (not Netlify — see README.md's "`vercel.json` must stay at the repo root"
+> section) and the API now runs on a **different Render account/workspace** at
+> `https://atlas-south-api.onrender.com` (service `srv-d9tbhl3ncjis738t0hr0`) — the workspace
+> and service IDs in §6.0 below (`tea-d6uihhmuk2gs7386pak0` / `srv-da1hi1mgekts738amgrg`) are
+> from the original, now-suspended account and no longer apply. **The README's "Deployment"
+> and "Recent updates" sections are the current source of truth**; treat this document as a
+> historical record of the initial provisioning decisions, not a live runbook.
+
 This is the practical companion to the numbered specs in this folder. Those describe what the
 site *should* be; this describes what it **is** right now, what went wrong on the way, what the
 mitigation was, and what is genuinely still outstanding.
@@ -409,7 +419,7 @@ Provisioned over MCP, so these are the real resources, not a plan:
 | Netlify URL | `https://atlas-south-technical-services.netlify.app` |
 | Render workspace | `tea-d6uihhmuk2gs7386pak0` |
 | Render web service | `atlas-south-api` · `srv-da1hi1mgekts738amgrg` |
-| Render API URL | `https://atlas-south-api-95v9.onrender.com` |
+| Render API URL | `https://atlas-south-api.onrender.com` |
 | Render Postgres | `atlas-south-db` · `dpg-da1hhbe7bikc73958gr0-a` (PG16, frankfurt) |
 
 **Two deviations from the original plan, both deliberate:**
@@ -477,7 +487,7 @@ While you're there, add (each with **Generate**, so the value is never handled b
 | `JWT_REFRESH_SECRET` | click **Generate** |
 | `ADMIN_SEED_EMAIL` | type the first admin's email |
 
-Then confirm: `curl -sI https://atlas-south-api-95v9.onrender.com/api/health` → `200`.
+Then confirm: `curl -sI https://atlas-south-api.onrender.com/api/health` → `200`.
 
 > The health check path is **not** currently configured on the service — the MCP's
 > `create_web_service` doesn't accept `healthCheckPath`. Render therefore treats the service as
@@ -499,7 +509,7 @@ Then log in at `/admin/login` and change the password immediately — the flow f
 
 ### 6.4 The frontend already points at it
 
-`netlify.toml` proxies `/api/*` → `https://atlas-south-api-95v9.onrender.com/api/:splat`,
+`netlify.toml` proxies `/api/*` → `https://atlas-south-api.onrender.com/api/:splat`,
 verified live: `/api/health` currently returns **504**, which is the proxy correctly reaching
 Render and finding no running instance. It becomes 200 as soon as §6.3 is done.
 

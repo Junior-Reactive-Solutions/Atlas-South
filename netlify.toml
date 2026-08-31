@@ -22,7 +22,7 @@
 # the API's host can change without touching application code.
 [[redirects]]
   from = "/api/*"
-  to = "https://atlas-south-api-95v9.onrender.com/api/:splat"
+  to = "https://atlas-south-api.onrender.com/api/:splat"
   status = 200
   force = true
 

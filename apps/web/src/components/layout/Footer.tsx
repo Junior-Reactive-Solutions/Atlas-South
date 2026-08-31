@@ -63,17 +63,26 @@ function FooterColumn({ title, items }: ColumnProps) {
 }
 
 /** Brand SVG paths — lucide-react carries no brand icons, so we inline them directly. */
-const SOCIAL_ICONS: Record<string, { label: string; path: string | string[]; viewBox?: string; color: string }> = {
+const SOCIAL_ICONS: Record<
+  string,
+  { label: string; path: string | string[]; viewBox?: string; color: string; fillIcon?: boolean }
+> = {
   'https://www.tiktok.com/@atlassouthes': {
     label: 'TikTok',
     color: '#010101',
     path: 'M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5',
     viewBox: '0 0 24 24',
   },
+  // The old outline (two crossing diagonal strokes) read as a "close/exit" glyph rather
+  // than the X brand mark — a plain X-shape drawn with stroke lines is visually
+  // indistinguishable from a dismiss/cancel icon. This is the actual X logo (solid glyph,
+  // not an outline), so it needs `fillIcon: true` to render filled instead of stroked —
+  // see the fillIcon branch in SocialBar below.
   'https://x.com/SouthAtlas': {
     label: 'X (Twitter)',
     color: '#000000',
-    path: 'M4 4l16 16M4 20L20 4',
+    fillIcon: true,
+    path: 'M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231Zm-1.161 17.52h1.833L7.084 4.126H5.117Z',
     viewBox: '0 0 24 24',
   },
   'https://www.instagram.com/atlassouthes/': {
@@ -137,11 +146,11 @@ function SocialBar() {
               viewBox={meta.viewBox ?? '0 0 24 24'}
               width={18}
               height={18}
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={1.8}
-              strokeLinecap="round"
-              strokeLinejoin="round"
+              fill={meta.fillIcon ? 'currentColor' : 'none'}
+              stroke={meta.fillIcon ? 'none' : 'currentColor'}
+              strokeWidth={meta.fillIcon ? undefined : 1.8}
+              strokeLinecap={meta.fillIcon ? undefined : 'round'}
+              strokeLinejoin={meta.fillIcon ? undefined : 'round'}
               className="relative z-10 text-white/70 transition-colors duration-150 group-hover:text-white"
               aria-hidden="true"
             >
