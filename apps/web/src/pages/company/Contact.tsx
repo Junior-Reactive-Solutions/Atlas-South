@@ -3,16 +3,14 @@ import { CoverageMap } from '../../components/home/CoverageMap';
 import { SectionHeading } from '../../components/sections';
 import { Seo } from '../../components/seo/Seo.js';
 import { Icon } from '@atlas-south/design-system';
-import { COMPANY } from '@atlas-south/shared';
+import { COMPANY, PAGE_SEO } from '@atlas-south/shared';
 import { trackPhoneClick, trackWhatsAppClick } from '../../lib/analytics.js';
 
 export function Contact() {
   return (
     <>
       <Seo
-        title="Contact Us — Get a Free Quote"
-        description="Ready to discuss your project? Contact Atlas South today. 24/7 emergency line: 07778 858278"
-        path="/company/contact"
+        {...PAGE_SEO['/company/contact']}
         jsonLd={{
           '@context': 'https://schema.org',
           '@type': 'LocalBusiness',

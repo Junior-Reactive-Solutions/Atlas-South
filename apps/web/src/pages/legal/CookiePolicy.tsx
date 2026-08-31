@@ -1,12 +1,11 @@
 import { Seo } from '../../components/seo/Seo.js';
+import { PAGE_SEO } from '@atlas-south/shared';
 
 export function CookiePolicy() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-16">
       <Seo
-        title="Cookie Policy"
-        description="Which cookies Atlas South Technical Services uses, what they're for, and how to manage your cookie preferences."
-        path="/legal/cookies"
+        {...PAGE_SEO['/legal/cookies']}
       />
       <h1 className="mb-2 text-4xl font-black text-navy">Cookie Policy</h1>
       <p className="mb-8 text-slate-600">Last updated: August 2026</p>

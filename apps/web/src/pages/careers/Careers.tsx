@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { useContentPage } from '../../hooks/useContentPage';
 import { PageLoadingFallback } from '../../components/PageLoadingFallback';
 import { Seo } from '../../components/seo/Seo.js';
-import { COMPANY } from '@atlas-south/shared';
+import { COMPANY, PAGE_SEO } from '@atlas-south/shared';
 import { Icon } from '@atlas-south/design-system';
 import type { CareersContent } from '../../types/content';
 
@@ -14,9 +14,7 @@ export function Careers() {
   return (
     <>
       <Seo
-        title="Careers — Facilities & Trades Jobs in London"
-        description="Grow with Atlas South. We're hiring talented professionals to join our London-based team."
-        path="/company/join-us"
+        {...PAGE_SEO['/company/join-us']}
         jsonLd={{
           '@context': 'https://schema.org',
           '@type': 'JobPosting',

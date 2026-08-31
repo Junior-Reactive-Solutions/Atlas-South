@@ -30,6 +30,8 @@ interface IndustryDetailPageProps {
   title: string;
   /** Optional, more detailed <title> tag — see the field comment on IndustryContent. */
   seoTitle?: string;
+  /** Optional purpose-written meta description — see the field comment on ServiceContent. */
+  seoDescription?: string;
   icon: IconName;
   /** Route this page is mounted at, e.g. "/industries/healthcare" — feeds Seo's canonical/OG URL. */
   path: string;
@@ -62,6 +64,7 @@ export function IndustryDetailPage({
   id,
   title,
   seoTitle,
+  seoDescription,
   path,
   heroDescription,
   overview,
@@ -109,7 +112,8 @@ export function IndustryDetailPage({
     <>
       <Seo
         title={seoTitle ?? `${title} Facilities & Technical Services`}
-        description={heroDescription}
+        // seoDescription, not heroDescription — see the note in ServiceDetailPage.
+        description={seoDescription ?? heroDescription}
         path={path}
         jsonLd={{
           '@context': 'https://schema.org',

@@ -4,7 +4,7 @@ import { QuoteForm } from '../components/home/QuoteForm';
 import { CoverageMap } from '../components/home/CoverageMap';
 import { Seo } from '../components/seo/Seo.js';
 import { useContentPage } from '../hooks/useContentPage';
-import { HARD_SERVICES, SOFT_SERVICES, INDUSTRIES, COMPANY, HOME_SEO } from '@atlas-south/shared';
+import { HARD_SERVICES, SOFT_SERVICES, INDUSTRIES, COMPANY, PAGE_SEO } from '@atlas-south/shared';
 import { Icon } from '@atlas-south/design-system';
 import { useVisibleNavItems } from '../hooks/useNavVisibility.js';
 import {
@@ -127,14 +127,11 @@ export function Home() {
 
   return (
     <>
-      {/* Brand-first title + the shared description live in HOME_SEO (packages/shared) so
-          this component and the build-time prerender step (scripts/prerender-seo.mjs) can't
-          drift — the prerendered copy is what link-preview crawlers actually read. */}
+      {/* Title/description/path come from PAGE_SEO (packages/shared) so this component and
+          the build-time prerender step (scripts/prerender-seo.mjs) can't drift — the
+          prerendered copy is what link-preview crawlers actually read. */}
       <Seo
-        title={HOME_SEO.title}
-        titleIncludesSiteName
-        description={HOME_SEO.description}
-        path="/"
+        {...PAGE_SEO['/']}
         jsonLd={{
           '@context': 'https://schema.org',
           '@type': 'LocalBusiness',

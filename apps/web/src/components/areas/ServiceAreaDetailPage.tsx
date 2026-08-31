@@ -21,6 +21,8 @@ interface ServiceAreaDetailPageProps {
   title: string;
   /** Optional, more detailed <title> tag — see the field comment on ServiceAreaContent. */
   seoTitle?: string;
+  /** Optional purpose-written meta description — see the field comment on ServiceContent. */
+  seoDescription?: string;
   icon: IconName;
   /** Route this page is mounted at, e.g. "/areas/central-london" — feeds Seo's canonical/OG URL. */
   path: string;
@@ -51,6 +53,7 @@ export function ServiceAreaDetailPage({
   id,
   title,
   seoTitle,
+  seoDescription,
   path,
   heroDescription,
   overview,
@@ -80,7 +83,8 @@ export function ServiceAreaDetailPage({
     <>
       <Seo
         title={seoTitle ?? `Trades & Facilities Services in ${title}`}
-        description={heroDescription}
+        // seoDescription, not heroDescription — see the note in ServiceDetailPage.
+        description={seoDescription ?? heroDescription}
         path={path}
         jsonLd={{
           '@context': 'https://schema.org',

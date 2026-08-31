@@ -1,7 +1,7 @@
 import { useContentPage } from '../../hooks/useContentPage';
 import { PageLoadingFallback } from '../../components/PageLoadingFallback';
 import { Seo } from '../../components/seo/Seo.js';
-import { COMPANY } from '@atlas-south/shared';
+import { COMPANY, PAGE_SEO } from '@atlas-south/shared';
 import type { CompanyContent } from '../../types/content';
 
 export function VisionMission() {
@@ -12,9 +12,7 @@ export function VisionMission() {
   return (
     <>
       <Seo
-        title="Our Vision & Mission — Trusted Facilities Partner"
-        description="Our vision is to be the most trusted facilities partner for organisations where standards and compliance are always on the line. Our mission drives every job we deliver."
-        path="/company/vision-mission"
+        {...PAGE_SEO['/company/vision-mission']}
         jsonLd={{
           '@context': 'https://schema.org',
           '@type': 'Organization',
