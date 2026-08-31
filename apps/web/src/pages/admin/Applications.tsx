@@ -15,34 +15,43 @@ interface JobApplication {
   roleTitle: string | null;
   coverLetter: string | null;
   cvFileName: string | null;
+  coverLetterFileName: string | null;
   createdAt: string;
 }
+
+type FileKind = 'cv' | 'cover-letter';
 
 export function AdminApplications() {
   const [applications, setApplications] = useState<JobApplication[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selected, setSelected] = useState<JobApplication | null>(null);
-  const [cvStatus, setCvStatus] = useState<'idle' | 'downloading' | 'error'>('idle');
+  const [fileStatus, setFileStatus] = useState<Record<FileKind, 'idle' | 'downloading' | 'error'>>({
+    cv: 'idle',
+    'cover-letter': 'idle',
+  });
   const { authFetch } = useAuth();
 
   // The download route requires the same Bearer token every other admin request does, so
   // a plain <a href> can't be used (the browser wouldn't attach it) — fetch the file
-  // through authFetch, then hand the browser a local object URL to save.
-  async function handleDownloadCv(app: JobApplication) {
-    setCvStatus('downloading');
+  // through authFetch, then hand the browser a local object URL to save. Same route shape
+  // for both file kinds (/cv, /cover-letter — see routes/admin/applications.ts).
+  async function handleDownloadFile(app: JobApplication, kind: FileKind) {
+    setFileStatus((s) => ({ ...s, [kind]: 'downloading' }));
     try {
-      const res = await authFetch(`/api/admin/applications/${app.id}/cv`);
+      const res = await authFetch(`/api/admin/applications/${app.id}/${kind}`);
       if (!res.ok) throw new Error('Download failed');
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = app.cvFileName || `${app.fullName.replace(/\s+/g, '-')}-cv.pdf`;
+      const fallbackName = kind === 'cv' ? 'cv.pdf' : 'cover-letter.pdf';
+      const fileName = kind === 'cv' ? app.cvFileName : app.coverLetterFileName;
+      a.download = fileName || `${app.fullName.replace(/\s+/g, '-')}-${fallbackName}`;
       a.click();
       URL.revokeObjectURL(url);
-      setCvStatus('idle');
+      setFileStatus((s) => ({ ...s, [kind]: 'idle' }));
     } catch {
-      setCvStatus('error');
+      setFileStatus((s) => ({ ...s, [kind]: 'error' }));
     }
   }
 
@@ -113,7 +122,7 @@ export function AdminApplications() {
                 transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                 onClick={() => {
                   setSelected(app);
-                  setCvStatus('idle');
+                  setFileStatus({ cv: 'idle', 'cover-letter': 'idle' });
                 }}
                 className="application-row w-full rounded-lg border border-slate-200 bg-white p-4 text-left transition-colors focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-accent-blue"
               >
@@ -194,11 +203,11 @@ export function AdminApplications() {
             {selected.cvFileName && (
               <DetailField label="CV">
                 <button
-                  onClick={() => handleDownloadCv(selected)}
-                  disabled={cvStatus === 'downloading'}
+                  onClick={() => handleDownloadFile(selected, 'cv')}
+                  disabled={fileStatus.cv === 'downloading'}
                   className="flex w-full items-center gap-2 rounded-lg bg-slate-50 p-3 text-left transition-colors hover:bg-slate-100 disabled:opacity-60"
                 >
-                  {cvStatus === 'downloading' ? (
+                  {fileStatus.cv === 'downloading' ? (
                     <Loader2 className="h-5 w-5 shrink-0 animate-spin text-accent-blue" />
                   ) : (
                     <FileText className="h-5 w-5 shrink-0 text-accent-blue" />
@@ -206,18 +215,42 @@ export function AdminApplications() {
                   <span className="min-w-0 flex-1 truncate text-sm font-medium text-navy">{selected.cvFileName}</span>
                   <Download className="h-4 w-4 shrink-0 text-slate-400" />
                 </button>
-                {cvStatus === 'error' && (
+                {fileStatus.cv === 'error' && (
                   <p className="mt-1.5 text-xs text-red-600">
                     Couldn't download this CV — it may have been lost in a deploy since it was submitted.
                   </p>
                 )}
               </DetailField>
             )}
-            <DetailField label="Cover letter">
+            {selected.coverLetterFileName && (
+              <DetailField label="Cover letter (file)">
+                <button
+                  onClick={() => handleDownloadFile(selected, 'cover-letter')}
+                  disabled={fileStatus['cover-letter'] === 'downloading'}
+                  className="flex w-full items-center gap-2 rounded-lg bg-slate-50 p-3 text-left transition-colors hover:bg-slate-100 disabled:opacity-60"
+                >
+                  {fileStatus['cover-letter'] === 'downloading' ? (
+                    <Loader2 className="h-5 w-5 shrink-0 animate-spin text-accent-blue" />
+                  ) : (
+                    <FileText className="h-5 w-5 shrink-0 text-accent-blue" />
+                  )}
+                  <span className="min-w-0 flex-1 truncate text-sm font-medium text-navy">
+                    {selected.coverLetterFileName}
+                  </span>
+                  <Download className="h-4 w-4 shrink-0 text-slate-400" />
+                </button>
+                {fileStatus['cover-letter'] === 'error' && (
+                  <p className="mt-1.5 text-xs text-red-600">
+                    Couldn't download this cover letter — it may have been lost in a deploy since it was submitted.
+                  </p>
+                )}
+              </DetailField>
+            )}
+            <DetailField label="Note">
               {selected.coverLetter ? (
                 <p className="whitespace-pre-wrap leading-relaxed">{selected.coverLetter}</p>
               ) : (
-                <span className="italic text-slate-400">No cover letter submitted</span>
+                <span className="italic text-slate-400">No additional note submitted</span>
               )}
             </DetailField>
           </dl>

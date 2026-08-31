@@ -34,6 +34,8 @@ interface FAQ {
 interface ServiceDetailPageProps {
   id: string;
   title: string;
+  /** Optional, more detailed <title> tag — see the field comment on ServiceContent. */
+  seoTitle?: string;
   icon: IconName;
   /** Route this page is mounted at, e.g. "/hard-services/electricals" — feeds Seo's canonical/OG URL. */
   path: string;
@@ -63,6 +65,7 @@ interface ServiceDetailPageProps {
 export function ServiceDetailPage({
   id,
   title,
+  seoTitle,
   path,
   heroDescription,
   overview,
@@ -114,7 +117,7 @@ export function ServiceDetailPage({
   return (
     <>
       <Seo
-        title={title}
+        title={seoTitle ?? title}
         description={heroDescription}
         path={path}
         jsonLd={[

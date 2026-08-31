@@ -62,6 +62,100 @@ function FooterColumn({ title, items }: ColumnProps) {
   );
 }
 
+/** Brand SVG paths — lucide-react carries no brand icons, so we inline them directly. */
+const SOCIAL_ICONS: Record<string, { label: string; path: string | string[]; viewBox?: string; color: string }> = {
+  'https://www.tiktok.com/@atlassouthes': {
+    label: 'TikTok',
+    color: '#010101',
+    path: 'M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5',
+    viewBox: '0 0 24 24',
+  },
+  'https://x.com/SouthAtlas': {
+    label: 'X (Twitter)',
+    color: '#000000',
+    path: 'M4 4l16 16M4 20L20 4',
+    viewBox: '0 0 24 24',
+  },
+  'https://www.instagram.com/atlassouthes/': {
+    label: 'Instagram',
+    color: '#E1306C',
+    // rect + circle + dot
+    path: [
+      'M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9A5.5 5.5 0 0 1 16.5 22h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2z',
+      'M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7z',
+      'M17.5 6.5a.5.5 0 1 1 0 1 .5.5 0 0 1 0-1z',
+    ],
+    viewBox: '0 0 24 24',
+  },
+  'https://www.facebook.com/atlassouthes24/': {
+    label: 'Facebook',
+    color: '#1877F2',
+    path: 'M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z',
+    viewBox: '0 0 24 24',
+  },
+  'https://www.linkedin.com/company/108248390/': {
+    label: 'LinkedIn',
+    color: '#0A66C2',
+    path: [
+      'M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z',
+      'M2 9h4v12H2z',
+      'M4 6a2 2 0 1 0 0-4 2 2 0 0 0 0 4z',
+    ],
+    viewBox: '0 0 24 24',
+  },
+};
+
+function SocialBar() {
+  return (
+    <div className="mt-8 flex items-center gap-3 border-t border-white/10 pt-6">
+      <span className="mr-2 text-xs font-semibold uppercase tracking-widest text-white/40">Follow us</span>
+      {COMPANY.socialProfiles.map((url) => {
+        const meta = SOCIAL_ICONS[url];
+        if (!meta) return null;
+        const paths = Array.isArray(meta.path) ? meta.path : [meta.path];
+        return (
+          <a
+            key={url}
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={meta.label}
+            className="social-icon group relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border border-white/20 bg-white/5 transition-all duration-300 hover:border-transparent hover:shadow-lg"
+            style={
+              {
+                '--brand': meta.color,
+              } as React.CSSProperties
+            }
+          >
+            {/* Brand colour fill that sweeps up on hover — Option B theming */}
+            <span
+              aria-hidden="true"
+              className="absolute inset-0 translate-y-full rounded-full transition-transform duration-300 ease-out group-hover:translate-y-0"
+              style={{ backgroundColor: meta.color }}
+            />
+            <svg
+              viewBox={meta.viewBox ?? '0 0 24 24'}
+              width={18}
+              height={18}
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={1.8}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="relative z-10 text-white/70 transition-colors duration-150 group-hover:text-white"
+              aria-hidden="true"
+            >
+              {paths.map((d, i) => (
+                <path key={i} d={d} />
+              ))}
+            </svg>
+          </a>
+        );
+      })}
+    </div>
+  );
+}
+
 export function Footer() {
   const root = useAnimationScope((self) => {
     self?.add('reveal', () => {
@@ -169,6 +263,9 @@ export function Footer() {
             <FooterColumn title="Legal & Connect" items={legalConnectItems} />
           </div>
         </div>
+
+        {/* Social icon bar */}
+        <SocialBar />
 
         {/* Bottom bar — docs/build/04-FOOTER-SPEC.md §4 */}
         <div className="mt-8 flex flex-col gap-3 border-t border-white/10 pt-6 text-xs text-white/60 lg:flex-row lg:items-center lg:justify-between">

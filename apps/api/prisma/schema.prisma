@@ -185,15 +185,20 @@ model ChatLead {
 }
 
 model JobApplication {
-  id           String   @id @default(cuid())
-  fullName     String
-  email        String
-  phone        String
-  roleTitle    String?
-  coverLetter  String?
-  cvFileName   String?
-  cvFilePath   String?
-  createdAt    DateTime @default(now())
+  id                   String   @id @default(cuid())
+  fullName             String
+  email                String
+  phone                String
+  roleTitle            String?
+  /// Optional free-text note — no longer the primary way to submit a cover letter (an
+  /// actual file upload was added 2026-08-31, see coverLetterFileName/Path below); kept as
+  /// an "anything else" field on the form.
+  coverLetter          String?
+  cvFileName           String?
+  cvFilePath           String?
+  coverLetterFileName  String?
+  coverLetterFilePath  String?
+  createdAt            DateTime @default(now())
 
   @@index([createdAt])
   @@index([roleTitle])

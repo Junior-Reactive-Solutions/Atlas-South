@@ -2,6 +2,12 @@ import type { IconName } from '@atlas-south/design-system';
 
 export interface ServiceContent {
   title: string;
+  /** Optional, more detailed <title> tag — falls back to `title` alone when absent. Kept
+   * separate from `title` because `title` also renders as the page's on-page H1; a
+   * keyword-rich SEO title and a clean, readable H1 don't have to be the same string.
+   * Added 2026-08-31 as part of a site-wide title audit (client request: "clear and
+   * detailed... professional, up-to-standard title to every page"). */
+  seoTitle?: string;
   icon: IconName;
   heroDescription: string;
   overview: string;
@@ -12,6 +18,8 @@ export interface ServiceContent {
 
 export interface IndustryContent {
   title: string;
+  /** See the same field on ServiceContent for why this exists separately from `title`. */
+  seoTitle?: string;
   icon: IconName;
   heroDescription: string;
   overview: string;
@@ -23,6 +31,8 @@ export interface IndustryContent {
 
 export interface ServiceAreaContent {
   title: string;
+  /** See the same field on ServiceContent for why this exists separately from `title`. */
+  seoTitle?: string;
   icon: IconName;
   heroDescription: string;
   overview: string;
@@ -93,9 +103,16 @@ export interface BenefitItem {
 }
 
 export interface OpenRole {
+  /** URL slug for this role's own page, e.g. "cleaning-supervisor" — /company/careers/:slug. */
+  slug: string;
   title: string;
   icon: IconName;
+  /** e.g. "Cleaning Operations", "Sales & Business Dev." */
+  department?: string;
+  /** e.g. "Operations Manager", "Senior Sales Manager" */
+  reportsTo?: string;
   location: string;
+  /** Job type/hours, e.g. "Full-Time, Permanent". */
   hours: string;
   /** Deliberately not shown on the public Careers page — pay is set per candidate based on
    * experience, so a fixed range on the listing either undersells a strong candidate or
@@ -104,6 +121,21 @@ export interface OpenRole {
    * and public page both just ignore it now. */
   payRange?: string;
   startAvailability: string;
+  /** Short one/two-line teaser shown on the listing card. */
+  summary?: string;
+  /** Longer "Role Overview" paragraph shown on the role's own page. */
+  roleOverview?: string;
+  /** One bullet per line — split on "\n" and rendered as a list on the role page. */
+  responsibilities?: string;
+  /** One bullet per line — split on "\n" and rendered as a list on the role page. */
+  requirements?: string;
+  /** e.g. shift pattern / hybrid split — optional paragraph. */
+  workingPattern?: string;
+  /** One bullet per line — split on "\n" and rendered as a list on the role page. */
+  whatWeOffer?: string;
+  /** Legacy field from before the role got its own page — still rendered as a fallback
+   * paragraph when the richer fields above aren't present, so old published rows don't
+   * regress to an empty page. */
   description?: string;
 }
 

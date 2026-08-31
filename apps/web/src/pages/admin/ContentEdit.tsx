@@ -436,16 +436,41 @@ export function AdminContentEdit() {
             rows={openRoles}
             setRows={setOpenRoles}
             fieldConfig={[
+              // slug drives this role's own URL (/company/join-us/:slug) — keep it
+              // lowercase-hyphenated and unique across roles.
+              { key: 'slug', label: 'URL slug (e.g. cleaning-supervisor)' },
               { key: 'title', label: 'Title' },
               { key: 'icon', label: 'Icon name (lucide)' },
+              { key: 'department', label: 'Department' },
+              { key: 'reportsTo', label: 'Reports to' },
               { key: 'location', label: 'Location' },
-              { key: 'hours', label: 'Hours' },
+              { key: 'hours', label: 'Job type (e.g. Full-Time, Permanent)' },
               { key: 'startAvailability', label: 'Start availability' },
-              { key: 'description', label: 'Description', multiline: true },
+              { key: 'summary', label: 'Listing summary (1-2 lines)', multiline: true },
+              { key: 'roleOverview', label: 'Role overview', multiline: true },
+              { key: 'responsibilities', label: 'Key responsibilities (one per line)', multiline: true },
+              { key: 'requirements', label: "What we're looking for (one per line)", multiline: true },
+              { key: 'workingPattern', label: 'Working pattern', multiline: true },
+              { key: 'whatWeOffer', label: 'What we offer (one per line)', multiline: true },
             ]}
             // No pay-range field — deliberately, per types/content.ts's note on OpenRole:
             // pay is set per candidate based on experience, not published on the listing.
-            newRow={{ title: '', icon: 'briefcase', location: '', hours: '', startAvailability: '', description: '' }}
+            newRow={{
+              slug: '',
+              title: '',
+              icon: 'briefcase',
+              department: '',
+              reportsTo: '',
+              location: '',
+              hours: '',
+              startAvailability: '',
+              summary: '',
+              roleOverview: '',
+              responsibilities: '',
+              requirements: '',
+              workingPattern: '',
+              whatWeOffer: '',
+            }}
           />
           <Field
             label="Right to work note"

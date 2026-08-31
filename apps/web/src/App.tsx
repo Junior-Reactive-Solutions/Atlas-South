@@ -87,6 +87,7 @@ const About = lazy(() => import('./pages/company/About.js').then((m) => ({ defau
 const VisionMission = lazy(() => import('./pages/company/VisionMission.js').then((m) => ({ default: m.VisionMission })));
 const Contact = lazy(() => import('./pages/company/Contact.js').then((m) => ({ default: m.Contact })));
 const Careers = lazy(() => import('./pages/careers/Careers.js').then((m) => ({ default: m.Careers })));
+const CareerDetail = lazy(() => import('./pages/careers/CareerDetail.js').then((m) => ({ default: m.CareerDetail })));
 
 
 function stubRoutes(items: NavItem[], specRef: string) {
@@ -151,6 +152,10 @@ export default function App() {
           <Route path="/company/vision-mission" element={<VisionMission />} />
           <Route path="/company/contact" element={<Contact />} />
           <Route path="/company/join-us" element={<Careers />} />
+          {/* Each open role gets its own full-screen page (JD + application form) rather
+              than expanding inline on the listing — see JobApplicationForm.tsx's header
+              comment for why. */}
+          <Route path="/company/join-us/:slug" element={<CareerDetail />} />
 
           {/* Built-out service pages (Sprint 4+) — lazy-loaded for performance */}
           <Route path="/hard-services/plumbing" element={<Plumbing />} />

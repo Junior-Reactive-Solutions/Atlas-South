@@ -19,6 +19,8 @@ import { useVisibleNavItems } from '../../hooks/useNavVisibility.js';
 interface ServiceAreaDetailPageProps {
   id: string;
   title: string;
+  /** Optional, more detailed <title> tag — see the field comment on ServiceAreaContent. */
+  seoTitle?: string;
   icon: IconName;
   /** Route this page is mounted at, e.g. "/areas/central-london" — feeds Seo's canonical/OG URL. */
   path: string;
@@ -48,6 +50,7 @@ interface ServiceAreaDetailPageProps {
 export function ServiceAreaDetailPage({
   id,
   title,
+  seoTitle,
   path,
   heroDescription,
   overview,
@@ -76,7 +79,7 @@ export function ServiceAreaDetailPage({
   return (
     <>
       <Seo
-        title={`Trades & Facilities Services in ${title}`}
+        title={seoTitle ?? `Trades & Facilities Services in ${title}`}
         description={heroDescription}
         path={path}
         jsonLd={{

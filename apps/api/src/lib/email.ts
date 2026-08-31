@@ -157,7 +157,13 @@ export async function sendJobApplicationConfirmation(data: JobApplicationEmailDa
  * Alerts the team to follow up with the candidate.
  */
 export async function sendJobApplicationAdminNotification(
-  data: JobApplicationEmailData & { applicationId: string; phone: string; coverLetter?: string; cvFileName?: string }
+  data: JobApplicationEmailData & {
+    applicationId: string;
+    phone: string;
+    coverLetter?: string;
+    cvFileName?: string;
+    coverLetterFileName?: string;
+  }
 ) {
   if (!resend) {
     console.warn('Resend not configured — skipping application admin notification email');
@@ -189,7 +195,8 @@ export async function sendJobApplicationAdminNotification(
             <td style="padding: 8px;">${data.roleTitle}</td>
           </tr>
           ${data.cvFileName ? `<tr style="border-bottom: 1px solid #eee;"><td style="padding: 8px; font-weight: bold;">CV:</td><td style="padding: 8px;">${data.cvFileName}</td></tr>` : ''}
-          ${data.coverLetter ? `<tr><td style="padding: 8px; font-weight: bold; vertical-align: top;">Cover Letter:</td><td style="padding: 8px;">${data.coverLetter.replace(/\n/g, '<br>')}</td></tr>` : ''}
+          ${data.coverLetterFileName ? `<tr style="border-bottom: 1px solid #eee;"><td style="padding: 8px; font-weight: bold;">Cover Letter file:</td><td style="padding: 8px;">${data.coverLetterFileName}</td></tr>` : ''}
+          ${data.coverLetter ? `<tr><td style="padding: 8px; font-weight: bold; vertical-align: top;">Note:</td><td style="padding: 8px;">${data.coverLetter.replace(/\n/g, '<br>')}</td></tr>` : ''}
         </table>
         <hr />
         <p style="font-size: 12px; color: #666;">

@@ -46,6 +46,13 @@ export const COMPANY = {
   vatNumber: null as string | null,
   icoRegistrationNumber: null as string | null,
 
-  /** No social profiles confirmed yet — populate once the client supplies real URLs. */
-  socialProfiles: [] as string[],
+  /** Client-supplied (2026-08-31 WhatsApp drop). Feeds both the footer's social icon bar
+   * (Footer.tsx) and the Organization JSON-LD's `sameAs` array. */
+  socialProfiles: [
+    'https://www.tiktok.com/@atlassouthes',
+    'https://x.com/SouthAtlas',
+    'https://www.instagram.com/atlassouthes/',
+    'https://www.facebook.com/atlassouthes24/',
+    'https://www.linkedin.com/company/108248390/',
+  ] as string[],
 } as const;
