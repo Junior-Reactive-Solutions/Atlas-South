@@ -36,6 +36,8 @@ interface ServiceDetailPageProps {
   title: string;
   /** Optional, more detailed <title> tag — see the field comment on ServiceContent. */
   seoTitle?: string;
+  /** Optional purpose-written meta description — see the field comment on ServiceContent. */
+  seoDescription?: string;
   icon: IconName;
   /** Route this page is mounted at, e.g. "/hard-services/electricals" — feeds Seo's canonical/OG URL. */
   path: string;
@@ -66,6 +68,7 @@ export function ServiceDetailPage({
   id,
   title,
   seoTitle,
+  seoDescription,
   path,
   heroDescription,
   overview,
@@ -118,7 +121,11 @@ export function ServiceDetailPage({
     <>
       <Seo
         title={seoTitle ?? title}
-        description={heroDescription}
+        // seoDescription, not heroDescription: the hero copy above is written to be read
+        // on the page and is routinely well outside the 140–160 chars a search result or
+        // link preview can show. Falls back to the hero copy for any record that predates
+        // the field.
+        description={seoDescription ?? heroDescription}
         path={path}
         jsonLd={[
           {

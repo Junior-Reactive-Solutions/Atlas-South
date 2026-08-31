@@ -8,6 +8,13 @@ export interface ServiceContent {
    * Added 2026-08-31 as part of a site-wide title audit (client request: "clear and
    * detailed... professional, up-to-standard title to every page"). */
   seoTitle?: string;
+  /** Optional purpose-written meta description (140–160 chars) for search results and link
+   * previews — falls back to `heroDescription` when absent. Separate for the same reason
+   * `seoTitle` is: `heroDescription` is on-page hero copy, written to be read above the
+   * fold, and is routinely far outside the length a preview can actually show. Added
+   * 2026-08-31 after an audit found 34 of 37 pages outside the 140–160 target — 26 of them
+   * because they were reusing hero copy verbatim. */
+  seoDescription?: string;
   icon: IconName;
   heroDescription: string;
   overview: string;
@@ -20,6 +27,8 @@ export interface IndustryContent {
   title: string;
   /** See the same field on ServiceContent for why this exists separately from `title`. */
   seoTitle?: string;
+  /** See the same field on ServiceContent. */
+  seoDescription?: string;
   icon: IconName;
   heroDescription: string;
   overview: string;
@@ -33,6 +42,8 @@ export interface ServiceAreaContent {
   title: string;
   /** See the same field on ServiceContent for why this exists separately from `title`. */
   seoTitle?: string;
+  /** See the same field on ServiceContent. */
+  seoDescription?: string;
   icon: IconName;
   heroDescription: string;
   overview: string;
@@ -125,6 +136,10 @@ export interface OpenRole {
   startAvailability: string;
   /** Short one/two-line teaser shown on the listing card. */
   summary?: string;
+  /** Optional meta description (140–160 chars) for search results and link previews.
+   * `summary` is the listing-card teaser and runs well past what a preview can show, so it
+   * is only the fallback — see the same field on ServiceContent. */
+  seoDescription?: string;
   /** Longer "Role Overview" paragraph shown on the role's own page. */
   roleOverview?: string;
   /** One bullet per line — split on "\n" and rendered as a list on the role page. */

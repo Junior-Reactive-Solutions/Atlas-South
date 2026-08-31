@@ -14,6 +14,8 @@
  *
  * Generated once from that JSON; edit this file directly from now on.
  */
+import { SEO_PHONE_CTA } from '../constants/seo.js';
+
 export interface ExtractedPage {
   slug: string;
   type: 'service' | 'industry' | 'area';
@@ -29,6 +31,7 @@ export const EXTRACTED_PAGES: ExtractedPage[] = [
     "data": {
       "title": "Electricals",
       "seoTitle": "Commercial Electrical Services & Maintenance",
+      "seoDescription": "Commercial and industrial electrical services across London — installation, planned maintenance, fault diagnosis and full compliance testing." + SEO_PHONE_CTA,
       "icon": "zap",
       "heroDescription": "Comprehensive electrical services for commercial and industrial facilities, from installation to maintenance to emergency response",
       "overview": "Electrical systems are critical infrastructure. A fault isn't just a cost — it affects operations, safety, and compliance. Atlas South provides end-to-end electrical services: planned maintenance, rapid fault diagnosis, emergency response, and full compliance testing.\n\nOur engineers are qualified to Building Regulations, BS 7909, and all relevant electrical standards. We manage everything from routine PAT testing to major system upgrades.",
@@ -101,6 +104,7 @@ export const EXTRACTED_PAGES: ExtractedPage[] = [
     "data": {
       "title": "Plumbing Services",
       "seoTitle": "Commercial & Industrial Plumbing Services",
+      "seoDescription": "Commercial and industrial plumbing across London — emergency response, leak and drainage repairs, and planned preventative maintenance." + SEO_PHONE_CTA,
       "icon": "wrench",
       "heroDescription": "Comprehensive plumbing solutions for commercial and industrial facilities, from emergency response to preventative maintenance.",
       "overview": "## Professional plumbing for buildings of all sizes\n\nAtlas South provides full-spectrum plumbing services designed to keep your building's water systems running smoothly. Whether you need emergency response at 2 AM or planned maintenance schedules, our team has the expertise and equipment to handle complex commercial plumbing challenges.\n\nWe work with healthcare trusts, shopping centres, offices, and industrial facilities — each with distinct plumbing demands. Our approach combines rapid fault diagnosis, minimal downtime, and long-term reliability.",
@@ -173,6 +177,7 @@ export const EXTRACTED_PAGES: ExtractedPage[] = [
     "data": {
       "title": "Reactive Maintenance",
       "seoTitle": "24/7 Reactive Maintenance & Emergency Repairs",
+      "seoDescription": "24/7 emergency call-outs across London and the South East — qualified multi-trade engineers dispatched fast to get you operational again." + SEO_PHONE_CTA,
       "icon": "hammer",
       "heroDescription": "Rapid response to unplanned breakdowns, emergency repairs, and urgent facility issues — keeping you operational 24/7",
       "overview": "Equipment fails when you least expect it. Reactive maintenance is emergency response: getting a qualified engineer on site fast, diagnosing the problem, and restoring operations. Atlas South operates 24/7 across London and the South East for exactly this reason.\n\nWe respond to call-outs from emergency repairs (broken doors, burst pipes, electrical faults) to complex multi-trade issues. A dedicated control room manages dispatch to hit response-time targets even during peak demand.",
@@ -251,6 +256,7 @@ export const EXTRACTED_PAGES: ExtractedPage[] = [
     "data": {
       "title": "Facilities Management",
       "seoTitle": "Integrated Facilities Management Services",
+      "seoDescription": "Integrated facilities management across London — hard and soft services under one contract, one invoice and one point of contact." + SEO_PHONE_CTA,
       "icon": "building-2",
       "heroDescription": "Integrated facilities management combining hard services, soft services, and operational support under one contract",
       "overview": "Facilities management is the glue holding a building together—coordinating plumbing, electrical, cleaning, security, catering, and a hundred other moving parts. Rather than juggling multiple vendors, consolidate under a single facilities partner who knows your building, your people, and your operational needs.\n\nAtlas South's integrated FM model combines hard services (electrical, plumbing, maintenance) with soft services (cleaning, security, catering) in one contract, one invoice, one point of contact.",
@@ -335,6 +341,7 @@ export const EXTRACTED_PAGES: ExtractedPage[] = [
     "data": {
       "title": "Security Services",
       "seoTitle": "Commercial Security Services & CCTV",
+      "seoDescription": "Commercial security across London — SIA-licensed officers, CCTV design and monitoring, and access control matched to your building's risk." + SEO_PHONE_CTA,
       "icon": "shield-check",
       "heroDescription": "Professional security staffing, CCTV systems, and access control tailored to your building's risk profile",
       "overview": "Security isn't one-size-fits-all. A retail centre needs different coverage than an office park; a data centre requires different protocols than a healthcare facility. Atlas South designs security solutions matching your actual risk profile, operations, and budget.\n\nWe provide everything: uniformed security officers, CCTV system design and monitoring, access control wiring and maintenance, incident response protocols, and liaison with police and insurers.",
@@ -411,6 +418,7 @@ export const EXTRACTED_PAGES: ExtractedPage[] = [
     "data": {
       "title": "Commercial Cleaning",
       "seoTitle": "Commercial Cleaning Services",
+      "seoDescription": "Commercial cleaning across London — daily office cleaning, deep cleans, floor care and washroom hygiene across every facility type." + SEO_PHONE_CTA,
       "icon": "sparkles",
       "heroDescription": "Professional daily and specialized cleaning maintaining hygiene, appearance, and compliance across all facility types",
       "overview": "Cleanliness isn't cosmetic—it affects health, morale, and first impressions. Commercial cleaning requires discipline, systems, and trained staff. Atlas South manages everything from daily office cleaning to specialized deep-cleans, specialized floor care, and post-incident biohazard cleanup.\n\nWe schedule around your operations, use industry-standard protocols and eco-friendly products, track performance with checklists and photo documentation, and respond rapidly to urgent cleanup needs.",
@@ -487,6 +495,7 @@ export const EXTRACTED_PAGES: ExtractedPage[] = [
     "data": {
       "title": "Corporate Catering",
       "seoTitle": "Corporate Catering & Event Catering Services",
+      "seoDescription": "On-site corporate catering across London — boardroom meetings through to full company events, delivered to our facilities-services standard." + SEO_PHONE_CTA,
       "icon": "utensils",
       "heroDescription": "On-site catering for corporate functions — from boardroom meetings to full corporate events — delivered with the same reliability and standard of presentation as the rest of our facilities services.",
       "overview": "Atlas South provides on-site catering for corporate environments — from everyday boardroom meetings to full corporate functions and events — delivered with the same reliability and standard of presentation as the rest of our facilities services.\n\nCatering is planned, delivered and cleared down by us, so your team can focus on the meeting, not the menu. Every order is prepared and handled to full food hygiene and allergen compliance, with documentation available whenever your site or event requires it — and service is timed around your agenda, whether that's a breakfast briefing, a full day of back-to-back meetings, or an evening function.",
@@ -563,6 +572,7 @@ export const EXTRACTED_PAGES: ExtractedPage[] = [
     "data": {
       "title": "Aviation & Airfield Facilities",
       "seoTitle": "Aviation & Airfield Facilities Services",
+      "seoDescription": "Aviation facilities services — terminal, hangar and MRO cleaning, technical maintenance and ground support built around your turnarounds." + SEO_PHONE_CTA,
       "icon": "plane",
       "heroDescription": "Facility cleaning, technical maintenance, compliance-driven hygiene and ground support servicing for terminals, hangars, MRO facilities and corporate aviation — engineered around your operational windows, not around ours.",
       "overview": "Aviation doesn't tolerate a delayed turnaround. Every hour a hangar bay, gate area or MRO facility is out of service has a cost. Our aviation offering is built around the industry's own constraints — tight windows, strict compliance, and zero tolerance for disruption.\n\nFacility servicing is scheduled around flight operations, curfews and shift changeovers — early mornings, overnight, and between-flight windows — so aircraft, gates and hangars stay operational. Cleaning and maintenance protocols are built around aviation hygiene, biosecurity and safety-critical facility standards, with documentation ready for audit at any time. Cleaning, technical maintenance and ground support area servicing run under a single point of contact and a single schedule — fewer contractors on-site, less coordination overhead for your operations team.",
@@ -608,6 +618,7 @@ export const EXTRACTED_PAGES: ExtractedPage[] = [
     "data": {
       "title": "Concierge Services",
       "seoTitle": "Concierge & Front-of-House Services",
+      "seoDescription": "Front-of-house concierge for corporate and commercial buildings across London — reception, access, visitors and daily requests covered." + SEO_PHONE_CTA,
       "icon": "concierge-bell",
       "heroDescription": "Front-of-house concierge cover for corporate and commercial buildings — reception, access, visitors and daily requests managed with the same reliability as the rest of our facilities services.",
       "overview": "Atlas South provides on-site concierge services for corporate and commercial buildings — professional front-of-house cover that manages reception, access, visitors and daily requests with the same reliability as the rest of our facilities services.\n\nOne concierge team acts as a single point of contact for every request, from front-desk reception to day-to-day operational needs, so staff and visitors always know exactly who to ask. Access management, visitor handling, deliveries and daily requests are managed the way your site actually operates, not as a generic front-desk routine — and concierge sits alongside our cleaning, technical maintenance and facilities management services, so front-of-house and back-of-house are run by one accountable provider.",
@@ -686,6 +697,7 @@ export const EXTRACTED_PAGES: ExtractedPage[] = [
     "data": {
       "title": "Corporate",
       "seoTitle": "Facilities Management for Corporate Offices",
+      "seoDescription": "Facilities management for corporate offices and multi-site estates — compliance, predictable costs and responsive support across London." + SEO_PHONE_CTA,
       "icon": "briefcase",
       "heroDescription": "Multi-site compliance, predictable costs, and responsive support for enterprise building management",
       "overview": "Corporate headquarters and multi-site office portfolios demand building services that don't just react to problems — they anticipate them. Your facilities underpin business continuity, employee safety, and regulatory compliance across often-complex estate profiles.\n\nAtlas South has supported corporate clients from FTSE-listed firms to growth-stage tech companies, managing everything from routine maintenance schedules to emergency response coordination across multiple buildings, often across multiple regions.",
@@ -748,6 +760,7 @@ export const EXTRACTED_PAGES: ExtractedPage[] = [
     "data": {
       "title": "Healthcare",
       "seoTitle": "Healthcare Facilities Management & Cleaning",
+      "seoDescription": "Infection-control-conscious cleaning and facilities management for clinical and non-clinical healthcare spaces across London." + SEO_PHONE_CTA,
       "icon": "cross",
       "heroDescription": "Infection-control-conscious cleaning and facilities management for clinical and non-clinical healthcare spaces, with protocols built to protect patients, staff and visitors while keeping disruption to care to a minimum.",
       "overview": "Cleaning protocols are built around infection prevention and control principles, with clear separation between clinical and non-clinical area procedures. Servicing is scheduled around ward routines, patient turnover and clinical activity, so care is never interrupted by facilities work.\n\nDocumentation and reporting are kept to the standard healthcare settings are expected to evidence at any time, and teams working in patient-facing environments are trained to work quietly, respectfully and with awareness of the setting.",
@@ -806,6 +819,7 @@ export const EXTRACTED_PAGES: ExtractedPage[] = [
     "data": {
       "title": "Retail",
       "seoTitle": "Facilities Management for Retail & Multi-Unit Estates",
+      "seoDescription": "Facilities management for retail estates across London — keeping customer-facing space open, safe and compliant across multi-unit portfolios." + SEO_PHONE_CTA,
       "icon": "shopping-bag",
       "heroDescription": "Keep customer-facing spaces operational, safe, and compliant while managing costs across multi-unit estates",
       "overview": "Retail centres, flagship stores, and distributed retail chains share one overriding constraint: the building must be ready to serve customers every day the doors are open. A fire alarm fault, a water leak, or broken HVAC isn't just a maintenance issue — it's lost trading hours, customer experience damage, and potential evacuation.\n\nAtlas South has managed retail estates ranging from single high-street stores to multi-unit regional portfolios, coordinating maintenance schedules around trading hours and tenant requirements.",
@@ -872,6 +886,7 @@ export const EXTRACTED_PAGES: ExtractedPage[] = [
     "data": {
       "title": "Education & Learning Institutions",
       "seoTitle": "Facilities Management for Schools & Colleges",
+      "seoDescription": "Cleaning and facilities management for schools, colleges and training sites across London — scheduled around term time and daily occupancy." + SEO_PHONE_CTA,
       "icon": "graduation-cap",
       "heroDescription": "Cleaning and facilities management for schools, colleges and training environments, keeping learning spaces safe, well-kept and ready — scheduled around term time and daily site occupancy.",
       "overview": "Servicing runs around term time, holiday periods and daily occupancy, so classrooms and communal spaces are ready without disrupting learning. Staff working in education environments are prepared for the safeguarding expectations that come with working around students of all ages.\n\nClassrooms, canteens, washrooms and communal areas are cleaned to standards that hold up under heavy daily use, and ongoing maintenance support helps keep older school and college buildings safe, functional and well presented.",
@@ -930,6 +945,7 @@ export const EXTRACTED_PAGES: ExtractedPage[] = [
     "data": {
       "title": "Central London",
       "seoTitle": "Facilities Management in Central London",
+      "seoDescription": "Facilities management and emergency response across Central London — 30-minute critical response in central postcodes, West End to the City." + SEO_PHONE_CTA,
       "icon": "map-pin",
       "heroDescription": "Premium facilities management and emergency response across London's high-value office, retail, and hospitality districts",
       "overview": "Central London's dense commercial landscape demands responsive, reliable building services. From the West End to the City, high-street retail to corporate headquarters, facilities downtime isn't just costly — it's reputationally damaging.\n\nAtlas South maintains rapid dispatch across Westminster, the City of London, Southwark, and Lambeth, with engineers stationed to hit response time targets in central areas where every minute counts.",
@@ -945,6 +961,7 @@ export const EXTRACTED_PAGES: ExtractedPage[] = [
     "data": {
       "title": "South East London",
       "seoTitle": "Facilities Management in South East London",
+      "seoDescription": "Facilities management across South East London, Lewisham to Croydon — 40-minute emergency response across SE1–SE28 postcodes." + SEO_PHONE_CTA,
       "icon": "map-pin",
       "heroDescription": "Comprehensive facilities management for growing South East London estates, from Lewisham to Crystal Palace to Croydon",
       "overview": "South East London is a mixed-use commercial landscape with rapidly expanding office space, established retail districts, and light industrial zones. Estates here are often larger and more distributed than central areas, requiring coordinated multi-site management and flexible scheduling.\n\nAtlas South operates across SE London with a network of engineers capable of handling everything from emergency response to planned preventative maintenance at competitive rates that reflect the area's market conditions.",
@@ -960,6 +977,7 @@ export const EXTRACTED_PAGES: ExtractedPage[] = [
     "data": {
       "title": "North London",
       "seoTitle": "Facilities Management in North London",
+      "seoDescription": "Facilities management across North London, from King's Cross to Barnet — 35-minute emergency response in inner N postcodes." + SEO_PHONE_CTA,
       "icon": "map-pin",
       "heroDescription": "Responsive facilities management across North London's diverse commercial and institutional landscape, from King's Cross to Barnet",
       "overview": "North London spans from the dense mixed-use redevelopment zones around King's Cross and Islington through to suburban and light industrial areas in Barnet, Enfield, and Haringey. The area combines high-value central properties, growing mid-market office space, healthcare and educational institutions, and light industrial/logistics facilities.\n\nAtlas South serves North London with dedicated coverage, leveraging our central London expertise in the inner boroughs and expanding capability in outer areas as demand for professional FM grows.",
@@ -975,6 +993,7 @@ export const EXTRACTED_PAGES: ExtractedPage[] = [
     "data": {
       "title": "East London",
       "seoTitle": "Facilities Management in East London",
+      "seoDescription": "Facilities management across East London's industrial, logistics and commercial zones — 40-minute emergency response across E1–E18." + SEO_PHONE_CTA,
       "icon": "map-pin",
       "heroDescription": "Facilities management and emergency response across East London's industrial, logistics, and emerging commercial zones",
       "overview": "East London combines established light industrial and logistics hubs with rapidly emerging mixed-use development zones. The area is home to data centres, logistics operators, established commercial tenants, and newer office/retail developments—each with distinct FM requirements and operational patterns.\n\nAtlas South operates across East London with expertise in both industrial-scale facility management and the newer commercial developments reshaping the area's commercial profile.",
@@ -990,6 +1009,7 @@ export const EXTRACTED_PAGES: ExtractedPage[] = [
     "data": {
       "title": "West London",
       "seoTitle": "Facilities Management in West London",
+      "seoDescription": "Facilities management across West London, from Knightsbridge to Ealing — 35-minute emergency response in inner W postcodes." + SEO_PHONE_CTA,
       "icon": "map-pin",
       "heroDescription": "Premium and responsive facilities management across West London's high-value retail, corporate, and institutional districts",
       "overview": "West London spans high-value retail districts, corporate headquarters, hospitality venues, and healthcare institutions. The area combines central premium services demand with suburban facility management, and includes major commercial hubs and light industrial areas.\n\nAtlas South serves West London with dedicated coverage and premium service delivery tailored to the area's high-value commercial and institutional clients.",
@@ -1005,6 +1025,7 @@ export const EXTRACTED_PAGES: ExtractedPage[] = [
     "data": {
       "title": "Surrey & Kent",
       "seoTitle": "Facilities Management in Surrey & Kent",
+      "seoDescription": "Facilities management and emergency response across Surrey and Kent — corporate HQs, business parks and light industrial, 60-minute response." + SEO_PHONE_CTA,
       "icon": "map-pin",
       "heroDescription": "Facilities management and emergency response across Surrey and Kent, serving corporate headquarters, light industrial estates, and suburban facilities",
       "overview": "Surrey and Kent represent Atlas South's geographic expansion beyond London's core, serving the extensive commuter belt and regional commercial hubs. The areas include corporate headquarters relocations, business parks, light industrial zones, and logistics facilities—often with larger footprints and lower service density than central London.\n\nAtlas South operates across Surrey and Kent with experienced engineers and regional coordination, delivering cost-effective preventative maintenance and responsive emergency support to a growing regional client base.",
@@ -1020,6 +1041,7 @@ export const EXTRACTED_PAGES: ExtractedPage[] = [
     "data": {
       "title": "Government & Public Sector",
       "seoTitle": "Facilities Management for Government & Public Sector",
+      "seoDescription": "Cleaning and facilities management for government offices and civic buildings — compliance-first, vetted personnel, audit-ready reporting." + SEO_PHONE_CTA,
       "icon": "landmark",
       "heroDescription": "Cleaning and facilities management for government offices, civic buildings and public sector sites — built around compliance, vetted personnel, and the standard of upkeep the public expects from its institutions.",
       "overview": "Government and public sector contracts are held to a documented standard. Our cleaning and facilities protocols are built with compliance, health & safety records, and audit-ready reporting as the baseline, not an extra.\n\nStaff working in government offices, civic buildings and public-facing sites are prepared for the vetting, conduct and security expectations these environments require — because council offices, courts, libraries and civic buildings are judged on their upkeep, and a clean, well-maintained public building reflects directly on the institution behind it.",
@@ -1070,6 +1092,7 @@ export const EXTRACTED_PAGES: ExtractedPage[] = [
     "data": {
       "title": "Oil & Gas",
       "seoTitle": "Facilities Management for Oil & Gas Sites",
+      "seoDescription": "Cleaning and facilities management for oil and gas sites, control rooms and offices — COSHH-compliant, site-inducted, round-the-clock." + SEO_PHONE_CTA,
       "icon": "flame-kindling",
       "heroDescription": "Cleaning and facilities management for oil and gas operational sites, control rooms and office facilities — built around COSHH compliance, site safety inductions, and round-the-clock operational schedules.",
       "overview": "Teams working on or near operational sites are trained in COSHH-compliant materials handling, so cleaning never becomes a site safety liability. Staff are prepared for site inductions, PPE requirements and access controls before ever stepping on-site.\n\nSites that run continuous shifts need servicing that fits around them — including night and weekend coverage without disrupting operations — with cleaning and facilities records kept audit-ready, in line with the health & safety documentation oil and gas sites are held to.",
@@ -1120,6 +1143,7 @@ export const EXTRACTED_PAGES: ExtractedPage[] = [
     "data": {
       "title": "Manufacturing",
       "seoTitle": "Facilities Management for Manufacturing Sites",
+      "seoDescription": "Facility cleaning and maintenance for production floors, warehousing and offices — scheduled around downtime to protect throughput." + SEO_PHONE_CTA,
       "icon": "factory",
       "heroDescription": "Facility cleaning and maintenance for production floors, warehousing and office areas, scheduled to protect throughput while maintaining the housekeeping and safety standards manufacturing sites are held to.",
       "overview": "Cleaning and maintenance are scheduled around downtime windows and shift changeovers, so servicing never slows the line. Clean, well-organised floors and walkways reduce workplace hazards — housekeeping is treated as part of site safety, not separate from it.\n\nCleaning near production and QA-sensitive areas is handled with awareness of contamination risk and material compatibility, with production floor, warehouse and office cleaning and maintenance running under a single schedule and point of contact.",
@@ -1166,6 +1190,7 @@ export const EXTRACTED_PAGES: ExtractedPage[] = [
     "data": {
       "title": "Data Centres",
       "seoTitle": "Facilities Management for Data Centres",
+      "seoDescription": "Data centre cleaning and facilities management across London — particulate control, anti-static methods and security-cleared personnel." + SEO_PHONE_CTA,
       "icon": "server",
       "heroDescription": "Cleaning and facilities management for data centre environments — built around particulate control, security-cleared access, and scheduling that never touches an uptime-critical window.",
       "overview": "Cleaning protocols are built to minimise dust and particulate contamination around server halls and technical equipment, using anti-static, low-residue methods. Personnel working in data centre environments are prepared for security clearance, access control and escort procedures before ever entering a facility.\n\nServicing is scheduled around maintenance windows and never scheduled in a way that risks operational uptime or equipment access protocols — with teams briefed on temperature, humidity and ESD-sensitive conditions specific to data hall environments, so cleaning never becomes a risk to equipment.",
@@ -1212,6 +1237,7 @@ export const EXTRACTED_PAGES: ExtractedPage[] = [
     "data": {
       "title": "Venues",
       "seoTitle": "Facilities Management for Venues & Event Spaces",
+      "seoDescription": "Cleaning and facilities management for venues, conference centres and arenas — fast turnarounds between events, front-of-house standard." + SEO_PHONE_CTA,
       "icon": "theater",
       "heroDescription": "Cleaning and facilities management for event venues, conference centres and arenas — built around fast turnarounds between events and the front-of-house standard visitors expect the moment they walk in.",
       "overview": "Venues move from one event to the next fast. Cleaning and reset are scheduled tightly around load-in, event hours and load-out, so the space is ready for what's next. Lobbies, auditoriums, washrooms and public areas are cleaned to a presentation standard that holds up under high footfall and full public view.\n\nGreen rooms, backstage corridors and technical/plant areas get the same standard of care as public-facing spaces, without getting in the way of production and technical crews — and high-volume waste and debris after events are cleared efficiently, so venues are event-ready again on schedule.",
@@ -1258,6 +1284,7 @@ export const EXTRACTED_PAGES: ExtractedPage[] = [
     "data": {
       "title": "Parking Lot Management",
       "seoTitle": "Car Park & Parking Facilities Management",
+      "seoDescription": "Car park cleaning and maintenance across London — sweeping, pressure washing, line marking, lighting and barrier upkeep on live sites." + SEO_PHONE_CTA,
       "icon": "square-parking",
       "heroDescription": "Cleaning and facilities management for car parks and parking facilities — keeping surfaces clean, markings clear, and equipment maintained across sites that never stop being used.",
       "overview": "A car park is often the first thing a visitor sees and the last thing they remember. Clean surfaces, clear markings and working lighting set the tone before anyone reaches the front door. Litter, spillages, faded line markings and poor lighting are trip, slip and safety risks — ongoing cleaning and maintenance keep car parks compliant and safe for daily use.\n\nCar parks at retail, corporate, healthcare and transport sites see constant vehicle and pedestrian traffic. Sweeping, waste management, pressure washing and facilities maintenance run under a single contract — one point of contact instead of multiple contractors and missed handoffs.",
@@ -1315,6 +1342,7 @@ export const EXTRACTED_PAGES: ExtractedPage[] = [
     "data": {
       "title": "Interior Painting",
       "seoTitle": "Commercial Interior Painting & Decorating Services",
+      "seoDescription": "Commercial interior painting and decorating across London — offices, retail and industrial, scheduled out-of-hours so you never close." + SEO_PHONE_CTA,
       "icon": "brush",
       "heroDescription": "Interior painting and decorating for offices, retail units and industrial facilities — scheduled around your operating hours, not the other way around",
       "overview": "A tired interior undersells everything happening inside it — client meetings, retail sales, staff morale. Atlas South provides interior painting and decorating for commercial and industrial premises, from a single office refresh to full-floor refurbishment ahead of a tenant fit-out.\n\nWork is scheduled out-of-hours or in phased zones where a site can't close, with surfaces properly prepared and protected before a coat goes on — the finish is only as good as the prep underneath it.",

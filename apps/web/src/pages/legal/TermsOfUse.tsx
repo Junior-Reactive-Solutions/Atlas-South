@@ -1,12 +1,11 @@
 import { Seo } from '../../components/seo/Seo.js';
+import { PAGE_SEO } from '@atlas-south/shared';
 
 export function TermsOfUse() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-16">
       <Seo
-        title="Terms of Use"
-        description="Terms and conditions governing use of the Atlas South Technical Services website, including IP rights, liability limits, and quote/pricing terms."
-        path="/legal/terms"
+        {...PAGE_SEO['/legal/terms']}
       />
       <h1 className="mb-2 text-4xl font-black text-navy">Terms of Use</h1>
       <p className="mb-8 text-slate-600">Last updated: August 2026</p>

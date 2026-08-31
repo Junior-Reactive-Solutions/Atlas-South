@@ -25,7 +25,7 @@ export interface SeoProps {
    * having " | Atlas South Technical Services" appended to it a second time.
    *
    * The homepage is the only page that does this — it uses the brand-first title format the
-   * client's previous site established (see HOME_SEO in packages/shared), while every
+   * client's previous site established (see PAGE_SEO in packages/shared), while every
    * interior page keeps the keyword-first/brand-last order.
    */
   titleIncludesSiteName?: boolean;

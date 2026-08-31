@@ -69,7 +69,9 @@ export function CareerDetail() {
     <>
       <Seo
         title={role.title}
-        description={role.summary || role.roleOverview || `Join Atlas South as a ${role.title}.`}
+        // seoDescription first — `summary` is the listing-card teaser and runs 200+ chars,
+        // past what a search result or link preview can show.
+        description={role.seoDescription || role.summary || role.roleOverview || `Join Atlas South as a ${role.title}.`}
         path={`/company/join-us/${role.slug}`}
         jsonLd={{
           '@context': 'https://schema.org',

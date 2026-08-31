@@ -37,7 +37,7 @@ import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { EXTRACTED_PAGES, CAREERS_CONTENT, COMPANY, HOME_SEO } from '@atlas-south/shared';
+import { EXTRACTED_PAGES, CAREERS_CONTENT, COMPANY, PAGE_SEO } from '@atlas-south/shared';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DIST_DIR = path.join(__dirname, '..', 'dist');
@@ -45,59 +45,15 @@ const SITE_NAME = COMPANY.name;
 const SITE_URL = `https://${COMPANY.domain}`;
 
 /**
- * Static pages — title/description here must match what each page's own <Seo
- * title=... description=.../> renders (apps/web/src/pages/**), so the prerendered card
- * and the post-hydration client tags never disagree.
+ * Static pages — every entry comes straight from PAGE_SEO in @atlas-south/shared, which is
+ * the same object each page component spreads into its own <Seo/>. That shared source is
+ * what guarantees the prerendered card and the post-hydration client tags can't disagree.
+ *
+ * This list used to be hand-maintained here, duplicating each string from its component —
+ * and it had already drifted: the three legal pages shipped one description client-side and
+ * a shorter, differently-worded stub in the prerendered HTML that crawlers actually read.
  */
-const STATIC_ROUTES = [
-  {
-    path: '/',
-    // Imported, not duplicated — Home.tsx renders the same two strings via <Seo/>, and the
-    // client-side tags must match this prerendered copy exactly.
-    title: HOME_SEO.title,
-    // HOME_SEO.title already leads with the company name, so it is NOT suffixed with it
-    // again here. Mirrors <Seo/>'s `titleIncludesSiteName` prop.
-    titleIncludesSiteName: true,
-    description: HOME_SEO.description,
-  },
-  {
-    path: '/company',
-    title: 'About Us — Trusted London Facilities Partner',
-    description:
-      "Founded in 2018, Atlas South has grown into London's full-service facilities company. Meet our team, learn our story.",
-  },
-  {
-    path: '/company/vision-mission',
-    title: 'Our Vision & Mission — Trusted Facilities Partner',
-    description:
-      'Our vision is to be the most trusted facilities partner for organisations where standards and compliance are always on the line. Our mission drives every job we deliver.',
-  },
-  {
-    path: '/company/contact',
-    title: 'Contact Us — Get a Free Quote',
-    description: 'Get in touch with Atlas South for a free quote. 24/7 emergency line, or fill out our contact form and we\'ll respond within 24 hours.',
-  },
-  {
-    path: '/company/join-us',
-    title: 'Careers — Facilities & Trades Jobs in London',
-    description: "Grow with Atlas South. We're hiring talented professionals to join our London-based team.",
-  },
-  {
-    path: '/legal/privacy',
-    title: 'Privacy Policy',
-    description: 'How Atlas South Technical Services collects, uses and protects your personal data.',
-  },
-  {
-    path: '/legal/terms',
-    title: 'Terms of Use',
-    description: 'The terms and conditions governing use of the Atlas South Technical Services website and services.',
-  },
-  {
-    path: '/legal/cookies',
-    title: 'Cookie Policy',
-    description: 'How Atlas South Technical Services uses cookies on this website.',
-  },
-];
+const STATIC_ROUTES = Object.values(PAGE_SEO);
 
 function contentRoutes() {
   return EXTRACTED_PAGES.map((page) => {
@@ -105,7 +61,9 @@ function contentRoutes() {
     return {
       path: page.path,
       title: data.seoTitle || data.title,
-      description: data.heroDescription,
+      // Same precedence the three detail templates apply — hero copy is on-page prose and
+      // is routinely far outside the length a preview can show.
+      description: data.seoDescription || data.heroDescription,
     };
   });
 }
@@ -116,7 +74,10 @@ function careerRoutes() {
     .map((role) => ({
       path: `/company/join-us/${role.slug}`,
       title: role.title,
-      description: role.summary || role.roleOverview || `${role.title} — join the Atlas South team in London.`,
+      // Same precedence CareerDetail.tsx uses. `summary` is the listing-card teaser and
+      // runs 200+ chars, so it is only the fallback.
+      description:
+        role.seoDescription || role.summary || role.roleOverview || `${role.title} — join the Atlas South team in London.`,
     }));
 }
 

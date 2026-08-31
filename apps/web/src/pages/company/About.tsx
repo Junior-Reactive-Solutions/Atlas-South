@@ -6,7 +6,7 @@ import { TeamGrid } from '../../components/company/TeamGrid';
 import { CertificationsBar } from '../../components/company/CertificationsBar';
 import { Seo } from '../../components/seo/Seo.js';
 import { StatBand, StatsMarquee } from '../../components/sections';
-import { COMPANY } from '@atlas-south/shared';
+import { COMPANY, PAGE_SEO } from '@atlas-south/shared';
 import type { CompanyContent } from '../../types/content';
 
 export function About() {
@@ -17,9 +17,7 @@ export function About() {
   return (
     <>
       <Seo
-        title="About Us — Trusted London Facilities Partner"
-        description="Founded in 2018, Atlas South has grown into London's full-service facilities company. Meet our team, learn our story."
-        path="/company"
+        {...PAGE_SEO['/company']}
         jsonLd={{
           '@context': 'https://schema.org',
           '@type': 'Organization',

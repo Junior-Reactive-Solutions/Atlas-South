@@ -197,6 +197,8 @@ export const CAREERS_CONTENT = {
       startAvailability: 'Immediate',
       summary:
         "Lead our on-site cleaning teams across corporate and commercial client sites — a hands-on role for an experienced cleaning professional who can lead a team and be the day-to-day point of contact clients trust.",
+      seoDescription:
+        'Cleaning Supervisor role at Atlas South, London. Lead on-site cleaning teams across corporate and commercial client sites. Full-time, permanent.',
       roleOverview:
         "As Cleaning Supervisor, you'll lead a team of cleaning operatives across one or more client sites, ensuring work is delivered to Atlas South's standard, on schedule, and in line with health & safety requirements. You'll be the first point of contact for site-level issues and a key link between the cleaning team and our operations function.",
       responsibilities:
@@ -219,6 +221,8 @@ export const CAREERS_CONTENT = {
       startAvailability: 'Immediate',
       summary:
         "Join our growing sales team — a hybrid role for someone early in their sales career who's eager to learn, build a pipeline, and support the Senior Sales Manager in winning new corporate facilities management contracts.",
+      seoDescription:
+        'Junior Sales Executive role at Atlas South, London. Build a pipeline and support new corporate facilities contracts. Full-time, permanent, hybrid.',
       roleOverview:
         "As Junior Sales Executive, you'll work closely with the Senior Sales Manager to identify leads, build the pipeline, and support proposal preparation across Atlas South's full facilities management range. This is a hands-on, learning-focused role for someone who wants to build a career in B2B sales.",
       responsibilities:
@@ -241,6 +245,8 @@ export const CAREERS_CONTENT = {
       startAvailability: 'Immediate',
       summary:
         'Lead new business development across our corporate and commercial client base — a hybrid role for an experienced B2B sales professional who can confidently present our full facilities management offering and turn it into won business.',
+      seoDescription:
+        'Senior Sales Manager role at Atlas South, London. Lead new business development across our corporate client base. Full-time, permanent, hybrid.',
       roleOverview:
         "As Senior Sales Manager, you will be responsible for winning new corporate facilities management contracts by identifying opportunities, building relationships with key decision-makers, and delivering compelling, tailored proposals across Atlas South's full service range. You'll work closely with leadership and operations to convert prospects into long-term client relationships.",
       responsibilities:
