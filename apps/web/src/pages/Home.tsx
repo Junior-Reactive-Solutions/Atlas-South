@@ -4,7 +4,7 @@ import { QuoteForm } from '../components/home/QuoteForm';
 import { CoverageMap } from '../components/home/CoverageMap';
 import { Seo } from '../components/seo/Seo.js';
 import { useContentPage } from '../hooks/useContentPage';
-import { HARD_SERVICES, SOFT_SERVICES, INDUSTRIES, COMPANY } from '@atlas-south/shared';
+import { HARD_SERVICES, SOFT_SERVICES, INDUSTRIES, COMPANY, HOME_SEO } from '@atlas-south/shared';
 import { Icon } from '@atlas-south/design-system';
 import { useVisibleNavItems } from '../hooks/useNavVisibility.js';
 import {
@@ -127,9 +127,13 @@ export function Home() {
 
   return (
     <>
+      {/* Brand-first title + the shared description live in HOME_SEO (packages/shared) so
+          this component and the build-time prerender step (scripts/prerender-seo.mjs) can't
+          drift — the prerendered copy is what link-preview crawlers actually read. */}
       <Seo
-        title="Trades & Facilities Services in London & the South East"
-        description="Atlas South delivers electrical, plumbing, fire safety and full facilities management for commercial buildings across London and the South East. 24/7 emergency cover."
+        title={HOME_SEO.title}
+        titleIncludesSiteName
+        description={HOME_SEO.description}
         path="/"
         jsonLd={{
           '@context': 'https://schema.org',
