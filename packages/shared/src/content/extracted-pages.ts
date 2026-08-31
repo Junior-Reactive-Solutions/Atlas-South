@@ -31,7 +31,7 @@ export const EXTRACTED_PAGES: ExtractedPage[] = [
     "data": {
       "title": "Electricals",
       "seoTitle": "Commercial Electrical Services & Maintenance",
-      "seoDescription": "Commercial and industrial electrical services across London — installation, planned maintenance, fault diagnosis and full compliance testing." + SEO_PHONE_CTA,
+      "seoDescription": "Commercial and industrial electrical services across London — installation, planned maintenance, fault diagnosis and compliance testing." + SEO_PHONE_CTA,
       "icon": "zap",
       "heroDescription": "Comprehensive electrical services for commercial and industrial facilities, from installation to maintenance to emergency response",
       "overview": "Electrical systems are critical infrastructure. A fault isn't just a cost — it affects operations, safety, and compliance. Atlas South provides end-to-end electrical services: planned maintenance, rapid fault diagnosis, emergency response, and full compliance testing.\n\nOur engineers are qualified to Building Regulations, BS 7909, and all relevant electrical standards. We manage everything from routine PAT testing to major system upgrades.",
@@ -819,7 +819,7 @@ export const EXTRACTED_PAGES: ExtractedPage[] = [
     "data": {
       "title": "Retail",
       "seoTitle": "Facilities Management for Retail & Multi-Unit Estates",
-      "seoDescription": "Facilities management for retail estates across London — keeping customer-facing space open, safe and compliant across multi-unit portfolios." + SEO_PHONE_CTA,
+      "seoDescription": "Facilities management for retail estates across London — keeping customer-facing space open, safe and compliant across multi-unit sites." + SEO_PHONE_CTA,
       "icon": "shopping-bag",
       "heroDescription": "Keep customer-facing spaces operational, safe, and compliant while managing costs across multi-unit estates",
       "overview": "Retail centres, flagship stores, and distributed retail chains share one overriding constraint: the building must be ready to serve customers every day the doors are open. A fire alarm fault, a water leak, or broken HVAC isn't just a maintenance issue — it's lost trading hours, customer experience damage, and potential evacuation.\n\nAtlas South has managed retail estates ranging from single high-street stores to multi-unit regional portfolios, coordinating maintenance schedules around trading hours and tenant requirements.",
@@ -1025,7 +1025,7 @@ export const EXTRACTED_PAGES: ExtractedPage[] = [
     "data": {
       "title": "Surrey & Kent",
       "seoTitle": "Facilities Management in Surrey & Kent",
-      "seoDescription": "Facilities management and emergency response across Surrey and Kent — corporate HQs, business parks and light industrial, 60-minute response." + SEO_PHONE_CTA,
+      "seoDescription": "Facilities management across Surrey and Kent — corporate HQs, business parks and light industrial, 60-minute emergency response." + SEO_PHONE_CTA,
       "icon": "map-pin",
       "heroDescription": "Facilities management and emergency response across Surrey and Kent, serving corporate headquarters, light industrial estates, and suburban facilities",
       "overview": "Surrey and Kent represent Atlas South's geographic expansion beyond London's core, serving the extensive commuter belt and regional commercial hubs. The areas include corporate headquarters relocations, business parks, light industrial zones, and logistics facilities—often with larger footprints and lower service density than central London.\n\nAtlas South operates across Surrey and Kent with experienced engineers and regional coordination, delivering cost-effective preventative maintenance and responsive emergency support to a growing regional client base.",
