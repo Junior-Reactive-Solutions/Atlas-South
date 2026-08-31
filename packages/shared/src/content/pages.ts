@@ -87,7 +87,7 @@ export const COMPANY_CONTENT = {
     {
       icon: 'users',
       title: 'Vetted, trained, sector-briefed teams',
-      body: 'Personnel are prepared for the specific access, conduct and safety expectations of the environment they're working in, from corporate offices to regulated and public sector sites.',
+      body: 'Personnel are prepared for the specific access, conduct and safety expectations of the environment they\'re working in, from corporate offices to regulated and public sector sites.',
     },
     {
       icon: 'settings',
@@ -102,7 +102,7 @@ export const COMPANY_CONTENT = {
     {
       icon: 'map-pin',
       title: 'London-based, London-focused',
-      body: 'Based in London and focused on London & South East delivery, with the local presence to respond quickly and the accountability of a provider that's actually nearby.',
+      body: 'Based in London and focused on London & South East delivery, with the local presence to respond quickly and the accountability of a provider that\'s actually nearby.',
     },
   ],
   team: [
