@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --port 9000",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build && node scripts/prerender-seo.mjs",
     "preview": "vite preview --port 9000",
     "lint": "eslint . --ext ts,tsx --max-warnings 0 && npm run check:links",
     "check:links": "node scripts/check-links.mjs",
