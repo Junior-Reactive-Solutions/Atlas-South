@@ -1,5 +1,6 @@
 import { Resend } from 'resend';
-import { renderReplyEmail, type ReplyEmailTheme } from './emailThemes.js';
+import { COMPANY, SITE_ORIGIN } from '@atlas-south/shared';
+import { renderReplyEmail, renderConfirmationEmail, escapeHtml, type ReplyEmailTheme } from './emailThemes.js';
 
 /**
  * Email service — docs/build/12-HOSTING-DEPLOYMENT.md §6.
@@ -22,6 +23,13 @@ const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'enquiries@atlassouthes.com';
  */
 const ADMIN_REPLY_THEME: ReplyEmailTheme = 'light-editorial';
 
+/** The enquiry confirmation's CTA needs an absolute link back to the site — SITE_ORIGIN,
+ * not COMPANY.domain, for the same reason emailThemes.ts' own SITE_URL/LOGO_URL now use it:
+ * atlassouthes.com serves the client's OLD site until the DNS cutover, so a link there
+ * would 404 on a real customer today. See the note on SITE_ORIGIN in
+ * packages/shared/constants/seo.ts. */
+const SITE_URL = SITE_ORIGIN;
+
 export interface EnquiryEmailData {
   fullName: string;
   email: string;
@@ -33,6 +41,16 @@ export interface EnquiryEmailData {
 /**
  * Send a confirmation email to the enquiry submitter.
  * Acknowledges receipt and sets response-time expectation.
+ *
+ * Rewritten 2026-08-31 (client request: a themed confirmation for every form that
+ * collects an email address) to fix two things the previous ad-hoc HTML had:
+ *   1. It quoted a placeholder phone number, "020 XXXX XXXX", verbatim — never filled
+ *      in, and not even the right area code for COMPANY.phone. Every confirmation this
+ *      system has ever sent told the recipient to call a number that doesn't exist.
+ *   2. It wasn't themed at all — no logo, no brand colour, plain <h1>/<p> — inconsistent
+ *      with the admin-reply emails, which do carry the client's chosen theme.
+ * Now built on renderConfirmationEmail (lib/emailThemes.ts), the same 'light-editorial'
+ * theme chosen for replies, with the real number from COMPANY.
  */
 export async function sendEnquiryConfirmation(data: EnquiryEmailData) {
   if (!resend) {
@@ -40,23 +58,21 @@ export async function sendEnquiryConfirmation(data: EnquiryEmailData) {
     return;
   }
 
+  const firstName = data.fullName.trim().split(/\s+/)[0] || data.fullName;
+
   try {
     await resend.emails.send({
       from: SENDER_EMAIL,
       to: data.email,
       subject: "We've received your enquiry — Atlas South",
-      html: `
-        <h1>Thank you, ${data.fullName}!</h1>
-        <p>We've received your enquiry and will respond within 24 hours.</p>
-        <p><strong>Phone:</strong> 020 XXXX XXXX (24/7)</p>
-        <p>
-          In the meantime, feel free to reach out if you have any urgent questions.
-        </p>
-        <hr />
-        <p style="font-size: 12px; color: #666;">
-          This is an automated confirmation. Do not reply to this email.
-        </p>
-      `,
+      html: renderConfirmationEmail({
+        recipientFirstName: firstName,
+        bodyHtml: `
+          <p style="margin:0 0 16px;">We've received your enquiry and will respond within 24 hours.</p>
+          <p style="margin:0 0 16px;">Need to reach us sooner? Call us on <strong>${escapeHtml(COMPANY.phone.display)}</strong> — we're here 24/7.</p>
+        `,
+        cta: { label: 'Visit our site', href: SITE_URL },
+      }),
     });
   } catch (err) {
     console.error('Failed to send enquiry confirmation email:', err);
@@ -124,6 +140,11 @@ export interface JobApplicationEmailData {
 /**
  * Send a confirmation email to the job applicant.
  * Acknowledges receipt and sets response-time expectation.
+ *
+ * Rewritten 2026-08-31 for the same theming reason as sendEnquiryConfirmation above.
+ * Deliberately carries no phone CTA — matches the decision already made for the careers
+ * pages' own SEO copy (packages/shared/constants/seo.ts): a candidate should hear back
+ * through the process they applied through, not be invited to ring the sales line.
  */
 export async function sendJobApplicationConfirmation(data: JobApplicationEmailData) {
   if (!resend) {
@@ -131,20 +152,21 @@ export async function sendJobApplicationConfirmation(data: JobApplicationEmailDa
     return;
   }
 
+  const firstName = data.fullName.trim().split(/\s+/)[0] || data.fullName;
+
   try {
     await resend.emails.send({
       from: SENDER_EMAIL,
       to: data.email,
       subject: "We've received your application — Atlas South Careers",
-      html: `
-        <h1>Thank you, ${data.fullName}!</h1>
-        <p>We've received your application for the <strong>${data.roleTitle}</strong> position and will review it carefully.</p>
-        <p>If your background matches what we're looking for, a member of our team will be in touch within 5-7 working days.</p>
-        <hr />
-        <p style="font-size: 12px; color: #666;">
-          This is an automated confirmation. Do not reply to this email.
-        </p>
-      `,
+      html: renderConfirmationEmail({
+        recipientFirstName: firstName,
+        bodyHtml: `
+          <p style="margin:0 0 16px;">We've received your application for the <strong>${escapeHtml(data.roleTitle)}</strong> position and will review it carefully.</p>
+          <p style="margin:0 0 16px;">If your background matches what we're looking for, a member of our team will be in touch within 5–7 working days.</p>
+        `,
+        // No cta: — see the note above on why there's deliberately no phone/contact link here.
+      }),
     });
   } catch (err) {
     console.error('Failed to send job application confirmation email:', err);
