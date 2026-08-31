@@ -50,6 +50,10 @@ export const SOFT_SERVICES: NavItem[] = [
   // trackside-adjacent access, rail-operator compliance documentation) is specific to rail
   // environments and doesn't apply to a typical office/retail FM contract.
   { id: 'rail-facilities', label: 'Rail Facilities', path: '/soft-services/rail-facilities', icon: 'train-front' },
+  // Added 2026-08-31 — the original site (atlassouthes.com) offered interior painting as a
+  // standalone service (per-borough landing pages); the rebuild had no equivalent. See the
+  // fuller note on the content entry itself (packages/shared/src/content/extracted-pages.ts).
+  { id: 'interior-painting', label: 'Interior Painting', path: '/soft-services/interior-painting', icon: 'brush' },
 ];
 
 export const INDUSTRIES: NavItem[] = [

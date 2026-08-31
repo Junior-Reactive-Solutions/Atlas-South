@@ -1299,5 +1299,81 @@ export const EXTRACTED_PAGES: ExtractedPage[] = [
         }
       ]
     }
+  },
+  // Added 2026-08-31 — the client's original site (atlassouthes.com) offered interior
+  // painting as a standalone service (per-borough landing pages, e.g.
+  // interior-painting-kensington.php); it had no equivalent anywhere on the rebuild.
+  // Content below is written fresh for this site's commercial/industrial-only scope and
+  // voice — the old page's copy was residential-framed and carried a different phone
+  // number than this site's single verified NAP source (COMPANY.phone), so it wasn't
+  // reused directly; only the underlying service scope (surface prep, priming,
+  // application, colour/finish consultation) came from it.
+  {
+    "slug": "interior-painting",
+    "type": "service",
+    "path": "/soft-services/interior-painting",
+    "data": {
+      "title": "Interior Painting",
+      "seoTitle": "Commercial Interior Painting & Decorating Services",
+      "icon": "brush",
+      "heroDescription": "Interior painting and decorating for offices, retail units and industrial facilities — scheduled around your operating hours, not the other way around",
+      "overview": "A tired interior undersells everything happening inside it — client meetings, retail sales, staff morale. Atlas South provides interior painting and decorating for commercial and industrial premises, from a single office refresh to full-floor refurbishment ahead of a tenant fit-out.\n\nWork is scheduled out-of-hours or in phased zones where a site can't close, with surfaces properly prepared and protected before a coat goes on — the finish is only as good as the prep underneath it.",
+      "features": [
+        {
+          "icon": "brush",
+          "title": "Offices, Retail & Industrial",
+          "description": "Painting scoped to the space — from meeting rooms and reception areas to warehouse and plant-room surfaces requiring durable, protective coatings."
+        },
+        {
+          "icon": "clipboard-check",
+          "title": "Surface Preparation & Repair",
+          "description": "Filling, sanding, and repairing walls and surfaces before priming — the step that determines how long a finish actually lasts."
+        },
+        {
+          "icon": "palette",
+          "title": "Colour & Finish Consultation",
+          "description": "Guidance on colour schemes, finishes and materials to match your brand, wayfinding or fit-out specification."
+        },
+        {
+          "icon": "moon",
+          "title": "Out-of-Hours & Phased Scheduling",
+          "description": "Evening, weekend or zone-by-zone working so a retail unit, office floor or operational facility never has to close."
+        },
+        {
+          "icon": "shield-check",
+          "title": "Low-VOC & Site-Safe Materials",
+          "description": "Low-odour, low-VOC paints available for occupied buildings and sites with air-quality or health & safety requirements."
+        },
+        {
+          "icon": "layers",
+          "title": "Fit-Out & Refurbishment Ready",
+          "description": "Coordinated with wider refurbishment or tenant fit-out projects, including as part of an integrated Facilities Management contract."
+        }
+      ],
+      "faqs": [
+        {
+          "question": "Can painting be done without closing the site?",
+          "answer": "Yes — most commercial work is scheduled out-of-hours or zone-by-zone so the rest of the building stays operational throughout."
+        },
+        {
+          "question": "Do you handle surface repairs before painting, or just the paint itself?",
+          "answer": "Both. Filling, sanding and repairing damaged surfaces is part of the job — a coat of paint over an unprepared wall doesn't last."
+        },
+        {
+          "question": "Can this be bundled into a wider Facilities Management contract?",
+          "answer": "Yes. Interior painting and decorating can sit under the same single contract as your other hard and soft services rather than being managed as a separate vendor relationship."
+        }
+      ],
+      "relatedServices": [
+        {
+          "label": "Facilities Management",
+          "path": "/soft-services/facilities-management"
+        },
+        {
+          "label": "Commercial Cleaning",
+          "path": "/soft-services/commercial-cleaning"
+        }
+      ]
+    }
   }
 ];

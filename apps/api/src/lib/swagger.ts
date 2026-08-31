@@ -82,7 +82,7 @@ Rate limits:
           phone: { type: 'string', example: '+44 7700 900000' },
           serviceId: {
             type: 'string',
-            enum: ['electricals', 'plumbing', 'reactive-maintenance', 'facilities-management', 'security', 'commercial-cleaning', 'catering', 'aviation', 'concierge', 'parking-lot-management', 'rail-facilities'],
+            enum: ['electricals', 'plumbing', 'reactive-maintenance', 'facilities-management', 'security', 'commercial-cleaning', 'catering', 'aviation', 'concierge', 'parking-lot-management', 'rail-facilities', 'interior-painting'],
             nullable: true,
           },
           propertyType: {
