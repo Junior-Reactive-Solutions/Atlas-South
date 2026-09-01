@@ -138,6 +138,19 @@ export const PAGE_SEO = {
       'Careers at Atlas South Technical Services. Current openings across cleaning operations and corporate facilities sales in our London-based team. Apply online.',
   },
 
+  '/case-studies': {
+    path: '/case-studies',
+    /**
+     * The library page is prerendered so crawlers get real metadata for it. The individual
+     * case studies are NOT: they are authored in the admin panel and live in the database,
+     * and the prerender step only reads content bundled into the repo. Same limitation
+     * every DB-authored page has — mirror a study into content/case-studies.ts if it needs
+     * to be prerendered as well as published.
+     */
+    title: 'Case Studies — Commercial Facilities Work',
+    description:
+      'Written-up examples of facilities and trades work delivered for commercial, corporate and government sites across London & the South East.' + SEO_PHONE_CTA,
+  },
   '/legal/privacy': {
     path: '/legal/privacy',
     title: 'Privacy Policy',

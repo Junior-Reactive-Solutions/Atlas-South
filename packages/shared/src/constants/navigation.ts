@@ -22,6 +22,11 @@ export const COMPANY_PAGES: NavItem[] = [
   { id: 'vision-mission', label: 'Vision & Mission', path: '/company/vision-mission', icon: 'compass' },
   { id: 'join-us', label: 'Join Us', path: '/company/join-us', icon: 'users' },
   { id: 'contact-us', label: 'Contact Us', path: '/company/contact', icon: 'mail' },
+  // Added 2026-09-01. `placeholder: true` keeps it out of the public header and footer
+  // (both already filter placeholders) until real case studies are published — the route
+  // and the library page exist and work, but linking to an empty library from every page
+  // advertises proof we cannot yet show. Drop the flag once the first write-up is live.
+  { id: 'case-studies', label: 'Case Studies', path: '/case-studies', icon: 'file-text', placeholder: true },
 ];
 
 // Fire & Safety removed 2026-08-20 at the client's request — no replacement page.

@@ -94,6 +94,10 @@ const About = lazy(() => import('./pages/company/About.js').then((m) => ({ defau
 const VisionMission = lazy(() => import('./pages/company/VisionMission.js').then((m) => ({ default: m.VisionMission })));
 const Contact = lazy(() => import('./pages/company/Contact.js').then((m) => ({ default: m.Contact })));
 const Careers = lazy(() => import('./pages/careers/Careers.js').then((m) => ({ default: m.Careers })));
+const CaseStudies = lazy(() => import('./pages/caseStudies/CaseStudies.js').then((m) => ({ default: m.CaseStudies })));
+const CaseStudyDetail = lazy(() =>
+  import('./pages/caseStudies/CaseStudyDetail.js').then((m) => ({ default: m.CaseStudyDetail }))
+);
 const CareerDetail = lazy(() => import('./pages/careers/CareerDetail.js').then((m) => ({ default: m.CareerDetail })));
 
 
@@ -170,6 +174,8 @@ export default function App() {
               than expanding inline on the listing — see JobApplicationForm.tsx's header
               comment for why. */}
           <Route path="/company/join-us/:slug" element={<CareerDetail />} />
+          <Route path="/case-studies" element={<CaseStudies />} />
+          <Route path="/case-studies/:slug" element={<CaseStudyDetail />} />
 
           {/* Built-out service pages (Sprint 4+) — lazy-loaded for performance */}
           <Route path="/hard-services/plumbing" element={<Plumbing />} />

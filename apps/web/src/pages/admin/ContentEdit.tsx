@@ -9,7 +9,7 @@ type JsonRecord = Record<string, unknown>;
 interface ContentPageDoc {
   id: string;
   slug: string;
-  type: 'service' | 'industry' | 'area' | 'home' | 'company' | 'careers';
+  type: 'service' | 'industry' | 'area' | 'home' | 'company' | 'careers' | 'caseStudy';
   path: string;
   status: 'draft' | 'published';
   draftData: JsonRecord;
@@ -61,6 +61,8 @@ export function AdminContentEdit() {
   const [certifications, setCertifications] = useState<Row[]>([]);
   const [benefits, setBenefits] = useState<Row[]>([]);
   const [openRoles, setOpenRoles] = useState<Row[]>([]);
+  const [results, setResults] = useState<Row[]>([]);
+  const [images, setImages] = useState<Row[]>([]);
 
   const { authFetch } = useAuth();
 
@@ -80,6 +82,8 @@ export function AdminContentEdit() {
         setValues(withKeys(recordArray(data.draftData.values)));
         setTeam(withKeys(recordArray(data.draftData.team)));
         setCertifications(withKeys(recordArray(data.draftData.certifications)));
+        setResults(withKeys(recordArray(data.draftData.results)));
+        setImages(withKeys(recordArray(data.draftData.images)));
         setBenefits(withKeys(recordArray(data.draftData.benefits)));
         setOpenRoles(withKeys(recordArray(data.draftData.openRoles)));
       } catch (error) {
@@ -108,6 +112,10 @@ export function AdminContentEdit() {
       data.values = stripKeys(values);
       data.team = stripKeys(team);
       data.certifications = stripKeys(certifications);
+    }
+    if (page?.type === 'caseStudy') {
+      data.results = stripKeys(results);
+      data.images = stripKeys(images);
     }
     if (page?.type === 'careers') {
       data.benefits = stripKeys(benefits);
@@ -413,6 +421,74 @@ export function AdminContentEdit() {
         </>
       )}
 
+      {page.type === 'caseStudy' && (
+        <>
+          {/* A case study states facts about a named client. Every label below is worded to
+              make that explicit at the point of authoring, because this is the one content
+              type where an invented detail is a claim about somebody else. */}
+          <Field
+            label="Client (real name, or an honest anonymisation e.g. 'A central London law firm')"
+            value={str(fields.client)}
+            onChange={(v) => setFields((f) => ({ ...f, client: v }))}
+          />
+          <Field
+            label="Location"
+            value={str(fields.location)}
+            onChange={(v) => setFields((f) => ({ ...f, location: v }))}
+          />
+          <Field
+            label="Timeline (e.g. 6 weeks, Ongoing since 2023)"
+            value={str(fields.timeline)}
+            onChange={(v) => setFields((f) => ({ ...f, timeline: v }))}
+          />
+          <Field
+            label="Industry id (e.g. healthcare) — links this to an industry page"
+            value={str(fields.industryId)}
+            onChange={(v) => setFields((f) => ({ ...f, industryId: v }))}
+          />
+          <Field
+            label="Listing summary (1-2 lines shown on the library card)"
+            value={str(fields.summary)}
+            onChange={(v) => setFields((f) => ({ ...f, summary: v }))}
+          />
+          <MarkdownField
+            label="The challenge — what the site was dealing with before we were involved"
+            value={str(fields.challenge)}
+            onChange={(v) => setFields((f) => ({ ...f, challenge: v }))}
+          />
+          <MarkdownField
+            label="Our approach — what was actually done"
+            value={str(fields.approach)}
+            onChange={(v) => setFields((f) => ({ ...f, approach: v }))}
+          />
+          <MarkdownField
+            label="The outcome — what changed as a result"
+            value={str(fields.outcome)}
+            onChange={(v) => setFields((f) => ({ ...f, outcome: v }))}
+          />
+          <ReorderableList
+            label="Results — only figures someone will stand behind if challenged. Leave empty if the job produced none."
+            rows={results}
+            setRows={setResults}
+            fieldConfig={[
+              { key: 'label', label: 'Label (e.g. Response time)' },
+              { key: 'value', label: 'Value (e.g. 22 minutes)' },
+            ]}
+            newRow={{ label: '', value: '' }}
+          />
+          <ReorderableList
+            label="Photographs — of this actual job. Stock imagery in a case study misrepresents work you did."
+            rows={images}
+            setRows={setImages}
+            fieldConfig={[
+              { key: 'src', label: 'Image URL' },
+              { key: 'alt', label: 'Alt text (describe what is shown)' },
+              { key: 'caption', label: 'Caption (optional)' },
+            ]}
+            newRow={{ src: '', alt: '', caption: '' }}
+          />
+        </>
+      )}
       {page.type === 'careers' && (
         <>
           <MarkdownField
