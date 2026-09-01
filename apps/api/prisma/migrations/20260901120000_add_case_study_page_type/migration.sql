@@ -1,0 +1,11 @@
+-- Adds "caseStudy" to the ContentPageType enum.
+--
+-- Case studies reuse the existing ContentPage table rather than getting a model of their
+-- own: they need exactly what every other page type already has — a slug, a route, and the
+-- draft/published split — and reusing it means the admin editor, the content API and the
+-- offline-safe static fallback all work for them without a parallel implementation.
+--
+-- ALTER TYPE ... ADD VALUE cannot run inside a transaction block in older PostgreSQL, and
+-- Prisma wraps migrations in one. Postgres 12+ permits it, and this database is PG16
+-- (confirmed from the Neon connection), so a plain ADD VALUE is safe here.
+ALTER TYPE "ContentPageType" ADD VALUE 'caseStudy';

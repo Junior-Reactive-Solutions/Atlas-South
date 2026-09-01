@@ -16,6 +16,7 @@ import { adminLogsRouter } from './routes/admin/logs.js';
 import { contentRouter } from './routes/content.js';
 import { visibilityRouter } from './routes/visibility.js';
 import { careersRouter } from './routes/careers.js';
+import { caseStudiesRouter } from './routes/caseStudies.js';
 import { leadsRouter } from './routes/leads.js';
 import adminAuthRouter from './routes/admin/auth.js';
 import adminEnquiriesRouter from './routes/admin/enquiries.js';
@@ -157,6 +158,7 @@ app.use('/api', telemetryRouter);
 app.use('/api', contentRouter);
 app.use('/api', visibilityRouter);
 app.use('/api', careersRouter);
+app.use('/api', caseStudiesRouter);
 app.use('/api', leadsRouter);
 
 // Admin routes — secured with JWT authentication

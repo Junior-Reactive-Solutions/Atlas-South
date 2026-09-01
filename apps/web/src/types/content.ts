@@ -167,3 +167,71 @@ export interface CareersContent {
 // pricing of any kind is to be displayed on the website. The /packages page, its nav entry,
 // footer/header links, the homepage pricing teaser, and the PayPal subscription components
 // that rendered on it were removed in the same change — see git history on this file.
+
+/**
+ * A written-up piece of client work. The audit called the absence of these "the single
+ * biggest credibility gap" on the old site, and recommended 6–10 covering scope, timeline
+ * and outcome.
+ *
+ * Every field below describes something that must be TRUE of a real job. Nothing here is
+ * decorative: `client`, `results` and `testimonial` in particular make factual claims about
+ * a third party, which is why case studies stay in draft until verified, and why none ship
+ * with the system — see the note in caseStudies.ts.
+ */
+export interface CaseStudyResult {
+  /** e.g. "Response time", "Annual saving" */
+  label: string;
+  /** e.g. "22 minutes", "£18,000" — a figure someone can stand behind. */
+  value: string;
+}
+
+export interface CaseStudyContent {
+  title: string;
+  /** See the same field on ServiceContent. */
+  seoTitle?: string;
+  seoDescription?: string;
+  icon: IconName;
+
+  /**
+   * The client's name — or an honest anonymisation like "A central London law firm".
+   * Many commercial clients will not permit being named, and an invented or implied name
+   * is worse than no name at all.
+   */
+  client: string;
+  /** True when `client` is a description rather than a real organisation name. */
+  clientAnonymised?: boolean;
+
+  /** Industry nav id (e.g. "healthcare") — drives filtering and cross-linking. */
+  industryId?: string;
+  /** Service nav ids involved (e.g. ["electricals", "reactive-maintenance"]). */
+  serviceIds?: string[];
+
+  location?: string;
+  /** e.g. "6 weeks", "Ongoing since 2023" */
+  timeline?: string;
+  /** ISO date or year the work completed — used for ordering, newest first. */
+  completedAt?: string;
+
+  /** One or two lines for the listing card. */
+  summary: string;
+
+  /** The situation before Atlas South was involved. */
+  challenge: string;
+  /** What was actually done. */
+  approach: string;
+  /** What changed as a result. */
+  outcome: string;
+
+  /** Hard numbers. Optional because not every job has a defensible metric. */
+  results?: CaseStudyResult[];
+
+  /**
+   * Optional quote from the client. Requires their sign-off — this project has previously
+   * shipped invented testimonials as fact, so an unattributed or unverified quote must not
+   * go in here.
+   */
+  testimonial?: { quote: string; attribution: string };
+
+  /** Photographs of the actual job. Stock imagery does not belong in a case study. */
+  images?: Array<{ src: string; alt: string; caption?: string }>;
+}

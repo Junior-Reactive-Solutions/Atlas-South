@@ -94,6 +94,10 @@ enum ContentPageType {
   company
   careers
   packages
+  /// Client work write-ups. Uses the same draft/published workflow as every other page
+  /// type, which matters more here than elsewhere: a case study names a real client and
+  /// a real outcome, so it stays in draft until someone has actually verified it.
+  caseStudy
 }
 
 enum ContentStatus {
