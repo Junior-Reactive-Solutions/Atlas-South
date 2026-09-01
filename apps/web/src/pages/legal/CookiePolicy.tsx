@@ -134,11 +134,25 @@ export function CookiePolicy() {
             Then we do not record your visit. There is no fallback, no delayed collection, and no
             separate mechanism that counts you anyway.
           </p>
-          <p>
-            The only thing that continues is the ordinary server record every website keeps in order
-            to serve a page at all — the sort of log that tells us how much traffic the site handled.
-            It involves no cookies, nothing stored on your device, and nothing that identifies you or
-            follows you between pages.
+          <p>Two things do still happen, and you should know about both:</p>
+          <ul className="ml-6 space-y-2">
+            <li>
+              • <strong>We keep a record of the choice itself.</strong> Which categories you allowed
+              or refused, and when. We keep it so that if we are ever asked to show we respected your
+              decision, we can. It contains no address, no device details and nothing about which
+              pages you looked at — it is a record of the answer, not of you.
+            </li>
+            <li>
+              • <strong>If something breaks, we log the fault.</strong> When a page fails to load or
+              the site throws an error, we record what went wrong and which page it happened on, so
+              we can fix it. No identifier of any kind is attached, and these records are never
+              joined up into a picture of one person's visit.
+            </li>
+          </ul>
+          <p className="mt-4">
+            Beyond that, the only thing that continues is the ordinary server record every website
+            keeps in order to serve a page at all — the sort of log that tells us how much traffic the
+            site handled. It involves no cookies and nothing that identifies you.
           </p>
         </section>
 

@@ -10,6 +10,9 @@ import { generalApiLimiter, loginLimiter, adminApiLimiter } from './middleware/r
 import { healthRouter } from './routes/health.js';
 import { enquiriesRouter } from './routes/enquiries.js';
 import { eventsRouter } from './routes/events.js';
+import { telemetryRouter } from './routes/telemetry.js';
+import { logSystemEvent } from './lib/systemLog.js';
+import { adminLogsRouter } from './routes/admin/logs.js';
 import { contentRouter } from './routes/content.js';
 import { visibilityRouter } from './routes/visibility.js';
 import { careersRouter } from './routes/careers.js';
@@ -148,6 +151,9 @@ app.use(generalApiLimiter);
 app.use('/api', healthRouter);
 app.use('/api', enquiriesRouter);
 app.use('/api', eventsRouter);
+// Consent audit trail + client crash reports. Public by necessity — a visitor answering a
+// cookie banner has no account, and a page that has just crashed cannot authenticate.
+app.use('/api', telemetryRouter);
 app.use('/api', contentRouter);
 app.use('/api', visibilityRouter);
 app.use('/api', careersRouter);
@@ -167,12 +173,27 @@ app.use('/api/admin/content', adminApiLimiter, adminContentRouter);
 app.use('/api/admin/visibility', adminApiLimiter, adminVisibilityRouter);
 app.use('/api/admin', adminApiLimiter, adminLeadsRouter);
 app.use('/api/admin/audit-log', adminApiLimiter, adminAuditLogRouter);
+app.use('/api/admin', adminApiLimiter, adminLogsRouter);
 
 // Centralised error handler — never leak stack traces to the client.
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-app.use((err: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
-  // eslint-disable-next-line no-console
-  console.error('Unhandled error:', err);
+app.use((err: unknown, req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  // Persisted as well as written to stdout, so a fault is still visible in the admin panel
+  // after the hosting platform's own short-lived log stream has rolled over — on the
+  // current Render plan that window is hours, not days. logSystemEvent never throws and
+  // never blocks the response, which is what makes it safe to call from here: a logger that
+  // could fail would turn a handled 500 into an unhandled crash.
+  logSystemEvent({
+    level: 'error',
+    source: 'api',
+    event: 'unhandled_api_error',
+    message: err instanceof Error ? err.message : String(err),
+    path: req.originalUrl,
+    context: {
+      method: req.method,
+      ...(err instanceof Error && err.stack ? { stack: err.stack } : {}),
+    },
+  });
   res.status(500).json({ error: 'Internal server error' });
 });
 

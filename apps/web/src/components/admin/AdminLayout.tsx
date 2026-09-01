@@ -15,6 +15,7 @@ import {
   Bot,
   ShieldCheck,
   type LucideIcon,
+  ScrollText,
 } from 'lucide-react';
 import { useNoIndex } from '../../hooks/useNoIndex.js';
 import { useAuth } from '../../contexts/AuthContext.js';
@@ -28,6 +29,7 @@ const NAV_ITEMS: Array<{ to: string; icon: LucideIcon; label: string }> = [
   { to: '/admin/visibility', icon: Eye, label: 'Visibility' },
   { to: '/admin/analytics', icon: BarChart3, label: 'Analytics' },
   { to: '/admin/security', icon: ShieldCheck, label: 'Security' },
+  { to: '/admin/system-logs', icon: ScrollText, label: 'System Logs' },
   { to: '/admin/settings', icon: Settings, label: 'Settings' },
 ];
 

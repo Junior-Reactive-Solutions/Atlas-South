@@ -1,4 +1,5 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react';
+import { reportClientError } from '../lib/errorReporting.js';
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -26,6 +27,11 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
   componentDidCatch(error: Error, info: ErrorInfo) {
     // eslint-disable-next-line no-console
     console.error('Unhandled render error:', error, info.componentStack);
+    // Also reported to the operations log so a crash is visible in the admin panel rather
+    // than only in the console of whoever happened to hit it. Non-identifying and not
+    // consent-gated — see the note at the top of lib/errorReporting.ts on why an
+    // "our software broke" record is distinct from the analytics a visitor can refuse.
+    reportClientError('client_render_error', error);
   }
 
   render() {

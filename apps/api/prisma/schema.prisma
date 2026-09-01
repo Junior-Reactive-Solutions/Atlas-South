@@ -241,3 +241,72 @@ model Subscription {
   @@index([status])
   @@index([customerEmail])
 }
+
+/// Server-side record of cookie-consent decisions, so the client can evidence consent to
+/// the ICO on request. UK GDPR Art. 7(1) puts the burden of demonstrating consent on the
+/// controller, and a choice held only in the visitor's own localStorage cannot be produced
+/// as evidence — the visitor can clear it, and the operator never had a copy.
+///
+/// Deliberately minimal, because this log must not become the tracking mechanism the
+/// consent system exists to gate:
+///   - `consentId` is a random value generated when the visitor answers, stored alongside
+///     their choice. It identifies the *decision*, not the person, and is transmitted only
+///     at the moment a decision is made — never on page views — so it cannot be used to
+///     follow anyone around the site.
+///   - No IP address, no user agent, no page path. Storing an IP would make this materially
+///     more identifying while adding nothing: the record's job is to show WHAT was chosen,
+///     under WHICH policy version, and WHEN.
+/// The honest trade-off is that this evidences the decision rather than the individual.
+/// That is the correct side to err on for a log covering people who may have refused.
+model ConsentLog {
+  id        String   @id @default(cuid())
+  /// Random per-decision reference, also held in the visitor's consent record.
+  consentId String
+  /// CONSENT_VERSION the banner was showing — proves which disclosure they answered.
+  version   Int
+  /// The choice per category, e.g. { "strictly-necessary": true, "analytics": false }.
+  choices   Json
+  /// When the visitor answered, as reported by their device.
+  decidedAt DateTime
+  /// When we received it — differs from decidedAt if the request was retried offline.
+  createdAt DateTime @default(now())
+
+  @@index([consentId])
+  @@index([createdAt])
+}
+
+enum SystemEventLevel {
+  info
+  warning
+  error
+}
+
+/// Operational and error log for the whole system — API faults, client-side crashes, and
+/// notable non-admin events. Surfaced in the admin panel so problems are visible without
+/// trawling hosting logs, which on the current plan are short-lived.
+///
+/// NOT analytics, and deliberately not a way to reinstate tracking for visitors who
+/// refused it: entries carry no session id, no consent id, no IP and no visitor identifier
+/// of any kind. `path` is recorded because an error is not diagnosable without knowing
+/// where it happened, but a path alone identifies a page, not a person, and rows are never
+/// correlated into a per-visitor trail. Recording that a page threw an error is ordinary
+/// operational necessity (UK GDPR Art. 6(1)(f)) and is what the Cookie Policy describes as
+/// the record every site keeps in order to run at all.
+model SystemEvent {
+  id        String           @id @default(cuid())
+  level     SystemEventLevel @default(error)
+  /// Where it came from: "api" | "web".
+  source    String
+  /// Short machine-readable kind, e.g. "unhandled_api_error", "client_render_error".
+  event     String
+  /// Human-readable summary. Truncated at the boundary before storage.
+  message   String
+  /// Route or page the fault occurred on. Never a query string — those carry user input.
+  path      String?
+  /// Extra diagnostic detail (status code, truncated stack). No personal data.
+  context   Json?
+  createdAt DateTime         @default(now())
+
+  @@index([level, createdAt])
+  @@index([createdAt])
+}

@@ -70,7 +70,7 @@ export const COOKIE_CATEGORIES: CookieCategoryDef[] = [
         name: 'atlas_south_cookie_consent',
         storage: 'Local storage',
         purpose:
-          'Records which categories you agreed to, and when, so we do not ask again on every page. Without it we would have to show this banner every single visit.',
+          'Records which categories you agreed to, and when, so we do not ask again on every page. Without it we would have to show this banner every single visit. We also keep our own copy of the choice itself — what was chosen and when — so we can show we honoured it. That copy holds no address, device or browsing information and is never used to recognise you.',
         retention: '12 months, then we ask again',
       },
       {
