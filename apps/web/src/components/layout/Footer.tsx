@@ -13,6 +13,7 @@ import {
 } from '@atlas-south/shared';
 import { Icon, useAnimationScope, DURATION, EASE, STAGGER_GAP } from '@atlas-south/design-system';
 import { useNavVisibility } from '../../hooks/useNavVisibility.js';
+import { openCookieSettings } from '../../lib/cookieSettingsBus.js';
 import { trackPhoneClick, trackWhatsAppClick } from '../../lib/analytics.js';
 
 interface ColumnProps {
@@ -279,12 +280,23 @@ export function Footer() {
         {/* Bottom bar — docs/build/04-FOOTER-SPEC.md §4 */}
         <div className="mt-8 flex flex-col gap-3 border-t border-white/10 pt-6 text-xs text-white/60 lg:flex-row lg:items-center lg:justify-between">
           <p>© {new Date().getFullYear()} {COMPANY.name}. All rights reserved.</p>
-          <div className="flex gap-4">
+          <div className="flex flex-wrap gap-4">
             {LEGAL_PAGES.map((p) => (
               <Link key={p.id} to={p.path} className="hover:text-accent-blue">
                 {p.label}
               </Link>
             ))}
+            {/* Reopens the preferences panel with the visitor's current choices. Required
+                in practice, not just nice to have: consent has to be as easy to withdraw as
+                it was to give, which means a permanent, findable control — not a one-time
+                banner that disappears once answered. */}
+            <button
+              type="button"
+              onClick={openCookieSettings}
+              className="text-left hover:text-accent-blue"
+            >
+              Cookie settings
+            </button>
           </div>
           <p>
             Site by{' '}
