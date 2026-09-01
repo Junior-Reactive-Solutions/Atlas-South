@@ -35,6 +35,17 @@ export interface ConsentRecord {
   /** ISO timestamp — part of being able to evidence when consent was given. */
   decidedAt: string;
   choices: ConsentChoices;
+  /**
+   * Random reference for this decision, sent with the server-side audit record so the
+   * operator can evidence consent to the ICO (UK GDPR Art. 7(1) puts that burden on them,
+   * and a choice held only here can be cleared by the visitor at any time).
+   *
+   * It identifies the decision, not the person: it is generated when the banner is answered
+   * and transmitted only at that moment — never on page views — so it cannot be used to
+   * follow anyone around the site. Optional so a record written before this existed still
+   * reads back as valid rather than forcing everyone to re-consent.
+   */
+  consentId?: string;
 }
 
 /** Everything optional refused. The starting point before any choice is made. */
@@ -70,7 +81,14 @@ export function readConsent(): ConsentRecord | null {
 
     const parsed = JSON.parse(raw) as Partial<ConsentRecord>;
     if (parsed.version !== CONSENT_VERSION) return null;
-    if (!parsed.decidedAt || !parsed.choices) return null;
+    if (!parsed.decidedAt) return null;
+    // Must be a real object, not merely truthy. A tampered record holding a string here
+    // would otherwise spread into the defaults harmlessly (so analytics still stayed off)
+    // but count as "decided" — leaving the visitor never re-asked on the strength of a
+    // record that isn't a valid answer. Treat anything malformed as no answer at all.
+    if (typeof parsed.choices !== 'object' || parsed.choices === null || Array.isArray(parsed.choices)) {
+      return null;
+    }
 
     const age = Date.now() - new Date(parsed.decidedAt).getTime();
     if (!Number.isFinite(age) || age > MAX_AGE_MS) return null;
@@ -103,11 +121,27 @@ export function hasConsent(category: ConsentCategory): boolean {
   return readConsent()?.choices[category] === true;
 }
 
+/**
+ * A random, opaque reference for one decision. crypto.randomUUID where available, with a
+ * Math.random fallback for older browsers — this is a correlation key for an audit row, not
+ * a security token, so it does not need to be unguessable.
+ */
+function newConsentId(): string {
+  try {
+    return crypto.randomUUID().replace(/-/g, '');
+  } catch {
+    return `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 12)}`;
+  }
+}
+
 /** Persists a decision and notifies listeners. */
 export function saveConsent(choices: ConsentChoices): void {
   const record: ConsentRecord = {
     version: CONSENT_VERSION,
     decidedAt: new Date().toISOString(),
+    // A fresh id per decision, so changing your mind is a new audit row rather than an
+    // overwrite — the history of what was chosen and when is the point of the log.
+    consentId: newConsentId(),
     // Built from the defaults outward: required categories come out true no matter what a
     // caller passed, and only the optional answers are taken from the caller. A bug in the
     // UI therefore cannot record essential storage as refused, nor an unknown category as
@@ -122,7 +156,42 @@ export function saveConsent(choices: ConsentChoices): void {
     // the visitor will simply be asked again next visit.
   }
 
+  // Notify listeners BEFORE the network call, so the banner closes and the analytics gate
+  // flips immediately. The audit write is bookkeeping for the operator; the visitor should
+  // never wait on it, and it must not be able to fail their choice.
   window.dispatchEvent(new CustomEvent(CONSENT_EVENT, { detail: record }));
+
+  recordConsentServerSide(record);
+}
+
+/**
+ * Sends the decision to the audit trail. Fire-and-forget, and deliberately silent on
+ * failure: what actually runs is governed by the record above, on this device, so a failed
+ * audit write must never surface to the visitor or block anything.
+ *
+ * Sent for refusals as well as grants — "declined analytics on this date under version N"
+ * is exactly the record that demonstrates a refusal was honoured.
+ */
+function recordConsentServerSide(record: ConsentRecord): void {
+  try {
+    void fetch('/api/consent', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        consentId: record.consentId,
+        version: record.version,
+        choices: record.choices,
+        decidedAt: record.decidedAt,
+      }),
+      // The decision often coincides with the visitor navigating away from the page they
+      // answered on; keepalive lets the request outlive the unload.
+      keepalive: true,
+    }).catch(() => {
+      /* offline, blocked, or API down — see the note above on why this is silent */
+    });
+  } catch {
+    /* fetch itself unavailable */
+  }
 }
 
 /** Keeps the caller's answers for optional categories only, coerced to real booleans. */

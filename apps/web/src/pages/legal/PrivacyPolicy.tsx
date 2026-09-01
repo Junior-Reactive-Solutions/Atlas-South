@@ -36,21 +36,46 @@ export function PrivacyPolicy() {
             <div>
               <h3 className="font-semibold text-slate-900">Analytics Data</h3>
               <p>
-                We automatically collect information about your visits to our website, including:
+                <strong>Only if you allow analytics cookies.</strong> If you refuse, none of this is
+                collected. What we record is:
               </p>
               <ul className="ml-6 space-y-1">
-                <li>• Pages visited and time spent on each page</li>
-                <li>• Referrer information (where you came from)</li>
-                <li>• Anonymised session IDs for tracking behavior patterns</li>
-                <li>• Device type and browser information (coarse data only)</li>
-                <li>• Interaction events (button clicks, form submissions)</li>
+                <li>• Which pages were viewed</li>
+                <li>• Where you arrived from</li>
+                <li>• Which buttons were used — for example tapping the phone number</li>
+                <li>
+                  • A reference that groups one visit together, so five pages read by one person
+                  aren't counted as five people. It is created fresh each time you open the site and
+                  is gone when you close the tab.
+                </li>
               </ul>
+              <p className="mt-2">
+                We do <strong>not</strong> collect your name, email, IP address, device or browser
+                details as part of this, and we do not measure how long you spend on a page.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-semibold text-slate-900">Your Cookie Choice</h3>
+              <p>
+                We keep a record of which cookie categories you allowed or refused, and when, so we
+                can show your decision was respected if we're ever asked. It holds no address, device
+                or browsing information, and is never used to recognise you.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-semibold text-slate-900">Fault Reports</h3>
+              <p>
+                When something on the site breaks, we record what went wrong and which page it
+                happened on, so we can fix it. This happens whatever your cookie choice, because it's
+                how we know our own software is faulty. No identifier is attached, and these records
+                are never joined up into a picture of one person's visit.
+              </p>
             </div>
             <div>
               <h3 className="font-semibold text-slate-900">Payment Information</h3>
               <p>
-                For Packages purchases, payment information is handled directly by our payment processor (Stripe/PayPal). We do not
-                collect or store payment card details.
+                <strong>None.</strong> This website does not take payments and has no checkout, so no
+                card or billing details are ever collected or passed to a payment processor.
               </p>
             </div>
           </div>
@@ -61,9 +86,18 @@ export function PrivacyPolicy() {
           <p>We process your personal data on the following legal bases under UK GDPR:</p>
           <ul className="ml-6 space-y-2">
             <li>• <strong>Contract:</strong> To provide the services you've requested (e.g., processing an enquiry)</li>
-            <li>• <strong>Legitimate Interests:</strong> To understand how our website is used and improve our services</li>
-            <li>• <strong>Consent:</strong> For marketing communications (where you've opted in)</li>
-            <li>• <strong>Legal Obligation:</strong> To comply with accounting and tax requirements</li>
+            <li>
+              • <strong>Consent:</strong> For website analytics. These run only if you turn them on,
+              and you can withdraw that at any time from the Cookie settings link in the footer.
+            </li>
+            <li>
+              • <strong>Legitimate Interests:</strong> To keep the site working and secure — recording
+              faults so we can fix them, and keeping a security log of administrator activity.
+            </li>
+            <li>
+              • <strong>Legal Obligation:</strong> To comply with accounting and tax requirements, and
+              to keep a record of your cookie choice so we can demonstrate it was respected.
+            </li>
           </ul>
         </section>
 
@@ -120,17 +154,29 @@ export function PrivacyPolicy() {
               <p className="text-sm text-slate-600">Sends enquiry confirmation and admin notification emails</p>
             </div>
             <div className="rounded border border-slate-200 p-3">
-              <p className="font-semibold text-slate-900">Cloudinary (Image Host)</p>
-              <p className="text-sm text-slate-600">Hosts website images and photography</p>
+              <p className="font-semibold text-slate-900">Unsplash (Photography)</p>
+              <p className="text-sm text-slate-600">
+                Delivers some of the photographs on this site. Your browser fetches the image files
+                from them; no information about you is sent.
+              </p>
             </div>
             <div className="rounded border border-slate-200 p-3">
-              <p className="font-semibold text-slate-900">Google Analytics (GA4)</p>
-              <p className="text-sm text-slate-600">Anonymised/pseudonymised analytics (requires cookie consent)</p>
+              <p className="font-semibold text-slate-900">Google Fonts (Typefaces)</p>
+              <p className="text-sm text-slate-600">
+                Delivers the fonts the site is set in. Your browser requests the font files from
+                Google; this sets no cookies on this site.
+              </p>
             </div>
-            <div className="rounded border border-slate-200 p-3">
-              <p className="font-semibold text-slate-900">Stripe/PayPal (Payment Processing)</p>
-              <p className="text-sm text-slate-600">Handles payment card data for Packages purchases (PCI-DSS compliant)</p>
-            </div>
+          </div>
+
+          <div className="mt-4 rounded border border-slate-200 bg-slate-50 p-4">
+            <p className="font-semibold text-navy">Who we do not share data with</p>
+            <p className="mt-1 text-sm text-slate-700">
+              We use <strong>no advertising networks, no social media trackers, and no third-party
+              analytics</strong> — including Google Analytics. The analytics described above go to our
+              own systems and nowhere else. We take no card payments through this website, so no
+              payment processor receives anything.
+            </p>
           </div>
         </section>
 

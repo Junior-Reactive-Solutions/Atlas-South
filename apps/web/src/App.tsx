@@ -43,6 +43,9 @@ const AdminContentEdit = lazy(() =>
 );
 const AdminLeads = lazy(() => import('./pages/admin/Leads.js').then((m) => ({ default: m.AdminLeads })));
 const AdminSecurity = lazy(() => import('./pages/admin/Security.js').then((m) => ({ default: m.AdminSecurity })));
+const AdminSystemLogs = lazy(() =>
+  import('./pages/admin/SystemLogs.js').then((m) => ({ default: m.AdminSystemLogs }))
+);
 
 // Legal pages
 import { TermsOfUse } from './pages/legal/TermsOfUse.js';
@@ -143,6 +146,7 @@ export default function App() {
             <Route path="/admin/settings" element={<AdminSettings />} />
             <Route path="/admin/leads" element={<AdminLeads />} />
             <Route path="/admin/security" element={<AdminSecurity />} />
+            <Route path="/admin/system-logs" element={<AdminSystemLogs />} />
           </Route>
 
           {/* Legal pages */}

@@ -37,3 +37,31 @@ export const adminApiLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 });
+
+/**
+ * Consent decisions. Generous relative to the enquiry form because a visitor legitimately
+ * hits this more than once — answering the banner, then changing their mind in the
+ * preferences panel — but still bounded, since it is an unauthenticated endpoint that
+ * writes a row.
+ */
+export const consentLimiter = rateLimit({
+  windowMs: 10 * 60 * 1000,
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many requests — please try again later.' },
+});
+
+/**
+ * Client crash reports. Capped hard: a page stuck in a render loop can emit errors as fast
+ * as the browser can run, and an uncapped reporting endpoint turns one visitor's broken
+ * page into a flood of database writes. The limit is per-IP, so a genuine widespread outage
+ * still gets reported by other visitors once this one is throttled.
+ */
+export const clientErrorLimiter = rateLimit({
+  windowMs: 5 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many reports — please try again later.' },
+});
