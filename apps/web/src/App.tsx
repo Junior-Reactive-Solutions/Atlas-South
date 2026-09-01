@@ -18,6 +18,7 @@ import { PageLoadingFallback } from './components/PageLoadingFallback.js';
 // the pages behind it, it doesn't pull in any of the heavy libraries below.
 import { AdminLogin } from './pages/admin/Login.js';
 import { ChatBot } from './components/chat/ChatBot.js';
+import { CookieConsent } from './components/consent/CookieConsent.js';
 
 // Every other admin page is lazy-loaded. They were previously bundled eagerly on the
 // assumption they were "small, always together" — but Enquiries/Dashboard pull in the
@@ -118,6 +119,12 @@ export default function App() {
   return (
     <>
       {!isAdminRoute && <ChatBot />}
+      {/* Mounted here rather than inside Layout because the legal pages, /thank-you and the
+          404 all sit OUTSIDE the Layout route — and /legal/privacy is one of the places the
+          banner itself links to, so a visitor following that link then had no way to answer.
+          Excluded from /admin for the same reason ChatBot is: the admin panel's only storage
+          is the strictly-necessary sign-in cookie, so there is nothing there to consent to. */}
+      {!isAdminRoute && <CookieConsent />}
       <Suspense fallback={<PageLoadingFallback />}>
         <Routes>
           {/* Admin panel routes — separate from public site layout */}
