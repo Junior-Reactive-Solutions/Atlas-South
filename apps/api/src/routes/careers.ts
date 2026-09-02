@@ -1,103 +1,73 @@
 import { Router } from 'express';
 import { requireDb } from '../lib/prisma.js';
-import { sendJobApplicationConfirmation, sendJobApplicationAdminNotification } from '../lib/email.js';
+import {
+  sendJobApplicationConfirmation,
+  sendJobApplicationAdminNotification,
+  type MailAttachment,
+} from '../lib/email.js';
 import { validateBody } from '../middleware/validate.js';
 import { JobApplicationSchema } from '@atlas-south/shared';
 import multer from 'multer';
-import path from 'path';
-import fs from 'fs';
-import { randomUUID } from 'crypto';
 
 export const careersRouter = Router();
 
-// Configure multer for file uploads
-const uploadDir = path.join(process.cwd(), 'uploads', 'cv');
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
-
-const storage = multer.diskStorage({
-  destination: (_req, _file, cb) => {
-    cb(null, uploadDir);
-  },
-  // The stored filename is a server-generated UUID with a hardcoded .pdf extension —
-  // never derived from file.originalname. Previously this reused
-  // path.extname(file.originalname), which is attacker-controlled: a file uploaded as
-  // "resume.html" with a spoofed application/pdf Content-Type would have been written to
-  // disk as <random>.html (a security-audit finding, 2026-08-27). Every file accepted by
-  // fileFilter below is verified to actually be a PDF before it's ever served back, so a
-  // fixed .pdf extension here is correct regardless of what the client claimed.
-  filename: (_req, _file, cb) => {
-    cb(null, `${randomUUID()}.pdf`);
-  },
-});
+/**
+ * Uploads are held in memory and emailed — never written to disk.
+ *
+ * Client instruction (2026-09-02): CVs and cover letters must not be stored on the server.
+ * That also fixes an existing bug rather than merely satisfying a preference — the previous
+ * implementation wrote them to `uploads/cv` on Render's local disk, which is **wiped on
+ * every deploy**, so every CV received was silently lost at the next release. There is no
+ * persistent volume on this plan, so "store on disk" was never actually storage.
+ *
+ * The consequence to keep in mind: the notification email is now the ONLY copy of a
+ * candidate's documents. sendJobApplicationAdminNotification carries that responsibility
+ * and logs loudly if the send fails.
+ */
+const storage = multer.memoryStorage();
 
 const upload = multer({
   storage,
   fileFilter: (_req, file, cb) => {
-    // This only checks the client-supplied Content-Type header — trivially spoofable,
-    // and NOT a substitute for the magic-number check performed after upload below. Kept
-    // as a cheap first-pass rejection so an obviously-wrong file type never gets written
-    // to disk at all.
+    // Only checks the client-supplied Content-Type header — trivially spoofable, and NOT a
+    // substitute for the magic-number check below. Kept as a cheap first-pass rejection so
+    // an obviously-wrong file never reaches the buffer at all.
     if (file.mimetype === 'application/pdf') {
       cb(null, true);
     } else {
       cb(new Error('Only PDF files are allowed'));
     }
   },
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+  // 5MB per file, two files max. Deliberately well inside typical mail-server message
+  // limits: base64 encoding inflates attachments by ~33%, so 2×5MB arrives as roughly
+  // 13.5MB on the wire, and shared mail hosts commonly cap a message at 25–50MB.
+  limits: { fileSize: 5 * 1024 * 1024, files: 2 },
 });
 
-/** The real PDF magic number — every valid PDF file begins with these 5 bytes. */
+/** The real PDF magic number — every valid PDF begins with these 5 bytes. */
 const PDF_MAGIC = Buffer.from('%PDF-');
 
 /**
  * Confirms an uploaded file's actual content, not its declared Content-Type — a
- * security-audit finding (2026-08-27). multer's fileFilter above only ever sees what the
- * uploader's browser/client claims the file is; this reads the first 5 real bytes off
- * disk and checks them against the format's own signature, the same way a virus scanner
- * or a file-type sniffer would. Deletes the file and returns false if it doesn't match.
+ * security-audit finding (2026-08-27). multer's fileFilter only ever sees what the
+ * uploader's client claims the file is; this inspects the real leading bytes against the
+ * format's own signature.
+ *
+ * Now reads the in-memory buffer rather than opening a path, since nothing is written to
+ * disk. Same check, no filesystem involved — and nothing to clean up on rejection, because
+ * a rejected upload simply goes out of scope.
  */
-function verifyIsRealPdf(filePath: string): boolean {
-  let fd: number | null = null;
-  try {
-    fd = fs.openSync(filePath, 'r');
-    const header = Buffer.alloc(PDF_MAGIC.length);
-    fs.readSync(fd, header, 0, PDF_MAGIC.length, 0);
-    return header.equals(PDF_MAGIC);
-  } catch {
-    return false;
-  } finally {
-    if (fd !== null) fs.closeSync(fd);
-  }
+function isRealPdf(file: Express.Multer.File | undefined): boolean {
+  if (!file?.buffer || file.buffer.length < PDF_MAGIC.length) return false;
+  return file.buffer.subarray(0, PDF_MAGIC.length).equals(PDF_MAGIC);
 }
 
-/** Named fields, not upload.single — the form now takes an optional Cover Letter file
- * alongside the CV, added 2026-08-31 (client feedback: "allow a user upload a CV and
- * Cover Letter"). Same 5MB-per-file limit and PDF-only fileFilter apply to both. */
+/** Named fields, not upload.single — the form takes an optional Cover Letter alongside the
+ * CV. Same 5MB-per-file limit and PDF-only filter apply to both. */
 const uploadFields = upload.fields([
   { name: 'cv', maxCount: 1 },
   { name: 'coverLetterFile', maxCount: 1 },
 ]);
-
-/** Runs the magic-number check (see verifyIsRealPdf above) on every file multer accepted,
- * deleting and rejecting the whole request if any one of them isn't a real PDF. Returns
- * the files that passed, keyed the same way req.files is. */
-function verifyUploadedFiles(files: { [field: string]: Express.Multer.File[] } | undefined) {
-  if (!files) return { ok: true as const };
-  for (const field of Object.keys(files)) {
-    const file = files[field]?.[0];
-    if (file && !verifyIsRealPdf(file.path)) {
-      // Clean up every file in this request, not just the bad one — a legitimate CV
-      // sitting alongside a spoofed cover letter shouldn't be kept without its pair.
-      for (const f of Object.values(files).flat()) {
-        fs.unlink(f.path, () => {});
-      }
-      return { ok: false as const };
-    }
-  }
-  return { ok: true as const };
-}
 
 careersRouter.post('/careers/apply', uploadFields, validateBody(JobApplicationSchema), async (req, res) => {
   try {
@@ -106,9 +76,33 @@ careersRouter.post('/careers/apply', uploadFields, validateBody(JobApplicationSc
     const cvFile = files?.cv?.[0];
     const coverLetterFile = files?.coverLetterFile?.[0];
 
-    const verified = verifyUploadedFiles(files);
-    if (!verified.ok) {
-      return res.status(400).json({ error: 'One of the uploaded files is not a valid PDF.' });
+    // Every supplied file must genuinely be a PDF. Rejecting the whole request rather than
+    // dropping the bad file: a candidate who attached the wrong thing should be told, not
+    // have half their application accepted silently.
+    for (const file of [cvFile, coverLetterFile]) {
+      if (file && !isRealPdf(file)) {
+        return res.status(400).json({ error: 'One of the uploaded files is not a valid PDF.' });
+      }
+    }
+
+    const attachments: MailAttachment[] = [];
+    if (cvFile) {
+      attachments.push({
+        // The candidate's own filename is used here, unlike the old disk path (which used a
+        // server-generated UUID to avoid path traversal). That risk doesn't apply to a mail
+        // attachment name, and a recruiter wants "Jane Smith CV.pdf", not a UUID. Stripped
+        // of path separators and quotes so it can't smuggle a directory or break the header.
+        filename: safeAttachmentName(cvFile.originalname, 'CV.pdf'),
+        content: cvFile.buffer,
+        contentType: 'application/pdf',
+      });
+    }
+    if (coverLetterFile) {
+      attachments.push({
+        filename: safeAttachmentName(coverLetterFile.originalname, 'Cover-Letter.pdf'),
+        content: coverLetterFile.buffer,
+        contentType: 'application/pdf',
+      });
     }
 
     const db = requireDb();
@@ -119,15 +113,21 @@ careersRouter.post('/careers/apply', uploadFields, validateBody(JobApplicationSc
         phone,
         roleTitle: roleTitle || null,
         coverLetter: coverLetter || null,
+        // Filenames are still recorded so the admin list shows what was submitted, but the
+        // *Path columns stay null: there is no file on disk to point at. They remain in the
+        // schema for historical rows written before this change.
         cvFileName: cvFile?.originalname || null,
-        cvFilePath: cvFile?.path || null,
+        cvFilePath: null,
         coverLetterFileName: coverLetterFile?.originalname || null,
-        coverLetterFilePath: coverLetterFile?.path || null,
+        coverLetterFilePath: null,
       },
     });
 
-    // Fire confirmation and admin notification emails in parallel
-    Promise.all([
+    // Confirmation to the candidate and the internal copy go out together. Not awaited: the
+    // application is already saved, and the applicant shouldn't wait on SMTP to see their
+    // success screen. sendMail never throws for these two, so a failure is logged to
+    // /admin/system-logs rather than surfacing here.
+    void Promise.all([
       sendJobApplicationConfirmation({
         fullName,
         email,
@@ -142,22 +142,34 @@ careersRouter.post('/careers/apply', uploadFields, validateBody(JobApplicationSc
         coverLetter,
         cvFileName: cvFile?.originalname,
         coverLetterFileName: coverLetterFile?.originalname,
+        attachments,
       }),
-    ]).catch((err) => {
-      // eslint-disable-next-line no-console
-      console.error('Failed to send application emails:', err);
-    });
+    ]);
 
     return res.status(201).json({ ok: true, id: application.id });
   } catch (err) {
     if (err instanceof Error && err.message.includes('DATABASE_URL')) {
       return res.status(503).json({ error: 'Database not yet configured for this environment.' });
     }
-    // eslint-disable-next-line no-console
     console.error('Failed to create job application:', err);
     return res.status(500).json({ error: 'Something went wrong — please try again.' });
   }
 });
+
+/**
+ * Reduces an uploaded filename to something safe to put in a MIME header: no path
+ * separators, no quotes or control characters, length-capped, and always ending .pdf.
+ */
+function safeAttachmentName(original: string | undefined, fallback: string): string {
+  if (!original) return fallback;
+  const base = original
+    .replace(/[\\/]/g, '-')
+    .replace(/["\r\n\t]/g, '')
+    .trim()
+    .slice(0, 100);
+  if (!base) return fallback;
+  return base.toLowerCase().endsWith('.pdf') ? base : `${base}.pdf`;
+}
 
 // The admin-facing "download this CV" route lives in routes/admin/applications.ts,
 // alongside the rest of the admin JobApplication endpoints, not here — this file stays
