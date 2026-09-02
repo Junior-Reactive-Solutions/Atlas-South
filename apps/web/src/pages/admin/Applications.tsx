@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext.js';
-import { FileText, Calendar, Mail, Phone, Eye, Download, Loader2 } from 'lucide-react';
+import { FileText, Calendar, Mail, Phone, Eye } from 'lucide-react';
 import { animate, stagger } from 'animejs';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAnimationScope, DURATION, EASE, STAGGER_GAP } from '@atlas-south/design-system';
@@ -19,41 +19,11 @@ interface JobApplication {
   createdAt: string;
 }
 
-type FileKind = 'cv' | 'cover-letter';
-
 export function AdminApplications() {
   const [applications, setApplications] = useState<JobApplication[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selected, setSelected] = useState<JobApplication | null>(null);
-  const [fileStatus, setFileStatus] = useState<Record<FileKind, 'idle' | 'downloading' | 'error'>>({
-    cv: 'idle',
-    'cover-letter': 'idle',
-  });
   const { authFetch } = useAuth();
-
-  // The download route requires the same Bearer token every other admin request does, so
-  // a plain <a href> can't be used (the browser wouldn't attach it) — fetch the file
-  // through authFetch, then hand the browser a local object URL to save. Same route shape
-  // for both file kinds (/cv, /cover-letter — see routes/admin/applications.ts).
-  async function handleDownloadFile(app: JobApplication, kind: FileKind) {
-    setFileStatus((s) => ({ ...s, [kind]: 'downloading' }));
-    try {
-      const res = await authFetch(`/api/admin/applications/${app.id}/${kind}`);
-      if (!res.ok) throw new Error('Download failed');
-      const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      const fallbackName = kind === 'cv' ? 'cv.pdf' : 'cover-letter.pdf';
-      const fileName = kind === 'cv' ? app.cvFileName : app.coverLetterFileName;
-      a.download = fileName || `${app.fullName.replace(/\s+/g, '-')}-${fallbackName}`;
-      a.click();
-      URL.revokeObjectURL(url);
-      setFileStatus((s) => ({ ...s, [kind]: 'idle' }));
-    } catch {
-      setFileStatus((s) => ({ ...s, [kind]: 'error' }));
-    }
-  }
 
   useEffect(() => {
     const fetchApplications = async () => {
@@ -120,10 +90,7 @@ export function AdminApplications() {
                 exit={{ opacity: 0, scale: 0.95 }}
                 whileHover={{ backgroundColor: 'rgb(248, 250, 252)' }}
                 transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                onClick={() => {
-                  setSelected(app);
-                  setFileStatus({ cv: 'idle', 'cover-letter': 'idle' });
-                }}
+                onClick={() => setSelected(app)}
                 className="application-row w-full rounded-lg border border-slate-200 bg-white p-4 text-left transition-colors focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-accent-blue"
               >
                 <div className="flex items-start justify-between">
@@ -200,50 +167,38 @@ export function AdminApplications() {
                 {selected.phone}
               </a>
             </DetailField>
-            {selected.cvFileName && (
-              <DetailField label="CV">
-                <button
-                  onClick={() => handleDownloadFile(selected, 'cv')}
-                  disabled={fileStatus.cv === 'downloading'}
-                  className="flex w-full items-center gap-2 rounded-lg bg-slate-50 p-3 text-left transition-colors hover:bg-slate-100 disabled:opacity-60"
-                >
-                  {fileStatus.cv === 'downloading' ? (
-                    <Loader2 className="h-5 w-5 shrink-0 animate-spin text-accent-blue" />
-                  ) : (
-                    <FileText className="h-5 w-5 shrink-0 text-accent-blue" />
+            {(selected.cvFileName || selected.coverLetterFileName) && (
+              <DetailField label="Documents">
+                {/* Not downloadable from here by design. Uploads are attached to the email
+                    sent to the careers inbox at submission and are never stored on the
+                    server, so this panel names what was received and points at where it
+                    actually is. The previous download buttons hit routes that are now 410 —
+                    and before that were mostly serving files already lost to a deploy. */}
+                <div className="space-y-2 rounded-lg bg-slate-50 p-3">
+                  {selected.cvFileName && (
+                    <div className="flex items-center gap-2">
+                      <FileText className="h-5 w-5 shrink-0 text-accent-blue" />
+                      <span className="min-w-0 flex-1 truncate text-sm font-medium text-navy">
+                        {selected.cvFileName}
+                      </span>
+                      <span className="shrink-0 text-xs text-slate-500">CV</span>
+                    </div>
                   )}
-                  <span className="min-w-0 flex-1 truncate text-sm font-medium text-navy">{selected.cvFileName}</span>
-                  <Download className="h-4 w-4 shrink-0 text-slate-400" />
-                </button>
-                {fileStatus.cv === 'error' && (
-                  <p className="mt-1.5 text-xs text-red-600">
-                    Couldn't download this CV — it may have been lost in a deploy since it was submitted.
-                  </p>
-                )}
-              </DetailField>
-            )}
-            {selected.coverLetterFileName && (
-              <DetailField label="Cover letter (file)">
-                <button
-                  onClick={() => handleDownloadFile(selected, 'cover-letter')}
-                  disabled={fileStatus['cover-letter'] === 'downloading'}
-                  className="flex w-full items-center gap-2 rounded-lg bg-slate-50 p-3 text-left transition-colors hover:bg-slate-100 disabled:opacity-60"
-                >
-                  {fileStatus['cover-letter'] === 'downloading' ? (
-                    <Loader2 className="h-5 w-5 shrink-0 animate-spin text-accent-blue" />
-                  ) : (
-                    <FileText className="h-5 w-5 shrink-0 text-accent-blue" />
+                  {selected.coverLetterFileName && (
+                    <div className="flex items-center gap-2">
+                      <FileText className="h-5 w-5 shrink-0 text-accent-blue" />
+                      <span className="min-w-0 flex-1 truncate text-sm font-medium text-navy">
+                        {selected.coverLetterFileName}
+                      </span>
+                      <span className="shrink-0 text-xs text-slate-500">Cover letter</span>
+                    </div>
                   )}
-                  <span className="min-w-0 flex-1 truncate text-sm font-medium text-navy">
-                    {selected.coverLetterFileName}
-                  </span>
-                  <Download className="h-4 w-4 shrink-0 text-slate-400" />
-                </button>
-                {fileStatus['cover-letter'] === 'error' && (
-                  <p className="mt-1.5 text-xs text-red-600">
-                    Couldn't download this cover letter — it may have been lost in a deploy since it was submitted.
+                  <p className="border-t border-slate-200 pt-2 text-xs text-slate-600">
+                    Emailed to the careers inbox when this application was submitted. Documents
+                    aren&rsquo;t stored on the server — search that mailbox for{' '}
+                    <span className="font-medium">{selected.fullName}</span> to open them.
                   </p>
-                )}
+                </div>
               </DetailField>
             )}
             <DetailField label="Note">

@@ -27,6 +27,23 @@ const EnvSchema = z.object({
   JWT_ACCESS_SECRET: z.string().min(32).optional(),
   JWT_REFRESH_SECRET: z.string().min(32).optional(),
   RESEND_API_KEY: z.string().optional(),
+
+  // SMTP — transactional mail goes through the domain's own mail server rather than a
+  // third party. That is not a preference: this domain publishes SPF ending in `-all`
+  // and DMARC `p=reject`, so mail sent from anywhere except this server is rejected
+  // outright by the recipient. Sending from the server itself is already authorised by
+  // the existing SPF/DKIM records — see docs/build/17-DOMAIN-CUTOVER-RUNBOOK.md §1.2.
+  // All optional so the API still boots without them; email degrades to a logged warning.
+  SMTP_HOST: z.string().optional(),
+  SMTP_PORT: z.coerce.number().int().positive().default(587),
+  SMTP_USER: z.string().optional(),
+  SMTP_PASS: z.string().optional(),
+  /** Full From header, e.g. `Atlas South <noreply@atlassouthes.com>`. */
+  MAIL_FROM: z.string().optional(),
+  /** Where enquiry notifications land. */
+  ADMIN_EMAIL: z.string().email().optional(),
+  /** Where job applications land, WITH the CV and cover letter attached. */
+  CAREERS_EMAIL: z.string().email().optional(),
   CLOUDINARY_CLOUD_NAME: z.string().optional(),
   CLOUDINARY_API_KEY: z.string().optional(),
   CLOUDINARY_API_SECRET: z.string().optional(),

@@ -1,7 +1,5 @@
 import { Router, Response } from 'express';
 import { z } from 'zod';
-import fs from 'fs';
-import path from 'path';
 import { authMiddleware, AuthRequest } from '../../middleware/auth.js';
 import { requireDb } from '../../lib/prisma.js';
 import { sendAdminReply } from '../../lib/email.js';
@@ -55,88 +53,29 @@ adminApplicationsRouter.get('/applications/:id', async (req: AuthRequest, res: R
 });
 
 /**
- * GET /api/admin/applications/:id/cv — lets an admin actually retrieve a submitted CV.
- * No such route existed before (a security-audit finding, 2026-08-27): every CV was
- * accepted, confirmed by email, and then permanently unreachable — nothing ever served
- * the upload directory back out. This closes that for as long as the file still exists
- * on disk.
+ * GET /api/admin/applications/:id/cv and .../cover-letter
  *
- * It does NOT fix the underlying data-loss problem: Render's free-tier disk is ephemeral
- * and wipes on every deploy or restart, so a CV uploaded before the next deploy is still
- * gone regardless of this route existing. A real fix needs persistent storage (Cloudinary
- * is an already-present but unconfigured dependency — CLOUDINARY_* env vars are unset —
- * or S3-compatible object storage); provisioning that needs a decision and credentials
- * only the client can supply, so it's tracked as a separate follow-up rather than
- * silently deferred here.
+ * RETIRED 2026-09-02. Uploads are no longer stored on the server at all: they are attached
+ * to the notification email sent to the careers mailbox at submission time
+ * (routes/careers.ts). There is therefore no file for these routes to serve.
+ *
+ * They answer 410 Gone rather than being deleted outright, because the admin UI and any
+ * bookmarked links would otherwise get an unexplained 404 — a specific message pointing at
+ * the careers inbox is far more useful to whoever hits it than a dead route.
+ *
+ * This also closes the data-loss problem the old routes carried a long note about: files
+ * were written to Render local disk, which is wiped on every deploy, so a CV was reliably
+ * unreachable within days of being received. Emailing them means the copy lands somewhere
+ * durable and monitored instead.
  */
-adminApplicationsRouter.get('/applications/:id/cv', async (req: AuthRequest, res: Response) => {
-  try {
-    const db = requireDb();
-    const application = await db.jobApplication.findUnique({
-      where: { id: req.params.id },
-      select: { cvFilePath: true, cvFileName: true },
+for (const suffix of ['cv', 'cover-letter']) {
+  adminApplicationsRouter.get(`/applications/:id/${suffix}`, async (_req: AuthRequest, res: Response) => {
+    return res.status(410).json({
+      error:
+        'Documents are no longer stored on the server. The CV and cover letter were emailed to the careers inbox when the application was submitted.',
     });
-
-    if (!application?.cvFilePath) {
-      return res.status(404).json({ error: 'No CV on file for this application.' });
-    }
-
-    // cvFilePath is never derived from user input at read time — it's the exact path
-    // this server itself wrote the file to (routes/careers.ts), read back from the
-    // database, so no path-traversal input reaches this call.
-    if (!fs.existsSync(application.cvFilePath)) {
-      return res.status(410).json({
-        error: 'This CV is no longer available — it was likely lost in a subsequent deploy (see the note on this route).',
-      });
-    }
-
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader(
-      'Content-Disposition',
-      `attachment; filename="${(application.cvFileName || 'cv.pdf').replace(/"/g, '')}"`,
-    );
-    return res.sendFile(path.resolve(application.cvFilePath));
-  } catch (err) {
-    console.error('Failed to serve CV:', err);
-    return res.status(500).json({ error: 'Something went wrong — please try again.' });
-  }
-});
-
-/**
- * GET /api/admin/applications/:id/cover-letter — same pattern as the CV route above, for
- * the separate Cover Letter file added 2026-08-31. Same ephemeral-disk caveat applies.
- */
-adminApplicationsRouter.get('/applications/:id/cover-letter', async (req: AuthRequest, res: Response) => {
-  try {
-    const db = requireDb();
-    const application = await db.jobApplication.findUnique({
-      where: { id: req.params.id },
-      select: { coverLetterFilePath: true, coverLetterFileName: true },
-    });
-
-    if (!application?.coverLetterFilePath) {
-      return res.status(404).json({ error: 'No cover letter file on file for this application.' });
-    }
-
-    // coverLetterFilePath is never derived from user input at read time — same guarantee
-    // as cvFilePath above.
-    if (!fs.existsSync(application.coverLetterFilePath)) {
-      return res.status(410).json({
-        error: 'This cover letter is no longer available — it was likely lost in a subsequent deploy.',
-      });
-    }
-
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader(
-      'Content-Disposition',
-      `attachment; filename="${(application.coverLetterFileName || 'cover-letter.pdf').replace(/"/g, '')}"`,
-    );
-    return res.sendFile(path.resolve(application.coverLetterFilePath));
-  } catch (err) {
-    console.error('Failed to serve cover letter:', err);
-    return res.status(500).json({ error: 'Something went wrong — please try again.' });
-  }
-});
+  });
+}
 
 const ReplySchema = z.object({
   subject: z.string().trim().min(1).max(200).optional(),

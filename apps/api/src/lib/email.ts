@@ -1,18 +1,103 @@
-import { Resend } from 'resend';
+import nodemailer, { type Transporter } from 'nodemailer';
 import { COMPANY, SITE_ORIGIN } from '@atlas-south/shared';
+import { env } from './env.js';
+import { logSystemEvent } from './systemLog.js';
 import { renderReplyEmail, renderConfirmationEmail, escapeHtml, type ReplyEmailTheme } from './emailThemes.js';
 
 /**
- * Email service — docs/build/12-HOSTING-DEPLOYMENT.md §6.
- * Sends transactional emails via Resend (enquiry confirmations, admin notifications).
- * Requires RESEND_API_KEY environment variable.
+ * Email service — sends over SMTP through the domain's own mail server.
+ *
+ * WHY SMTP AND NOT A THIRD-PARTY API (changed 2026-09-02, client decision):
+ * atlassouthes.com publishes SPF ending in `-all` (hard fail) authorising only the mail
+ * server's own IP, and DMARC `p=reject`. Mail sent from anywhere else — Resend included —
+ * fails SPF, has no aligned DKIM, and is REJECTED by the recipient rather than
+ * spam-foldered. Sending from the server the domain already authorises means SPF, DKIM and
+ * DMARC all pass with no DNS changes at all. See docs/build/17-DOMAIN-CUTOVER-RUNBOOK.md.
+ *
+ * Every send is best-effort: a mail failure must never break the request that triggered it
+ * (an enquiry is already saved by then). Failures are recorded to the operations log so
+ * they are visible in the admin panel rather than lost to stdout.
  */
 
-const apiKey = process.env.RESEND_API_KEY;
-const resend = apiKey ? new Resend(apiKey) : null;
+/**
+ * Built once and reused — nodemailer pools connections, and rebuilding per send would
+ * re-handshake TLS every time. Null when SMTP isn't configured, so a dev environment or a
+ * half-provisioned deploy degrades to a logged warning instead of throwing on boot.
+ */
+const transporter: Transporter | null =
+  env.SMTP_HOST && env.SMTP_USER && env.SMTP_PASS
+    ? nodemailer.createTransport({
+        host: env.SMTP_HOST,
+        port: env.SMTP_PORT,
+        // 465 is implicit TLS; 587 upgrades via STARTTLS. Derived from the port rather
+        // than configured separately, because getting the two out of step is the single
+        // most common way an SMTP setup fails with an opaque handshake error.
+        secure: env.SMTP_PORT === 465,
+        auth: { user: env.SMTP_USER, pass: env.SMTP_PASS },
+      })
+    : null;
 
-const SENDER_EMAIL = 'noreply@atlassouthes.com';
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'enquiries@atlassouthes.com';
+/** The From header. Falls back to the SMTP user, which is always a real mailbox. */
+const SENDER_EMAIL = env.MAIL_FROM || env.SMTP_USER || `noreply@${COMPANY.domain}`;
+
+/** Where enquiry notifications go. */
+const ADMIN_EMAIL = env.ADMIN_EMAIL || `start@${COMPANY.domain}`;
+
+/**
+ * Where job applications go, with the CV and cover letter attached. Deliberately separate
+ * from ADMIN_EMAIL: applications carry candidate personal data and belong in a role
+ * mailbox that outlives whoever handles them today, not mixed into general enquiries.
+ */
+const CAREERS_EMAIL = env.CAREERS_EMAIL || `careers@${COMPANY.domain}`;
+
+export interface MailAttachment {
+  filename: string;
+  content: Buffer;
+  contentType: string;
+}
+
+/**
+ * One place every send goes through, so the 'never throw, always log' contract is
+ * guaranteed rather than repeated at each call site. Returns whether the message was
+ * accepted, for the one caller (admin replies) that needs to surface failure to a human.
+ */
+async function sendMail(opts: {
+  to: string;
+  subject: string;
+  html: string;
+  attachments?: MailAttachment[];
+  /** Set for mail a person is waiting on, so the failure reaches them not just the log. */
+  rethrow?: boolean;
+}): Promise<boolean> {
+  if (!transporter) {
+    console.warn(`SMTP not configured — skipping email to ${opts.to}`);
+    return false;
+  }
+
+  try {
+    await transporter.sendMail({
+      from: SENDER_EMAIL,
+      to: opts.to,
+      subject: opts.subject,
+      html: opts.html,
+      attachments: opts.attachments,
+    });
+    return true;
+  } catch (err) {
+    logSystemEvent({
+      level: 'error',
+      source: 'api',
+      event: 'email_send_failed',
+      message: err instanceof Error ? err.message : 'Unknown SMTP error',
+      // The recipient is deliberately NOT logged: it is a customer's or candidate's email
+      // address, and the operations log is not a place for personal data. The subject is
+      // enough to identify which send failed.
+      context: { subject: opts.subject },
+    });
+    if (opts.rethrow) throw err;
+    return false;
+  }
+}
 
 /**
  * Which of the three themed layouts (lib/emailThemes.ts) admin replies go out in. The
@@ -38,6 +123,16 @@ export interface EnquiryEmailData {
   message: string;
 }
 
+/** Two-column row for the internal notification tables. Escapes the value; the label is
+ * always a literal from this file. `raw` is for values already built as safe HTML. */
+function row(label: string, value: string, raw = false): string {
+  return `
+    <tr style="border-bottom:1px solid #eee;">
+      <td style="padding:8px;font-weight:bold;width:150px;vertical-align:top;">${label}</td>
+      <td style="padding:8px;">${raw ? value : escapeHtml(value)}</td>
+    </tr>`;
+}
+
 /**
  * Send a confirmation email to the enquiry submitter.
  * Acknowledges receipt and sets response-time expectation.
@@ -53,31 +148,20 @@ export interface EnquiryEmailData {
  * theme chosen for replies, with the real number from COMPANY.
  */
 export async function sendEnquiryConfirmation(data: EnquiryEmailData) {
-  if (!resend) {
-    console.warn('Resend not configured — skipping confirmation email');
-    return;
-  }
-
   const firstName = data.fullName.trim().split(/\s+/)[0] || data.fullName;
 
-  try {
-    await resend.emails.send({
-      from: SENDER_EMAIL,
-      to: data.email,
-      subject: "We've received your enquiry — Atlas South",
-      html: renderConfirmationEmail({
-        recipientFirstName: firstName,
-        bodyHtml: `
-          <p style="margin:0 0 16px;">We've received your enquiry and will respond within 24 hours.</p>
-          <p style="margin:0 0 16px;">Need to reach us sooner? Call us on <strong>${escapeHtml(COMPANY.phone.display)}</strong> — we're here 24/7.</p>
-        `,
-        cta: { label: 'Visit our site', href: SITE_URL },
-      }),
-    });
-  } catch (err) {
-    console.error('Failed to send enquiry confirmation email:', err);
-    // Don't throw — enquiry is already created. This is a nice-to-have notification.
-  }
+  await sendMail({
+    to: data.email,
+    subject: "We've received your enquiry — Atlas South",
+    html: renderConfirmationEmail({
+      recipientFirstName: firstName,
+      bodyHtml: `
+        <p style="margin:0 0 16px;">We've received your enquiry and will respond within 24 hours.</p>
+        <p style="margin:0 0 16px;">Need to reach us sooner? Call us on <strong>${escapeHtml(COMPANY.phone.display)}</strong> — we're here 24/7.</p>
+      `,
+      cta: { label: 'Visit our site', href: SITE_URL },
+    }),
+  });
 }
 
 /**
@@ -85,50 +169,22 @@ export async function sendEnquiryConfirmation(data: EnquiryEmailData) {
  * Alerts the team to follow up with the lead.
  */
 export async function sendEnquiryAdminNotification(data: EnquiryEmailData & { enquiryId: string }) {
-  if (!resend) {
-    console.warn('Resend not configured — skipping admin notification email');
-    return;
-  }
-
-  try {
-    await resend.emails.send({
-      from: SENDER_EMAIL,
-      to: ADMIN_EMAIL,
-      subject: `New enquiry: ${data.fullName} — ${data.serviceId}`,
-      html: `
-        <h2>New Enquiry Received</h2>
-        <table style="width: 100%; border-collapse: collapse;">
-          <tr style="border-bottom: 1px solid #eee;">
-            <td style="padding: 8px; font-weight: bold; width: 150px;">Name:</td>
-            <td style="padding: 8px;">${data.fullName}</td>
-          </tr>
-          <tr style="border-bottom: 1px solid #eee;">
-            <td style="padding: 8px; font-weight: bold;">Email:</td>
-            <td style="padding: 8px;"><a href="mailto:${data.email}">${data.email}</a></td>
-          </tr>
-          <tr style="border-bottom: 1px solid #eee;">
-            <td style="padding: 8px; font-weight: bold;">Phone:</td>
-            <td style="padding: 8px;"><a href="tel:${data.phone}">${data.phone}</a></td>
-          </tr>
-          <tr style="border-bottom: 1px solid #eee;">
-            <td style="padding: 8px; font-weight: bold;">Service:</td>
-            <td style="padding: 8px;">${data.serviceId}</td>
-          </tr>
-          <tr>
-            <td style="padding: 8px; font-weight: bold; vertical-align: top;">Message:</td>
-            <td style="padding: 8px;">${data.message.replace(/\n/g, '<br>')}</td>
-          </tr>
-        </table>
-        <hr />
-        <p style="font-size: 12px; color: #666;">
-          Enquiry ID: ${data.enquiryId}
-        </p>
-      `,
-    });
-  } catch (err) {
-    console.error('Failed to send admin notification email:', err);
-    // Don't throw — enquiry is already created. This is a nice-to-have notification.
-  }
+  await sendMail({
+    to: ADMIN_EMAIL,
+    subject: `New enquiry: ${data.fullName} — ${data.serviceId}`,
+    html: `
+      <h2>New Enquiry Received</h2>
+      <table style="width:100%;border-collapse:collapse;">
+        ${row('Name:', data.fullName)}
+        ${row('Email:', `<a href="mailto:${encodeURI(data.email)}">${escapeHtml(data.email)}</a>`, true)}
+        ${row('Phone:', `<a href="tel:${encodeURI(data.phone)}">${escapeHtml(data.phone)}</a>`, true)}
+        ${row('Service:', data.serviceId)}
+        ${row('Message:', escapeHtml(data.message).replace(/\n/g, '<br>'), true)}
+      </table>
+      <hr />
+      <p style="font-size:12px;color:#666;">Enquiry ID: ${escapeHtml(data.enquiryId)}</p>
+    `,
+  });
 }
 
 export interface JobApplicationEmailData {
@@ -147,36 +203,38 @@ export interface JobApplicationEmailData {
  * through the process they applied through, not be invited to ring the sales line.
  */
 export async function sendJobApplicationConfirmation(data: JobApplicationEmailData) {
-  if (!resend) {
-    console.warn('Resend not configured — skipping application confirmation email');
-    return;
-  }
-
   const firstName = data.fullName.trim().split(/\s+/)[0] || data.fullName;
 
-  try {
-    await resend.emails.send({
-      from: SENDER_EMAIL,
-      to: data.email,
-      subject: "We've received your application — Atlas South Careers",
-      html: renderConfirmationEmail({
-        recipientFirstName: firstName,
-        bodyHtml: `
-          <p style="margin:0 0 16px;">We've received your application for the <strong>${escapeHtml(data.roleTitle)}</strong> position and will review it carefully.</p>
-          <p style="margin:0 0 16px;">If your background matches what we're looking for, a member of our team will be in touch within 5–7 working days.</p>
-        `,
-        // No cta: — see the note above on why there's deliberately no phone/contact link here.
-      }),
-    });
-  } catch (err) {
-    console.error('Failed to send job application confirmation email:', err);
-    // Don't throw — application is already created. This is a nice-to-have notification.
-  }
+  await sendMail({
+    to: data.email,
+    subject: "We've received your application — Atlas South Careers",
+    html: renderConfirmationEmail({
+      recipientFirstName: firstName,
+      bodyHtml: `
+        <p style="margin:0 0 16px;">We've received your application for the <strong>${escapeHtml(data.roleTitle)}</strong> position and will review it carefully.</p>
+        <p style="margin:0 0 16px;">If your background matches what we're looking for, a member of our team will be in touch within 5–7 working days.</p>
+      `,
+      // No cta: — see the note above on why there's deliberately no phone/contact link here.
+    }),
+  });
 }
 
 /**
- * Send an admin notification email about a new job application.
- * Alerts the team to follow up with the candidate.
+ * Send the internal notification for a new job application — **with the CV and cover
+ * letter attached**.
+ *
+ * The attachments are the point of this message, not a nicety (client instruction,
+ * 2026-09-02): uploads are no longer written to disk anywhere, so this email is the only
+ * copy of the candidate's documents. That is deliberate — the previous behaviour wrote them
+ * to Render's local disk, which is wiped on every deploy, so CVs were being silently lost.
+ *
+ * Goes to CAREERS_EMAIL rather than ADMIN_EMAIL: a CV is candidate personal data and
+ * belongs in the role mailbox for recruitment, not mixed into the general enquiry inbox.
+ *
+ * If this send fails the documents are gone, since nothing else retains them. sendMail
+ * records the failure to the operations log (visible at /admin/system-logs) precisely so
+ * that is noticed rather than silent — and the applicant still gets their confirmation, so
+ * a failure here is recoverable by asking them to resend.
  */
 export async function sendJobApplicationAdminNotification(
   data: JobApplicationEmailData & {
@@ -185,51 +243,37 @@ export async function sendJobApplicationAdminNotification(
     coverLetter?: string;
     cvFileName?: string;
     coverLetterFileName?: string;
+    attachments?: MailAttachment[];
   }
 ) {
-  if (!resend) {
-    console.warn('Resend not configured — skipping application admin notification email');
-    return;
-  }
+  const hasFiles = (data.attachments?.length ?? 0) > 0;
 
-  try {
-    await resend.emails.send({
-      from: SENDER_EMAIL,
-      to: ADMIN_EMAIL,
-      subject: `New application: ${data.fullName} — ${data.roleTitle}`,
-      html: `
-        <h2>New Job Application Received</h2>
-        <table style="width: 100%; border-collapse: collapse;">
-          <tr style="border-bottom: 1px solid #eee;">
-            <td style="padding: 8px; font-weight: bold; width: 150px;">Name:</td>
-            <td style="padding: 8px;">${data.fullName}</td>
-          </tr>
-          <tr style="border-bottom: 1px solid #eee;">
-            <td style="padding: 8px; font-weight: bold;">Email:</td>
-            <td style="padding: 8px;"><a href="mailto:${data.email}">${data.email}</a></td>
-          </tr>
-          <tr style="border-bottom: 1px solid #eee;">
-            <td style="padding: 8px; font-weight: bold;">Phone:</td>
-            <td style="padding: 8px;"><a href="tel:${data.phone}">${data.phone}</a></td>
-          </tr>
-          <tr style="border-bottom: 1px solid #eee;">
-            <td style="padding: 8px; font-weight: bold;">Position:</td>
-            <td style="padding: 8px;">${data.roleTitle}</td>
-          </tr>
-          ${data.cvFileName ? `<tr style="border-bottom: 1px solid #eee;"><td style="padding: 8px; font-weight: bold;">CV:</td><td style="padding: 8px;">${data.cvFileName}</td></tr>` : ''}
-          ${data.coverLetterFileName ? `<tr style="border-bottom: 1px solid #eee;"><td style="padding: 8px; font-weight: bold;">Cover Letter file:</td><td style="padding: 8px;">${data.coverLetterFileName}</td></tr>` : ''}
-          ${data.coverLetter ? `<tr><td style="padding: 8px; font-weight: bold; vertical-align: top;">Note:</td><td style="padding: 8px;">${data.coverLetter.replace(/\n/g, '<br>')}</td></tr>` : ''}
-        </table>
-        <hr />
-        <p style="font-size: 12px; color: #666;">
-          Application ID: ${data.applicationId}
-        </p>
-      `,
-    });
-  } catch (err) {
-    console.error('Failed to send application admin notification email:', err);
-    // Don't throw — application is already created. This is a nice-to-have notification.
-  }
+  await sendMail({
+    to: CAREERS_EMAIL,
+    subject: `New application: ${data.fullName} — ${data.roleTitle}`,
+    attachments: data.attachments,
+    html: `
+      <h2>New Job Application Received</h2>
+      <table style="width:100%;border-collapse:collapse;">
+        ${row('Name:', data.fullName)}
+        ${row('Email:', `<a href="mailto:${encodeURI(data.email)}">${escapeHtml(data.email)}</a>`, true)}
+        ${row('Phone:', `<a href="tel:${encodeURI(data.phone)}">${escapeHtml(data.phone)}</a>`, true)}
+        ${row('Position:', data.roleTitle)}
+        ${data.cvFileName ? row('CV:', `${escapeHtml(data.cvFileName)} — attached`, true) : ''}
+        ${data.coverLetterFileName ? row('Cover letter:', `${escapeHtml(data.coverLetterFileName)} — attached`, true) : ''}
+        ${data.coverLetter ? row('Note:', escapeHtml(data.coverLetter).replace(/\n/g, '<br>'), true) : ''}
+      </table>
+      <p style="font-size:13px;color:#444;margin-top:16px;">
+        ${
+          hasFiles
+            ? 'The documents are attached to this email. They are not stored on the server, so keep this message — it is the only copy.'
+            : 'No documents were attached to this application.'
+        }
+      </p>
+      <hr />
+      <p style="font-size:12px;color:#666;">Application ID: ${escapeHtml(data.applicationId)}</p>
+    `,
+  });
 }
 
 export interface AdminReplyData {
@@ -242,17 +286,11 @@ export interface AdminReplyData {
 /**
  * Sends a themed reply from the admin panel (Enquiries or Applications "Reply" action) —
  * unlike the automated confirmations above, this carries the admin's own written message,
- * so a failure here is surfaced to the caller (returns false) rather than swallowed: the
- * admin needs to know the reply didn't actually go out, not just see a green success toast.
+ * so a failure here is surfaced to the caller rather than swallowed: the admin needs to
+ * know the reply didn't actually go out, not just see a green success toast.
  */
 export async function sendAdminReply(data: AdminReplyData): Promise<boolean> {
-  if (!resend) {
-    console.warn('Resend not configured — cannot send admin reply');
-    return false;
-  }
-
-  await resend.emails.send({
-    from: SENDER_EMAIL,
+  return sendMail({
     to: data.to,
     subject: data.subject,
     html: renderReplyEmail(ADMIN_REPLY_THEME, {
@@ -260,6 +298,8 @@ export async function sendAdminReply(data: AdminReplyData): Promise<boolean> {
       message: data.message,
       subject: data.subject,
     }),
+    // A person is waiting on this one and will be told it sent — let the caller see the
+    // failure instead of reporting success for a message that never left.
+    rethrow: true,
   });
-  return true;
 }
