@@ -29,6 +29,7 @@ import adminContentRouter from './routes/admin/content.js';
 import adminVisibilityRouter from './routes/admin/visibility.js';
 import { adminLeadsRouter } from './routes/admin/leads.js';
 import adminAuditLogRouter from './routes/admin/auditLog.js';
+import { adminBootstrapRouter } from './routes/admin/bootstrap.js';
 
 const app = express();
 
@@ -160,6 +161,18 @@ app.use('/api', visibilityRouter);
 app.use('/api', careersRouter);
 app.use('/api', caseStudiesRouter);
 app.use('/api', leadsRouter);
+
+// Bootstrap MUST be mounted before any router that claims the bare '/api/admin' prefix
+// with authMiddleware applied to it (adminApplicationsRouter, adminLeadsRouter below both
+// do). Express matches middleware in registration order, not by specificity — a router
+// mounted at '/api/admin' with `router.use(authMiddleware)` intercepts EVERY sub-path
+// under that prefix unconditionally, including '/admin/bootstrap', and returns its own 401
+// before this route is ever reached. Confirmed by hitting this exact ordering bug against
+// a real server: the response was authMiddleware's "Missing authorization header", not
+// anything from this file. Deliberately not behind adminApiLimiter/authMiddleware itself —
+// it has to work before an admin account exists to log in with. Gates itself; see
+// routes/admin/bootstrap.ts for the full safeguard list.
+app.use('/api', adminBootstrapRouter);
 
 // Admin routes — secured with JWT authentication
 // loginLimiter applies specifically to the auth endpoint (5 attempts / 15 min);

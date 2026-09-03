@@ -49,6 +49,11 @@ const EnvSchema = z.object({
   CLOUDINARY_API_SECRET: z.string().optional(),
   SENTRY_DSN: z.string().optional(),
   ADMIN_SEED_EMAIL: z.string().email().optional(),
+  // Turns on the one-time /api/admin/bootstrap route (routes/admin/bootstrap.ts).
+  // Unset in the normal running state — only present on Render while actually being
+  // used to create or reset an admin account, then removed. See that file for the full
+  // set of safeguards this alone is not relied on for.
+  ADMIN_BOOTSTRAP_TOKEN: z.string().min(20).optional(),
   CORS_ALLOWED_ORIGIN: z.string().default('http://localhost:9000'),
   RATE_LIMIT_WINDOW_MS: z.coerce.number().int().positive().default(600_000),
   RATE_LIMIT_MAX: z.coerce.number().int().positive().default(100),
