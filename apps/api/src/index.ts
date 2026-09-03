@@ -18,6 +18,7 @@ import { contentRouter } from './routes/content.js';
 import { visibilityRouter } from './routes/visibility.js';
 import { careersRouter } from './routes/careers.js';
 import { caseStudiesRouter } from './routes/caseStudies.js';
+import { articlesRouter } from './routes/articles.js';
 import { leadsRouter } from './routes/leads.js';
 import adminAuthRouter from './routes/admin/auth.js';
 import adminEnquiriesRouter from './routes/admin/enquiries.js';
@@ -156,6 +157,7 @@ app.use('/api', contentRouter);
 app.use('/api', visibilityRouter);
 app.use('/api', careersRouter);
 app.use('/api', caseStudiesRouter);
+app.use('/api', articlesRouter);
 app.use('/api', leadsRouter);
 
 // Bootstrap MUST be mounted before any router that claims the bare '/api/admin' prefix

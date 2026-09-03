@@ -1,0 +1,17 @@
+-- Adds "article" to the ContentPageType enum, for the /insights library.
+--
+-- Same rationale as the caseStudy value added on 2026-09-01: articles need exactly what
+-- ContentPage already provides — slug, route, and the draft/published split — so they
+-- reuse the table rather than getting a parallel model, and inherit the admin editor,
+-- the content API and the offline-safe static fallback for free.
+--
+-- One thing IS different about this type: rows are created at runtime by the client
+-- through the admin panel (POST /api/admin/content), not seeded from code like every
+-- other type. That is why the admin create/delete endpoints added alongside this
+-- migration restrict themselves to 'article' — a bug there must not be able to conjure
+-- or delete a service page and break routing.
+--
+-- ALTER TYPE ... ADD VALUE cannot run inside a transaction block in older PostgreSQL and
+-- Prisma wraps migrations in one. Postgres 12+ permits it, and this database is PG16, so
+-- a plain ADD VALUE is safe here.
+ALTER TYPE "ContentPageType" ADD VALUE 'article';

@@ -98,6 +98,11 @@ enum ContentPageType {
   /// type, which matters more here than elsewhere: a case study names a real client and
   /// a real outcome, so it stays in draft until someone has actually verified it.
   caseStudy
+  /// Insight/SEO articles at /insights. Unlike every other type above, rows of this type
+  /// are created at runtime through the admin panel rather than seeded from code — the
+  /// client authors these themselves. Draft until published, for the same reason as
+  /// caseStudy: it goes out under the company's name and gets read as its position.
+  article
 }
 
 enum ContentStatus {

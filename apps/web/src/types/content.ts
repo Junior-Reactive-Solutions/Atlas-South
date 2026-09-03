@@ -235,3 +235,59 @@ export interface CaseStudyContent {
   /** Photographs of the actual job. Stock imagery does not belong in a case study. */
   images?: Array<{ src: string; alt: string; caption?: string }>;
 }
+
+/**
+ * An insight article at /insights/:slug — the client-authored SEO/expertise library.
+ *
+ * Only `title` and `body` are structurally required; everything else is optional so a
+ * half-written draft still renders in the editor's preview rather than crashing it. The
+ * public pages treat every optional field as genuinely absent (no "TBC", no placeholder
+ * author) — see packages/shared/src/content/articles.ts on why nothing here is invented
+ * to fill a gap.
+ */
+export interface ArticleContent {
+  title: string;
+  /** Overrides the <title> tag when the on-page headline is too long for search results. */
+  seoTitle?: string;
+  /** The meta description. Falls back to `summary` when unset. */
+  seoDescription?: string;
+  icon?: IconName;
+
+  /** One or two lines for the listing card, and the fallback meta description. */
+  summary?: string;
+
+  /**
+   * The article itself, as Markdown. Authored in the admin panel's Markdown field, the
+   * same editor used for the long-form case study sections.
+   */
+  body: string;
+
+  /**
+   * Credited author. A real person who has agreed to be credited — a byline is a claim
+   * that a named individual stands behind the content.
+   */
+  author?: string;
+  /** e.g. "Operations Director" — shown next to the byline when present. */
+  authorRole?: string;
+
+  /**
+   * ISO date the article was written or last substantively revised. Distinct from the
+   * row's own publishedAt: re-publishing after fixing a typo shouldn't make a two-year-old
+   * article look new, and search engines treat a bogus fresh date as a quality signal
+   * problem rather than a bonus.
+   */
+  datePublished?: string;
+  dateModified?: string;
+
+  /** Free-text grouping shown on the card, e.g. "Compliance", "Cleaning". */
+  category?: string;
+  /** Rough read time in minutes, shown on the card. */
+  readMinutes?: number;
+
+  /** Hero image. Optional — an article without one renders on type alone. */
+  image?: { src: string; alt: string };
+
+  /** Related service/industry nav ids, for cross-linking back into the service pages. */
+  serviceIds?: string[];
+  industryId?: string;
+}
