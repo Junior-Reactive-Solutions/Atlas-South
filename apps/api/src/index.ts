@@ -6,6 +6,7 @@ import compression from 'compression';
 import swaggerUi from 'swagger-ui-express';
 import { swaggerSpec, swaggerUiOptions } from './lib/swagger.js';
 import { env } from './lib/env.js';
+import { corsOptions } from './lib/cors.js';
 import { generalApiLimiter, loginLimiter, adminApiLimiter } from './middleware/rateLimiters.js';
 import { healthRouter } from './routes/health.js';
 import { enquiriesRouter } from './routes/enquiries.js';
@@ -135,12 +136,7 @@ app.use(
   }),
 );
 
-app.use(
-  cors({
-    origin: env.CORS_ALLOWED_ORIGIN,
-    credentials: true,
-  }),
-);
+app.use(cors(corsOptions));
 
 // Compression middleware — gzip responses for 20-50% bandwidth reduction
 // Set threshold to 860 bytes (default is 1 kB) to compress most responses
