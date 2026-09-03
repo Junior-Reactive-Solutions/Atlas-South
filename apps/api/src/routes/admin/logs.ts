@@ -13,12 +13,20 @@ import { requireDb } from '../../lib/prisma.js';
  * which is nobody's business but the operator's.
  */
 const router = Router();
-router.use(authMiddleware);
+
+// authMiddleware applied per-route below, not via a blanket `.use()` — this router is
+// mounted at the bare '/api/admin' prefix (index.ts), shared with several other admin
+// routers. A blanket `.use()` on a router sharing that prefix intercepts every request
+// under it, including ones this file has never heard of. See the fuller incident note in
+// routes/admin/applications.ts, which carried the same pattern and was the one that
+// actually broke the mustChangePassword exemption for /api/admin/users/change-password
+// (2026-09-02) — this file had the identical latent bug, just masked because
+// adminApplicationsRouter was mounted first and always intercepted before this one ran.
 
 /** Matches the AdminAuditLog route's cap — enough to review, small enough to render. */
 const PAGE_SIZE = 200;
 
-router.get('/consent-log', async (_req: AuthRequest, res: Response) => {
+router.get('/consent-log', authMiddleware, async (_req: AuthRequest, res: Response) => {
   try {
     const db = requireDb();
 
@@ -44,7 +52,7 @@ router.get('/consent-log', async (_req: AuthRequest, res: Response) => {
   }
 });
 
-router.get('/system-events', async (req: AuthRequest, res: Response) => {
+router.get('/system-events', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
     const db = requireDb();
 
