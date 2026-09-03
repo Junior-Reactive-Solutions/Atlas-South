@@ -1,7 +1,13 @@
 import { COMPANY, SITE_ORIGIN } from '@atlas-south/shared';
 import { env } from './env.js';
 import { logSystemEvent } from './systemLog.js';
-import { renderReplyEmail, renderConfirmationEmail, escapeHtml, type ReplyEmailTheme } from './emailThemes.js';
+import {
+  renderReplyEmail,
+  renderConfirmationEmail,
+  renderInternalNotificationEmail,
+  escapeHtml,
+  type ReplyEmailTheme,
+} from './emailThemes.js';
 
 /**
  * Email service — sends over Mailgun's HTTPS API rather than SMTP.
@@ -150,14 +156,27 @@ export interface EnquiryEmailData {
   message: string;
 }
 
-/** Two-column row for the internal notification tables. Escapes the value; the label is
- * always a literal from this file. `raw` is for values already built as safe HTML. */
-function row(label: string, value: string, raw = false): string {
-  return `
-    <tr style="border-bottom:1px solid #eee;">
-      <td style="padding:8px;font-weight:bold;width:150px;vertical-align:top;">${label}</td>
-      <td style="padding:8px;">${raw ? value : escapeHtml(value)}</td>
-    </tr>`;
+/**
+ * Value builders for the internal-notification rows. Each returns HTML, so each is
+ * responsible for escaping whatever it interpolates — every one of these carries a value
+ * typed by a member of the public into a form.
+ *
+ * `encodeURI` guards the href (where the risk is a crafted scheme or a broken URL) and
+ * `escapeHtml` guards the visible text (where the risk is markup injection); they are not
+ * interchangeable, which is why both appear on the same line.
+ */
+function mailtoLink(email: string): string {
+  return `<a href="mailto:${encodeURI(email)}" style="color:#0062D6;">${escapeHtml(email)}</a>`;
+}
+
+function telLink(phone: string): string {
+  return `<a href="tel:${encodeURI(phone)}" style="color:#0062D6;">${escapeHtml(phone)}</a>`;
+}
+
+/** Escapes first, THEN converts newlines — doing it the other way round would let a
+ * submitted `<br>` survive escaping and inject markup. */
+function multilineHtml(text: string): string {
+  return escapeHtml(text).replace(/\n/g, '<br />');
 }
 
 /**
@@ -199,18 +218,18 @@ export async function sendEnquiryAdminNotification(data: EnquiryEmailData & { en
   await sendMail({
     to: ADMIN_EMAIL,
     subject: `New enquiry: ${data.fullName} — ${data.serviceId}`,
-    html: `
-      <h2>New Enquiry Received</h2>
-      <table style="width:100%;border-collapse:collapse;">
-        ${row('Name:', data.fullName)}
-        ${row('Email:', `<a href="mailto:${encodeURI(data.email)}">${escapeHtml(data.email)}</a>`, true)}
-        ${row('Phone:', `<a href="tel:${encodeURI(data.phone)}">${escapeHtml(data.phone)}</a>`, true)}
-        ${row('Service:', data.serviceId)}
-        ${row('Message:', escapeHtml(data.message).replace(/\n/g, '<br>'), true)}
-      </table>
-      <hr />
-      <p style="font-size:12px;color:#666;">Enquiry ID: ${escapeHtml(data.enquiryId)}</p>
-    `,
+    html: renderInternalNotificationEmail({
+      title: 'New enquiry received',
+      intro: 'A new enquiry has come in through the website. Details below.',
+      rows: [
+        { label: 'Name', valueHtml: escapeHtml(data.fullName) },
+        { label: 'Email', valueHtml: mailtoLink(data.email) },
+        { label: 'Phone', valueHtml: telLink(data.phone) },
+        { label: 'Service', valueHtml: escapeHtml(data.serviceId) },
+        { label: 'Message', valueHtml: multilineHtml(data.message) },
+      ],
+      reference: `Enquiry ID: ${data.enquiryId}`,
+    }),
   });
 }
 
@@ -279,27 +298,27 @@ export async function sendJobApplicationAdminNotification(
     to: CAREERS_EMAIL,
     subject: `New application: ${data.fullName} — ${data.roleTitle}`,
     attachments: data.attachments,
-    html: `
-      <h2>New Job Application Received</h2>
-      <table style="width:100%;border-collapse:collapse;">
-        ${row('Name:', data.fullName)}
-        ${row('Email:', `<a href="mailto:${encodeURI(data.email)}">${escapeHtml(data.email)}</a>`, true)}
-        ${row('Phone:', `<a href="tel:${encodeURI(data.phone)}">${escapeHtml(data.phone)}</a>`, true)}
-        ${row('Position:', data.roleTitle)}
-        ${data.cvFileName ? row('CV:', `${escapeHtml(data.cvFileName)} — attached`, true) : ''}
-        ${data.coverLetterFileName ? row('Cover letter:', `${escapeHtml(data.coverLetterFileName)} — attached`, true) : ''}
-        ${data.coverLetter ? row('Note:', escapeHtml(data.coverLetter).replace(/\n/g, '<br>'), true) : ''}
-      </table>
-      <p style="font-size:13px;color:#444;margin-top:16px;">
-        ${
-          hasFiles
-            ? 'The documents are attached to this email. They are not stored on the server, so keep this message — it is the only copy.'
-            : 'No documents were attached to this application.'
-        }
-      </p>
-      <hr />
-      <p style="font-size:12px;color:#666;">Application ID: ${escapeHtml(data.applicationId)}</p>
-    `,
+    html: renderInternalNotificationEmail({
+      title: 'New job application received',
+      intro: 'A candidate has applied through the careers pages. Details below.',
+      rows: [
+        { label: 'Name', valueHtml: escapeHtml(data.fullName) },
+        { label: 'Email', valueHtml: mailtoLink(data.email) },
+        { label: 'Phone', valueHtml: telLink(data.phone) },
+        { label: 'Position', valueHtml: escapeHtml(data.roleTitle) },
+        ...(data.cvFileName
+          ? [{ label: 'CV', valueHtml: `${escapeHtml(data.cvFileName)} — attached` }]
+          : []),
+        ...(data.coverLetterFileName
+          ? [{ label: 'Cover letter', valueHtml: `${escapeHtml(data.coverLetterFileName)} — attached` }]
+          : []),
+        ...(data.coverLetter ? [{ label: 'Note', valueHtml: multilineHtml(data.coverLetter) }] : []),
+      ],
+      footnote: hasFiles
+        ? 'The documents are attached to this email. They are not stored on the server, so keep this message — it is the only copy.'
+        : 'No documents were attached to this application.',
+      reference: `Application ID: ${data.applicationId}`,
+    }),
   });
 }
 

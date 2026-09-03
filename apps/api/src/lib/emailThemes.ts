@@ -260,3 +260,65 @@ export function renderConfirmationEmail(data: ConfirmationEmailData): string {
     : `<p style="margin:0;font-size:12px;color:${BRAND.slate};">This is an automated confirmation — no reply needed.</p>`;
   return lightEditorialShell(body, cta);
 }
+
+/** One label/value row in an internal notification. `valueHtml` is inserted as-is, so the
+ * caller must pass either a literal from its own source or something already escaped. */
+export interface NotificationRow {
+  label: string;
+  valueHtml: string;
+}
+
+export interface InternalNotificationData {
+  /** e.g. "New enquiry received" — the headline at the top of the message. */
+  title: string;
+  /** One line under the title saying what this is and what to do with it. */
+  intro: string;
+  rows: NotificationRow[];
+  /** Optional closing note — e.g. the warning that attachments are the only copy. */
+  footnote?: string;
+  /** Small monospace-ish reference line at the bottom, e.g. "Enquiry ID: abc123". */
+  reference?: string;
+}
+
+/**
+ * The internal notification emails — a new enquiry landing in the team inbox, a new job
+ * application landing in the careers inbox.
+ *
+ * Added 2026-09-03: these two were the last unthemed messages the system sent. Every
+ * other email (admin replies, both automated confirmations) had been moved onto the
+ * client's chosen 'light-editorial' theme, but the internal ones were still raw
+ * `<h2>` + bare `<table>` markup with no logo, no brand colour and no footer — so the
+ * team's own inbox was the one place Atlas South mail didn't look like Atlas South.
+ *
+ * Deliberately the same `lightEditorialShell` as everything else rather than a separate
+ * "internal" style: the client's instruction was that every email carry the theme, and a
+ * second template would be one more thing to keep in sync the next time the brand moves.
+ * The content differs (a scannable label/value table rather than prose), the shell does not.
+ */
+export function renderInternalNotificationEmail(data: InternalNotificationData): string {
+  const rows = data.rows
+    .map(
+      (row) => `
+      <tr>
+        <td style="padding:10px 12px 10px 0;font-size:13px;font-weight:bold;color:${BRAND.slate};width:150px;vertical-align:top;border-bottom:1px solid ${BRAND.border};">${escapeHtml(row.label)}</td>
+        <td style="padding:10px 0;font-size:14px;color:${BRAND.ink};border-bottom:1px solid ${BRAND.border};">${row.valueHtml}</td>
+      </tr>`,
+    )
+    .join('');
+
+  const body = `
+    <p style="margin:0 0 8px;font-size:20px;font-weight:bold;color:${BRAND.ink};">${escapeHtml(data.title)}</p>
+    <p style="margin:0 0 20px;font-size:14px;line-height:1.6;color:${BRAND.slate};">${escapeHtml(data.intro)}</p>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">${rows}</table>
+    ${
+      data.footnote
+        ? `<p style="margin:20px 0 0;padding:12px 14px;background:${BRAND.canvasTint};border-left:3px solid ${BRAND.accentBlue};font-size:13px;line-height:1.6;color:${BRAND.ink};">${escapeHtml(data.footnote)}</p>`
+        : ''
+    }`;
+
+  const cta = data.reference
+    ? `<p style="margin:0;font-size:12px;color:${BRAND.slate};">${escapeHtml(data.reference)}</p>`
+    : '';
+
+  return lightEditorialShell(body, cta);
+}
