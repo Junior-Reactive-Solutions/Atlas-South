@@ -105,6 +105,24 @@ export function AdminEnquiries() {
     }
   };
 
+  /**
+   * Permanently removes an enquiry. Confirms first, because unlike a status change this
+   * cannot be undone — the row holds the enquirer's name, email and phone, and the delete
+   * is a hard one precisely so an erasure request actually erases.
+   */
+  const deleteEnquiry = async (id: string, name: string) => {
+    if (!window.confirm(`Permanently delete the enquiry from ${name}? This cannot be undone.`)) return;
+    try {
+      const response = await authFetch(`/api/admin/enquiries/${id}`, { method: 'DELETE' });
+      if (response.ok) {
+        setEnquiries((current) => current.filter((e) => e.id !== id));
+        setSelectedEnquiry((current) => (current && current.id === id ? null : current));
+      }
+    } catch (error) {
+      console.error('Error deleting enquiry:', error);
+    }
+  };
+
   // Group enquiries by status
   const grouped = {
     new: enquiries.filter((e) => e.status === 'new'),
@@ -261,12 +279,24 @@ export function AdminEnquiries() {
         }
         footer={
           selectedEnquiry && (
-            <ReplyPanel
-              endpoint={`/api/admin/enquiries/${selectedEnquiry.id}/reply`}
-              recipientFirstName={selectedEnquiry.fullName.split(' ')[0]}
-              recipientEmail={selectedEnquiry.email}
-              defaultSubject="Re: your enquiry with Atlas South"
-            />
+            <div className="space-y-3">
+              <ReplyPanel
+                endpoint={`/api/admin/enquiries/${selectedEnquiry.id}/reply`}
+                recipientFirstName={selectedEnquiry.fullName.split(' ')[0]}
+                recipientEmail={selectedEnquiry.email}
+                defaultSubject="Re: your enquiry with Atlas South"
+              />
+              {/* Sits below the reply panel and styled as a quiet text button, not a
+                  primary one: replying is the common action, deleting is the rare and
+                  irreversible one, so the visual weight should not invite a stray click. */}
+              <button
+                type="button"
+                onClick={() => deleteEnquiry(selectedEnquiry.id, selectedEnquiry.fullName)}
+                className="text-xs font-medium text-red-700 hover:underline"
+              >
+                Delete this enquiry permanently
+              </button>
+            </div>
           )
         }
       >

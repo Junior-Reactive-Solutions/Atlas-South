@@ -45,6 +45,30 @@ export function AdminApplications() {
     fetchApplications();
   }, [authFetch]);
 
+  /**
+   * Permanently removes an application record. The confirmation spells out that the CV is
+   * not stored here — since 2026-09-02 documents are emailed to the careers inbox and
+   * never written to the server, so a full erasure request means deleting this row AND
+   * that email. Saying so at the point of deletion is the only place someone will read it.
+   */
+  const deleteApplication = async (id: string, name: string) => {
+    if (
+      !window.confirm(
+        `Permanently delete the application from ${name}? This cannot be undone.\n\nNote: the CV and cover letter are not stored here — they were emailed to the careers inbox. Delete that email too if this is an erasure request.`,
+      )
+    )
+      return;
+    try {
+      const response = await authFetch(`/api/admin/applications/${id}`, { method: 'DELETE' });
+      if (response.ok) {
+        setApplications((current) => current.filter((a) => a.id !== id));
+        setSelected((current) => (current && current.id === id ? null : current));
+      }
+    } catch (error) {
+      console.error('Error deleting application:', error);
+    }
+  };
+
   const root = useAnimationScope(
     (self) => {
       self?.add('reveal', () => {
@@ -143,12 +167,25 @@ export function AdminApplications() {
         }
         footer={
           selected && (
-            <ReplyPanel
-              endpoint={`/api/admin/applications/${selected.id}/reply`}
-              recipientFirstName={selected.fullName.split(' ')[0]}
-              recipientEmail={selected.email}
-              defaultSubject={`Re: your application — ${selected.roleTitle ?? 'Atlas South Careers'}`}
-            />
+            <div className="space-y-3">
+              <ReplyPanel
+                endpoint={`/api/admin/applications/${selected.id}/reply`}
+                recipientFirstName={selected.fullName.split(' ')[0]}
+                recipientEmail={selected.email}
+                defaultSubject={`Re: your application — ${selected.roleTitle ?? 'Atlas South Careers'}`}
+              />
+              {/* Quiet text button, not a primary one — replying is the routine action and
+                  this is the irreversible one. The warning names the email explicitly
+                  because the CV lives there, not here: deleting this row does not remove
+                  the documents. */}
+              <button
+                type="button"
+                onClick={() => deleteApplication(selected.id, selected.fullName)}
+                className="text-xs font-medium text-red-700 hover:underline"
+              >
+                Delete this application permanently
+              </button>
+            </div>
           )
         }
       >

@@ -298,17 +298,6 @@ export function Footer() {
               Cookie settings
             </button>
           </div>
-          <p>
-            Site by{' '}
-            <a
-              href="https://jrcom.vercel.app/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-accent-blue"
-            >
-              Junior Reactive Solutions
-            </a>
-          </p>
         </div>
       </div>
 
