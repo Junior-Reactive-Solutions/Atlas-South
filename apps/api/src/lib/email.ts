@@ -34,6 +34,20 @@ const transporter: Transporter | null =
         // most common way an SMTP setup fails with an opaque handshake error.
         secure: env.SMTP_PORT === 465,
         auth: { user: env.SMTP_USER, pass: env.SMTP_PASS },
+        // The host's own control panel documents SMTP_HOST as the correct outgoing
+        // server (confirmed 2026-09-03), but its shared mail infrastructure presents a
+        // certificate for '*.managed-vps.net' — not for the vanity 'mail.<domain>' hostname
+        // every tenant is told to use. Without this, every send failed with "Hostname/IP
+        // does not match certificate's altnames" before a message was ever transmitted.
+        //
+        // `servername` overrides ONLY the identity Node checks the presented cert against
+        // for TLS's hostname-verification step (SNI) — it does not disable certificate
+        // validation. The chain of trust, expiry, and revocation are still checked
+        // normally; this just tells Node "verify against the name the cert actually
+        // carries" instead of the DNS name we dialled. That is a deliberately narrower
+        // fix than `rejectUnauthorized: false`, which would accept ANY certificate
+        // (including an attacker's) and was not used for that reason.
+        tls: { servername: 'managed-vps.net' },
       })
     : null;
 
