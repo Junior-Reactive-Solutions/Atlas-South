@@ -1,58 +1,42 @@
-import nodemailer, { type Transporter } from 'nodemailer';
 import { COMPANY, SITE_ORIGIN } from '@atlas-south/shared';
 import { env } from './env.js';
 import { logSystemEvent } from './systemLog.js';
 import { renderReplyEmail, renderConfirmationEmail, escapeHtml, type ReplyEmailTheme } from './emailThemes.js';
 
 /**
- * Email service — sends over SMTP through the domain's own mail server.
+ * Email service — sends over Mailgun's HTTPS API rather than SMTP.
  *
- * WHY SMTP AND NOT A THIRD-PARTY API (changed 2026-09-02, client decision):
- * atlassouthes.com publishes SPF ending in `-all` (hard fail) authorising only the mail
- * server's own IP, and DMARC `p=reject`. Mail sent from anywhere else — Resend included —
- * fails SPF, has no aligned DKIM, and is REJECTED by the recipient rather than
- * spam-foldered. Sending from the server the domain already authorises means SPF, DKIM and
- * DMARC all pass with no DNS changes at all. See docs/build/17-DOMAIN-CUTOVER-RUNBOOK.md.
+ * WHY NOT SMTP (changed 2026-09-03, superseding the 2026-09-02 SMTP-only design — see git
+ * history on this file): Render's free web services block ALL outbound traffic to SMTP
+ * ports (25/465/587), full stop
+ * (https://render.com/changelog/free-web-services-will-no-longer-allow-outbound-traffic-to-smtp-ports).
+ * That made the previous design — sending via the domain's own mail server, chosen
+ * specifically to satisfy SPF `-all`/DMARC `p=reject` without any DNS changes — genuinely
+ * undeliverable from this host: every send failed with a connection timeout regardless of
+ * SMTP_HOST/PORT/TLS config, because the platform itself refused the outbound socket
+ * before a byte could be sent. Confirmed by testing raw TCP connectivity to the mail
+ * server from outside Render (succeeded) versus from the deployed service (timed out).
+ *
+ * Mailgun's API is a plain HTTPS POST, which Render does not block — the same reason the
+ * rest of this app's outbound calls (Neon, the frontend itself) work fine.
+ *
+ * WHY THIS DOESN'T WEAKEN SPF/DMARC: Mailgun sends via a dedicated subdomain
+ * (MAILGUN_DOMAIN, e.g. `mg.atlassouthes.com`) with its own SPF/DKIM records — entirely
+ * separate from the apex domain's existing mail server records (A/MX/DKIM/DMARC), which
+ * are untouched. The visible From address can still be `noreply@atlassouthes.com` (the
+ * business domain) even though Mailgun's DKIM signature is for `mg.atlassouthes.com`:
+ * DMARC's default relaxed alignment accepts a DKIM domain that shares the From address's
+ * organizational domain, which a subdomain does.
  *
  * Every send is best-effort: a mail failure must never break the request that triggered it
  * (an enquiry is already saved by then). Failures are recorded to the operations log so
  * they are visible in the admin panel rather than lost to stdout.
  */
 
-/**
- * Built once and reused — nodemailer pools connections, and rebuilding per send would
- * re-handshake TLS every time. Null when SMTP isn't configured, so a dev environment or a
- * half-provisioned deploy degrades to a logged warning instead of throwing on boot.
- */
-const transporter: Transporter | null =
-  env.SMTP_HOST && env.SMTP_USER && env.SMTP_PASS
-    ? nodemailer.createTransport({
-        host: env.SMTP_HOST,
-        port: env.SMTP_PORT,
-        // 465 is implicit TLS; 587 upgrades via STARTTLS. Derived from the port rather
-        // than configured separately, because getting the two out of step is the single
-        // most common way an SMTP setup fails with an opaque handshake error.
-        secure: env.SMTP_PORT === 465,
-        auth: { user: env.SMTP_USER, pass: env.SMTP_PASS },
-        // The host's own control panel documents SMTP_HOST as the correct outgoing
-        // server (confirmed 2026-09-03), but its shared mail infrastructure presents a
-        // certificate for '*.managed-vps.net' — not for the vanity 'mail.<domain>' hostname
-        // every tenant is told to use. Without this, every send failed with "Hostname/IP
-        // does not match certificate's altnames" before a message was ever transmitted.
-        //
-        // `servername` overrides ONLY the identity Node checks the presented cert against
-        // for TLS's hostname-verification step (SNI) — it does not disable certificate
-        // validation. The chain of trust, expiry, and revocation are still checked
-        // normally; this just tells Node "verify against the name the cert actually
-        // carries" instead of the DNS name we dialled. That is a deliberately narrower
-        // fix than `rejectUnauthorized: false`, which would accept ANY certificate
-        // (including an attacker's) and was not used for that reason.
-        tls: { servername: 'managed-vps.net' },
-      })
-    : null;
+const MAILGUN_CONFIGURED = Boolean(env.MAILGUN_API_KEY && env.MAILGUN_DOMAIN);
 
-/** The From header. Falls back to the SMTP user, which is always a real mailbox. */
-const SENDER_EMAIL = env.MAIL_FROM || env.SMTP_USER || `noreply@${COMPANY.domain}`;
+/** The From header. Falls back to noreply@ the business domain — always a plausible sender even unconfigured. */
+const SENDER_EMAIL = env.MAIL_FROM || `noreply@${COMPANY.domain}`;
 
 /** Where enquiry notifications go. */
 const ADMIN_EMAIL = env.ADMIN_EMAIL || `start@${COMPANY.domain}`;
@@ -83,26 +67,55 @@ async function sendMail(opts: {
   /** Set for mail a person is waiting on, so the failure reaches them not just the log. */
   rethrow?: boolean;
 }): Promise<boolean> {
-  if (!transporter) {
-    console.warn(`SMTP not configured — skipping email to ${opts.to}`);
+  if (!MAILGUN_CONFIGURED) {
+    console.warn(`Mailgun not configured — skipping email to ${opts.to}`);
     return false;
   }
 
+  // multipart/form-data, not JSON — Mailgun's send endpoint takes form fields and only
+  // accepts attachment bytes as file parts, which JSON can't carry. `attachment` (singular
+  // field name) is intentional and required for multiple files: Mailgun expects repeated
+  // `attachment` parts, not an array-style `attachments[]` name.
+  const form = new FormData();
+  form.set('from', SENDER_EMAIL);
+  form.set('to', opts.to);
+  form.set('subject', opts.subject);
+  form.set('html', opts.html);
+  for (const attachment of opts.attachments ?? []) {
+    // `new Uint8Array(buffer)` rather than passing the Buffer directly: Buffer's
+    // TypeScript type allows a SharedArrayBuffer-backed instance, which isn't assignable
+    // to BlobPart — wrapping it copies into a plain ArrayBuffer-backed view that is.
+    form.append(
+      'attachment',
+      new Blob([new Uint8Array(attachment.content)], { type: attachment.contentType }),
+      attachment.filename,
+    );
+  }
+
   try {
-    await transporter.sendMail({
-      from: SENDER_EMAIL,
-      to: opts.to,
-      subject: opts.subject,
-      html: opts.html,
-      attachments: opts.attachments,
+    // Basic auth with the literal username 'api' — not a placeholder, this is Mailgun's
+    // actual documented convention; the real secret is the password half (MAILGUN_API_KEY).
+    const auth = Buffer.from(`api:${env.MAILGUN_API_KEY}`).toString('base64');
+    const res = await fetch(`${env.MAILGUN_BASE_URL}/v3/${env.MAILGUN_DOMAIN}/messages`, {
+      method: 'POST',
+      headers: { Authorization: `Basic ${auth}` },
+      body: form,
     });
+
+    if (!res.ok) {
+      // Mailgun's error body is small JSON ({"message": "..."}) — safe to inline in the
+      // log, unlike a raw SMTP exception's stack trace.
+      const body = await res.text().catch(() => '');
+      throw new Error(`Mailgun ${res.status}: ${body.slice(0, 300)}`);
+    }
+
     return true;
   } catch (err) {
     logSystemEvent({
       level: 'error',
       source: 'api',
       event: 'email_send_failed',
-      message: err instanceof Error ? err.message : 'Unknown SMTP error',
+      message: err instanceof Error ? err.message : 'Unknown Mailgun error',
       // The recipient is deliberately NOT logged: it is a customer's or candidate's email
       // address, and the operations log is not a place for personal data. The subject is
       // enough to identify which send failed.

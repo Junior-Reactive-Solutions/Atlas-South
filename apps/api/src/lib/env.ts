@@ -28,17 +28,26 @@ const EnvSchema = z.object({
   JWT_REFRESH_SECRET: z.string().min(32).optional(),
   RESEND_API_KEY: z.string().optional(),
 
-  // SMTP — transactional mail goes through the domain's own mail server rather than a
-  // third party. That is not a preference: this domain publishes SPF ending in `-all`
-  // and DMARC `p=reject`, so mail sent from anywhere except this server is rejected
-  // outright by the recipient. Sending from the server itself is already authorised by
-  // the existing SPF/DKIM records — see docs/build/17-DOMAIN-CUTOVER-RUNBOOK.md §1.2.
-  // All optional so the API still boots without them; email degrades to a logged warning.
-  SMTP_HOST: z.string().optional(),
-  SMTP_PORT: z.coerce.number().int().positive().default(587),
-  SMTP_USER: z.string().optional(),
-  SMTP_PASS: z.string().optional(),
-  /** Full From header, e.g. `Atlas South <noreply@atlassouthes.com>`. */
+  // Mailgun HTTP API — replaced direct SMTP on 2026-09-03. Render's free web services
+  // block ALL outbound traffic to SMTP ports (25/465/587) as of their September 2025
+  // policy change (https://render.com/changelog/free-web-services-will-no-longer-allow-outbound-traffic-to-smtp-ports),
+  // which made the previous SMTP-to-the-domain's-own-mail-server design (see git history
+  // on this file, and docs/build/17-DOMAIN-CUTOVER-RUNBOOK.md §1.2) fundamentally
+  // undeliverable from this host — every send failed with a connection timeout no matter
+  // what was fixed on the DNS/TLS side, because the platform itself was blocking the
+  // connection before it could be made. HTTPS isn't blocked, so Mailgun's REST API (POST
+  // over HTTPS, see lib/email.ts) works where a raw SMTP socket cannot.
+  //
+  // Sends from a subdomain (mg.<domain>), not the apex, so Mailgun's own SPF/DKIM records
+  // stay fully isolated from the domain's existing mail server records (A/MX/DKIM/DMARC
+  // on the apex, untouched) — no risk of the two configurations colliding. All optional
+  // so the API still boots without them; email degrades to a logged warning.
+  MAILGUN_API_KEY: z.string().optional(),
+  /** The Mailgun sending domain, e.g. `mg.atlassouthes.com` — NOT the business domain. */
+  MAILGUN_DOMAIN: z.string().optional(),
+  /** Mailgun's US API host. Change to https://api.eu.mailgun.net if the domain is ever recreated in the EU region. */
+  MAILGUN_BASE_URL: z.string().default('https://api.mailgun.net'),
+  /** Full From header, e.g. `Atlas South <noreply@atlassouthes.com>`. Can stay on the business domain even though Mailgun sends via the mg. subdomain — DMARC's relaxed alignment (the default) accepts a DKIM signature from a subdomain of the From address's organizational domain. */
   MAIL_FROM: z.string().optional(),
   /** Where enquiry notifications land. */
   ADMIN_EMAIL: z.string().email().optional(),
