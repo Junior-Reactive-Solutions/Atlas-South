@@ -139,3 +139,50 @@ adminApplicationsRouter.post('/applications/:id/reply', authMiddleware, async (r
     return res.status(500).json({ error: 'Failed to send reply' });
   }
 });
+
+/**
+ * Permanently delete a job application.
+ *
+ * Same reasoning as the enquiry delete (routes/admin/enquiries.ts): UK GDPR's right to
+ * erasure applies squarely to an application record, which holds a candidate's name,
+ * email and phone number. Without this the only way to honour an erasure request was to
+ * edit the production database directly.
+ *
+ * It matters slightly more here than for enquiries. Candidate data is a category people
+ * are more likely to ask to have removed, and unsuccessful applications should not be kept
+ * indefinitely by default. Note that the CV and cover letter are NOT held here — since
+ * 2026-09-02 they are emailed to the careers inbox and never written to the server — so
+ * deleting this row removes the record, and clearing the documents means deleting that
+ * email. Anyone honouring a full erasure request needs to do both.
+ *
+ * A hard delete, for the same reason: a soft-deleted row still holds the personal data the
+ * request exists to remove. The audit log keeps the accountability trail without it.
+ */
+adminApplicationsRouter.delete('/applications/:id', authMiddleware, async (req: AuthRequest, res: Response) => {
+  try {
+    const db = requireDb();
+    const existing = await db.jobApplication.findUnique({
+      where: { id: req.params.id },
+      select: { id: true },
+    });
+
+    if (!existing) {
+      return res.status(404).json({ error: 'Application not found' });
+    }
+
+    await db.jobApplication.delete({ where: { id: req.params.id } });
+
+    await db.adminAuditLog.create({
+      data: {
+        event: `application_deleted:${req.params.id}`,
+        ip: req.ip ?? 'unknown',
+        adminUserId: req.adminId,
+      },
+    });
+
+    return res.json({ ok: true });
+  } catch (error) {
+    console.error('Error deleting application:', error);
+    return res.status(500).json({ error: 'Failed to delete application' });
+  }
+});

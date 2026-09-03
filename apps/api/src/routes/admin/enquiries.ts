@@ -131,4 +131,51 @@ router.post('/:id/reply', async (req: AuthRequest, res: Response) => {
   }
 });
 
+/**
+ * Permanently delete an enquiry.
+ *
+ * There was no way to remove an enquiry before this — the table only ever grew. That is a
+ * gap with two real consequences, not just untidiness:
+ *
+ *   1. UK GDPR gives a data subject the right to erasure. An enquiry record holds a name,
+ *      email address and phone number typed in by a member of the public. Without this
+ *      endpoint, honouring an erasure request meant someone editing the production
+ *      database by hand.
+ *   2. Spam and test submissions accumulate in the same list the team works from, so the
+ *      real leads get harder to see.
+ *
+ * A hard delete, deliberately. A soft-deleted row still holds the personal data an erasure
+ * request exists to remove, so "hidden but retained" would defeat the main reason this
+ * exists. The audit log records that a deletion happened and who did it — the event id
+ * keeps the accountability trail without keeping the personal data.
+ */
+router.delete('/:id', async (req: AuthRequest, res: Response) => {
+  try {
+    const db = requireDb();
+    const existing = await db.enquiry.findUnique({
+      where: { id: req.params.id },
+      select: { id: true },
+    });
+
+    if (!existing) {
+      return res.status(404).json({ error: 'Enquiry not found' });
+    }
+
+    await db.enquiry.delete({ where: { id: req.params.id } });
+
+    await db.adminAuditLog.create({
+      data: {
+        event: `enquiry_deleted:${req.params.id}`,
+        ip: req.ip ?? 'unknown',
+        adminUserId: req.adminId,
+      },
+    });
+
+    res.json({ ok: true });
+  } catch (error) {
+    console.error('Error deleting enquiry:', error);
+    res.status(500).json({ error: 'Failed to delete enquiry' });
+  }
+});
+
 export default router;
