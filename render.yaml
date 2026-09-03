@@ -38,7 +38,18 @@ services:
     # "Could not find a declaration file for module 'express'", which points nowhere near the
     # real cause. Belt-and-braces with the repo's .npmrc (`include=dev`), which covers any
     # environment that doesn't use this file.
-    buildCommand: npm ci --include=dev && npm run build --workspace=apps/api && npx prisma migrate deploy --schema=apps/api/prisma/schema.prisma
+    # `seed:missing-content` runs last, after the schema is up to date. It is INSERT-ONLY —
+    # it creates ContentPage rows for pages that exist in the code but not in the database,
+    # and skips every slug that already has a row, so it can never overwrite an edit made
+    # through the admin panel. That is what makes it safe on every deploy, unlike
+    # `seed:content`, which overwrites published content and must never run post-launch.
+    #
+    # It exists because nothing previously kept the two in step: `rail-facilities` shipped
+    # with a route, a nav entry and no content record and rendered "Page not found" for a
+    # week, and seven other pages were invisible in Admin → Content because they had no row.
+    # Running this on deploy means a page added to the code from now on cannot silently go
+    # missing from the database.
+    buildCommand: npm ci --include=dev && npm run build --workspace=apps/api && npx prisma migrate deploy --schema=apps/api/prisma/schema.prisma && npm run seed:missing-content --workspace=apps/api
     startCommand: npm run start --workspace=apps/api
     healthCheckPath: /api/health
     envVars:
