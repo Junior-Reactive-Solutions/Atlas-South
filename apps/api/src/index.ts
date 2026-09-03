@@ -13,6 +13,8 @@ import { enquiriesRouter } from './routes/enquiries.js';
 import { eventsRouter } from './routes/events.js';
 import { telemetryRouter } from './routes/telemetry.js';
 import { logSystemEvent } from './lib/systemLog.js';
+import { prisma } from './lib/prisma.js';
+import { seedMissingContentOnBoot } from './lib/seedMissingContent.js';
 import { adminLogsRouter } from './routes/admin/logs.js';
 import { contentRouter } from './routes/content.js';
 import { visibilityRouter } from './routes/visibility.js';
@@ -213,4 +215,10 @@ app.use((err: unknown, req: express.Request, res: express.Response, _next: expre
 app.listen(env.PORT, () => {
   // eslint-disable-next-line no-console
   console.log(`Atlas South API listening on port ${env.PORT} (${env.NODE_ENV})`);
+
+  // Fill in any page that exists in the code but has no database row — see the note in
+  // lib/seedMissingContent.ts. Deliberately after listen and deliberately not awaited: it
+  // is insert-only, so it cannot overwrite an admin's edits, and it never throws, so a slow
+  // or unreachable database delays no request and takes nothing down.
+  seedMissingContentOnBoot(prisma);
 });
