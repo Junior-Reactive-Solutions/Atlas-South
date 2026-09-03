@@ -3,7 +3,7 @@ import { CoverageMap } from '../../components/home/CoverageMap';
 import { SectionHeading } from '../../components/sections';
 import { Seo } from '../../components/seo/Seo.js';
 import { Icon } from '@atlas-south/design-system';
-import { COMPANY, PAGE_SEO } from '@atlas-south/shared';
+import { COMPANY, PAGE_SEO, ORGANIZATION_ID, SITE_ORIGIN } from '@atlas-south/shared';
 import { trackPhoneClick, trackWhatsAppClick } from '../../lib/analytics.js';
 
 export function Contact() {
@@ -14,10 +14,12 @@ export function Contact() {
         jsonLd={{
           '@context': 'https://schema.org',
           '@type': 'LocalBusiness',
+          // Shared with the footer and homepage nodes — one business, described once.
+          '@id': ORGANIZATION_ID,
           name: COMPANY.name,
           telephone: COMPANY.phone.tel,
           email: COMPANY.email,
-          url: `https://${COMPANY.domain}`,
+          url: SITE_ORIGIN,
           address: {
             '@type': 'PostalAddress',
             streetAddress: `${COMPANY.address.line1}, ${COMPANY.address.line2}`,

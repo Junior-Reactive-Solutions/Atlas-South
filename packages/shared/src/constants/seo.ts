@@ -51,6 +51,22 @@ import { COMPANY } from './company.js';
 export const SITE_ORIGIN = `https://${COMPANY.domain}`;
 
 /**
+ * The single canonical identifier for Atlas South as a business entity in structured data.
+ *
+ * Every page that emits a LocalBusiness/Organization node must carry THIS `@id`. Without
+ * it, each page describes what looks like a separate company that happens to share a name:
+ * the homepage said one thing, the contact page another, the footer a third, and two of
+ * them used a different URL host (`atlassouthes.com` vs `www.atlassouthes.com`) so they
+ * could not even be reconciled by URL. A shared `@id` is what tells a search engine these
+ * are all the same entity, and it is what lets the site's structured data reinforce a
+ * single Google Business Profile rather than compete with it.
+ *
+ * The fragment (#organization) is conventional and deliberate: it makes the identifier a
+ * node reference rather than a page URL, so nothing tries to fetch it.
+ */
+export const ORGANIZATION_ID = `${SITE_ORIGIN}/#organization`;
+
+/**
  * The call-to-action closing service, industry and area descriptions.
  *
  * Built from COMPANY rather than typed into each string — the previous site carried two
