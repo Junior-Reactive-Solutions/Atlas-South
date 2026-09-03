@@ -4,7 +4,15 @@ import { QuoteForm } from '../components/home/QuoteForm';
 import { CoverageMap } from '../components/home/CoverageMap';
 import { Seo } from '../components/seo/Seo.js';
 import { useContentPage } from '../hooks/useContentPage';
-import { HARD_SERVICES, SOFT_SERVICES, INDUSTRIES, COMPANY, PAGE_SEO } from '@atlas-south/shared';
+import {
+  HARD_SERVICES,
+  SOFT_SERVICES,
+  INDUSTRIES,
+  COMPANY,
+  PAGE_SEO,
+  ORGANIZATION_ID,
+  SITE_ORIGIN,
+} from '@atlas-south/shared';
 import { Icon } from '@atlas-south/design-system';
 import { useVisibleNavItems } from '../hooks/useNavVisibility.js';
 import {
@@ -135,10 +143,13 @@ export function Home() {
         jsonLd={{
           '@context': 'https://schema.org',
           '@type': 'LocalBusiness',
+          // Same @id as the footer's node, so search engines merge the two into one
+          // business rather than reading them as two companies with the same name.
+          '@id': ORGANIZATION_ID,
           name: COMPANY.name,
           telephone: COMPANY.phone.tel,
           email: COMPANY.email,
-          url: `https://${COMPANY.domain}`,
+          url: SITE_ORIGIN,
           address: {
             '@type': 'PostalAddress',
             streetAddress: `${COMPANY.address.line1}, ${COMPANY.address.line2}`,

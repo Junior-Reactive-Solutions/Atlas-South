@@ -2,7 +2,7 @@ import { Icon, type IconName } from '@atlas-south/design-system';
 import { QuoteForm } from '../home/QuoteForm';
 import { Seo } from '../seo/Seo.js';
 import { Markdown } from '../content/Markdown.js';
-import { COMPANY } from '@atlas-south/shared';
+import { ORGANIZATION_ID } from '@atlas-south/shared';
 import {
   PhotoHero,
   SectionHeading,
@@ -133,12 +133,11 @@ export function ServiceDetailPage({
             '@type': 'Service',
             name: title,
             description: heroDescription,
-            provider: {
-              '@type': 'LocalBusiness',
-              name: COMPANY.name,
-              telephone: COMPANY.phone.tel,
-              url: `https://${COMPANY.domain}`,
-            },
+            // A reference to the business entity defined in the footer, not a fresh
+            // description of it. Re-stating name/phone/url here created a second,
+            // unlinked company node on every service page — 12 near-duplicate businesses
+            // competing with the real one instead of 12 services pointing at it.
+            provider: { '@id': ORGANIZATION_ID },
             areaServed: 'London and the South East',
           },
           ...(faqs.length > 0
