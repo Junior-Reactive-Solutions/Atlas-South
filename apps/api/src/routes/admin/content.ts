@@ -40,6 +40,68 @@ router.get('/', async (req: AuthRequest, res: Response) => {
   }
 });
 
+/**
+ * Slug rules for a created article. This value becomes a public URL segment
+ * (/insights/<slug>), so it is constrained rather than sanitised: lowercase letters,
+ * digits and single hyphens only. Rejecting a bad slug outright is safer than silently
+ * rewriting one, which would leave the author looking at a URL they didn't choose.
+ */
+const ARTICLE_SLUG = z
+  .string()
+  .trim()
+  .min(3)
+  .max(80)
+  .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'Use lowercase letters, numbers and single hyphens only');
+
+const CreateArticleSchema = z.object({
+  slug: ARTICLE_SLUG,
+  title: z.string().trim().min(3).max(200),
+});
+
+/**
+ * Create a new article page.
+ *
+ * Restricted to `article` and nothing else, deliberately. Every other page type is seeded
+ * from code and bound to a route that already exists in the frontend router — letting this
+ * endpoint create a `service` row would produce a page the router has no route for, or
+ * shadow one that it does. Articles are the only type designed to be created at runtime,
+ * because they are the only type the client authors themselves.
+ *
+ * Created as a draft with empty content: publishing is a separate, explicit action
+ * (POST /:slug/publish), so a new article cannot reach the public site by being created.
+ */
+router.post('/', async (req: AuthRequest, res: Response) => {
+  try {
+    const { slug, title } = CreateArticleSchema.parse(req.body);
+
+    const existing = await prisma.contentPage.findUnique({ where: { slug } });
+    if (existing) {
+      return res.status(409).json({ error: `A page with the slug "${slug}" already exists.` });
+    }
+
+    const page = await prisma.contentPage.create({
+      data: {
+        slug,
+        type: 'article',
+        path: `/insights/${slug}`,
+        status: 'draft',
+        // Title only. The rest is filled in through the editor — seeding placeholder body
+        // text here would be exactly the fabricated-content failure this content type's
+        // documentation exists to prevent.
+        draftData: { title } as Prisma.InputJsonValue,
+      },
+    });
+
+    res.status(201).json(page);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ error: 'Invalid request', details: error.flatten() });
+    }
+    console.error('Error creating article:', error);
+    res.status(500).json({ error: 'Failed to create article' });
+  }
+});
+
 // Get one page's full draft + published data — for the admin edit view.
 router.get('/:slug', async (req: AuthRequest, res: Response) => {
   try {
@@ -139,6 +201,55 @@ router.post('/:slug/discard', async (req: AuthRequest, res: Response) => {
   } catch (error) {
     console.error('Error discarding content page draft:', error);
     res.status(500).json({ error: 'Failed to discard draft' });
+  }
+});
+
+/**
+ * Delete an article.
+ *
+ * Restricted to `article` for the mirror of the reason create is: every other page type is
+ * seeded from code and has a route in the frontend expecting it to exist, so deleting one
+ * would break a live page with no way back short of re-seeding. Articles are created at
+ * runtime, so they must also be removable at runtime — otherwise a typo'd slug is
+ * permanent.
+ *
+ * A hard delete, not a soft one, and that is the right call here: an unpublished article
+ * has no public URL to preserve, and a published one being taken down is usually taken
+ * down for a reason (a wrong claim, a legal problem) where leaving a hidden copy in the
+ * table is a liability rather than a safety net. The admin audit log records that it
+ * happened, and who did it.
+ */
+router.delete('/:slug', async (req: AuthRequest, res: Response) => {
+  try {
+    const existing = await prisma.contentPage.findUnique({
+      where: { slug: req.params.slug },
+      select: { slug: true, type: true },
+    });
+
+    if (!existing) {
+      return res.status(404).json({ error: 'Content page not found' });
+    }
+
+    if (existing.type !== 'article') {
+      return res.status(403).json({
+        error: 'Only articles can be deleted. Every other page type is part of the site structure — hide it from the Visibility screen instead.',
+      });
+    }
+
+    await prisma.contentPage.delete({ where: { slug: req.params.slug } });
+
+    await prisma.adminAuditLog.create({
+      data: {
+        event: `article_deleted:${existing.slug}`,
+        ip: req.ip ?? 'unknown',
+        adminUserId: req.adminId,
+      },
+    });
+
+    res.json({ ok: true });
+  } catch (error) {
+    console.error('Error deleting article:', error);
+    res.status(500).json({ error: 'Failed to delete article' });
   }
 });
 

@@ -99,6 +99,10 @@ const CaseStudyDetail = lazy(() =>
   import('./pages/caseStudies/CaseStudyDetail.js').then((m) => ({ default: m.CaseStudyDetail }))
 );
 const CareerDetail = lazy(() => import('./pages/careers/CareerDetail.js').then((m) => ({ default: m.CareerDetail })));
+const Insights = lazy(() => import('./pages/insights/Insights.js').then((m) => ({ default: m.Insights })));
+const InsightArticle = lazy(() =>
+  import('./pages/insights/InsightArticle.js').then((m) => ({ default: m.InsightArticle }))
+);
 
 
 function stubRoutes(items: NavItem[], specRef: string) {
@@ -176,6 +180,8 @@ export default function App() {
           <Route path="/company/join-us/:slug" element={<CareerDetail />} />
           <Route path="/case-studies" element={<CaseStudies />} />
           <Route path="/case-studies/:slug" element={<CaseStudyDetail />} />
+          <Route path="/insights" element={<Insights />} />
+          <Route path="/insights/:slug" element={<InsightArticle />} />
 
           {/* Built-out service pages (Sprint 4+) — lazy-loaded for performance */}
           <Route path="/hard-services/plumbing" element={<Plumbing />} />

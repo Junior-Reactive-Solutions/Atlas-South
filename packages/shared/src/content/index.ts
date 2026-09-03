@@ -3,6 +3,7 @@ import { HOME_CONTENT, COMPANY_CONTENT, CAREERS_CONTENT } from './pages.js';
 
 export { EXTRACTED_PAGES, type ExtractedPage } from './extracted-pages.js';
 export { CASE_STUDIES, type CaseStudySummary } from './case-studies.js';
+export { ARTICLES, type ArticleSummary } from './articles.js';
 export { HOME_CONTENT, COMPANY_CONTENT, CAREERS_CONTENT } from './pages.js';
 
 /**

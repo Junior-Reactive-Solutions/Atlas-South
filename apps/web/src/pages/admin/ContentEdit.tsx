@@ -9,7 +9,7 @@ type JsonRecord = Record<string, unknown>;
 interface ContentPageDoc {
   id: string;
   slug: string;
-  type: 'service' | 'industry' | 'area' | 'home' | 'company' | 'careers' | 'caseStudy';
+  type: 'service' | 'industry' | 'area' | 'home' | 'company' | 'careers' | 'caseStudy' | 'article';
   path: string;
   status: 'draft' | 'published';
   draftData: JsonRecord;
@@ -486,6 +486,53 @@ export function AdminContentEdit() {
               { key: 'caption', label: 'Caption (optional)' },
             ]}
             newRow={{ src: '', alt: '', caption: '' }}
+          />
+        </>
+      )}
+      {page.type === 'article' && (
+        <>
+          {/* An article publishes under the company's name and gets read as its
+              professional position, so the labels below name that responsibility at the
+              point of authoring — same approach as the case study fields above. */}
+          <Field
+            label="Category (e.g. Compliance, Cleaning, Maintenance) — shown on the listing card"
+            value={str(fields.category)}
+            onChange={(v) => setFields((f) => ({ ...f, category: v }))}
+          />
+          <Field
+            label="Listing summary (1-2 lines shown on the card, and used as the search description if no SEO description is set)"
+            value={str(fields.summary)}
+            onChange={(v) => setFields((f) => ({ ...f, summary: v }))}
+          />
+          <Field
+            label="Author — a real person who has agreed to be credited. Leave blank rather than inventing a byline."
+            value={str(fields.author)}
+            onChange={(v) => setFields((f) => ({ ...f, author: v }))}
+          />
+          <Field
+            label="Author role (e.g. Operations Director)"
+            value={str(fields.authorRole)}
+            onChange={(v) => setFields((f) => ({ ...f, authorRole: v }))}
+          />
+          <Field
+            label="Date published (YYYY-MM-DD) — the date the article was actually written, not today's date on a re-publish"
+            value={str(fields.datePublished)}
+            onChange={(v) => setFields((f) => ({ ...f, datePublished: v }))}
+          />
+          <Field
+            label="Date last revised (YYYY-MM-DD) — set this when you substantively update an older article"
+            value={str(fields.dateModified)}
+            onChange={(v) => setFields((f) => ({ ...f, dateModified: v }))}
+          />
+          <Field
+            label="Read time in minutes (e.g. 4)"
+            value={str(fields.readMinutes)}
+            onChange={(v) => setFields((f) => ({ ...f, readMinutes: v }))}
+          />
+          <MarkdownField
+            label="Article body — supports ## headings, - bullet lists, **bold** and *italic*. Check every figure, date and regulation cited before publishing."
+            value={str(fields.body)}
+            onChange={(v) => setFields((f) => ({ ...f, body: v }))}
           />
         </>
       )}
