@@ -1403,5 +1403,92 @@ export const EXTRACTED_PAGES: ExtractedPage[] = [
         }
       ]
     }
+  },
+  // Added 2026-09-03. This page existed in the navigation and had a route and a component
+  // since 2026-08-26, but NO content record was ever written for it — not here, and not in
+  // the database. The result was a live nav link, in both the header and the footer, that
+  // rendered "Page not found": the content API 404s for an unpublished slug, and with no
+  // bundled fallback the component had nothing to fall back to.
+  //
+  // ⚠️ THIS COPY NEEDS CLIENT REVIEW. The original component comment cites a client PDF
+  // ("Atlas-South-Rail-Facilities.pdf") as the intended source; that file is not in the
+  // repo, so this describes the service in the same register as the other soft-service
+  // pages without reproducing it. It deliberately claims NO rail-specific credentials —
+  // no PTS, no Sentinel, no track-safety certification — because COMPANY.certifications
+  // lists only Gas Safe, Part P and SIA, and asserting a rail competency the company may
+  // not hold would be a claim a prospective client could act on. If Atlas South does hold
+  // those credentials, they should be added here deliberately, not assumed.
+  {
+    "slug": "rail-facilities",
+    "type": "service",
+    "path": "/soft-services/rail-facilities",
+    "data": {
+      "title": "Rail Facilities",
+      "seoTitle": "Rail Facilities Management & Station Cleaning",
+      "seoDescription": "Facilities services for rail environments across London and the South East — stations, platforms, depots and offices, worked around service timetables." + SEO_PHONE_CTA,
+      "icon": "train-front",
+      "heroDescription": "Cleaning and facilities services for rail environments — stations, platforms, depots and supporting offices — planned around service timetables rather than against them.",
+      "overview": "Rail sites are unlike other commercial environments in one decisive way: they rarely stop. Passenger flow, service timetables and engineering windows dictate when work can physically happen, and a schedule that ignores them either doesn't get done or gets in the way of operations.\n\nAtlas South delivers facilities services across rail environments — station concourses and platforms, depots and maintenance buildings, and the offices and welfare facilities that support them. Work is planned around the operating timetable, including night and early-morning shifts and engineering possessions, and teams work to the site's own access, induction and safety requirements.",
+      "features": [
+        {
+          "icon": "train-front",
+          "title": "Station & Platform Environments",
+          "description": "Concourses, platforms, waiting areas, footbridges and passenger facilities kept presentable through the operating day and reset outside it."
+        },
+        {
+          "icon": "toolbox",
+          "title": "Depots & Maintenance Buildings",
+          "description": "Cleaning and facilities support for depots, workshops and maintenance sheds, scheduled around the work taking place in them."
+        },
+        {
+          "icon": "clock",
+          "title": "Timetable-Led Scheduling",
+          "description": "Work planned around service patterns, quiet periods and engineering windows — including nights, early mornings and weekends — so operations aren't obstructed."
+        },
+        {
+          "icon": "shield-check",
+          "title": "Site Access & Induction Compliance",
+          "description": "Teams work to each site's own access control, induction and permit requirements, and to the health & safety regime the operator sets."
+        },
+        {
+          "icon": "users",
+          "title": "Welfare & Back-of-House Facilities",
+          "description": "Staff rooms, welfare facilities, offices and back-of-house areas maintained alongside the public-facing estate."
+        },
+        {
+          "icon": "clipboard-check",
+          "title": "Documented, Auditable Delivery",
+          "description": "Inspections, attendance and completed tasks recorded, so performance against the contract can be evidenced rather than asserted."
+        }
+      ],
+      "faqs": [
+        {
+          "question": "Can you work around our service timetable?",
+          "answer": "Yes — that constraint shapes the whole schedule. Work is planned around service patterns, quiet periods and engineering windows, including night, early-morning and weekend shifts where that is the only practical time to do it."
+        },
+        {
+          "question": "Which parts of a rail site do you cover?",
+          "answer": "Station concourses, platforms, waiting areas and passenger facilities; depots, workshops and maintenance buildings; and the offices, staff rooms and welfare facilities that support them."
+        },
+        {
+          "question": "How do you handle site access and safety requirements?",
+          "answer": "Teams work to each site's own access control, induction and permit-to-work requirements and to the operator's health & safety regime. Specific competency requirements should be confirmed with us against your site's rules before work is scoped."
+        },
+        {
+          "question": "Can this sit under a wider facilities management contract?",
+          "answer": "Yes. Rail facilities work can be delivered under the same single contract as your other hard and soft services rather than as a separate vendor relationship."
+        }
+      ],
+      "relatedServices": [
+        {
+          "label": "Facilities Management",
+          "path": "/soft-services/facilities-management"
+        },
+        {
+          "label": "Commercial Cleaning",
+          "path": "/soft-services/commercial-cleaning"
+        }
+      ]
+    }
   }
 ];

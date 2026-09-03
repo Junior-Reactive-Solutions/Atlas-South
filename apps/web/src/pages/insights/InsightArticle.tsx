@@ -47,7 +47,7 @@ export function InsightArticle() {
           publisher: {
             '@type': 'Organization',
             name: COMPANY.name,
-            logo: { '@type': 'ImageObject', url: `${SITE_ORIGIN}/atlas-south-logo.jpg` },
+            logo: { '@type': 'ImageObject', url: `${SITE_ORIGIN}/email-logo.png` },
           },
           // Each of these is emitted only when the author actually supplied it. A
           // structured-data date or byline that doesn't correspond to anything real is

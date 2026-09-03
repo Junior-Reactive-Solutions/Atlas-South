@@ -349,3 +349,112 @@ export async function sendAdminReply(data: AdminReplyData): Promise<boolean> {
     rethrow: true,
   });
 }
+
+export interface ChatLeadEmailData {
+  firstName: string;
+  lastName: string;
+  company: string;
+  phone: string;
+  preferredContact: 'email' | 'phone';
+  email?: string;
+  services: string;
+  message?: string;
+  /** The conversation as it actually happened, oldest first. Optional — an older client
+   * build, or a lead captured some other way, simply won't send one. */
+  transcript?: Array<{ from: 'bot' | 'user'; text: string }>;
+  leadId: string;
+}
+
+/** Renders the chat transcript as a readable exchange. Returns '' when there isn't one,
+ * so callers can drop the whole section rather than print an empty heading. */
+function transcriptHtml(transcript?: ChatLeadEmailData['transcript']): string {
+  if (!transcript || transcript.length === 0) return '';
+  return transcript
+    .map((line) => {
+      const who = line.from === 'user' ? 'You' : 'Atlas South';
+      const colour = line.from === 'user' ? BRAND_INK : BRAND_SLATE;
+      const weight = line.from === 'user' ? '600' : '400';
+      return `<p style="margin:0 0 10px;font-size:14px;line-height:1.55;color:${colour};font-weight:${weight};">
+        <span style="display:block;font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:#8A93AD;margin-bottom:2px;">${who}</span>
+        ${multilineHtml(line.text)}
+      </p>`;
+    })
+    .join('');
+}
+
+// Kept local rather than imported: emailThemes.ts owns BRAND but doesn't export it, and
+// widening that export just for two colours here would make the theme's palette part of
+// this module's public surface.
+const BRAND_INK = '#0B1220';
+const BRAND_SLATE = '#47547A';
+
+/**
+ * Confirmation to a visitor who gave their details through the website chatbot, including
+ * a copy of the conversation.
+ *
+ * Added 2026-09-03 at the client's request ("all forms must auto-respond", "chatbot should
+ * send a summary of the chat"). Before this, the chatbot was the ONE route into the
+ * business that sent nothing at all — no confirmation to the visitor and no notification
+ * to the team. A lead landed silently in the admin panel and waited to be noticed.
+ *
+ * ONLY sent when the visitor actually supplied an email. The chatbot asks for one only
+ * when they choose email as their preferred contact method, so a phone-preference lead has
+ * no address to send to — the caller checks before calling this.
+ */
+export async function sendChatLeadConfirmation(data: ChatLeadEmailData) {
+  if (!data.email) return;
+
+  const conversation = transcriptHtml(data.transcript);
+
+  await sendMail({
+    to: data.email,
+    subject: "Your enquiry — Atlas South Technical Services",
+    html: renderConfirmationEmail({
+      recipientFirstName: data.firstName,
+      bodyHtml: `
+        <p style="margin:0 0 16px;">Thanks for chatting with us. We've passed your details to the team and someone will be in touch shortly.</p>
+        <p style="margin:0 0 16px;"><strong>What you told us you're interested in:</strong><br />${escapeHtml(data.services)}</p>
+        ${data.message ? `<p style="margin:0 0 16px;"><strong>Your note:</strong><br />${multilineHtml(data.message)}</p>` : ''}
+        ${
+          conversation
+            ? `<p style="margin:24px 0 8px;font-size:13px;font-weight:bold;text-transform:uppercase;letter-spacing:0.06em;color:${BRAND_SLATE};">A copy of our conversation</p>
+               <div style="border-left:3px solid #0062D6;padding-left:14px;">${conversation}</div>`
+            : ''
+        }
+        <p style="margin:20px 0 0;">Need us sooner? Call <strong>${escapeHtml(COMPANY.phone.display)}</strong> — we're available 24/7.</p>
+      `,
+      cta: { label: 'Visit our site', href: SITE_URL },
+    }),
+  });
+}
+
+/**
+ * Internal notification for a new chatbot lead, so one doesn't sit unseen in the admin
+ * panel. Goes to ADMIN_EMAIL alongside the enquiry notifications, since a chat lead is the
+ * same kind of thing commercially — a prospect asking to be contacted.
+ */
+export async function sendChatLeadAdminNotification(data: ChatLeadEmailData) {
+  await sendMail({
+    to: ADMIN_EMAIL,
+    subject: `New chat lead: ${data.firstName} ${data.lastName} — ${data.company}`,
+    html: renderInternalNotificationEmail({
+      title: 'New chat lead',
+      intro: 'Someone gave their details through the website chatbot. Details below.',
+      rows: [
+        { label: 'Name', valueHtml: escapeHtml(`${data.firstName} ${data.lastName}`) },
+        { label: 'Company', valueHtml: escapeHtml(data.company) },
+        { label: 'Phone', valueHtml: telLink(data.phone) },
+        ...(data.email ? [{ label: 'Email', valueHtml: mailtoLink(data.email) }] : []),
+        // Surfaced as its own row because it decides how to follow up — ringing someone who
+        // asked to be emailed is the fastest way to start badly.
+        { label: 'Prefers', valueHtml: data.preferredContact === 'phone' ? 'Phone call' : 'Email' },
+        { label: 'Interested in', valueHtml: escapeHtml(data.services) },
+        ...(data.message ? [{ label: 'Note', valueHtml: multilineHtml(data.message) }] : []),
+      ],
+      footnote: data.transcript && data.transcript.length > 0
+        ? 'The visitor was sent a copy of the conversation with this enquiry.'
+        : undefined,
+      reference: `Lead ID: ${data.leadId}`,
+    }),
+  });
+}

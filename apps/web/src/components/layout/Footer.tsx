@@ -332,8 +332,11 @@ export function Footer() {
             '@id': `https://www.${COMPANY.domain}/#organization`,
             name: COMPANY.name,
             url: `https://www.${COMPANY.domain}`,
-            logo: `https://www.${COMPANY.domain}/atlas-south-logo.jpg`,
-            image: `https://www.${COMPANY.domain}/atlas-south-logo.jpg`,
+            // The current brand logo, not the superseded atlas-south-logo.jpg. This is the
+            // image Google can surface beside the business in search and knowledge panels,
+            // so it needs to be the logo the site itself actually uses.
+            logo: `https://www.${COMPANY.domain}/email-logo.png`,
+            image: `https://www.${COMPANY.domain}/email-logo.png`,
             telephone: COMPANY.phone.tel,
             email: COMPANY.email,
             foundingDate: String(COMPANY.foundedYear),

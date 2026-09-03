@@ -9,6 +9,7 @@
     "preview": "vite preview --port 9000",
     "lint": "eslint . --ext ts,tsx --max-warnings 0 && npm run check:links",
     "check:links": "node scripts/check-links.mjs",
+    "build:email-logo": "node scripts/build-email-logo.mjs",
     "typecheck": "tsc -b --noEmit"
   },
   "dependencies": {
