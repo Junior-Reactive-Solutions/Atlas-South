@@ -1404,89 +1404,80 @@ export const EXTRACTED_PAGES: ExtractedPage[] = [
       ]
     }
   },
-  // Added 2026-09-03. This page existed in the navigation and had a route and a component
-  // since 2026-08-26, but NO content record was ever written for it — not here, and not in
-  // the database. The result was a live nav link, in both the header and the footer, that
-  // rendered "Page not found": the content API 404s for an unpublished slug, and with no
-  // bundled fallback the component had nothing to fall back to.
+  // Added 2026-09-03. This page had a route, a component and a nav entry since
+  // 2026-08-26, but NO content record was ever written for it — not here, and not in the
+  // database — so both the header and footer linked to a page that rendered "Page not
+  // found": the content API 404s for an unpublished slug, and with no bundled fallback the
+  // component had nothing to fall back to.
   //
-  // ⚠️ THIS COPY NEEDS CLIENT REVIEW. The original component comment cites a client PDF
-  // ("Atlas-South-Rail-Facilities.pdf") as the intended source; that file is not in the
-  // repo, so this describes the service in the same register as the other soft-service
-  // pages without reproducing it. It deliberately claims NO rail-specific credentials —
-  // no PTS, no Sentinel, no track-safety certification — because COMPANY.certifications
-  // lists only Gas Safe, Part P and SIA, and asserting a rail competency the company may
-  // not hold would be a claim a prospective client could act on. If Atlas South does hold
-  // those credentials, they should be added here deliberately, not assumed.
+  // The copy below is the client's own, taken from the sector one-pager the component
+  // comment always cited ("Atlas-South-Rail-Facilities.pdf", supplied 2026-09-03). The
+  // four "Why It Matters" points became the feature cards, the "Our Services" and "Where
+  // We're a Fit" lists became the overview, and the FAQs restate the same claims in
+  // question form — nothing here asserts a capability the one-pager doesn't.
   {
     "slug": "rail-facilities",
     "type": "service",
     "path": "/soft-services/rail-facilities",
     "data": {
       "title": "Rail Facilities",
-      "seoTitle": "Rail Facilities Management & Station Cleaning",
-      "seoDescription": "Facilities services for rail environments across London and the South East — stations, platforms, depots and offices, worked around service timetables." + SEO_PHONE_CTA,
+      "seoTitle": "Facilities Management for Rail Environments",
+      "seoDescription": "Cleaning and facilities management for stations, platforms, depots and rail infrastructure across London & the South East, built around service timetables." + SEO_PHONE_CTA,
       "icon": "train-front",
-      "heroDescription": "Cleaning and facilities services for rail environments — stations, platforms, depots and supporting offices — planned around service timetables rather than against them.",
-      "overview": "Rail sites are unlike other commercial environments in one decisive way: they rarely stop. Passenger flow, service timetables and engineering windows dictate when work can physically happen, and a schedule that ignores them either doesn't get done or gets in the way of operations.\n\nAtlas South delivers facilities services across rail environments — station concourses and platforms, depots and maintenance buildings, and the offices and welfare facilities that support them. Work is planned around the operating timetable, including night and early-morning shifts and engineering possessions, and teams work to the site's own access, induction and safety requirements.",
+      "heroDescription": "Atlas South delivers cleaning and facilities management for stations, platforms, depots and rail infrastructure — built around service timetables, engineering windows, and the safety standards rail environments demand.",
+      "overview": "Atlas South delivers cleaning and facilities management for stations, platforms, depots and rail infrastructure — built around service timetables, engineering windows, and the safety standards rail environments demand.\n\n**Our services**\n\nStation & concourse cleaning. Platform & passenger area servicing. Depot & operational facility cleaning. Washroom & high-footfall hygiene servicing. Facilities maintenance & planned preventative upkeep. Engineering-window & out-of-hours scheduling. Health & safety compliance documentation. Vetted, safety-briefed personnel.\n\n**Where we're a fit**\n\nStations & passenger concourses. Platforms & waiting areas. Depots & operational facilities. Rail operator & infrastructure offices. Engineering & out-of-hours access sites.\n\nTell us about your stations, depots or sites and their operating hours — we'll come back with a schedule built around your timetable and engineering windows, not a generic quote.",
       "features": [
         {
-          "icon": "train-front",
-          "title": "Station & Platform Environments",
-          "description": "Concourses, platforms, waiting areas, footbridges and passenger facilities kept presentable through the operating day and reset outside it."
-        },
-        {
-          "icon": "toolbox",
-          "title": "Depots & Maintenance Buildings",
-          "description": "Cleaning and facilities support for depots, workshops and maintenance sheds, scheduled around the work taking place in them."
+          "icon": "sparkles",
+          "title": "Passenger areas can't afford to look neglected",
+          "description": "Stations, platforms and concourses are judged by every passenger who passes through. Clean, well-maintained facilities directly shape how safe and trustworthy a rail environment feels."
         },
         {
           "icon": "clock",
-          "title": "Timetable-Led Scheduling",
-          "description": "Work planned around service patterns, quiet periods and engineering windows — including nights, early mornings and weekends — so operations aren't obstructed."
+          "title": "Servicing works around the timetable, not against it",
+          "description": "Cleaning and maintenance are scheduled around service hours, engineering windows and platform access restrictions — so operations are never disrupted."
         },
         {
           "icon": "shield-check",
-          "title": "Site Access & Induction Compliance",
-          "description": "Teams work to each site's own access control, induction and permit requirements, and to the health & safety regime the operator sets."
-        },
-        {
-          "icon": "users",
-          "title": "Welfare & Back-of-House Facilities",
-          "description": "Staff rooms, welfare facilities, offices and back-of-house areas maintained alongside the public-facing estate."
+          "title": "Safety-critical environments, handled correctly",
+          "description": "Personnel working trackside-adjacent, in depots or restricted station areas are briefed and prepared for the access controls and safety standards rail environments require."
         },
         {
           "icon": "clipboard-check",
-          "title": "Documented, Auditable Delivery",
-          "description": "Inspections, attendance and completed tasks recorded, so performance against the contract can be evidenced rather than asserted."
+          "title": "Compliance documentation, always audit-ready",
+          "description": "Cleaning and facilities records are kept to the standard rail operators and infrastructure managers are expected to evidence at any time."
         }
       ],
       "faqs": [
         {
-          "question": "Can you work around our service timetable?",
-          "answer": "Yes — that constraint shapes the whole schedule. Work is planned around service patterns, quiet periods and engineering windows, including night, early-morning and weekend shifts where that is the only practical time to do it."
-        },
-        {
           "question": "Which parts of a rail site do you cover?",
-          "answer": "Station concourses, platforms, waiting areas and passenger facilities; depots, workshops and maintenance buildings; and the offices, staff rooms and welfare facilities that support them."
+          "answer": "Stations and passenger concourses, platforms and waiting areas, depots and operational facilities, rail operator and infrastructure offices, and engineering and out-of-hours access sites."
         },
         {
-          "question": "How do you handle site access and safety requirements?",
-          "answer": "Teams work to each site's own access control, induction and permit-to-work requirements and to the operator's health & safety regime. Specific competency requirements should be confirmed with us against your site's rules before work is scoped."
+          "question": "Can you work around our service timetable?",
+          "answer": "Yes. Cleaning and maintenance are scheduled around service hours, engineering windows and platform access restrictions, so operations are never disrupted."
         },
         {
-          "question": "Can this sit under a wider facilities management contract?",
-          "answer": "Yes. Rail facilities work can be delivered under the same single contract as your other hard and soft services rather than as a separate vendor relationship."
+          "question": "How do you handle safety in restricted and trackside-adjacent areas?",
+          "answer": "Personnel working trackside-adjacent, in depots or in restricted station areas are briefed and prepared for the access controls and safety standards rail environments require."
+        },
+        {
+          "question": "Will we have documentation for audits?",
+          "answer": "Yes. Cleaning and facilities records are kept to the standard rail operators and infrastructure managers are expected to evidence at any time."
+        },
+        {
+          "question": "What areas do you cover?",
+          "answer": "London and the South East. Tell us about your stations, depots or sites and their operating hours, and we'll come back with a schedule built around your timetable and engineering windows rather than a generic quote."
         }
       ],
       "relatedServices": [
         {
-          "label": "Facilities Management",
-          "path": "/soft-services/facilities-management"
-        },
-        {
           "label": "Commercial Cleaning",
           "path": "/soft-services/commercial-cleaning"
+        },
+        {
+          "label": "Facilities Management",
+          "path": "/soft-services/facilities-management"
         }
       ]
     }

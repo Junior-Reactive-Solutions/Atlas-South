@@ -363,19 +363,24 @@ export function ChatBot() {
 
   // Preferred-contact is a button choice (like the greeting quick actions) rather than
   // free text — there are exactly two valid answers, so typing invites typos a button
-  // can't produce. Email is only asked for afterwards if they picked "Email"; a
-  // phone-preference lead already gave a phone number in the previous step, so there's
-  // nothing more to collect before moving to services.
+  // can't produce.
+  //
+  // The email step now runs for BOTH answers (changed 2026-09-03, client request). It used
+  // to be skipped for a phone-preference lead, on the reasoning that they had already given
+  // a phone number so there was nothing left to collect. That was true for contacting them,
+  // but it meant those visitors left no address — so they got no confirmation and no copy
+  // of the conversation, which is exactly what the client asked the chatbot to send. The
+  // preference still decides how the team follows up; the address is now collected either
+  // way so a record of the chat can be sent.
   async function choosePreferredContact(choice: PreferredContact) {
     pushUser(choice === 'email' ? 'Email' : 'Phone');
     setLeadPreferredContact(choice);
-    if (choice === 'email') {
-      await botSay("What's your email address?");
-      setStep('lead-email');
-    } else {
-      await botSay('Which service(s) are you interested in? Select all that apply, then hit Send.');
-      setStep('lead-services');
-    }
+    await botSay(
+      choice === 'email'
+        ? "What's your email address?"
+        : "No problem — we'll call you. What's your email address, so we can send you a copy of this chat for your records?",
+    );
+    setStep('lead-email');
   }
 
   function handleServiceToggle(service: string) {
@@ -403,9 +408,10 @@ export function ChatBot() {
           company: leadCompany,
           phone: leadPhone,
           preferredContact: leadPreferredContact,
-          // Only sent at all when they chose email as their preferred method — the API
-          // schema (routes/leads.ts) only requires it in that case.
-          email: leadPreferredContact === 'email' ? leadEmail : undefined,
+          // Sent regardless of preference now that the email step runs for both answers.
+          // `preferredContact` still tells the team whether to call or email; this is the
+          // address the confirmation and chat copy go to either way.
+          email: leadEmail || undefined,
           services: leadServices.join(', '),
           message: message || undefined,
           // The conversation so far, so the confirmation email can include a copy of it
