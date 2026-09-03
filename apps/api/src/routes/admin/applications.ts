@@ -6,14 +6,33 @@ import { sendAdminReply } from '../../lib/email.js';
 
 export const adminApplicationsRouter = Router();
 
-// Apply auth middleware to all routes in this router
-adminApplicationsRouter.use(authMiddleware);
+// authMiddleware is applied per-route below, NOT via a blanket `.use()` here — this router
+// is mounted at the bare '/api/admin' prefix (index.ts), shared with six other routers
+// (adminUsersRouter, adminStatsRouter, adminTotpRouter, ...). A blanket `.use()` on a
+// router sharing that prefix intercepts every request under it, not just this router's own
+// four routes — including ones this file has never heard of, like
+// '/api/admin/users/change-password'.
+//
+// That's exactly how this broke (2026-09-02): authMiddleware's mustChangePassword
+// exemption checks `req.baseUrl === '/api/admin/users'` to let the change-password request
+// itself through. With this mounted first at the shared prefix, THIS copy of authMiddleware
+// ran for that request, computed `req.baseUrl === '/api/admin'` (this router's own mount
+// point, not the specific one the check expected), failed the exemption, and returned 403
+// — for every account with mustChangePassword set, not just one. adminUsersRouter's own
+// copy of the same check never ran; this router answered first and the request never
+// reached it. Confirmed by instrumenting a local reproduction and reading the actual
+// runtime baseUrl.
+//
+// Scoping the middleware to each literal route means it only ever runs for a request that
+// actually matches THIS router's own paths, so it can no longer intercept a sibling route
+// mounted under the same prefix — matching the pattern adminLeadsRouter already uses
+// correctly.
 
 /**
  * List all job applications sorted by newest first
  * Protected by JWT authentication
  */
-adminApplicationsRouter.get('/applications', async (req: AuthRequest, res: Response) => {
+adminApplicationsRouter.get('/applications', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
     const db = requireDb();
     const applications = await db.jobApplication.findMany({
@@ -34,7 +53,7 @@ adminApplicationsRouter.get('/applications', async (req: AuthRequest, res: Respo
  * Get a single job application by ID
  * Protected by JWT authentication
  */
-adminApplicationsRouter.get('/applications/:id', async (req: AuthRequest, res: Response) => {
+adminApplicationsRouter.get('/applications/:id', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
     const db = requireDb();
     const application = await db.jobApplication.findUnique({
@@ -69,7 +88,7 @@ adminApplicationsRouter.get('/applications/:id', async (req: AuthRequest, res: R
  * durable and monitored instead.
  */
 for (const suffix of ['cv', 'cover-letter']) {
-  adminApplicationsRouter.get(`/applications/:id/${suffix}`, async (_req: AuthRequest, res: Response) => {
+  adminApplicationsRouter.get(`/applications/:id/${suffix}`, authMiddleware, async (_req: AuthRequest, res: Response) => {
     return res.status(410).json({
       error:
         'Documents are no longer stored on the server. The CV and cover letter were emailed to the careers inbox when the application was submitted.',
@@ -83,7 +102,7 @@ const ReplySchema = z.object({
 });
 
 /** POST /api/admin/applications/:id/reply — send a themed reply email to the candidate. */
-adminApplicationsRouter.post('/applications/:id/reply', async (req: AuthRequest, res: Response) => {
+adminApplicationsRouter.post('/applications/:id/reply', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
     const db = requireDb();
     const application = await db.jobApplication.findUnique({ where: { id: req.params.id } });
