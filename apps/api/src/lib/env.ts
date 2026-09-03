@@ -54,6 +54,10 @@ const EnvSchema = z.object({
   // used to create or reset an admin account, then removed. See that file for the full
   // set of safeguards this alone is not relied on for.
   ADMIN_BOOTSTRAP_TOKEN: z.string().min(20).optional(),
+  // Comma-separated list of allowed origins — plural since the 2026-09-03 DNS cutover:
+  // both the live domain (www.atlassouthes.com, the canonical URL the apex redirects to)
+  // and the original Vercel URL need to keep working, the latter for admin access and
+  // testing independent of DNS. See lib/cors.ts for how this is parsed.
   CORS_ALLOWED_ORIGIN: z.string().default('http://localhost:9000'),
   RATE_LIMIT_WINDOW_MS: z.coerce.number().int().positive().default(600_000),
   RATE_LIMIT_MAX: z.coerce.number().int().positive().default(100),

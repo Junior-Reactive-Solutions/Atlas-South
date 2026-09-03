@@ -37,21 +37,18 @@ import { COMPANY } from './company.js';
  * The origin the site is actually served from **right now** — used to build the absolute
  * URLs that have to resolve for a crawler: `og:image`, `og:url` and `canonical`.
  *
- * Deliberately NOT `https://${COMPANY.domain}`. Those are two different facts:
- * COMPANY.domain is a *business* fact (the company's domain, correct in JSON-LD and on
- * letterheads); this is a *deployment* fact (where the HTML and its assets genuinely
- * resolve today). Until the DNS cutover, atlassouthes.com still serves the client's OLD
- * site — so `https://atlassouthes.com/og-image.png` returned 404, crawlers fetched nothing,
- * and every shared link rendered with no preview image at all. A canonical pointing at a
- * 404 is worse still, since search engines may drop the page entirely.
+ * Flipped to `https://${COMPANY.domain}` on 2026-09-03 as part of the DNS cutover
+ * (docs/build/17-DOMAIN-CUTOVER-RUNBOOK.md): atlassouthes.com's apex and `www` now resolve
+ * to this Vercel deployment (verified live — 200 on www, 308 apex→www redirect), so this is
+ * both the business domain and the deployment's real origin again. Previously these were
+ * deliberately two different facts: until cutover, atlassouthes.com still served the
+ * client's OLD site, so pointing this constant at it would have 404'd every `og:image` and
+ * `canonical` URL a crawler tried to fetch.
  *
- * ⚠️ Flip this to `https://${COMPANY.domain}` as part of the DNS cutover checklist in
- * README.md — it is step 1 of making the site's own domain authoritative.
- *
- * (public/sitemap.xml deliberately still lists atlassouthes.com URLs: it is submitted to
- * Search Console *after* cutover, by which point those are the right ones.)
+ * (public/sitemap.xml already listed atlassouthes.com URLs ahead of this flip — it was
+ * written for submission to Search Console *after* cutover, which is now.)
  */
-export const SITE_ORIGIN = 'https://atlas-south-web.vercel.app';
+export const SITE_ORIGIN = `https://${COMPANY.domain}`;
 
 /**
  * The call-to-action closing service, industry and area descriptions.
