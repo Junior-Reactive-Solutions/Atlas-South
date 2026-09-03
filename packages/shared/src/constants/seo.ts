@@ -148,6 +148,26 @@ export const PAGE_SEO = {
     description:
       'Written-up examples of facilities and trades work delivered for commercial, corporate and government sites across London & the South East.' + SEO_PHONE_CTA,
   },
+  '/insights': {
+    path: '/insights',
+    /**
+     * Prerendered for the same reason /case-studies is, and with the same limitation: the
+     * library page gets real metadata for crawlers, but the individual articles do NOT —
+     * they are authored in the admin panel and live in the database, and this prerender
+     * step only reads content bundled into the repo.
+     *
+     * Missing this entry is not a cosmetic gap. Without it the route has no prerendered
+     * HTML of its own, so it is served index.html and inherits the HOMEPAGE's canonical
+     * tag — telling search engines /insights is a duplicate of / and should not be indexed
+     * separately. Caught on the live site immediately after this section shipped, by
+     * reading the canonical off the deployed page rather than trusting the route to work.
+     * Any future top-level route needs an entry here for the same reason.
+     */
+    title: 'Insights — Facilities Management Guidance',
+    description:
+      'Practical guidance on facilities management, compliance and building services for people responsible for commercial premises across London & the South East.' +
+      SEO_PHONE_CTA,
+  },
   '/legal/privacy': {
     path: '/legal/privacy',
     title: 'Privacy Policy',
