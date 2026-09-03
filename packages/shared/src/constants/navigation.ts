@@ -27,13 +27,11 @@ export const COMPANY_PAGES: NavItem[] = [
   // and the library page exist and work, but linking to an empty library from every page
   // advertises proof we cannot yet show. Drop the flag once the first write-up is live.
   { id: 'case-studies', label: 'Case Studies', path: '/case-studies', icon: 'file-text', placeholder: true },
-  // Added 2026-09-03, same `placeholder: true` reasoning as Case Studies above: the route
-  // and library page are complete and working, but the articles themselves are the
-  // client's to write (see packages/shared/src/content/articles.ts for why none were
-  // written for them). Linking "Insights" from every page while it holds nothing
-  // advertises expertise the site cannot yet show. Drop the flag once the first article
-  // is published.
-  { id: 'insights', label: 'Insights', path: '/insights', icon: 'newspaper', placeholder: true },
+  // Added 2026-09-03 as a placeholder, then un-flagged the same day once the first article
+  // was published. It now links from the header and footer, which is the point: an article
+  // that nothing links to is invisible to both readers and crawlers, since internal links
+  // are how a new page gets discovered and how relevance flows to it.
+  { id: 'insights', label: 'Insights', path: '/insights', icon: 'newspaper' },
 ];
 
 // Fire & Safety removed 2026-08-20 at the client's request — no replacement page.

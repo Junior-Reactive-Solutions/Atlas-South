@@ -205,6 +205,22 @@
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
+  <!-- Insights. Added 2026-09-03 with the first published article. NOTE: this file is
+       static, so a newly published article stays invisible to search engines until its URL
+       is added here by hand — one entry per article, at publish time. -->
+  <url>
+    <loc>https://atlassouthes.com/insights</loc>
+    <lastmod>2026-09-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://atlassouthes.com/insights/commercial-building-compliance-check-frequencies</loc>
+    <lastmod>2026-09-03</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
   <url>
     <loc>https://atlassouthes.com/legal/privacy</loc>
     <lastmod>2026-08-28</lastmod>
