@@ -5,6 +5,7 @@ import App from './App';
 import { AuthProvider } from './contexts/AuthContext.js';
 import { NavVisibilityProvider } from './hooks/useNavVisibility.js';
 import { ErrorBoundary } from './components/ErrorBoundary.js';
+import { ScrollToTop } from './components/ScrollToTop.js';
 import { installGlobalErrorReporting } from './lib/errorReporting.js';
 import './index.css';
 
@@ -17,6 +18,10 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <ErrorBoundary>
       <BrowserRouter>
+        {/* Sits directly under the router and outside every route, so one instance covers
+            the whole app — public pages, legal pages and admin alike — and it can't be
+            unmounted and remounted by a route change while it's doing its job. */}
+        <ScrollToTop />
         {/* AuthProvider inside BrowserRouter so useNavigate works inside the context */}
         <AuthProvider>
           {/* Hidden-page list is fetched once here and shared by the header, footer and
