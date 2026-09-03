@@ -26,27 +26,31 @@ const BRAND = {
  * Hosted at the production web origin — email clients can't resolve a relative path, and
  * unlike a browser they never retry, so the URL must resolve on the FIRST request.
  *
- * Built from SITE_ORIGIN, not COMPANY.domain: this was `https://atlassouthes.com/...`
- * until 2026-08-31, which meant the logo silently failed to load in every email this
- * system has ever sent — atlassouthes.com still serves the client's OLD site until the
- * DNS cutover, and that site has no /atlas-south-logo.jpg. Every admin reply and every
- * automated confirmation sent so far has shown a broken image where the logo should be.
- * Flip this back to `https://${COMPANY.domain}` as part of the DNS cutover checklist in
- * README.md, alongside SITE_ORIGIN itself.
+ * Built from SITE_ORIGIN rather than a hardcoded host, so it follows the domain: it pointed
+ * at a URL that didn't resolve before the 2026-09-03 DNS cutover, which meant every email
+ * the system had ever sent showed a broken image where the logo should be.
+ *
+ * Points at `/email-logo.png`, NOT the older `/atlas-south-logo.jpg` (changed 2026-09-03).
+ * That JPG is the previous brand — the Atlas figure, "TECHNICAL SERVICE" and the
+ * "WE'RE ONLY A CALL AWAY" strapline — and the site itself stopped using it when the
+ * current brand landed, so every email was going out carrying a logo the website no longer
+ * showed anywhere. `/email-logo.png` is generated from the same brand SVGs the live site
+ * uses (apps/web/scripts/build-email-logo.mjs), rasterised because Outlook desktop renders
+ * with Word's engine and does not support SVG at all.
  */
-const LOGO_URL = `${SITE_ORIGIN}/atlas-south-logo.jpg`;
+const LOGO_URL = `${SITE_ORIGIN}/email-logo.png`;
 const SITE_URL = SITE_ORIGIN;
 
 /**
- * The only logo file the site has is the full-colour wordmark on a white background
- * (public/atlas-south-logo.jpg) — there's no rasterised light/white variant for placing
- * directly on a navy background the way the site's own header/footer do with an SVG
- * (public/brand/wordmark-light.svg). An SVG isn't usable here: Outlook desktop (still the
- * dominant business email client) doesn't render inline or hosted SVG at all. A CSS
- * `filter` to fake a light version isn't usable either — filter support in email clients
- * is inconsistent to nonexistent. So on the two themes with a navy band, the real logo
- * sits inside a small white rounded card instead — a standard, broadly-supported
- * table-based pattern for showing a colour logo on a coloured background in email. */
+ * The email logo (public/email-logo.png) is the full-colour mark on a white ground, and
+ * there is no rasterised light/white variant for placing directly on a navy background the
+ * way the site's own header/footer do with an SVG (public/brand/wordmark-light.svg). An SVG
+ * isn't usable here: Outlook desktop (still the dominant business email client) doesn't
+ * render inline or hosted SVG at all. A CSS `filter` to fake a light version isn't usable
+ * either — filter support in email clients is inconsistent to nonexistent. So on the two
+ * themes with a navy band, the real logo sits inside a small white rounded card instead — a
+ * standard, broadly-supported table-based pattern for showing a colour logo on a coloured
+ * background in email. */
 function logoOnNavy(): string {
   return `<table role="presentation" cellpadding="0" cellspacing="0"><tr><td style="background:#FFFFFF;border-radius:8px;padding:10px 16px;"><img src="${LOGO_URL}" alt="Atlas South" width="150" style="display:block;height:auto;" /></td></tr></table>`;
 }

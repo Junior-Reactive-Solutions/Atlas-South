@@ -157,17 +157,27 @@ export default function App() {
             <Route path="/admin/system-logs" element={<AdminSystemLogs />} />
           </Route>
 
-          {/* Legal pages */}
-          <Route path="/legal/terms" element={<TermsOfUse />} />
-          <Route path="/legal/privacy" element={<PrivacyPolicy />} />
-          <Route path="/legal/cookies" element={<CookiePolicy />} />
-
-          {/* Transactional pages — no Layout header/footer, noindex */}
+          {/* Transactional pages — no Layout header/footer, noindex.
+              /thank-you deliberately stays outside the Layout: it is a post-submission
+              confirmation screen, and stripping the nav keeps the visitor on the one action
+              that matters rather than inviting them back into browsing. The legal pages
+              used to sit here too, which was wrong — see the note on them below. */}
           <Route path="/thank-you" element={<ThankYou />} />
 
           {/* Public site wrapped in Layout */}
           <Route element={<Layout />}>
             <Route path="/" element={<Home />} />
+
+            {/* Legal pages. These were previously routed OUTSIDE the Layout, so they
+                rendered with no site header and no footer — a visitor who clicked
+                "Privacy Policy" in the footer landed on what looked like a separate,
+                bare document with no way back into the site except the browser's Back
+                button. They are ordinary pages of the site and belong inside the shell
+                like every other page; only genuinely transactional screens (/thank-you)
+                justify dropping the nav. */}
+            <Route path="/legal/terms" element={<TermsOfUse />} />
+            <Route path="/legal/privacy" element={<PrivacyPolicy />} />
+            <Route path="/legal/cookies" element={<CookiePolicy />} />
 
           {/* Company pages */}
           <Route path="/company" element={<About />} />

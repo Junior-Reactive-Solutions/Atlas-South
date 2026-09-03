@@ -408,6 +408,11 @@ export function ChatBot() {
           email: leadPreferredContact === 'email' ? leadEmail : undefined,
           services: leadServices.join(', '),
           message: message || undefined,
+          // The conversation so far, so the confirmation email can include a copy of it
+          // (the client asked the chatbot to send the visitor a summary of the chat).
+          // `messages` is this component's own transcript state, so it is exactly what the
+          // visitor saw. The server caps the length and does not store it.
+          transcript: messages.map((m) => ({ from: m.from, text: m.text })),
         }),
       });
     } catch {
