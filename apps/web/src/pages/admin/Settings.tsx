@@ -18,6 +18,12 @@ export function AdminSettings() {
   const [pwSuccess, setPwSuccess] = useState('');
   const [pwLoading, setPwLoading] = useState(false);
 
+  const [newEmail, setNewEmail] = useState('');
+  const [emailPassword, setEmailPassword] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [emailSuccess, setEmailSuccess] = useState('');
+  const [emailLoading, setEmailLoading] = useState(false);
+
   // ── 2FA state ────────────────────────────────────────────────────────────────
   const [totpEnabled, setTotpEnabled] = useState<boolean | null>(null);
   const [totpStep, setTotpStep] = useState<TotpStep>('idle');
@@ -63,6 +69,27 @@ export function AdminSettings() {
       setPwError('Network error. Please try again.');
     } finally {
       setPwLoading(false);
+    }
+  };
+
+  const handleChangeEmail = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setEmailError('');
+    setEmailSuccess('');
+    setEmailLoading(true);
+    try {
+      const r = await authFetch('/api/admin/users/change-email', {
+        method: 'POST',
+        body: JSON.stringify({ currentPassword: emailPassword, newEmail }),
+      });
+      const d = await r.json().catch(() => ({}));
+      if (!r.ok) { setEmailError(d.error || 'Failed to change email'); return; }
+      setEmailSuccess(`Login email is now ${d.email}. Use it next time you sign in.`);
+      setNewEmail(''); setEmailPassword('');
+    } catch {
+      setEmailError('Network error. Please try again.');
+    } finally {
+      setEmailLoading(false);
     }
   };
 
@@ -160,6 +187,41 @@ export function AdminSettings() {
           <button type="submit" disabled={pwLoading}
             className="mt-2 rounded-lg bg-accent-blue px-6 py-2 font-semibold text-white transition-colors hover:bg-blue-700 disabled:opacity-50">
             {pwLoading ? 'Updating…' : 'Update Password'}
+          </button>
+        </form>
+      </div>
+
+      {/* ── Login Email ─────────────────────────────────────────────────────── */}
+      <div className="mt-8 rounded-lg border border-slate-200 bg-white p-6">
+        <div className="mb-2 flex items-center gap-3">
+          <Lock className="h-6 w-6 text-navy" />
+          <h2 className="text-xl font-semibold text-navy">Change Login Email</h2>
+        </div>
+        <p className="mb-6 text-sm text-slate-600">
+          The address you sign in with. Changing it does not sign you out, but you will need
+          the new address next time you log in — make sure you can receive mail at it first.
+        </p>
+
+        {emailError && <div className="mb-4 rounded-lg bg-red-50 p-4 text-sm text-red-600">{emailError}</div>}
+        {emailSuccess && <div className="mb-4 rounded-lg bg-green-50 p-4 text-sm text-green-600">{emailSuccess}</div>}
+
+        <form onSubmit={handleChangeEmail} className="space-y-4">
+          <div>
+            <label htmlFor="new-email" className="block text-sm font-medium text-slate-700">New Email</label>
+            <input id="new-email" type="email" value={newEmail} onChange={(e) => setNewEmail(e.target.value)}
+              className="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2 focus:border-accent-blue focus:outline-none focus:ring-2 focus:ring-accent-blue/20" required />
+          </div>
+          <div>
+            <label htmlFor="email-current-password" className="block text-sm font-medium text-slate-700">Current Password</label>
+            <input id="email-current-password" type="password" value={emailPassword} onChange={(e) => setEmailPassword(e.target.value)}
+              className="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2 focus:border-accent-blue focus:outline-none focus:ring-2 focus:ring-accent-blue/20" required />
+            <p className="mt-1 text-xs text-slate-500">
+              Required because this changes who can sign in — an open session alone is not enough.
+            </p>
+          </div>
+          <button type="submit" disabled={emailLoading}
+            className="mt-2 rounded-lg bg-accent-blue px-6 py-2 font-semibold text-white transition-colors hover:bg-blue-700 disabled:opacity-50">
+            {emailLoading ? 'Updating…' : 'Update Email'}
           </button>
         </form>
       </div>
