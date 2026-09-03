@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { animate, stagger } from 'animejs';
 import {
@@ -25,6 +25,39 @@ interface ColumnProps {
 function FooterColumn({ title, items }: ColumnProps) {
   const [expanded, setExpanded] = useState(false);
   const { hidden } = useNavVisibility();
+  const navRef = useRef<HTMLElement>(null);
+
+  /**
+   * Below `lg` these columns are collapsed accordions, and the headings sit at the very
+   * bottom of a long page. Expanding one therefore rendered its links *entirely below the
+   * fold* — measured on the live site at 375px wide: tapping "Soft Services" revealed 9
+   * links, 0 of them inside the viewport — while the page itself didn't move. From the
+   * visitor's side the footer simply didn't respond unless they knew to keep scrolling,
+   * which is exactly how it was reported.
+   *
+   * Scrolling the column into view on expand is the fix. `block: 'start'` puts the heading
+   * at the top of the viewport so the list it just revealed is the thing on screen, rather
+   * than 'nearest', which can settle with a long list still mostly below the fold.
+   *
+   * Only on expand — collapsing shouldn't yank the page around — and only after the next
+   * frame, because the list is still `hidden` on the tick the click handler runs, so
+   * measuring before the re-render would scroll to the wrong place.
+   */
+  function toggle() {
+    setExpanded((wasExpanded) => {
+      const willExpand = !wasExpanded;
+      if (willExpand) {
+        requestAnimationFrame(() => {
+          const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          navRef.current?.scrollIntoView({
+            block: 'start',
+            behavior: reduceMotion ? 'auto' : 'smooth',
+          });
+        });
+      }
+      return willExpand;
+    });
+  }
 
   // Same filtering as the header, applied here so a hidden page can't still be reached
   // from the footer — the audit's dead-link finding was largely a header/footer drift
@@ -35,13 +68,18 @@ function FooterColumn({ title, items }: ColumnProps) {
   const visibleItems = items.filter((item) => !hidden.has(item.id) && !('placeholder' in item && item.placeholder));
 
   return (
-    <nav aria-label={`Footer — ${title}`} className="border-b border-white/10 py-4 lg:border-0 lg:py-0">
+    <nav
+      ref={navRef}
+      aria-label={`Footer — ${title}`}
+      // scroll-mt keeps the heading clear of the sticky site header once scrolled to.
+      className="scroll-mt-20 border-b border-white/10 py-4 lg:border-0 lg:py-0"
+    >
       <h3 className="lg:mb-3">
         <button
           type="button"
           className="flex w-full min-h-[44px] items-center justify-between text-left text-sm font-semibold uppercase tracking-wide text-white lg:pointer-events-none lg:min-h-0"
           aria-expanded={expanded}
-          onClick={() => setExpanded((v) => !v)}
+          onClick={toggle}
         >
           {title}
           <Icon name={expanded ? 'chevron-up' : 'chevron-down'} size={16} className="lg:hidden" />
