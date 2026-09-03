@@ -301,24 +301,66 @@ export function Footer() {
         </div>
       </div>
 
-      {/* Organization schema — docs/build/04-FOOTER-SPEC.md §6. sameAs stays empty
-          until real social profile URLs are confirmed (docs/build/13-COMPANY-FACTS-VERIFIED.md). */}
+      {/* LocalBusiness schema — docs/build/04-FOOTER-SPEC.md §6.
+       *
+       * Upgraded from plain `Organization` to `ProfessionalService` (a LocalBusiness
+       * subtype) on 2026-09-03, as the on-site half of the Google Business Profile work.
+       * `Organization` is the generic company type and carries no local-search meaning;
+       * `LocalBusiness` and its subtypes are what Google reads for a business that serves
+       * a place, and it cross-references these fields against the Business Profile. The
+       * NAP here and the NAP on the Profile must agree exactly — a mismatched phone or
+       * street line is one of the most common reasons a local listing underperforms.
+       *
+       * Everything below is a fact the site already states elsewhere. Two fields Google
+       * accepts are deliberately ABSENT rather than guessed:
+       *   - `geo`: precise coordinates would have to be invented, and a wrong lat/long
+       *     drops the map pin on the wrong building. Google geocodes the postal address
+       *     perfectly well without it.
+       *   - `priceRange`: no published pricing exists to base it on, and this site
+       *     deliberately carries no pricing at all (client decision, 2026-08-24).
+       *
+       * sameAs stays empty until real social profile URLs are confirmed
+       * (docs/build/13-COMPANY-FACTS-VERIFIED.md). */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
             '@context': 'https://schema.org',
-            '@type': 'Organization',
+            '@type': 'ProfessionalService',
+            // A stable @id lets other structured data on the site point at this same
+            // entity rather than describing a second, unrelated company.
+            '@id': `https://www.${COMPANY.domain}/#organization`,
             name: COMPANY.name,
             url: `https://www.${COMPANY.domain}`,
+            logo: `https://www.${COMPANY.domain}/atlas-south-logo.jpg`,
+            image: `https://www.${COMPANY.domain}/atlas-south-logo.jpg`,
             telephone: COMPANY.phone.tel,
             email: COMPANY.email,
+            foundingDate: String(COMPANY.foundedYear),
             address: {
               '@type': 'PostalAddress',
               streetAddress: `${COMPANY.address.line1}, ${COMPANY.address.line2}`,
               addressLocality: COMPANY.address.city,
               postalCode: COMPANY.address.postalCode,
               addressCountry: COMPANY.address.country,
+            },
+            // The areas the site's own Service Areas section already lists.
+            areaServed: SERVICE_AREAS.map((area) => ({ '@type': 'Place', name: area.label })),
+            // Mirrors the "Available 24/7" claim the homepage hero has carried since
+            // launch — not a new assertion, and it must stay true of the phone line.
+            openingHoursSpecification: {
+              '@type': 'OpeningHoursSpecification',
+              dayOfWeek: [
+                'Monday',
+                'Tuesday',
+                'Wednesday',
+                'Thursday',
+                'Friday',
+                'Saturday',
+                'Sunday',
+              ],
+              opens: '00:00',
+              closes: '23:59',
             },
             sameAs: COMPANY.socialProfiles,
           }),
