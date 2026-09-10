@@ -1,6 +1,25 @@
 <!doctype html>
 <html lang="en-GB">
   <head>
+    <!--
+      Google Tag Manager — client-supplied container GTM-P84N846V (2026-09-10). Placed as
+      high in <head> as possible per Google's own install instructions, so the container
+      loads before the rest of the page. The CSP in vercel.json had to be widened to permit
+      it: this inline bootstrap is allow-listed by its exact SHA-256 hash (script-src
+      'sha256-...') rather than a blanket 'unsafe-inline', so this one known snippet runs
+      but an unrelated injected inline script still would not — that's the whole reason
+      the CSP had no 'unsafe-inline' before. googletagmanager.com is also added to
+      script-src (GTM's own gtm.js loads from there), and analytics.google.com /
+      google-analytics.com to connect-src, since a GA4 tag configured inside this
+      container reports there — not to this domain, so connect-src 'self' alone would
+      have silently blocked every hit once a tag was added.
+    -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-P84N846V');</script>
+    <!-- End Google Tag Manager -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!--
@@ -46,6 +65,11 @@
     <title>Atlas South Technical Services</title>
   </head>
   <body>
+    <!-- Google Tag Manager (noscript) — fallback for visitors with JS disabled.
+         iframe src is allow-listed via frame-src in vercel.json's CSP. -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-P84N846V"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
     <!--
       Skip-navigation link — bypasses the repeated header/nav for keyboard and screen-reader
       users (WCAG 2.4.1 Bypass Blocks). Visually hidden until focused via sr-only; the
