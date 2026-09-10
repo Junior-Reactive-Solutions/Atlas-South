@@ -13,6 +13,16 @@
       google-analytics.com to connect-src, since a GA4 tag configured inside this
       container reports there — not to this domain, so connect-src 'self' alone would
       have silently blocked every hit once a tag was added.
+
+      IF THIS SCRIPT'S TEXT EVER CHANGES, THE HASH IN vercel.json MUST BE RECOMPUTED —
+      and NOT by hashing this file's raw bytes. The browser normalises CRLF to LF while
+      parsing HTML before it hashes a script's content (per the HTML spec's input
+      preprocessing step), and this file is CRLF. Hashing the raw CRLF source produced a
+      value that looked right and silently failed in production — GTM never loaded, no
+      build error, no visible symptom short of opening devtools. Compute the hash from
+      apps/web/dist/index.html AFTER `npm run build`, with '\r\n' replaced by '\n' first,
+      or simply load the deployed page and read the value Chrome's own CSP violation
+      message reports — it names the exact hash it expected.
     -->
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
